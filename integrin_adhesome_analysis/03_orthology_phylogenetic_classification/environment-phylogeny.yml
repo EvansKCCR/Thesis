@@ -1,0 +1,10 @@
+name: integrin-phylogeny
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - mafft=7.526
+  - trimal=1.5.0
+  - iqtree=2.4.0
+  - biopython=1.85

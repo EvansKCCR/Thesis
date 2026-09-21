@@ -1,0 +1,5108 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/Q21313.json",
+  "retrieved_at": "2026-09-18T09:24:18.343400+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "Q21313",
+    "uniProtkbId": "EPI1_CAEEL",
+    "entryAudit": {
+      "firstPublicDate": "1997-11-01",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "1996-11-01",
+      "entryVersion": 169,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 5.0,
+    "organism": {
+      "scientificName": "Caenorhabditis elegans",
+      "taxonId": 6239,
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Nematoda",
+        "Chromadorea",
+        "Rhabditida",
+        "Rhabditina",
+        "Rhabditomorpha",
+        "Rhabditoidea",
+        "Rhabditidae",
+        "Peloderinae",
+        "Caenorhabditis"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "value": "Laminin-like protein epi-1"
+        }
+      },
+      "alternativeNames": [
+        {
+          "fullName": {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000303",
+                "source": "PubMed",
+                "id": "12783803"
+              }
+            ],
+            "value": "Laminin alphaB"
+          }
+        },
+        {
+          "fullName": {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305",
+                "source": "PubMed",
+                "id": "12783803"
+              }
+            ],
+            "value": "Laminin subunit alpha epi-1"
+          }
+        }
+      ],
+      "flag": "Precursor"
+    },
+    "genes": [
+      {
+        "geneName": {
+          "value": "epi-1"
+        },
+        "orfNames": [
+          {
+            "value": "K08C7.3"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000250",
+                "source": "UniProtKB",
+                "id": "P25391"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12783803"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16495308"
+              }
+            ],
+            "value": "Binding to cells via a high affinity receptor, laminin is thought to mediate the attachment, migration and organization of cells into tissues during embryonic development by interacting with other extracellular matrix components (By similarity). Required to assemble a stable basement membrane and for organizing receptor complexes and cytoskeletal components to the proper cell surfaces (PubMed:12783803). During embryogenesis, does not require the presence of collagen type IV in order to associate with cell surfaces, prior to assembly of the prototypical basement membrane (PubMed:12783803). During the formation of neuromuscular junctions at the larval stage, negatively regulates membrane protrusion from body wall muscles, probably downstream of the integrin complex formed by pat-2 and pat-3 (PubMed:16495308). Probably plays a distinct role from the related laminin subunit alpha lam-3 (PubMed:12783803)"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000250",
+                "source": "UniProtKB",
+                "id": "P25391"
+              }
+            ],
+            "value": "Laminin is a complex glycoprotein, consisting of three different polypeptide chains (alpha, beta, gamma), which are bound to each other by disulfide bonds into a cross-shaped molecule comprising one long and three short arms with globules at each end"
+          }
+        ],
+        "commentType": "SUBUNIT"
+      },
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "12783803"
+                }
+              ],
+              "value": "Secreted, extracellular space, extracellular matrix",
+              "id": "SL-0111"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "12783803"
+                }
+              ],
+              "value": "Secreted, extracellular space",
+              "id": "SL-0112"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "12783803"
+                }
+              ],
+              "value": "Secreted",
+              "id": "SL-0243"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "12783803"
+                }
+              ],
+              "value": "Secreted, extracellular space, extracellular matrix, basement membrane",
+              "id": "SL-0025"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12783803"
+              }
+            ],
+            "value": "First expressed between primary tissue layers near the end of gastrulation, at the 28-cell stage (at protein level) (PubMed:12783803). Detectable in all the major basement membranes during the remainder of embryogenesis, throughout larval development and in the adult (at protein level) (PubMed:12783803). Less expression in the basement membranes surrounding pharynx, intestine, body wall muscle and epidermis, and higher in the basement membranes surrounding gonad, distal tip cell, vulval muscle, intestinal muscle, anal depressor muscle and coelomocytes (at protein level) (PubMed:12783803). Earliest gene expression in cells that are ingressing through a furrow along the ventral midline (PubMed:12783803)"
+          }
+        ],
+        "commentType": "DEVELOPMENTAL STAGE"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12783803"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16495308"
+              }
+            ],
+            "value": "Lacks detectable epi-1, but has no effect on tissue localization of laminin subunit alpha lam-3 (PubMed:12783803). Sterility (PubMed:12783803). Disrupted basement membrane integrity around body wall muscles, epidermis, gonad, intestine, and nerves (PubMed:12783803). Abnormal cell polarity, such that apical and basal features are poorly organized (PubMed:12783803). RNAi-mediated knockdown in L4 larval stage, causes ectopic membrane extensions from body wall muscles (PubMed:16495308). Simultaneous knockdown of laminin subunit alpha lam-3 increases likelihood of arrest during embryogenesis (PubMed:12783803)"
+          }
+        ],
+        "commentType": "DISRUPTION PHENOTYPE"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12783803"
+              }
+            ],
+            "value": "Tissue-specific expression of the laminin alpha subunits lam-3 and epi-1 begins early, before or as organogenesis proceeds; furthermore, the tissue localization of the two alpha subunits are independent"
+          }
+        ],
+        "commentType": "MISCELLANEOUS"
+      }
+    ],
+    "features": [
+      {
+        "type": "Signal",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 27,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 28,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3672,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin-like protein epi-1",
+        "featureId": "PRO_0000017100"
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 28,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 297,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin N-terminal",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00466"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 298,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 356,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 1",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 357,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 426,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 2",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 427,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 471,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 3",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 472,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 518,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 4",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 519,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 563,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 5",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 564,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 609,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 6",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 610,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 655,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 7",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 656,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 700,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 8",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 701,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 755,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 9",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 756,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 808,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 10",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 809,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 839,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 11; truncated",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1415,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1460,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 12",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1461,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1505,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 13",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1506,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1553,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 14",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1554,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1604,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 15",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1605,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1614,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 16; first part",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1615,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1796,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin IV type A",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00458"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1797,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1829,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 16; second part",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1830,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1879,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 17",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1880,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1936,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 18",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1937,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1989,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 19",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 1990,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2036,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 20",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 2037,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2083,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 21",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 2084,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2131,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin EGF-like 22",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 2693,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2884,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin G-like 1",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00122"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 2896,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3066,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin G-like 2",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00122"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 3072,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3235,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin G-like 3",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00122"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 3310,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3482,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin G-like 4",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00122"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 3488,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3669,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Laminin G-like 5",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00122"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 3236,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3294,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 3271,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3280,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Low complexity",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 121,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 121,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 140,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 140,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 249,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 249,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "12754521"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 351,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 351,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 477,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 477,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 511,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 511,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 530,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 530,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 634,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 634,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 761,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 761,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1014,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1014,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1341,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1341,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1705,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1705,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1756,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1756,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1868,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1868,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1944,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1944,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1986,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1986,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 2002,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2002,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 2159,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2159,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 2207,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2207,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 2231,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2231,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 2235,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2235,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 2401,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2401,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 2421,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2421,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 2487,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2487,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 2821,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2821,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 3087,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3087,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 3242,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3242,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 3541,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3541,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 298,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 307,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 300,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 320,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 322,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 331,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 334,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 354,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 357,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 366,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 359,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 391,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 394,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 403,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 406,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 424,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 427,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 438,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 429,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 445,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 447,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 456,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 459,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 469,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 472,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 484,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 474,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 491,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 493,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 502,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 505,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 516,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 519,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 531,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 521,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 538,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 540,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 549,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 552,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 561,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 564,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 576,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 566,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 583,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 585,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 594,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 597,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 607,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 610,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 622,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 612,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 629,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 631,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 640,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 643,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 653,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 656,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 668,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 658,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 674,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 676,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 685,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 688,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 698,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 701,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 715,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 703,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 724,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 726,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 735,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 738,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 753,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 756,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 770,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 758,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 777,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 779,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 788,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 791,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 806,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 809,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 821,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 811,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 828,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 830,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 839,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1415,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1427,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1417,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1434,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1436,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1445,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1448,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1458,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1461,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1469,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1463,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1476,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1478,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1487,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1490,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1503,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1506,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1520,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1508,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1527,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1529,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1538,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1541,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1551,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1554,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1566,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1556,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1573,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1575,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1584,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1587,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1602,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1830,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1839,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1832,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1846,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1849,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1858,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1861,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1877,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1880,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1894,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1882,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1905,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1907,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1916,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1919,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1934,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1937,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1951,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1939,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1958,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1961,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1970,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1973,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1987,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1990,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2000,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 1992,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2007,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2009,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2018,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2021,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2031,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2037,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2048,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2039,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2055,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2057,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2066,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2069,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2081,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2084,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2096,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2086,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2103,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2105,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2114,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 2117,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2129,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00460"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 3040,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3066,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00122"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 3209,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3235,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00122"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 3460,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3482,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00122"
+          }
+        ]
+      },
+      {
+        "type": "Disulfide bond",
+        "location": {
+          "start": {
+            "value": 3633,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 3669,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00122"
+          }
+        ]
+      },
+      {
+        "type": "Mutagenesis",
+        "location": {
+          "start": {
+            "value": 2802,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2802,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "In rh152; causes ectopic muscle membrane extensions.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "16495308"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "L",
+          "alternativeSequences": [
+            "F"
+          ]
+        }
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0084",
+        "category": "Cellular component",
+        "name": "Basement membrane"
+      },
+      {
+        "id": "KW-1015",
+        "category": "PTM",
+        "name": "Disulfide bond"
+      },
+      {
+        "id": "KW-0272",
+        "category": "Cellular component",
+        "name": "Extracellular matrix"
+      },
+      {
+        "id": "KW-0325",
+        "category": "PTM",
+        "name": "Glycoprotein"
+      },
+      {
+        "id": "KW-0424",
+        "category": "Domain",
+        "name": "Laminin EGF-like domain"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "id": "KW-0677",
+        "category": "Domain",
+        "name": "Repeat"
+      },
+      {
+        "id": "KW-0964",
+        "category": "Cellular component",
+        "name": "Secreted"
+      },
+      {
+        "id": "KW-0732",
+        "category": "Domain",
+        "name": "Signal"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "9851916",
+          "citationType": "journal article",
+          "authoringGroup": [
+            "The C. elegans sequencing consortium"
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9851916"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.282.5396.2012"
+            }
+          ],
+          "title": "Genome sequence of the nematode C. elegans: a platform for investigating biology.",
+          "publicationDate": "1998",
+          "journal": "Science",
+          "firstPage": "2012",
+          "lastPage": "2018",
+          "volume": "282"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "12783803",
+          "citationType": "journal article",
+          "authors": [
+            "Huang C.C.",
+            "Hall D.H.",
+            "Hedgecock E.M.",
+            "Kao G.",
+            "Karantza V.",
+            "Vogel B.E.",
+            "Hutter H.",
+            "Chisholm A.D.",
+            "Yurchenco P.D.",
+            "Wadsworth W.G."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12783803"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1242/dev.00481"
+            }
+          ],
+          "title": "Laminin alpha subunits and their role in C. elegans development.",
+          "publicationDate": "2003",
+          "journal": "Development",
+          "firstPage": "3343",
+          "lastPage": "3358",
+          "volume": "130"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "SUBCELLULAR LOCATION",
+          "DEVELOPMENTAL STAGE",
+          "DISRUPTION PHENOTYPE"
+        ],
+        "referenceComments": [
+          {
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 3,
+        "citation": {
+          "id": "12754521",
+          "citationType": "journal article",
+          "authors": [
+            "Kaji H.",
+            "Saito H.",
+            "Yamauchi Y.",
+            "Shinkawa T.",
+            "Taoka M.",
+            "Hirabayashi J.",
+            "Kasai K.",
+            "Takahashi N.",
+            "Isobe T."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12754521"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1038/nbt829"
+            }
+          ],
+          "title": "Lectin affinity capture, isotope-coded tagging and mass spectrometry to identify N-linked glycoproteins.",
+          "publicationDate": "2003",
+          "journal": "Nat. Biotechnol.",
+          "firstPage": "667",
+          "lastPage": "672",
+          "volume": "21"
+        },
+        "referencePositions": [
+          "GLYCOSYLATION [LARGE SCALE ANALYSIS] AT ASN-249",
+          "IDENTIFICATION BY MASS SPECTROMETRY"
+        ],
+        "referenceComments": [
+          {
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 4,
+        "citation": {
+          "id": "15888633",
+          "citationType": "journal article",
+          "authors": [
+            "Fan X.",
+            "She Y.-M.",
+            "Bagshaw R.D.",
+            "Callahan J.W.",
+            "Schachter H.",
+            "Mahuran D.J."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "15888633"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1093/glycob/cwi075"
+            }
+          ],
+          "title": "Identification of the hydrophobic glycoproteins of Caenorhabditis elegans.",
+          "publicationDate": "2005",
+          "journal": "Glycobiology",
+          "firstPage": "952",
+          "lastPage": "964",
+          "volume": "15"
+        },
+        "referencePositions": [
+          "GLYCOSYLATION [LARGE SCALE ANALYSIS] AT ASN-249; ASN-351; ASN-761; ASN-1014; ASN-1341; ASN-1756; ASN-2231; ASN-2235; ASN-2401 AND ASN-2487",
+          "IDENTIFICATION BY MASS SPECTROMETRY"
+        ]
+      },
+      {
+        "referenceNumber": 5,
+        "citation": {
+          "id": "16495308",
+          "citationType": "journal article",
+          "authors": [
+            "Dixon S.J.",
+            "Alexander M.",
+            "Fernandes R.",
+            "Ricker N.",
+            "Roy P.J."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "16495308"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1242/dev.02300"
+            }
+          ],
+          "title": "FGF negatively regulates muscle membrane extension in Caenorhabditis elegans.",
+          "publicationDate": "2006",
+          "journal": "Development",
+          "firstPage": "1263",
+          "lastPage": "1275",
+          "volume": "133"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "DISRUPTION PHENOTYPE",
+          "MUTAGENESIS OF LEU-2802"
+        ]
+      },
+      {
+        "referenceNumber": 6,
+        "citation": {
+          "id": "17761667",
+          "citationType": "journal article",
+          "authors": [
+            "Kaji H.",
+            "Kamiie J.",
+            "Kawakami H.",
+            "Kido K.",
+            "Yamauchi Y.",
+            "Shinkawa T.",
+            "Taoka M.",
+            "Takahashi N.",
+            "Isobe T."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "17761667"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1074/mcp.m600392-mcp200"
+            }
+          ],
+          "title": "Proteomics reveals N-linked glycoprotein diversity in Caenorhabditis elegans and suggests an atypical translocation mechanism for integral membrane proteins.",
+          "publicationDate": "2007",
+          "journal": "Mol. Cell. Proteomics",
+          "firstPage": "2100",
+          "lastPage": "2109",
+          "volume": "6"
+        },
+        "referencePositions": [
+          "GLYCOSYLATION [LARGE SCALE ANALYSIS] AT ASN-121; ASN-249; ASN-351; ASN-477; ASN-634; ASN-761; ASN-1014; ASN-1341; ASN-1705; ASN-1756; ASN-1944; ASN-2207; ASN-2231; ASN-2235; ASN-2401 AND ASN-2487",
+          "IDENTIFICATION BY MASS SPECTROMETRY"
+        ],
+        "referenceComments": [
+          {
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "Z70286",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CAA94293.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "PIR",
+        "id": "T23433",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "T23433"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001023282.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001028111.5"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "Q21313",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID",
+        "id": "43057",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "12"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "Q21313",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "433"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "6239.K08C7.3f.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "GlyCosmos",
+        "id": "Q21313",
+        "properties": [
+          {
+            "key": "glycosylation",
+            "value": "28 sites, No reported glycans"
+          }
+        ]
+      },
+      {
+        "database": "iPTMnet",
+        "id": "Q21313",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "6239-K08C7.3f.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "K08C7.3b.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "K08C7.3b.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00001328"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "177956",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "cel:CELE_K08C7.3",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "UCSC",
+        "id": "K08C7.3a",
+        "properties": [
+          {
+            "key": "OrganismName",
+            "value": "c. elegans"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "WB:WBGene00001328",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "177956",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "WormBase",
+        "id": "K08C7.3b",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE06136"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00001328"
+          },
+          {
+            "key": "GeneName",
+            "value": "epi-1"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG1836",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "Q21313",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "10011303at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:Q21313",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000001940",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome IV"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "WBGene00001328",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in embryo and 12 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "ExpressionAtlas",
+        "id": "Q21313",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "baseline and differential"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005604",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:basement membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "12783803"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005576",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:extracellular region"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "EXP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "12783803"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005201",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:extracellular matrix structural constituent"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "ISS:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000250",
+            "source": "PubMed",
+            "id": "10727078"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0009887",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:animal organ morphogenesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007411",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:axon guidance"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007414",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:axonal defasciculation"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "9165130"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0071711",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:basement membrane organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22051349"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007155",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0016477",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell migration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "9165130"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0001764",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:neuron migration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "9475729"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0040017",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of locomotion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22051349"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0042127",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:regulation of cell population proliferation"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "10419689"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0009408",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:response to heat"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22051349"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0051788",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:response to misfolded protein"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22051349"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0009888",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:tissue development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd02795",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CBM6-CBM35-CBM36_like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd00055",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_Lam"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "20"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd00110",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LamG"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000011",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Cadherin EGF LAG seven-pass G-type receptor"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000106",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Heparan sulfate proteoglycan 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000083",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000388",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000090",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "laminin subunit alpha"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000069",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000082",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000189",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.120.260:FF:000017",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000034",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha 3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000051",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha 4"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000209",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha 5"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000407",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha-3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.120.200:FF:000160",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit alpha-3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000188",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin subunit gamma 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000711",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin-like protein epi-1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000726",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin-like protein epi-1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.120.200:FF:000222",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin-like protein epi-1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.120.200:FF:000264",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin-like protein epi-1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.120.200:FF:000272",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin-like protein epi-1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.120.200:FF:000306",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin-like protein epi-1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.120.200",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "-"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.120.260",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Galactose-binding domain-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.10.25.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "20"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.10.287.950",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Methyl-accepting chemotaxis protein"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR013320",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ConA-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000742",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR008979",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Galactose-bd-like_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR050440",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin/Netrin_ECM"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001791",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin_G"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000034",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin_IV"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR008211",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin_N"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR002049",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LE_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR056863",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LMN_ATRN_NET-like_EGF"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR10574:SF406",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LAMININ SUBUNIT ALPHA 5"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR10574",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "NETRIN/LAMININ-RELATED"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00053",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_laminin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "19"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF24973",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_LMN_ATRN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00052",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin_B"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF02210",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin_G_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00055",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin_N"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00011",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGFLAMININ"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00181",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "14"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00180",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_Lam"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "21"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00281",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LamB"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00282",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LamG"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00136",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LamNT"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF49899",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Concanavalin A-like lectins/glucanases"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF57196",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF/Laminin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "18"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF49785",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Galactose-binding domain-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00022",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "19"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS01186",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS01248",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_LAM_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "21"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50027",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_LAM_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "21"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50025",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LAM_G_DOMAIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS51115",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LAMININ_IVA"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS51117",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "LAMININ_NTER"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MSPYDSSPWATKALFLIVTLLAQFTYSQVLTPSQITISHRKPITATSTCGEIQGQPVTEIYCSLTGSTQYTPLNSYSYQDDEQQKSWSQYENPMVRGGHGCGHCNAGNENSHPAANMVDGNNSWWMSPPLSRGLQHNEVNITIDLEQEFHVAYVWIQMANSPRPGSWVLERSTDHGKTYQPWFNFAENAAECMRRFGMESLSPISEDDSVTCRTDMASLQPLENAEMVIRILEHRPSSRQFATSEALQNFTRATNVRLRLLGTRTLQGHLMDMNEWRDPTVTRRYFYAIKEIMIGGRCVCNGHAVTCDILEPQRPKSLLCRCEHNTCGDMCERCCPGFVQKQWQAATAHNNFTCEACNCFGRSNECEYDAEVDLNKQSIDSQGNYEGGGVCKNCRENTEGVNCNKCSFGYFRPEGVTWNEPQPCKVCDCDPDKHTGACAEETGKCECLPRFVGEDCDQCASGYYDAPKCKPCECNVNGTIGDVCLPEDGQCPCKAGFGGTFCETCADGYTNVTAGCVECVCDATGSEHGNCSASTGQCECKPAYAGLSCDKCQVGYFGDDCKFCNCDPMGTEGGVCDQTTGQCLCKEGFAGDKCDRCDIAFYGYPNCKACACDGAGITSPECDATSGQCPCNGNFTGRTCDKCAAGFYNYPDCRGCECLLSGAKGQTCDSNGQCYCKGNFEGERCDRCKPNFYNFPICEECNCNPSGVTRDFQGCDKVSPGELCSCRKHVTGRICDQCKPTFWDLQYHHEDGCRSCDCNVNGTISGLNTCDLKTGQCMCKKNADGRRCDQCADGFYRLNSYNQMGCESCHCDIGGALRAECDITSGQCKCRPRVTGLRCDQPIENHYFPTLWHNQYEAEDAHTEDQKPVRFAVDPEQFADFSWRGYAVFSPIQDKILIDVDITKATVYRLLFRYRNPTSVPVTATVTINPRFTHTHDVEQTGKATFAPGDLPAMKEITVDGKPFVLNPGKWSLAISTKQRLFLDYVVVLPAEYYEGTVLRQRAPQPCLSHSTKNTTCVDLIYPPIPSVSRQFVDMDKVPFNYINEDGTTTALEHVPVEILLSEITGPAAFVRADENPRVVEAKLDVPETGEYVIVLEYHNREETDGNIGVGISQNDKEVLNGNAVIHHCPYATFCRELVSSEGTIPYIPLEKGEATVRLNIKPNHEFGLAGVQLIKKSDFSSEYLQQVPVCIKKDARCVQQSYPPAADSVTTEAESGSNMDKSILGDKLPFPVSNSKEMRVVPLDDAQATVEISGVVPTRGHYMFMVHYFNPDNTPINIDVLIQNEHYFQGDSCNSFACSSVPLAFCPSISGCRALIRDKERPEVIQFYMDDKYTATFYHNSSQKGPIYIDSITAVPYNSYKDKLMEPLALDLSNEFLKECSEDNLKNHPESVSDFCKQKIFSLTTDFNAAALSCDCVAQGSESFQCEQYGGQCKCKPGVIGRRCERCAPGYYNFPECIKCQCNAGQQCDERTGQCFCPPHVEGQTCDRCVSNAFGYDPLIGCQKCGCHPQGSEGGNLVCDPESGQCLCRESMGGRQCDRCLAGFYGFPHCYGCSCNRAGTTEEICDATNAQCKCKENVYGGRCEACKAGTFDLSAENPLGCVNCFCFGVTDSCRSSMYPVTIMSVDMSSFLTTDDNGMVDNKDDTVIYTSEETSPNSVYFNVPIEKKDYTTSYGLKLTFKLSTVPRGGRKSMNADADVRLTGANMTIEYWASEQPTNPEEQFTVKCKLVPENFLTAEGKTVTREELMKVLHSLQNITLKASYFDHPKTSTLYEFGLEISEPNGVDSVIKASSVEQCQCPAPYTGPSCQLCASGYHRVQSGSFLGACVPCECNGHSATCDPDTGICTDCEHNTNGDHCEFCNEGHYGNATNGSPYDCMACACPFAPTNNFAKSCDVSEEGQLLQCNCKPGYTGDRCDRCASGFFGHPQISGESCSPCQCNGNNNLTDSRSCHPNSGDCYLCEQNTDGRHCESCAAWFYGDAVTAKNCSSCECSQCGSQYCDNKSGGCECKINVEGDSCDRCKPDHWGFSKCQGCQGCHCGTAAFNTQCNVENGQCTCRPGATGMRCEHCEHGYWNYGEHGCDKCDCEADLSMGTVCDVRTGQCHCQEGATGSRCDQCLPSYLRIPTYGCRRCDECVHHLIGDVDNLELEIDVLGTAIANISSATIVGARLARNKKEFNDINEITKMLNDEENSFGNVFGDAQDILTNSTQIQNKLVRTKTHSQNSVSSAKNITLNGTEFLQEVMKRAQRARQSVRSLAEIALAIGSSSKAVNVDPRLLKEAEETLMTLEAASADQYPEKAQTVPGKLEEIQKKIQEETEKLDKQKETFEAQKKRAEELAAYLNSAQQLLKESKSKADKSNNIAKMLQLTKVENLVAAITDDLERVEAAKGEFQKLNVAIGNITENLKDKREEMTHAVTTLNETRNDVAEALEAAKKRVRRDEKSVDMQLVNAKAHELHLQATTLRQTFDNNKDNTDQAVEAANAFSNLTDTLKNAKAQIDNAYEALSAEPAFAESVQNARDKPFPDETKEKIDALSKTVSQDLKETEKLKKQLEQLTELSEKLRKRKEAVKAGIPKYSKNTLDSIDEKVQEVEKLKAEIDANIEETRAKISEIAGKAEEITEKANSAMEGIRLARRNSVQLNKLAPVIVSKFEELKKLSSARSAKVDSVSDKVSQIKEMIAVARDAANRIKLGAHFEKGSSLDLNIPQRVTRSAAHADISFYFRTEQEHGIPLFFGNEETAVGSRAVPTADYVAAEIEYGRPKITVDLGDAPAVVKLDTPVNDGLWRRLNIERIGKTVSVTLSKPNSVETAETKSSVAGGNKSVLNLNQQISRLFVGGVPTSARISKDLYNRDFVGDIESLKLHGEPIGLWNSREKGNTNVNGAQKKPKITDNADELVVSLDGEGYTSYKPSHWNPRKATKISLSFLTFSPHGLLFFVGKDKDFMALELSDGGVKLSVDLGSGVGQWITESSNYNDGKWHTVSIVREEKHVKIMIDGETEVLEGDVPGKDSEMSVTEFLYIGGTPSGLSVRTTIVPLRGCIKSVKLGSDNVDLESSHASKGVRSGCPLHSVRTVSFLSDRTTASFNNATEFSEDVSVTFKFKTRSIRQPSSLFTVNDDEDSVLSVSINEDGILTVTSGEDIATLELAASPDEKWHYVSIRKTKYIIRIDADDSFSNEVARKHADDSNPDASFLSAFFGKSGETPSFVGCIGDVTLNGKLLDFANSEIKEISLNGCSLSDDENISTTTTAAPKPTDDSDVAVLPIDEEEESTTTTTTTTTEEPTEEPAEARPDGHCSLPEDPMVQFEDAEGFNFGSQQYSRIEYDILPEAIDKSGEFTFKIRPTSDNGIIFIATNKRTDHIAVMLEHGRVVFTYDTGSGQVIIKSDKSIIDGRWHTIKVSRRGKSAHLIVDDNSYESEGAANQNEDLIETQPPFYVGGVPADLAGFARNLVVGVRSQFSGCIKDFKLNGKSLDNGKEFGTEQCSQFSEPGMYFGKDGGYAIVQKDYEVGLTFGLEVEMRPRMKNGILFSVGVLEYITVEFVNGSIKTTVESGSGGEELWHHPDIENQYCDGQWQSFKISKKRNLLTVAVNGKAHLKILKKAKTDVLTKDPLYFGGLPEGVTNKGIKTNKPFVGCIRFVSFGLKKDRKIRRKKQVDTERFDVFGDVHRNACPAI",
+      "length": 3672,
+      "molWeight": 404230,
+      "crc64": "28E262DB5FF14BFA",
+      "md5": "124A118BDA24B7B046B01726103FE5D7"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "SUBUNIT": 1,
+        "SUBCELLULAR LOCATION": 1,
+        "DEVELOPMENTAL STAGE": 1,
+        "DISRUPTION PHENOTYPE": 1,
+        "MISCELLANEOUS": 1
+      },
+      "countByFeatureType": {
+        "Signal": 1,
+        "Chain": 1,
+        "Domain": 30,
+        "Region": 1,
+        "Compositional bias": 1,
+        "Glycosylation": 28,
+        "Disulfide bond": 87,
+        "Mutagenesis": 1
+      },
+      "uniParcId": "UPI000012E77D"
+    }
+  }
+}

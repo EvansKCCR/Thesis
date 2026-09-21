@@ -1,0 +1,1101 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/X2BBX2.json",
+  "retrieved_at": "2026-09-18T09:50:28.536893+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB unreviewed (TrEMBL)",
+    "primaryAccession": "X2BBX2",
+    "uniProtkbId": "X2BBX2_CAPTE",
+    "entryAudit": {
+      "firstPublicDate": "2014-05-14",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "2014-05-14",
+      "entryVersion": 50,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 2.0,
+    "organism": {
+      "scientificName": "Capitella teleta",
+      "commonName": "Polychaete worm",
+      "taxonId": 283909,
+      "evidences": [
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "EnsemblMetazoa",
+          "id": "CapteP93285"
+        },
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "Proteomes",
+          "id": "UP000014760"
+        }
+      ],
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Spiralia",
+        "Lophotrochozoa",
+        "Annelida",
+        "Polychaeta",
+        "Sedentaria",
+        "Scolecida",
+        "Capitellidae",
+        "Capitella"
+      ]
+    },
+    "proteinExistence": "3: Inferred from homology",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000256",
+              "source": "RuleBase",
+              "id": "RU000633"
+            }
+          ],
+          "value": "Integrin beta"
+        }
+      }
+    },
+    "comments": [
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "ARBA",
+                  "id": "ARBA00004251"
+                },
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "RuleBase",
+                  "id": "RU000633"
+                }
+              ],
+              "value": "Cell membrane",
+              "id": "SL-0039"
+            },
+            "topology": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "ARBA",
+                  "id": "ARBA00004251"
+                },
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "RuleBase",
+                  "id": "RU000633"
+                }
+              ],
+              "value": "Single-pass type I membrane protein",
+              "id": "SL-9905"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000256",
+                "source": "ARBA",
+                "id": "ARBA00007449"
+              },
+              {
+                "evidenceCode": "ECO:0000256",
+                "source": "RuleBase",
+                "id": "RU000633"
+              }
+            ],
+            "value": "Belongs to the integrin beta chain family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Transmembrane",
+        "location": {
+          "start": {
+            "value": 629,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 651,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Helical",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "Phobius"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 2,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 368,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Integrin beta subunit VWA",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "SMART",
+            "id": "SM00187"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 553,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 628,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Integrin beta subunit tail",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "SMART",
+            "id": "SM01242"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 652,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 697,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Integrin beta subunit cytoplasmic",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "SMART",
+            "id": "SM01241"
+          }
+        ]
+      }
+    ],
+    "keywords": [
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022889"
+          },
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "RuleBase",
+            "id": "RU000633"
+          }
+        ],
+        "id": "KW-0130",
+        "category": "Biological process",
+        "name": "Cell adhesion"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022475"
+          }
+        ],
+        "id": "KW-1003",
+        "category": "Cellular component",
+        "name": "Cell membrane"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023157"
+          }
+        ],
+        "id": "KW-1015",
+        "category": "PTM",
+        "name": "Disulfide bond"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022536"
+          }
+        ],
+        "id": "KW-0245",
+        "category": "Domain",
+        "name": "EGF-like domain"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023180"
+          }
+        ],
+        "id": "KW-0325",
+        "category": "PTM",
+        "name": "Glycoprotein"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023037"
+          },
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "RuleBase",
+            "id": "RU000633"
+          }
+        ],
+        "id": "KW-0401",
+        "category": "Molecular function",
+        "name": "Integrin"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023136"
+          },
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "Phobius"
+          }
+        ],
+        "id": "KW-0472",
+        "category": "Cellular component",
+        "name": "Membrane"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000014760"
+          }
+        ],
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022737"
+          }
+        ],
+        "id": "KW-0677",
+        "category": "Domain",
+        "name": "Repeat"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022729"
+          }
+        ],
+        "id": "KW-0732",
+        "category": "Domain",
+        "name": "Signal"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022692"
+          },
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "RuleBase",
+            "id": "RU000633"
+          }
+        ],
+        "id": "KW-0812",
+        "category": "Domain",
+        "name": "Transmembrane"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022989"
+          },
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "Phobius"
+          }
+        ],
+        "id": "KW-1133",
+        "category": "Domain",
+        "name": "Transmembrane helix"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "23254933",
+          "citationType": "journal article",
+          "authors": [
+            "Simakov O.",
+            "Marletaz F.",
+            "Cho S.J.",
+            "Edsinger-Gonzales E.",
+            "Havlak P.",
+            "Hellsten U.",
+            "Kuo D.H.",
+            "Larsson T.",
+            "Lv J.",
+            "Arendt D.",
+            "Savage R.",
+            "Osoegawa K.",
+            "de Jong P.",
+            "Grimwood J.",
+            "Chapman J.A.",
+            "Shapiro H.",
+            "Aerts A.",
+            "Otillar R.P.",
+            "Terry A.Y.",
+            "Boore J.L.",
+            "Grigoriev I.V.",
+            "Lindberg D.R.",
+            "Seaver E.C.",
+            "Weisblat D.A.",
+            "Putnam N.H.",
+            "Rokhsar D.S."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "23254933"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1038/nature11696"
+            }
+          ],
+          "title": "Insights into bilaterian evolution from three spiralian genomes.",
+          "publicationDate": "2013",
+          "journal": "Nature",
+          "firstPage": "526",
+          "lastPage": "531",
+          "volume": "493"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE"
+        ],
+        "referenceComments": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "Proteomes",
+                "id": "UP000014760"
+              }
+            ],
+            "value": "I ESC-2004",
+            "type": "STRAIN"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000014760"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "CI-CP7C60OHHB882",
+          "citationType": "submission",
+          "authoringGroup": [
+            "EnsemblMetazoa"
+          ],
+          "publicationDate": "JUN-2015",
+          "submissionDatabase": "UniProtKB"
+        },
+        "referencePositions": [
+          "IDENTIFICATION"
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "EnsemblMetazoa",
+            "id": "CapteP93285"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "AMQN01000124",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "-"
+          },
+          {
+            "key": "Status",
+            "value": "NOT_ANNOTATED_CDS"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "X2BBX2",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "CapteT93285",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CapteP93285"
+          },
+          {
+            "key": "GeneId",
+            "value": "CapteG93285"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_011772_1_0_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "SGNQNCT",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "410592at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000014760",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Unassembled WGS sequence"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0009986",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell surface"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005925",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:focal adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0008305",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:integrin complex"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005178",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:integrin binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0033627",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell adhesion mediated by integrin"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0016477",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell migration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0098609",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell-cell adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007160",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell-matrix adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007229",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:integrin-mediated signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.10.25.10:FF:000036",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin beta"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "3.40.50.410:FF:000002",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin beta"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "4.10.1240.30",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "-"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.5.100",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Cytochrome c1, transmembrane anchor, C-terminal"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.10.25.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Laminin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.40.1510",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ntegrin, alpha v. Chain A, domain 3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.40.50.410",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "von Willebrand factor, type A domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR057073",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_integrin_2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR015812",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_bsu"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR014836",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_bsu_cyt_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR012896",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_bsu_tail"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036349",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_bsu_tail_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR002369",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_bsu_VWA"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR032695",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR057243",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_I-EGF_CS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036465",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "vWFA_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR10082",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRIN BETA SUBUNIT"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR10082:SF60",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRIN BETA-PS"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF23105",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF_integrin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF08725",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_b_cyt"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF07965",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_B_tail"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00362",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_beta"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR01186",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRINB"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00187",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INB"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM01241",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_b_cyt"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM01242",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_B_tail"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF57196",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EGF/Laminin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF69687",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin beta tail domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF69179",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin domains"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF53300",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "vWA-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00243",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "I_EGF_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MAFHNAEAEEEAIQLSPQKVSIKLRPNDPFTFPVQFRQAKNYPVDLYFVMDLSKSMQDDKQEISLLGDLLAGEMGKLTNNFKLGFGSFVDKETYPFIGIDGMWMRHLCKGEVCEPPYEFRNNLPLTKDTHLFKKRVNETNISVNMDKPEGGLDAIMQAVVCDQEIGWRNSSRKVLLFTTDDSFHHAGDGRLGGIVTPNDGLCHLDAEGRYNESLNQDYPSIGHLASVIASKKVNVIFAVIEKFVPLYSSLSSMIEGSMVGELANDSSNVVDLVRDNYNKISGTVELKADENDDVFVGFKAQCEEWVNGEFGPGTKCGNIGIGQNVTFEVTIEVMSCPTNPSERKRSFFIYPVGLNEKLLVEVETTCECECEKPGVGVRRMTAKCNGTGTFECGACSCTSGTFGKNCECSASEMDHDHFSVSCKRSNTSKVVCEGRGQCYCGHCECFPLTPDDPSRKYDGRFCECNNYACDFFEEELCGGPSRGTCKCGKCECRPGLTGPACDCATDQEACRAKENGLLCNGKGECVCGACVCDQNDHYRGPTCEDCPICPGKCDEFRACVQCTAFESGEITKENCDANCTYVEIVDQIEGWRLCTFRDVDDCDFYFTYSYLLDGVFVQRTKECPPPVKLLAIVFGTIAGTILIGLTLLFLWKFCVTFIDKKEFEKFEKEQKKIQWEMDENPLYQEASATFSNPTYIN",
+      "length": 697,
+      "molWeight": 77587,
+      "crc64": "B1D99B1320F9DDE3",
+      "md5": "B1DC46A6921B936775ADA3FD71292D17"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "SUBCELLULAR LOCATION": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Transmembrane": 1,
+        "Domain": 3
+      },
+      "uniParcId": "UPI00035627FA"
+    }
+  }
+}

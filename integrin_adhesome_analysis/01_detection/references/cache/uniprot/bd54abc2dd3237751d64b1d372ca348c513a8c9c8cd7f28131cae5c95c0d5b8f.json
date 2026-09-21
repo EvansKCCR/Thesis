@@ -1,0 +1,1351 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/Q23158.json",
+  "retrieved_at": "2026-09-18T09:28:06.161212+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB unreviewed (TrEMBL)",
+    "primaryAccession": "Q23158",
+    "uniProtkbId": "Q23158_CAEEL",
+    "entryAudit": {
+      "firstPublicDate": "1996-11-01",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "1996-11-01",
+      "entryVersion": 200,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 3.0,
+    "organism": {
+      "scientificName": "Caenorhabditis elegans",
+      "taxonId": 6239,
+      "evidences": [
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "EMBL",
+          "id": "CAA99941.1"
+        },
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "Proteomes",
+          "id": "UP000001940"
+        }
+      ],
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Nematoda",
+        "Chromadorea",
+        "Rhabditida",
+        "Rhabditina",
+        "Rhabditomorpha",
+        "Rhabditoidea",
+        "Rhabditidae",
+        "Peloderinae",
+        "Caenorhabditis"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "submissionNames": [
+        {
+          "fullName": {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "CAA99941.1"
+              }
+            ],
+            "value": "Alpha-actinin, sarcomeric"
+          }
+        }
+      ]
+    },
+    "genes": [
+      {
+        "geneName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000313",
+              "source": "EMBL",
+              "id": "CAA99941.1"
+            },
+            {
+              "evidenceCode": "ECO:0000313",
+              "source": "WormBase",
+              "id": "W04D2.1a"
+            }
+          ],
+          "value": "atn-1"
+        },
+        "orfNames": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "CAA99941.1"
+              }
+            ],
+            "value": "CELE_W04D2.1"
+          },
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "WormBase",
+                "id": "W04D2.1a"
+              }
+            ],
+            "value": "W04D2.1"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "commentType": "INTERACTION",
+        "interactions": [
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "Q23158",
+              "intActId": "EBI-314014"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "G5EFL5",
+              "geneName": "alp-1",
+              "intActId": "EBI-316352"
+            },
+            "numberOfExperiments": 4,
+            "organismDiffer": false
+          },
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "Q23158",
+              "intActId": "EBI-314014"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "Q9TZA6",
+              "geneName": "CELE_C40A11.7",
+              "intActId": "EBI-328905"
+            },
+            "numberOfExperiments": 3,
+            "organismDiffer": false
+          },
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "Q23158",
+              "intActId": "EBI-314014"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "P55853",
+              "geneName": "smo-1",
+              "intActId": "EBI-313647"
+            },
+            "numberOfExperiments": 3,
+            "organismDiffer": false
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000256",
+                "source": "ARBA",
+                "id": "ARBA00010255"
+              }
+            ],
+            "value": "Belongs to the alpha-actinin family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 37,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 141,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Calponin-homology (CH)",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "PROSITE",
+            "id": "PS50021"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 150,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 254,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Calponin-homology (CH)",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "PROSITE",
+            "id": "PS50021"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 778,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 812,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "EF-hand",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "PROSITE",
+            "id": "PS50222"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 818,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 853,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "EF-hand",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "PROSITE",
+            "id": "PS50222"
+          }
+        ]
+      },
+      {
+        "type": "Coiled coil",
+        "location": {
+          "start": {
+            "value": 296,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 350,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "Coils"
+          }
+        ]
+      }
+    ],
+    "keywords": [
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023203"
+          }
+        ],
+        "id": "KW-0009",
+        "category": "Molecular function",
+        "name": "Actin-binding"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022837"
+          }
+        ],
+        "id": "KW-0106",
+        "category": "Ligand",
+        "name": "Calcium"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "Coils"
+          }
+        ],
+        "id": "KW-0175",
+        "category": "Domain",
+        "name": "Coiled coil"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022723"
+          }
+        ],
+        "id": "KW-0479",
+        "category": "Ligand",
+        "name": "Metal-binding"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0007829",
+            "source": "PeptideAtlas",
+            "id": "Q23158"
+          }
+        ],
+        "id": "KW-1267",
+        "category": "Technical term",
+        "name": "Proteomics identification"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000001940"
+          }
+        ],
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022737"
+          }
+        ],
+        "id": "KW-0677",
+        "category": "Domain",
+        "name": "Repeat"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "9851916",
+          "citationType": "journal article",
+          "authoringGroup": [
+            "The C. elegans sequencing consortium"
+          ],
+          "authors": [
+            "Sulson J.E.",
+            "Waterston R."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9851916"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.282.5396.2012"
+            }
+          ],
+          "title": "Genome sequence of the nematode C. elegans: a platform for investigating biology.",
+          "publicationDate": "1998",
+          "journal": "Science",
+          "firstPage": "2012",
+          "lastPage": "2018",
+          "volume": "282"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "CAA99941.1"
+              },
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "Proteomes",
+                "id": "UP000001940"
+              }
+            ],
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "EMBL",
+            "id": "CAA99941.1"
+          },
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000001940"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "BX284605",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CAA99941.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "PIR",
+        "id": "T26147",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "T26147"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_506127.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_073726.7"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "Q23158",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "Q23158",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "DIP",
+        "id": "DIP-25407N",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "Q23158",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "719"
+          }
+        ]
+      },
+      {
+        "database": "IntAct",
+        "id": "Q23158",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "48"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "6239.W04D2.1a.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "6239-W04D2.1a.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "Q23158",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "179709",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "WB:WBGene00000228",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "179709",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "WormBase",
+        "id": "W04D2.1a",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE06539"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00000228"
+          },
+          {
+            "key": "GeneName",
+            "value": "atn-1"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG0035",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "Q23158",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "QQRWITV",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "10017054at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "Q23158",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-114608",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Platelet degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-438066",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Unblocking of NMDA receptors, glutamate binding and activation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-446388",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Regulation of cytoskeletal remodeling and cell spreading by IPP complex components"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9035034",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RHOF GTPase cycle"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000001940",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome V"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "WBGene00000228",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in pharyngeal muscle cell (C elegans) and 3 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "ExpressionAtlas",
+        "id": "Q23158",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "baseline and differential"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030054",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell junction"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030864",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cortical actin cytoskeleton"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0097433",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:dense body"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "28978740"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005886",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0055120",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:striated muscle dense body"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "23283987"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005865",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:striated muscle thin filament"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "22901814"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030018",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:Z disc"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0051015",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:actin filament binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005509",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:calcium ion binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030036",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:actin cytoskeleton organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0055001",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:muscle cell development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd21214",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH_ACTN_rpt1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd21216",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH_ACTN_rpt2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd00051",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EFh"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd00176",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SPEC"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.10.238.10:FF:000004",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Actinin alpha 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.10.418.10:FF:000001",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Actinin alpha 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.58.60:FF:000004",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Actinin alpha 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.58.60:FF:000005",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Actinin alpha 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.10.418.10:FF:000005",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Actinin alpha 4"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.58.60",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "-"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.10.418.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Calponin-like domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.10.238.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EF-hand"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001589",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Actinin_actin-bd_CS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001715",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036872",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR011992",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EF-hand-dom_pair"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR014837",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EF-hand_Ca_insen"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR002048",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EF_hand_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR018159",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Spectrin/alpha-actinin"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR002017",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Spectrin_repeat"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR11915",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SPECTRIN/FILAMIN RELATED CYTOSKELETAL PROTEIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00307",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF08726",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EFhand_Ca_insen"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00435",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Spectrin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00033",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM01184",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "efhand_Ca_insen"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00150",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SPEC"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47576",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Calponin-homology domain, CH-domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47473",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EF-hand"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF46966",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Spectrin repeat"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00019",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ACTININ_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00020",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ACTININ_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50021",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50222",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "EF_HAND_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MVDYYQQPPSYHQPGYDYTQQEEEWDREGLLDPAWEKQQKKTFTAWCNSHLRKAGTSIDTIEEDFRNGLKLMLLLEVISGEPLPKPDRGKMRFHKIANVNKALEYIESKGVKLVSIGAEEIVDGNVKMTLGLIWTIILRFAIQDINVEELSARDGLLLWCQRKTAPYNNVNVQNFHNSWKDGLAFCALIHRHRPDLLDYSQLHKGDPIHNLNLAFDIAEKHLDIPKMLDAEDVSRHPDEKSTMTYVSCFYHAFRNMRDPPPPVIRQPPPQRVVVAPPPERDWRKDAETAANRICRVLKVNQENEKMMEDYENLASDLLAWINRWMPWLANRSTDDTLQQAQQKLEDYRNYRRREKPPRIEDKGRLETLFNTLQTRLRLSNRPAFLPRDGHLIKDINAAWAGLEDSEKGFEEWLLSEIMRLERLEHLAEKFRRKCALHEEWAHGKEDALRSNDWRSCGLYKIKALRKRHEAFESDLGAHQDRVEQIAAIARELNNLRYPDIGPINARCQAICSQWDRLGQLSSKRRETLEDAERIAERLDSLYLDFAKRAAPFNNWLDGAREDLADLVIVHEMREIEELVNAHDQFKSTLGDADREFSSINQIEHEVEHLVTSHGLDRELLRNPYTDLSASDIRRKWGEVQNSVPRRDSQLQAELKRQQNNERLRTIFAEKANQVGPWLERELEQVLAIGLGGRGRLEDAIQQLRSIQRNVLGYKPNLDELERVHQEMQENFVFENRKSRYSMESLRVGWETLLTSINKTINEFENQVLLRDSKGISEEQIAEFRASFSHFDKERAGLDPEQLRSCLISVGYTIRPGREGDAELHRVLAHVDPNRMGRVPFEAFLDFMTKENSDQDTVEQMIDSFRILASGKTFITADELERELPRDQAAYCMARMAPSREPGAPPRSFDYVTFSRSLYSQ",
+      "length": 920,
+      "molWeight": 107180,
+      "crc64": "5B8AF3F897B1146E",
+      "md5": "103E2945EFCD438A7EEFFE63CCD62B2D"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "INTERACTION": 3,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Domain": 4,
+        "Coiled coil": 1
+      },
+      "uniParcId": "UPI00000611FD"
+    }
+  }
+}

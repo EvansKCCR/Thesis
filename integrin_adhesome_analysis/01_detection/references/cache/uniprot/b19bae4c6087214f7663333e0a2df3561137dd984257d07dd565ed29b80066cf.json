@@ -1,0 +1,2564 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/P34446.json",
+  "retrieved_at": "2026-09-18T09:24:13.444548+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "P34446",
+    "uniProtkbId": "PAT2_CAEEL",
+    "entryAudit": {
+      "firstPublicDate": "1994-02-01",
+      "lastAnnotationUpdateDate": "2026-06-10",
+      "lastSequenceUpdateDate": "1994-02-01",
+      "entryVersion": 185,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 5.0,
+    "organism": {
+      "scientificName": "Caenorhabditis elegans",
+      "taxonId": 6239,
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Nematoda",
+        "Chromadorea",
+        "Rhabditida",
+        "Rhabditina",
+        "Rhabditomorpha",
+        "Rhabditoidea",
+        "Rhabditidae",
+        "Peloderinae",
+        "Caenorhabditis"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "value": "Integrin alpha pat-2"
+        }
+      },
+      "alternativeNames": [
+        {
+          "fullName": {
+            "value": "Paralyzed arrest at two-fold protein 2"
+          }
+        }
+      ],
+      "flag": "Precursor"
+    },
+    "genes": [
+      {
+        "geneName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000312",
+              "source": "WormBase",
+              "id": "F54F2.1"
+            }
+          ],
+          "value": "pat-2"
+        },
+        "orfNames": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000312",
+                "source": "WormBase",
+                "id": "F54F2.1"
+              }
+            ],
+            "value": "F54F2.1"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000250",
+                "source": "UniProtKB",
+                "id": "P53708"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12915588"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16495308"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "17606640"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "22253611"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "28135265"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "8106547"
+              }
+            ],
+            "value": "Required for muscle development probably through the regulation of the actin-myosin cytoskeleton (PubMed:12915588, PubMed:8106547). Component of an integrin containing attachment complex, which is required for muscle maintenance (PubMed:22253611). During the formation of neuromuscular junctions at the larval stage, negatively regulates membrane protrusion from body wall muscles, probably through lamins such as epi-1, lam-2 and unc-52 (PubMed:16495308). Required for distal tip cell migration and dorsal pathfinding (PubMed:17606640). Required for egg-laying (PubMed:12915588). May play a role in cell motility and cell-cell interactions (By similarity). Plays a role in vulval development (PubMed:28135265). Probably within the alpha pat-2/beta pat-3 integrin receptor complex, plays a role in the negative regulation of let-23 signaling and vulval induction. This is probably partly by restricting the mobility of the let-23 receptor on the plasma membrane of vulval cells which thereby attenuates let-23 signaling (PubMed:28135265)"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "28135265"
+              },
+              {
+                "evidenceCode": "ECO:0000305"
+              },
+              {
+                "evidenceCode": "ECO:0000305",
+                "source": "PubMed",
+                "id": "22253611"
+              }
+            ],
+            "value": "Heterodimer of an alpha and a beta subunit (Probable). Interacts with beta subunit pat-3 (Probable). Interacts with dep-1 (PubMed:28135265). Component of an integrin containing attachment complex, composed of at least pat-2, pat-3, pat-4, pat-6, unc-52, unc-97 and unc-112 (PubMed:22253611)"
+          }
+        ],
+        "commentType": "SUBUNIT"
+      },
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000250"
+                }
+              ],
+              "value": "Membrane",
+              "id": "SL-0162"
+            },
+            "topology": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000250"
+                }
+              ],
+              "value": "Single-pass type I membrane protein",
+              "id": "SL-9905"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "17606640"
+              }
+            ],
+            "value": "Expressed in body-wall muscle cells, distal tip cells, and vulval tissue"
+          }
+        ],
+        "commentType": "TISSUE SPECIFICITY"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "17606640"
+              }
+            ],
+            "value": "Up-regulated during L3 developmental stage in distal tip cells"
+          }
+        ],
+        "commentType": "DEVELOPMENTAL STAGE"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12915588"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16495308"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "17606640"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "22253611"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "28135265"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "8106547"
+              }
+            ],
+            "value": "Severe paralysis at the 1-fold stage of embryonic development followed by an arrest in elongation at 2-fold stage (PubMed:8106547). Loss of myosin and actin organization in embryonic body wall muscles and loss of muscle cell polarization (PubMed:8106547). RNAi-mediated knockdown in post-hatching animals causes paralysis associated with severe disorganization of body wall muscle actin filaments and defects in egg-laying associated with embryonic hatching within the mother (the bag of worms phenotype) (PubMed:12915588). Few surviving adults, are uncoordinated with abnormal body size and shape and have defects in distal tip cells (DTC) migration resulting in abnormal gonad formation (PubMed:17606640). RNAi-mediated knockdown in L4 larval stage, causes ectopic membrane extensions from body wall muscles (PubMed:16495308). RNAi-mediated knockdown results in impaired mobility, mitochondrial fragmentation and disrupted integrin attachment complexes in muscle (PubMed:22253611). This leads to degradation of muscle proteins in the cytosol, myofibrillar defects and disruption of sarcomere organization (PubMed:22253611). RNAi-mediated knockdown in vulval precursor cells in a let-60 gain of function mutant background results in increased vulval induction and an adjacent primary fate (Apf) phenotype whereby secondary vulval precursor cells transform into primary-like vulval cells (PubMed:28135265)"
+          }
+        ],
+        "commentType": "DISRUPTION PHENOTYPE"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the integrin alpha chain family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Signal",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 25,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 26,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1226,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Integrin alpha pat-2",
+        "featureId": "PRO_0000016332"
+      },
+      {
+        "type": "Topological domain",
+        "location": {
+          "start": {
+            "value": 26,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1154,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Extracellular",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Transmembrane",
+        "location": {
+          "start": {
+            "value": 1155,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1177,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Helical",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Topological domain",
+        "location": {
+          "start": {
+            "value": 1178,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1226,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Cytoplasmic",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 27,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 94,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 1",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 108,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 171,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 2",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 178,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 233,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 3",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 234,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 290,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 4",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 291,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 345,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 5",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 362,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 421,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 6",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 425,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 488,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 7",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 709,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 733,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 898,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 958,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 982,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1040,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 1191,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1226,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Motif",
+        "location": {
+          "start": {
+            "value": 620,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 622,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Cell attachment site",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 920,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 931,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Acidic residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 932,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 951,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Low complexity",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 985,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1005,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Acidic residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1010,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1026,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Basic residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1027,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1040,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Basic and acidic residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1200,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1226,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Polar residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 108,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 108,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 228,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 228,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 290,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 290,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 608,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 608,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 679,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 679,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 775,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 775,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 819,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 819,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "15888633"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17761667"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Mutagenesis",
+        "location": {
+          "start": {
+            "value": 441,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 441,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "In st567; severe paralysis at embryonic 1-fold stage followed by an arrest in elongation at 2-fold stage. Loss of myosin and actin organization in embryonic muscles.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "8106547"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "G",
+          "alternativeSequences": [
+            "D"
+          ]
+        }
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0130",
+        "category": "Biological process",
+        "name": "Cell adhesion"
+      },
+      {
+        "id": "KW-0325",
+        "category": "PTM",
+        "name": "Glycoprotein"
+      },
+      {
+        "id": "KW-0401",
+        "category": "Molecular function",
+        "name": "Integrin"
+      },
+      {
+        "id": "KW-0472",
+        "category": "Cellular component",
+        "name": "Membrane"
+      },
+      {
+        "id": "KW-0675",
+        "category": "Molecular function",
+        "name": "Receptor"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "id": "KW-0677",
+        "category": "Domain",
+        "name": "Repeat"
+      },
+      {
+        "id": "KW-0732",
+        "category": "Domain",
+        "name": "Signal"
+      },
+      {
+        "id": "KW-0812",
+        "category": "Domain",
+        "name": "Transmembrane"
+      },
+      {
+        "id": "KW-1133",
+        "category": "Domain",
+        "name": "Transmembrane helix"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "7906398",
+          "citationType": "journal article",
+          "authors": [
+            "Wilson R.",
+            "Ainscough R.",
+            "Anderson K.",
+            "Baynes C.",
+            "Berks M.",
+            "Bonfield J.",
+            "Burton J.",
+            "Connell M.",
+            "Copsey T.",
+            "Cooper J.",
+            "Coulson A.",
+            "Craxton M.",
+            "Dear S.",
+            "Du Z.",
+            "Durbin R.",
+            "Favello A.",
+            "Fraser A.",
+            "Fulton L.",
+            "Gardner A.",
+            "Green P.",
+            "Hawkins T.",
+            "Hillier L.",
+            "Jier M.",
+            "Johnston L.",
+            "Jones M.",
+            "Kershaw J.",
+            "Kirsten J.",
+            "Laisster N.",
+            "Latreille P.",
+            "Lightning J.",
+            "Lloyd C.",
+            "Mortimore B.",
+            "O'Callaghan M.",
+            "Parsons J.",
+            "Percy C.",
+            "Rifken L.",
+            "Roopra A.",
+            "Saunders D.",
+            "Shownkeen R.",
+            "Sims M.",
+            "Smaldon N.",
+            "Smith A.",
+            "Smith M.",
+            "Sonnhammer E.",
+            "Staden R.",
+            "Sulston J.",
+            "Thierry-Mieg J.",
+            "Thomas K.",
+            "Vaudin M.",
+            "Vaughan K.",
+            "Waterston R.",
+            "Watson A.",
+            "Weinstock L.",
+            "Wilkinson-Sproat J.",
+            "Wohldman P."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "7906398"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1038/368032a0"
+            }
+          ],
+          "title": "2.2 Mb of contiguous nucleotide sequence from chromosome III of C. elegans.",
+          "publicationDate": "1994",
+          "journal": "Nature",
+          "firstPage": "32",
+          "lastPage": "38",
+          "volume": "368"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "9851916",
+          "citationType": "journal article",
+          "authoringGroup": [
+            "The C. elegans sequencing consortium"
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9851916"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.282.5396.2012"
+            }
+          ],
+          "title": "Genome sequence of the nematode C. elegans: a platform for investigating biology.",
+          "publicationDate": "1998",
+          "journal": "Science",
+          "firstPage": "2012",
+          "lastPage": "2018",
+          "volume": "282"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 3,
+        "citation": {
+          "id": "8106547",
+          "citationType": "journal article",
+          "authors": [
+            "Williams B.D.",
+            "Waterston R.H."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "8106547"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1083/jcb.124.4.475"
+            }
+          ],
+          "title": "Genes critical for muscle development and function in Caenorhabditis elegans identified through lethal mutations.",
+          "publicationDate": "1994",
+          "journal": "J. Cell Biol.",
+          "firstPage": "475",
+          "lastPage": "490",
+          "volume": "124"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "DISRUPTION PHENOTYPE",
+          "MUTAGENESIS OF GLY-441"
+        ]
+      },
+      {
+        "referenceNumber": 4,
+        "citation": {
+          "id": "12915588",
+          "citationType": "journal article",
+          "authors": [
+            "Cram E.J.",
+            "Clark S.G.",
+            "Schwarzbauer J.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12915588"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1242/jcs.00705"
+            }
+          ],
+          "title": "Talin loss-of-function uncovers roles in cell contractility and migration in C. elegans.",
+          "publicationDate": "2003",
+          "journal": "J. Cell Sci.",
+          "firstPage": "3871",
+          "lastPage": "3878",
+          "volume": "116"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "DISRUPTION PHENOTYPE"
+        ]
+      },
+      {
+        "referenceNumber": 5,
+        "citation": {
+          "id": "15888633",
+          "citationType": "journal article",
+          "authors": [
+            "Fan X.",
+            "She Y.-M.",
+            "Bagshaw R.D.",
+            "Callahan J.W.",
+            "Schachter H.",
+            "Mahuran D.J."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "15888633"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1093/glycob/cwi075"
+            }
+          ],
+          "title": "Identification of the hydrophobic glycoproteins of Caenorhabditis elegans.",
+          "publicationDate": "2005",
+          "journal": "Glycobiology",
+          "firstPage": "952",
+          "lastPage": "964",
+          "volume": "15"
+        },
+        "referencePositions": [
+          "GLYCOSYLATION [LARGE SCALE ANALYSIS] AT ASN-108; ASN-228; ASN-290; ASN-608 AND ASN-819",
+          "IDENTIFICATION BY MASS SPECTROMETRY"
+        ]
+      },
+      {
+        "referenceNumber": 6,
+        "citation": {
+          "id": "16495308",
+          "citationType": "journal article",
+          "authors": [
+            "Dixon S.J.",
+            "Alexander M.",
+            "Fernandes R.",
+            "Ricker N.",
+            "Roy P.J."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "16495308"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1242/dev.02300"
+            }
+          ],
+          "title": "FGF negatively regulates muscle membrane extension in Caenorhabditis elegans.",
+          "publicationDate": "2006",
+          "journal": "Development",
+          "firstPage": "1263",
+          "lastPage": "1275",
+          "volume": "133"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "DISRUPTION PHENOTYPE"
+        ]
+      },
+      {
+        "referenceNumber": 7,
+        "citation": {
+          "id": "17606640",
+          "citationType": "journal article",
+          "authors": [
+            "Meighan C.M.",
+            "Schwarzbauer J.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "17606640"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1101/gad.1534807"
+            }
+          ],
+          "title": "Control of C. elegans hermaphrodite gonad size and shape by vab-3/Pax6-mediated regulation of integrin receptors.",
+          "publicationDate": "2007",
+          "journal": "Genes Dev.",
+          "firstPage": "1615",
+          "lastPage": "1620",
+          "volume": "21"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "TISSUE SPECIFICITY",
+          "DEVELOPMENTAL STAGE",
+          "DISRUPTION PHENOTYPE"
+        ]
+      },
+      {
+        "referenceNumber": 8,
+        "citation": {
+          "id": "17761667",
+          "citationType": "journal article",
+          "authors": [
+            "Kaji H.",
+            "Kamiie J.",
+            "Kawakami H.",
+            "Kido K.",
+            "Yamauchi Y.",
+            "Shinkawa T.",
+            "Taoka M.",
+            "Takahashi N.",
+            "Isobe T."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "17761667"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1074/mcp.m600392-mcp200"
+            }
+          ],
+          "title": "Proteomics reveals N-linked glycoprotein diversity in Caenorhabditis elegans and suggests an atypical translocation mechanism for integral membrane proteins.",
+          "publicationDate": "2007",
+          "journal": "Mol. Cell. Proteomics",
+          "firstPage": "2100",
+          "lastPage": "2109",
+          "volume": "6"
+        },
+        "referencePositions": [
+          "GLYCOSYLATION [LARGE SCALE ANALYSIS] AT ASN-108; ASN-228; ASN-608; ASN-679 AND ASN-819",
+          "IDENTIFICATION BY MASS SPECTROMETRY"
+        ],
+        "referenceComments": [
+          {
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 9,
+        "citation": {
+          "id": "22253611",
+          "citationType": "journal article",
+          "authors": [
+            "Etheridge T.",
+            "Oczypok E.A.",
+            "Lehmann S.",
+            "Fields B.D.",
+            "Shephard F.",
+            "Jacobson L.A.",
+            "Szewczyk N.J."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "22253611"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1371/journal.pgen.1002471"
+            }
+          ],
+          "title": "Calpains mediate integrin attachment complex maintenance of adult muscle in Caenorhabditis elegans.",
+          "publicationDate": "2012",
+          "journal": "PLoS Genet.",
+          "firstPage": "E1002471",
+          "lastPage": "E1002471",
+          "volume": "8"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "COMPONENT OF AN INTEGRIN CONTAINING ATTACHMENT COMPLEX",
+          "DISRUPTION PHENOTYPE"
+        ]
+      },
+      {
+        "referenceNumber": 10,
+        "citation": {
+          "id": "28135265",
+          "citationType": "journal article",
+          "authors": [
+            "Walser M.",
+            "Umbricht C.A.",
+            "Froehli E.",
+            "Nanni P.",
+            "Hajnal A."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "28135265"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1371/journal.pgen.1006592"
+            }
+          ],
+          "title": "beta-Integrin de-phosphorylation by the density-enhanced phosphatase DEP-1 attenuates EGFR signaling in C. elegans.",
+          "publicationDate": "2017",
+          "journal": "PLoS Genet.",
+          "firstPage": "E1006592",
+          "lastPage": "E1006592",
+          "volume": "13"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "IDENTIFICATION BY MASS SPECTROMETRY",
+          "INTERACTION WITH DEP-1",
+          "DISRUPTION PHENOTYPE"
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "BX284603",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CCD71234.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "PIR",
+        "id": "S44824",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "S44824"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_498948.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_066547.6"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "P34446",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "P34446",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID",
+        "id": "41442",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "7"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "P34446",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "1217"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "6239.F54F2.1.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "GlyCosmos",
+        "id": "P34446",
+        "properties": [
+          {
+            "key": "glycosylation",
+            "value": "7 sites, No reported glycans"
+          }
+        ]
+      },
+      {
+        "database": "iPTMnet",
+        "id": "P34446",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "6239-F54F2.1.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "P34446",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "F54F2.1.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "F54F2.1.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00003929"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "176240",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "cel:CELE_F54F2.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "UCSC",
+        "id": "F54F2.1",
+        "properties": [
+          {
+            "key": "OrganismName",
+            "value": "c. elegans"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "WB:WBGene00003929",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "176240",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "WormBase",
+        "id": "F54F2.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE00194"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00003929"
+          },
+          {
+            "key": "GeneName",
+            "value": "pat-2"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG3637",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_004111_4_2_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "P34446",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "QVPCMLL",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "5317514at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "P34446",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-114608",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Platelet degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-1236973",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Cross-presentation of particulate exogenous antigens (phagosomes)"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-1566948",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Elastic fibre formation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-1566977",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Fibronectin matrix formation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-202733",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Cell surface interactions at the vascular wall"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-216083",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Integrin cell surface interactions"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-3000170",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Syndecan interactions"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-3000178",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "ECM proteoglycans"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-354192",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Integrin signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-354194",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "GRB2:SOS provides linkage to MAPK signaling for Integrins"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-4420097",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "VEGFA-VEGFR2 Pathway"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-445144",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Signal transduction by L1"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-5674135",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "MAP2K and MAPK activation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-6798695",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Neutrophil degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9860927",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Turbulent (oscillatory, disturbed) flow shear stress activates signaling by PIEZO1 and integrins in endothelial cells"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:P34446",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000001940",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome III"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "WBGene00003929",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in larva and 3 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0009986",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell surface"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "22615577"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0008305",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:integrin complex"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "ISS:WormBase"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0031430",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:M band"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "22615577"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0055120",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:striated muscle dense body"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "22615577"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0038023",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:signaling receptor activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0004888",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:transmembrane signaling receptor activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "22615577"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0098609",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell-cell adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007229",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:integrin-mediated signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007005",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:mitochondrion organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22253611"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0046716",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:muscle cell cellular homeostasis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22253611"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0042059",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:negative regulation of epidermal growth factor receptor signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "28135265"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:1901076",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of engulfment of apoptotic cell"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22615577"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0040017",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of locomotion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22253611"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0060298",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of sarcomere organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22253611"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:1903354",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:regulation of distal tip cell migration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "17606640"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0040028",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:regulation of vulval development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "28135265"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0072327",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:vulval cell fate specification"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "28135265"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.130.10.130:FF:000019",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin alpha pat-2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.40.1510:FF:000026",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin alpha pat-2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.5.930",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Bicelle-embedded integrin alpha(iib) transmembrane segment"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.130.10.130",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin alpha, N-terminal"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.40.1460",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin domains. Chain A, domain 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.40.1510",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ntegrin, alpha v. Chain A, domain 3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.40.1530",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ntegrin, alpha v. Chain A, domain 4"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR013517",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FG-GAP"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR013519",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Int_alpha_beta-p"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000413",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR018184",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_C_CS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR013649",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_Ig-like_1"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR048285",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_Ig-like_2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR048286",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_Ig-like_3"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR028994",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_N"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR032695",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR23220",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRIN ALPHA"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR23220:SF133",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRIN ALPHA-PS2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF01839",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FG-GAP"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF08441",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_A_Ig_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF20805",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_A_Ig_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF20806",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_A_Ig_3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00357",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR01185",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRINA"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00191",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Int_alpha"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF69318",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin alpha N-terminal domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF69179",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin domains"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS51470",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FG_GAP"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "7"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00242",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRIN_ALPHA"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MREGSFPRRIGLLLGLLGLLAGVATFNIDTKNVVVHHMAGNYFGYSLDFYHEQKGMPVLVVGAPEAESNNPNLAGIRRPGAVYACSVNRATCREVHVDKMKGNLKKLNGSHLVPIEEKSHQFFGATVRSNDKHDKIVVCAPKYTYFYSKFEVIEPVGTCFYAENGFDNAEEFSSCKQEPARHGRHRLGYGQCGFSAAVPGKKNQNRVFIGAPGVWYWQGAMFSQNIKNQTDRPNTEYGSKEYDHDMMGYSTATGDFDGDGIDDIVAGVPRGNDLHGKLVLYTSKLKMMINLTDEVSTQHGQYCGGSVAVADVNKDGRDDIIMGCPFYTDYGSVKDAKTQERKPQYDVGKVIVMLQTAPGVFGKQIAVVGDDQWGRFGHAVAAAGDLNLDGYNDVIVGAPYAGKNKQGAVYVIHGSKDGVRELPTQKIEGANIGHGNIKSFGFSLTGNEDVDGNGMPDIAVGAWKSGNAAVLLTKPVVTVTGQTEPESALISVEDKNCDVDGKLGKQACKHINTCFKYEGKGDTPNDLEFDLRFNLDDHSPEPRAYFLQKDVKSDRSIKVAQGSKTRDHPSSIEQRVRLEKGRQKCFRHRFFASSTMKDKLSPIHWSVNYTYVESKTGKLRGDKLEPAIDTTVPLSFQNKINIANNCGKDDLCVPDLKVTAVADREKFLLGTQDNTMLINVTVQNGGEDSYETKLYFDVPQGFEYGGIESVGGDGSKSAPACSPTSDEPDSDGKWTFACDLGNPLPANKVVSSVVRVTASSDKPPLAPISINAHVNSSNDEEAHTVADNKVTFTIPVDFKNQLSLNGRSNPEQVDFSMTNKTRVDAFDDNEIGPVVSHLYQISNRGPSEVDSATLDIFWPSFSTEGGHLLYIITEPVVNPPNKGRCRVKQLQNVNPLNLRITNEHVPTEPPVAKTPNEYSREEDDESYEDETTTQSQSTRHQSTQHQTHHQSGPVHVYEKDEEKIRQNTGNWQYVEDKKKKGDYEYIPDDQEYDGDDFEEEDDEDFDRAGSKRVKRNPTPKKKKKGGEHRGEPRSDKARFSDLREAVKLSKEAGGVVDYKGPLSRASVDCNSLRCTHIECDIYDLKEDEFVLVEIFSRLYTNTLVDEKNPGGDISSLALARVTSTKYNLPHKPTLITAVSTNMNAIASEEGRDLPWWLYLLAILIGLAILILLILLLWRCGFFKRNRPPTEHAELRADRQPNAQYADSQSRYTSQDQYNQGRHGQML",
+      "length": 1226,
+      "molWeight": 135940,
+      "crc64": "B9169AD75B88901D",
+      "md5": "26A87655052FB3CBD892A1E690DE8271"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "SUBUNIT": 1,
+        "SUBCELLULAR LOCATION": 1,
+        "TISSUE SPECIFICITY": 1,
+        "DEVELOPMENTAL STAGE": 1,
+        "DISRUPTION PHENOTYPE": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Signal": 1,
+        "Chain": 1,
+        "Topological domain": 2,
+        "Transmembrane": 1,
+        "Repeat": 7,
+        "Region": 4,
+        "Motif": 1,
+        "Compositional bias": 6,
+        "Glycosylation": 7,
+        "Mutagenesis": 1
+      },
+      "uniParcId": "UPI0000131353"
+    }
+  }
+}

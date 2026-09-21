@@ -1,0 +1,7 @@
+name: integrin-orthofinder
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - orthofinder=3.1.5

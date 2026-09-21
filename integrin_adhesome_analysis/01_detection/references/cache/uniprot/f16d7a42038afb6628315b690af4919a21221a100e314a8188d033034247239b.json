@@ -1,0 +1,639 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/A0A267DJG1.json",
+  "retrieved_at": "2026-09-18T21:08:30.214288+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB unreviewed (TrEMBL)",
+    "primaryAccession": "A0A267DJG1",
+    "uniProtkbId": "A0A267DJG1_9PLAT",
+    "entryAudit": {
+      "firstPublicDate": "2017-11-22",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "2017-11-22",
+      "entryVersion": 19,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 1.0,
+    "organism": {
+      "scientificName": "Macrostomum lignano",
+      "taxonId": 282301,
+      "evidences": [
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "EMBL",
+          "id": "PAA49365.1"
+        },
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "Proteomes",
+          "id": "UP000215902"
+        }
+      ],
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Spiralia",
+        "Lophotrochozoa",
+        "Platyhelminthes",
+        "Rhabditophora",
+        "Macrostomorpha",
+        "Macrostomidae",
+        "Macrostomum"
+      ]
+    },
+    "proteinExistence": "4: Predicted",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000259",
+              "source": "PROSITE",
+              "id": "PS50003"
+            }
+          ],
+          "value": "PH domain-containing protein"
+        }
+      }
+    },
+    "genes": [
+      {
+        "orfNames": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "PAA49365.1"
+              }
+            ],
+            "value": "BOX15_Mlig007286g3"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "PAA49365.1"
+              }
+            ],
+            "value": "The sequence shown here is derived from an EMBL/GenBank/DDBJ whole genome shotgun (WGS) entry which is preliminary data"
+          }
+        ],
+        "commentType": "CAUTION"
+      }
+    ],
+    "features": [
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 447,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 554,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "PH",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "PROSITE",
+            "id": "PS50003"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 167,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 216,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      }
+    ],
+    "keywords": [
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000215902"
+          }
+        ],
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "CI-7QB9GK2L3JQGF",
+          "citationType": "submission",
+          "authors": [
+            "Berezikov E."
+          ],
+          "title": "A platform for efficient transgenesis in Macrostomum lignano, a flatworm model organism for stem cell research.",
+          "publicationDate": "JUN-2017",
+          "submissionDatabase": "EMBL/GenBank/DDBJ databases"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "PAA49365.1"
+              }
+            ],
+            "value": "DV1",
+            "type": "STRAIN"
+          },
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "PAA49365.1"
+              }
+            ],
+            "value": "Whole organism",
+            "type": "TISSUE"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "EMBL",
+            "id": "PAA49365.1"
+          },
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000215902"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "NIVC01003898",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "PAA49365.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "A0A267DJG1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "282301.A0A267DJG1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "282301-A0A267DJG1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "10057618at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000215902",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Unassembled WGS sequence"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030055",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell-substrate junction"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005178",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:integrin binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007160",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell-matrix adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:TreeGrafter"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007229",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:integrin-mediated signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd14473",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_B-lobe"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd17095",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_F0_kindlins"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.80.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "-"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.10.20.90",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Phosphatidylinositol 3-kinase Catalytic Subunit, Chain A, domain 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.30.29.30",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Pleckstrin-homology domain (PH domain)/Phosphotyrosine-binding domain (PTB)"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019749",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Band_41_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR014352",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM/acyl-CoA-bd_prot_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR035963",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019748",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_central"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR037843",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kindlin/fermitin"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR040790",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kindlin_2_N"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR011993",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001849",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_domain"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR16160",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERMITIN 2-RELATED"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR16160:SF13",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERMITIN 2-RELATED"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00373",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_M"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF18124",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kindlin_2_N"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00169",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00295",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "B41"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00233",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF50729",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH domain-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47031",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Second domain of FERM"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50003",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_DOMAIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MDLGHGIYVDGSWELSILVEDLQIVKRIRVSGETHIGGVMLKLVEAIDVKLDWSDHGLWWPERNCWLLKTRQTLDQNGVQADAKLEFHRMHNWLRLQLPDLQEKELRVNFSQTVFSVVMSICKDLGIRHPEELSLKRRIDTADFGLGGGGGGGDGYAYSVGTTKSSRFSSMRRSRSINRNGGNDTMDSRKRLSNNRRSDAFNPLVPKAPSMTAGTLPYGNGADSLVKSPGSPRLGESANLMSPMSINSLAFEGADESYLANSPHVPLQTALTEKGLQRLRSNTERAMLSVTWLDSSKSLMEQGVRPGCEEELLLRFKYFAFYDLNIKYDAIRINQIYEQVKWSLLTEEIDCTDEEMMLLAALQLQGHLQANDPQRATSSNSGAAASAAAAAATVTEEDTAADDEIDAALADLEMSLMSDAHYGIGNLSRQQSEQQHLQQKQPEVREVPELSGYLKFFKPKRFTLKNYKRYFFALRDTTLYLYPDQAAASQMAAFVESFNLKNAEVVPDLNMTTRKFGIRLFILTQSGLMQEVWLRCETKDQYAQWVAAISLASRGKTLASKSLYDSELKETLTRLDMQAPRPQPMLTVDSMPNIDVADFVALRCLKKHKSRALLQGILERHANVRSLNLLESKLEYIRTWQRLPMHGVAYFLVNYTESRSKPMTFSEFRKERRKNHDALFGVAFNRIMRLDVQTGDILNTWRYQELASWTVNWEVMSFRLTLNRPPHEMTLVPSPFFASRLSVCKTLAEMVGGYVFLSLRKPDRSQEINEQMFHRLTGSRDHQA",
+      "length": 784,
+      "molWeight": 88949,
+      "crc64": "44AFE161D43207AF",
+      "md5": "C80B6E57904DC49E58E6D18C4BD7AC2C"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "CAUTION": 1
+      },
+      "countByFeatureType": {
+        "Domain": 1,
+        "Region": 1
+      },
+      "uniParcId": "UPI000BD5192F"
+    }
+  }
+}

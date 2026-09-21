@@ -1,0 +1,1710 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/G5EGK1.json",
+  "retrieved_at": "2026-09-18T09:28:04.851244+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB unreviewed (TrEMBL)",
+    "primaryAccession": "G5EGK1",
+    "uniProtkbId": "G5EGK1_CAEEL",
+    "entryAudit": {
+      "firstPublicDate": "2011-12-14",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "2011-12-14",
+      "entryVersion": 117,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 4.0,
+    "organism": {
+      "scientificName": "Caenorhabditis elegans",
+      "taxonId": 6239,
+      "evidences": [
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "EMBL",
+          "id": "CCD67967.1"
+        },
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "Proteomes",
+          "id": "UP000001940"
+        }
+      ],
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Nematoda",
+        "Chromadorea",
+        "Rhabditida",
+        "Rhabditina",
+        "Rhabditomorpha",
+        "Rhabditoidea",
+        "Rhabditidae",
+        "Peloderinae",
+        "Caenorhabditis"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "submissionNames": [
+        {
+          "fullName": {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "CCD67967.1"
+              }
+            ],
+            "value": "FERM domain-containing protein"
+          }
+        }
+      ]
+    },
+    "genes": [
+      {
+        "geneName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000313",
+              "source": "EMBL",
+              "id": "CCD67967.1"
+            },
+            {
+              "evidenceCode": "ECO:0000313",
+              "source": "WormBase",
+              "id": "Y71G12B.11a"
+            }
+          ],
+          "value": "tln-1"
+        },
+        "orfNames": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "CCD67967.1"
+              }
+            ],
+            "value": "CELE_Y71G12B.11"
+          },
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "WormBase",
+                "id": "Y71G12B.11a"
+              }
+            ],
+            "value": "Y71G12B.11"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "ARBA",
+                  "id": "ARBA00004245"
+                }
+              ],
+              "value": "Cytoplasm, cytoskeleton",
+              "id": "SL-0090"
+            }
+          }
+        ]
+      }
+    ],
+    "features": [
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 87,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 431,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FERM",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "PROSITE",
+            "id": "PS50057"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 2311,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2549,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "I/LWEQ",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "PROSITE",
+            "id": "PS50945"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 140,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 181,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Coiled coil",
+        "location": {
+          "start": {
+            "value": 1706,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1733,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "Coils"
+          }
+        ]
+      },
+      {
+        "type": "Coiled coil",
+        "location": {
+          "start": {
+            "value": 2517,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2544,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "Coils"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 140,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 151,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Gly residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 157,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 168,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Basic and acidic residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      }
+    ],
+    "keywords": [
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "Coils"
+          }
+        ],
+        "id": "KW-0175",
+        "category": "Domain",
+        "name": "Coiled coil"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022490"
+          }
+        ],
+        "id": "KW-0963",
+        "category": "Cellular component",
+        "name": "Cytoplasm"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023212"
+          }
+        ],
+        "id": "KW-0206",
+        "category": "Cellular component",
+        "name": "Cytoskeleton"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0007829",
+            "source": "PeptideAtlas",
+            "id": "G5EGK1"
+          }
+        ],
+        "id": "KW-1267",
+        "category": "Technical term",
+        "name": "Proteomics identification"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000001940"
+          }
+        ],
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "9851916",
+          "citationType": "journal article",
+          "authoringGroup": [
+            "The C. elegans sequencing consortium"
+          ],
+          "authors": [
+            "Sulson J.E.",
+            "Waterston R."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9851916"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.282.5396.2012"
+            }
+          ],
+          "title": "Genome sequence of the nematode C. elegans: a platform for investigating biology.",
+          "publicationDate": "1998",
+          "journal": "Science",
+          "firstPage": "2012",
+          "lastPage": "2018",
+          "volume": "282"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "CCD67967.1"
+              },
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "Proteomes",
+                "id": "UP000001940"
+              }
+            ],
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "EMBL",
+            "id": "CCD67967.1"
+          },
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000001940"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "BX284601",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CCD67967.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_490886.2",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_058485.8"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "G5EGK1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "G5EGK1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "IntAct",
+        "id": "G5EGK1",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "6239.Y71G12B.11a.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "6239-Y71G12B.11a.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "G5EGK1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "171736",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "WB:WBGene00006771",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "171736",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "WormBase",
+        "id": "Y71G12B.11a",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE29914"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00006771"
+          },
+          {
+            "key": "GeneName",
+            "value": "tln-1"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG4261",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_000364_1_1_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "VDMTQHY",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "10262320at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-114608",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Platelet degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-354192",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Integrin signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-354194",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "GRB2:SOS provides linkage to MAPK signaling for Integrins"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-399955",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "SEMA3A-Plexin repulsion signaling by inhibiting Integrin adhesion"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-445355",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Smooth Muscle Contraction"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-5674135",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "MAP2K and MAPK activation"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000001940",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome I"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "WBGene00006771",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in pharyngeal muscle cell (C elegans) and 12 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005604",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:basement membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "28135265"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005737",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoplasm"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "28135265"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005856",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoskeleton"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:UniProtKB-SubCell"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005925",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:focal adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0016328",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:lateral plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "28135265"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0031430",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:M band"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "8856663"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005886",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0001726",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:ruffle"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0055120",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:striated muscle dense body"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "8856663"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0051015",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:actin filament binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005178",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:integrin binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005200",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:structural constituent of cytoskeleton"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030036",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:actin cytoskeleton organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0098609",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell-cell adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0042059",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:negative regulation of epidermal growth factor receptor signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "28135265"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0040028",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:regulation of vulval development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "28135265"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0072327",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:vulval cell fate specification"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "28135265"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd14473",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_B-lobe"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd10569",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_C_Talin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd17089",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_F0_TLN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd17090",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_F1_TLN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd12150",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "talin-RS"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.230:FF:000030",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TaLiN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.230:FF:000040",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TaLiN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.1420.10:FF:000017",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.1410.10:FF:000001",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.80.10:FF:000007",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.30.29.30:FF:000028",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.80.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "-"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.120.230",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Alpha-catenin/vinculin-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.1410.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "I/LWEQ domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.10.20.90",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Phosphatidylinositol 3-kinase Catalytic Subunit, Chain A, domain 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.30.29.30",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Pleckstrin-homology domain (PH domain)/Phosphotyrosine-binding domain (PTB)"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.1420.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin, central domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "7"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036723",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Alpha-catenin/vinculin-like_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019749",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Band_41_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR014352",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM/acyl-CoA-bd_prot_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR035963",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019748",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_central"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019747",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_CS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000299",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR032425",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_f0"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR035964",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "I/LWEQ_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR002558",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ILWEQ_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR002404",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "IRS_PTB"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR011993",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR037438",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin1/2-RS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR015224",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin_cent"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036476",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin_cent_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR054082",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin_IBS2B"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR049108",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin_R4"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR054060",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TLN1-like_RS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR015009",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin-bd_dom"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR19981:SF1",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "RHEA, ISOFORM B"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR19981",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TALIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF16511",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_f0"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF01608",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "I_LWEQ"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF02174",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "IRS"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF21896",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin_IBS2B"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF09141",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin_middle"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF21692",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Talin_R4"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF21865",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TLN1-like_RS"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF08913",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "VBS"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00295",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "B41"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00307",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ILWEQ"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM01244",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "IRS"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF109880",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "A middle domain of Talin 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47220",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "alpha-catenin/vinculin-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF109885",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "I/LWEQ domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF50729",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH domain-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47031",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Second domain of FERM"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00660",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00661",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50057",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50945",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "I_LWEQ"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MGVLSLTVSSAEKGIKKTMQFEPSTLIYDAAKLIREKFAMHDVNANEYGIFRLDENPSKSLWMDNGRTFEHYLVRNKDEIEYKRKIRLLKVRMLDGAVKTISVDESQPVSQLMMTVCNKIGISNYEEYSLVRDDILMQNGGGGGGGGGQNGGSTWNLKEKESRSKSSDRGGGGIYGTMRKKNEQKLEELRKKLHTDEELPWLDHTKTLREQGITEEETLILRRKYFFSDSNVDSRDPVQLNLLYVQCRDGILRGLHPVEKETAFQLAALQSHIQYGDFPYDKPKFHLDGRDVLPKEYAKNKENEKKVVAMYKELSGTSELDAKSKYVHLCRGLKTYGVTFFVVKEKLPGKNKLVPRLLGVNKESVMRVDENSKQILKEWPLEQVRRWVPSAKCFSLDFGDYQDGYYSVQTTDGEKIAQLIQGYVDIILKKKRTQDHQGIEGDEGSTMLEDMVAPAKATLVAHGQIGSGQHATDGLVAVRGVLRTPQGGQGYGINGAQYGAVSGEITSQELARAQRLRYQDMYQHPQRALIGTIEATIRAVEDAEIELEAEPQIDIPRFNDDYSQNRWMEEQQAVNKENVNERLAAMGAATAQVVQWTAVEEYDDRVGTAIATIGSNLPDVSRNVRDLGAFMEHRERGDLLDATKKLCGAFGKFLNTVNPETEARRNEVFRTAGHVGETSQHLINVMEAPNEGQQKFDERLVQSAKNVATSTAQLVLCAKTISAECDEPQVQERVIQSATKCAFATSQLVACARVVAPTIDNNACQQQLSTAATEVTQSVNNLLHDAEHAVYQQSSLTDIHEAARQVTSALDSLLEHAKCSPKTQTTRREEEEMYNEVLRRTNRMVVHQGPSEDLTREARKVVRHSQLLTEQFQHEAHQRPEHRERLLDAAAKVAHATSEMILATEQAESQPRQVETEYALRTAAERLGQVTNETTQEQQEQHIMQRLEQAAKQTAYDATQTISAANSAKDVIESRSYKENLVYESTQTAGHLPNLITSIRESQKVDNTPGEKFKAQSRLIRDSYKVLETSVRLFETARTAVPMVSDSHLASSLDQSANRLGTSLADLRTSVNDAQQLNFSQQLLYSEELIKELDDQLVNTQKRAIARELPPIQNATSFSVSSKLMATTSNVGSGVAQLITAAATSNDDKYVGTSAVELAQGLRDFTDAITEIVTVRTDIQLDKLIVSARSVVHESGRVFDRVREKSAPTVLTDAAMNVSTSLKQVISCLPDTKHIEKAIHEIQTAHTSANIRPMEVRQAANKFIEATSQLVVTIGSPDSREAVDIFVRAYCDLHGSVVAQLQRQSNMNNVKTAIIDRLEEAQRGSIGVLETLRQAGNPSDHTLSQQFTSKTRELATTVNQLVELSGMDGGESRWQRECDAALRRIQAVYHVTQHANVPLNDNGYFASLQSVSDGSRRLGEAMTGMARHAKGNDTEGFCTSVRDSADALCSLAESASHSAYLVGISHPASSPGRAALIDSSEVARSVESINASCQRVESRQLNREELMSDISSITKQSSSLAQLCRIASEKTQNPNVKKHLVGCAMGVASKTSSLVTAFKDLDRMPDAESRCTSSASELRQVALQLLHFADKPDFAAIQGSISTEGHSAQQPILQSSREMLDSSAQMIQTAKSWASAPQDEATWQRMAVNSRQVSDSIMRLVNAIHEAAPGQMELEAAIGRLSALSGQIERSAMDCYASGNVQKHGANAERQLLQQVQHIASQLEDKVDDLHNAAVEHGERLPKVVQLHCQMVEDLADAACCAAGMTVDSNQQTELFDKCKTVVEAELAMMVASRESGGNPNAVHAHANVKDAAGQLKHAIGDMRQTIAKVSSEQGAVQGMVDTISSSIAHTDVAVSSAHPGSSFADAQTRMTAYLEDIRRTAIEMPTLNTTDLGAASLNLSEKYRLVAGDVRQAAGMLPEADIGQRLKLAVQKLGTSCIETVTVAGGKRAHPEDERIQRQLSSQAGTVVERVEQVLAALHSASRGTQACINAANTVSGIIGDLDTTIMFATSGSLNSSDDRKFPSHKEAIVKTAKALVEDTKALVAGAASNQEQLAVAAQNAVRTIVNLSDAVKTGAVSLSSENSETQVLVIHAVRDVAAALTSLIQATKNASGLSLQHPAMGHLKDAAKVMVSNVARLLKTVATVEEKNQQGTRAVEAAVDAIGFEMKQFEHDLNEGAAIPTDFRPEHLQQTAEHVSEITKRVMQGADAPQSEEEIIGVANLSRSAVRSLLAVVRTISNDADTAPQRYAVLDSGRDVANNVKSLLVSLHTQMVRNPGQEESRRLLLEASKGVSSALSHLVGLCNEMTGLPHNHEMESAAAQAENELLGAASSIEAASAKLAELRPRQIVQENTQEIVETEFDDNIIISAKGILHAVHTLMRSASNAQRELAMQGRAAAGGTGTYQWSEGLISAARVVVASVHKLCDAANTLMKGQTTEERLISAAKQVSSSTAQLLVACNVRADPDSQANRRLQAAGQAVRNAAERLVQSAQQEMIARDDRNIAISDRLVNGIAQVMDAQEEVLRKERELGEARHKLAHLNKARYERDGEEA",
+      "length": 2553,
+      "molWeight": 279126,
+      "crc64": "F08F84883D7F5FA4",
+      "md5": "82E8B33CD317778319C3621B938864CA"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "SUBCELLULAR LOCATION": 1
+      },
+      "countByFeatureType": {
+        "Domain": 2,
+        "Region": 1,
+        "Coiled coil": 2,
+        "Compositional bias": 2
+      },
+      "uniParcId": "UPI0000056023"
+    }
+  }
+}

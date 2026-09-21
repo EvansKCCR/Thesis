@@ -1,0 +1,1768 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/Q18685.json",
+  "retrieved_at": "2026-09-18T09:23:17.346859+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "Q18685",
+    "uniProtkbId": "UN112_CAEEL",
+    "entryAudit": {
+      "firstPublicDate": "2004-01-16",
+      "lastAnnotationUpdateDate": "2026-06-10",
+      "lastSequenceUpdateDate": "1996-11-01",
+      "entryVersion": 167,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 5.0,
+    "organism": {
+      "scientificName": "Caenorhabditis elegans",
+      "taxonId": 6239,
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Nematoda",
+        "Chromadorea",
+        "Rhabditida",
+        "Rhabditina",
+        "Rhabditomorpha",
+        "Rhabditoidea",
+        "Rhabditidae",
+        "Peloderinae",
+        "Caenorhabditis"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "value": "Protein unc-112"
+        }
+      },
+      "alternativeNames": [
+        {
+          "fullName": {
+            "value": "Mitogen-inducible mig-2 protein-like"
+          }
+        },
+        {
+          "fullName": {
+            "value": "Uncoordinated protein 112"
+          }
+        }
+      ]
+    },
+    "genes": [
+      {
+        "geneName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000312",
+              "source": "WormBase",
+              "id": "C47E8.7"
+            }
+          ],
+          "value": "unc-112"
+        },
+        "orfNames": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000312",
+                "source": "WormBase",
+                "id": "C47E8.7"
+              }
+            ],
+            "value": "C47E8.7"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "10893272"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "22253611"
+              }
+            ],
+            "value": "Component of an integrin containing attachment complex, which is required for muscle development and maintenance (PubMed:22253611). Probable regulator of cell-extracellular matrix adhesion (PubMed:10893272). Required during initial muscle assembly to form dense bodies and M-lines (PubMed:10893272)"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12015115"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12781130"
+              },
+              {
+                "evidenceCode": "ECO:0000305",
+                "source": "PubMed",
+                "id": "22253611"
+              }
+            ],
+            "value": "Interacts with pat-4/ILK (PubMed:12015115, PubMed:12781130). Probably forms a complex with pat-4 and pat-6 (PubMed:12781130). Component of an integrin containing attachment complex, composed of at least pat-2, pat-3, pat-4, pat-6, unc-52, unc-97 and unc-112 (PubMed:22253611)"
+          }
+        ],
+        "commentType": "SUBUNIT"
+      },
+      {
+        "commentType": "INTERACTION",
+        "interactions": [
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "Q18685",
+              "intActId": "EBI-1564809"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "Q9TZC4",
+              "geneName": "pat-4",
+              "intActId": "EBI-1564527"
+            },
+            "numberOfExperiments": 5,
+            "organismDiffer": false
+          }
+        ]
+      },
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "note": {
+          "texts": [
+            {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "10893272"
+                },
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "23283987"
+                }
+              ],
+              "value": "Colocalizes with pat-3/beta-integrin in body wall muscles. Requires unc-52/perlecan and pat-3 to be localized to the muscle cell membrane (PubMed:10893272). Colocalizes with cpna-1 in M line and dense bodies (PubMed:23283987)"
+            }
+          ]
+        },
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "10893272"
+                }
+              ],
+              "value": "Cell membrane",
+              "id": "SL-0039"
+            },
+            "topology": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "10893272"
+                }
+              ],
+              "value": "Peripheral membrane protein",
+              "id": "SL-9903"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "23283987"
+                }
+              ],
+              "value": "Cytoplasm, myofibril, sarcomere, M line",
+              "id": "SL-0315"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "10893272"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12015115"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12781130"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "23283987"
+              }
+            ],
+            "value": "Mainly expressed in muscle cells in both embryos and adults"
+          }
+        ],
+        "commentType": "TISSUE SPECIFICITY"
+      },
+      {
+        "texts": [
+          {
+            "value": "The FERM domain is not correctly detected by PROSITE or Pfam techniques because it contains the insertion of a PH domain"
+          }
+        ],
+        "commentType": "DOMAIN"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "22253611"
+              }
+            ],
+            "value": "RNAi-mediated knockdown results in impaired mobility, mitochondrial fragmentation and disrupted integrin attachment complexes in muscle. This leads to degradation of muscle proteins in the cytosol, myofibrillar defects and disruption of sarcomere organization"
+          }
+        ],
+        "commentType": "DISRUPTION PHENOTYPE"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the kindlin family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 720,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Protein unc-112",
+        "featureId": "PRO_0000219458"
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 288,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 614,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FERM"
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 402,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 507,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "PH",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00145"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 145,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 170,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 210,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 236,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Mutagenesis",
+        "location": {
+          "start": {
+            "value": 85,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 85,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "In R367; temperature sensitive. Adults are paralyzed. Induces disorganized body wall muscle. Disrupted integrin attachment complexes in muscle, which results in degradation of muscle proteins in the cytosol, myofibrillar defects and disruption of sarcomere organization. Mitochondrial fragmentation.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "10893272"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "22253611"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "T",
+          "alternativeSequences": [
+            "I"
+          ]
+        }
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0130",
+        "category": "Biological process",
+        "name": "Cell adhesion"
+      },
+      {
+        "id": "KW-1003",
+        "category": "Cellular component",
+        "name": "Cell membrane"
+      },
+      {
+        "id": "KW-0963",
+        "category": "Cellular component",
+        "name": "Cytoplasm"
+      },
+      {
+        "id": "KW-0472",
+        "category": "Cellular component",
+        "name": "Membrane"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "10893272",
+          "citationType": "journal article",
+          "authors": [
+            "Rogalski T.M.",
+            "Mullen G.P.",
+            "Gilbert M.M.",
+            "Williams B.D.",
+            "Moerman D.G."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "10893272"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1083/jcb.150.1.253"
+            }
+          ],
+          "title": "The UNC-112 gene in Caenorhabditis elegans encodes a novel component of cell-matrix adhesion structures required for integrin localization in the muscle cell membrane.",
+          "publicationDate": "2000",
+          "journal": "J. Cell Biol.",
+          "firstPage": "253",
+          "lastPage": "264",
+          "volume": "150"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [MRNA]",
+          "FUNCTION",
+          "SUBCELLULAR LOCATION",
+          "TISSUE SPECIFICITY",
+          "MUTAGENESIS OF THR-85"
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "9851916",
+          "citationType": "journal article",
+          "authoringGroup": [
+            "The C. elegans sequencing consortium"
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9851916"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.282.5396.2012"
+            }
+          ],
+          "title": "Genome sequence of the nematode C. elegans: a platform for investigating biology.",
+          "publicationDate": "1998",
+          "journal": "Science",
+          "firstPage": "2012",
+          "lastPage": "2018",
+          "volume": "282"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 3,
+        "citation": {
+          "id": "12015115",
+          "citationType": "journal article",
+          "authors": [
+            "Mackinnon A.C.",
+            "Qadota H.",
+            "Norman K.R.",
+            "Moerman D.G.",
+            "Williams B.D."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12015115"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/s0960-9822(02)00810-2"
+            }
+          ],
+          "title": "C. elegans PAT-4/ILK functions as an adaptor protein within integrin adhesion complexes.",
+          "publicationDate": "2002",
+          "journal": "Curr. Biol.",
+          "firstPage": "787",
+          "lastPage": "797",
+          "volume": "12"
+        },
+        "referencePositions": [
+          "INTERACTION WITH PAT-4",
+          "TISSUE SPECIFICITY"
+        ]
+      },
+      {
+        "referenceNumber": 4,
+        "citation": {
+          "id": "12781130",
+          "citationType": "journal article",
+          "authors": [
+            "Lin X.",
+            "Qadota H.",
+            "Moerman D.G.",
+            "Williams B.D."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12781130"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/s0960-9822(03)00372-5"
+            }
+          ],
+          "title": "C. elegans PAT-6/actopaxin plays a critical role in the assembly of integrin adhesion complexes in vivo.",
+          "publicationDate": "2003",
+          "journal": "Curr. Biol.",
+          "firstPage": "922",
+          "lastPage": "932",
+          "volume": "13"
+        },
+        "referencePositions": [
+          "SUBUNIT OF A COMPLEX WITH PAT-4 AND PAT-6",
+          "TISSUE SPECIFICITY"
+        ]
+      },
+      {
+        "referenceNumber": 5,
+        "citation": {
+          "id": "22253611",
+          "citationType": "journal article",
+          "authors": [
+            "Etheridge T.",
+            "Oczypok E.A.",
+            "Lehmann S.",
+            "Fields B.D.",
+            "Shephard F.",
+            "Jacobson L.A.",
+            "Szewczyk N.J."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "22253611"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1371/journal.pgen.1002471"
+            }
+          ],
+          "title": "Calpains mediate integrin attachment complex maintenance of adult muscle in Caenorhabditis elegans.",
+          "publicationDate": "2012",
+          "journal": "PLoS Genet.",
+          "firstPage": "E1002471",
+          "lastPage": "E1002471",
+          "volume": "8"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "COMPONENT OF AN INTEGRIN CONTAINING ATTACHMENT COMPLEX",
+          "DISRUPTION PHENOTYPE",
+          "MUTAGENESIS OF THR-85"
+        ]
+      },
+      {
+        "referenceNumber": 6,
+        "citation": {
+          "id": "23283987",
+          "citationType": "journal article",
+          "authors": [
+            "Warner A.",
+            "Xiong G.",
+            "Qadota H.",
+            "Rogalski T.",
+            "Vogl A.W.",
+            "Moerman D.G.",
+            "Benian G.M."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "23283987"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1091/mbc.e12-06-0478"
+            }
+          ],
+          "title": "CPNA-1, a copine domain protein, is located at integrin adhesion sites and is required for myofilament stability in Caenorhabditis elegans.",
+          "publicationDate": "2013",
+          "journal": "Mol. Biol. Cell",
+          "firstPage": "601",
+          "lastPage": "616",
+          "volume": "24"
+        },
+        "referencePositions": [
+          "SUBCELLULAR LOCATION",
+          "TISSUE SPECIFICITY"
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "AF217185",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAF20162.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "BX284605",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CAA99790.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "PIR",
+        "id": "T20016",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "T20016"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_506628.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_074227.8"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "Q18685",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "Q18685",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID",
+        "id": "44974",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "8"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "Q18685",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "1605"
+          }
+        ]
+      },
+      {
+        "database": "IntAct",
+        "id": "Q18685",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "6239.C47E8.7.2",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "iPTMnet",
+        "id": "Q18685",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "6239-C47E8.7.2",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "Q18685",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "C47E8.7.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "C47E8.7.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00006836"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "179972",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "cel:CELE_C47E8.7",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "UCSC",
+        "id": "C47E8.7.1",
+        "properties": [
+          {
+            "key": "OrganismName",
+            "value": "c. elegans"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "WB:WBGene00006836",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "179972",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "WormBase",
+        "id": "C47E8.7",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE05443"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00006836"
+          },
+          {
+            "key": "GeneName",
+            "value": "unc-112"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG3727",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_011611_0_0_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "Q18685",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "PEHGIHY",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "10057618at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "Q18685",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-114608",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Platelet degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-446353",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Cell-extracellular matrix interactions"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9013149",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RAC1 GTPase cycle"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9013423",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RAC3 GTPase cycle"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:Q18685",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000001940",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome V"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "WBGene00006836",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in pharyngeal muscle cell (C elegans) and 4 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030055",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell-substrate junction"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "10893272"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005737",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoplasm"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "10893272"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0031430",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:M band"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "22761445"
+          },
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "23283987"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005886",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "10893272"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0055120",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:striated muscle dense body"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "22761445"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0050839",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:cell adhesion molecule binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "10893272"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005178",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:integrin binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IPI:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000353",
+            "source": "PubMed",
+            "id": "22761445"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030674",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:protein-macromolecule adaptor activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IPI:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000353",
+            "source": "PubMed",
+            "id": "10893272"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007160",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell-matrix adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "10893272"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0072594",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:establishment of protein localization to organelle"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22761445"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007229",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:integrin-mediated signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0040011",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:locomotion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "10893272"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007005",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:mitochondrion organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22253611"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0046716",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:muscle cell cellular homeostasis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22253611"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007517",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:muscle organ development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "10893272"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0040017",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of locomotion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22253611"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:1904901",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of myosin II filament organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22761445"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0060298",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of sarcomere organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22253611"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:1901074",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:regulation of engulfment of apoptotic cell"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "24632947"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd14473",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_B-lobe"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd13205",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_C_fermitin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd17095",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_F0_kindlins"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd17096",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_F1_kindlins"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd01237",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_fermitin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.10.20.90",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Phosphatidylinositol 3-kinase Catalytic Subunit, Chain A, domain 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.30.29.30",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Pleckstrin-homology domain (PH domain)/Phosphotyrosine-binding domain (PTB)"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019749",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Band_41_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR035963",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019748",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_central"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019747",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_CS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR037843",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kindlin/fermitin"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR040790",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kindlin_2_N"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR011993",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001849",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR037837",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_Kindlin/fermitin"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR16160",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERMITIN 2-RELATED"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR16160:SF13",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERMITIN 2-RELATED"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00373",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_M"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF18124",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kindlin_2_N"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00169",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00295",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "B41"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00233",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF50729",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH domain-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47031",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Second domain of FERM"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00660",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50003",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_DOMAIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MAHLVEGTSIIDGKWQLPILVTDLNIQRSISVLGNLNVGGLMLELVSECDVERDWSDHALWWPEKRRWLQHTRSTLDQNGITAETQLEFTPMHKEARIQLPDMQMIDARVDFSVNSFKATKKLCRDLGIRYSEELSLKRYIPPEDLRRGTSDADNMNGPLSMRPGEESVGPMTLRKAAPIFASQSNLDMRRRGQSPALSQSGHIFNAHEMGTLPRHGTLPRGVSPSPGAYNDTMRRTPIMPSISFSEGLENEQFDDALIHSPRLAPSRDTPVFRPQNYVEKAAINRGWLDSSRSLMEQGIFEGDIILLRFKFMNFFDLNPKYDPVRINQLYEQAKWSILLDEFDHTEEEATLFAALQLQATLQRDSPEPEENNKDDVDILLDELEQNLDAAALNRRSDLTQVPELADYLKYMKPKKLAAFKGFKRAFFSFRDLYLSYHQSSSDVNSAPLGHFSLKGCEVSQDVSVGQQKYHIKLLLPTAEGMIDFILKCDSEHQYARWMAACRLASRGKSMADSSYQQEVESIKNLLKMQSGNGNENGNSNTASRKAAAVKLPNDFNVDEYISSKYVRRARSKQQIQQRVSDAHGNVRQLTATEAKLQYIRAWQALPEHGIHYFIVRFRNARKAELVAVAVNRLAKLNMDNGESLKTWRFANMKKWHVNWEIRHLKIQFEDEDIEFKPLSADCKVVHEFIGGYIFLSMRSKEHSQNLDEELFHKLTGGWA",
+      "length": 720,
+      "molWeight": 82355,
+      "crc64": "663CB0E9891C1A12",
+      "md5": "94EAC89419A1A1B5CAFA79934FE73EBB"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "SUBUNIT": 1,
+        "INTERACTION": 1,
+        "SUBCELLULAR LOCATION": 1,
+        "TISSUE SPECIFICITY": 1,
+        "DOMAIN": 1,
+        "DISRUPTION PHENOTYPE": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Chain": 1,
+        "Domain": 2,
+        "Region": 2,
+        "Mutagenesis": 1
+      },
+      "uniParcId": "UPI000007A822"
+    }
+  }
+}

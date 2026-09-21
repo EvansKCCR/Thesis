@@ -1,0 +1,3679 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/P12080.json",
+  "retrieved_at": "2026-09-18T09:28:01.447789+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "P12080",
+    "secondaryAccessions": [
+      "E1JJN2",
+      "Q8IR07",
+      "Q8MSG3",
+      "Q9VXB6"
+    ],
+    "uniProtkbId": "ITA2_DROME",
+    "entryAudit": {
+      "firstPublicDate": "1989-10-01",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "2000-12-01",
+      "entryVersion": 228,
+      "sequenceVersion": 2
+    },
+    "annotationScore": 5.0,
+    "organism": {
+      "scientificName": "Drosophila melanogaster",
+      "commonName": "Fruit fly",
+      "taxonId": 7227,
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Arthropoda",
+        "Altocrustacea",
+        "Allotriocarida",
+        "Hexapoda",
+        "Insecta",
+        "Pterygota",
+        "Neoptera",
+        "Eumetabola",
+        "Endopterygota",
+        "Aparaglossata",
+        "Panorpida",
+        "Diptera",
+        "Brachycera",
+        "Muscomorpha",
+        "Ephydroidea",
+        "Drosophilidae",
+        "Drosophila",
+        "Sophophora"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "value": "Integrin alpha-PS2"
+        }
+      },
+      "alternativeNames": [
+        {
+          "fullName": {
+            "value": "Position-specific antigen subunit alpha-2"
+          }
+        },
+        {
+          "fullName": {
+            "value": "Protein inflated"
+          }
+        }
+      ],
+      "contains": [
+        {
+          "recommendedName": {
+            "fullName": {
+              "value": "Integrin alpha-PS2 heavy chain"
+            }
+          }
+        },
+        {
+          "recommendedName": {
+            "fullName": {
+              "value": "Integrin alpha-PS2 light chain"
+            }
+          }
+        }
+      ],
+      "flag": "Precursor"
+    },
+    "genes": [
+      {
+        "geneName": {
+          "value": "if"
+        },
+        "orfNames": [
+          {
+            "value": "CG9623"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "10821184"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "7924982"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "7972082"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "9660786"
+              }
+            ],
+            "value": "Alpha-PS2/beta-PS is a receptor for Tig, wb and Ten-m. Involved in the function and/or development of the olfactory system"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "texts": [
+          {
+            "value": "Heterodimer of an alpha and a beta subunit. The alpha subunit is composed of a heavy and a light chain linked by a disulfide bond. Alpha-PS2 associates with beta-PS"
+          }
+        ],
+        "commentType": "SUBUNIT"
+      },
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "note": {
+          "texts": [
+            {
+              "value": "During mid-oogenesis, localizes to the apical, to the lateral and to the basal membranes of follicle cells. Apical membrane localization peaks at oogenesis stages 9 and 10A in columnar follicle cells overlying the oocyte while decreases in the most posterior follicle cells. During embryogenesis, at the end of germband extension concentrates at the basal membrane of mesodermal cells, where they adhere to the ectoderm. Then, in visceral mesoderm localizes basally, whereas in somatic mesoderm is homogeneously distributed"
+            }
+          ]
+        },
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "19035354"
+                }
+              ],
+              "value": "Apical cell membrane",
+              "id": "SL-0015"
+            },
+            "topology": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "19035354"
+                }
+              ],
+              "value": "Single-pass type I membrane protein",
+              "id": "SL-9905"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "19035354"
+                }
+              ],
+              "value": "Lateral cell membrane",
+              "id": "SL-0153"
+            },
+            "topology": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "19035354"
+                }
+              ],
+              "value": "Single-pass type I membrane protein",
+              "id": "SL-9905"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "19035354"
+                }
+              ],
+              "value": "Basal cell membrane",
+              "id": "SL-0024"
+            },
+            "topology": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "19035354"
+                }
+              ],
+              "value": "Single-pass type I membrane protein",
+              "id": "SL-9905"
+            }
+          }
+        ]
+      },
+      {
+        "commentType": "ALTERNATIVE PRODUCTS",
+        "events": [
+          "Alternative splicing"
+        ],
+        "isoforms": [
+          {
+            "name": {
+              "value": "PS2C"
+            },
+            "synonyms": [
+              {
+                "value": "D"
+              },
+              {
+                "value": "F"
+              }
+            ],
+            "isoformIds": [
+              "P12080-1"
+            ],
+            "isoformSequenceStatus": "Displayed"
+          },
+          {
+            "name": {
+              "value": "PS2M8"
+            },
+            "synonyms": [
+              {
+                "value": "C"
+              }
+            ],
+            "isoformIds": [
+              "P12080-2"
+            ],
+            "sequenceIds": [
+              "VSP_002739"
+            ],
+            "isoformSequenceStatus": "Described"
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "15469969"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "19035354"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "2961459"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "8240969"
+              }
+            ],
+            "value": "In ovaries, highly expressed in follicle cells. At syncytial blastoderm stage, expressed in the embryonic mesodermal precursors but not in the ectoderm. At embryonic stages 7 and 10, expression is restricted to the mesoderm. At stage 12, expressed in the gonadal sheath and the interstitial cells of the gonad. In stage 16 embryos, expressed in the somatic and visceral muscles where localizes to sites of attachment between adjacent muscles. In third larval instar wing imaginal disk, expressed in the ventral compartment and in a subset of adepithelial and peripodial cells (at protein level)"
+          }
+        ],
+        "commentType": "TISSUE SPECIFICITY"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "2507168"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "2961459"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "8240969"
+              }
+            ],
+            "value": "Expressed throughout embryonic and larval development with peaks of expression during mid-embryogenesis and at third larval instar (at protein level). The relative ratio of isoform 1/PS2C and isoform 2/PS2M8 varies widely during development"
+          }
+        ],
+        "commentType": "DEVELOPMENTAL STAGE"
+      },
+      {
+        "texts": [
+          {
+            "value": "The heavy-light chain cleavage site is either in 1230-1231, or 1233-1234, or 1243-1244"
+          }
+        ],
+        "commentType": "PTM"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the integrin alpha chain family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      },
+      {
+        "commentType": "SEQUENCE CAUTION",
+        "sequenceCautionType": "Erroneous initiation",
+        "sequence": "AAM50700.1",
+        "note": "Extended N-terminus.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      },
+      {
+        "commentType": "SEQUENCE CAUTION",
+        "sequenceCautionType": "Miscellaneous discrepancy",
+        "sequence": "AAM50700.1",
+        "note": "Contaminating sequence. Potential poly-A sequence.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      }
+    ],
+    "features": [
+      {
+        "type": "Signal",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 31,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 32,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1396,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Integrin alpha-PS2",
+        "featureId": "PRO_0000016323"
+      },
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 32,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1243,
+            "modifier": "UNSURE"
+          }
+        },
+        "description": "Integrin alpha-PS2 heavy chain",
+        "featureId": "PRO_0000016324"
+      },
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 1244,
+            "modifier": "UNSURE"
+          },
+          "end": {
+            "value": 1396,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Integrin alpha-PS2 light chain",
+        "featureId": "PRO_0000016325"
+      },
+      {
+        "type": "Topological domain",
+        "location": {
+          "start": {
+            "value": 32,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1341,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Extracellular",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Transmembrane",
+        "location": {
+          "start": {
+            "value": 1342,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1366,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Helical",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Topological domain",
+        "location": {
+          "start": {
+            "value": 1367,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1396,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Cytoplasmic",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 36,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 106,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 1",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 117,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 174,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 2",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 186,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 239,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 3",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 266,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 317,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 4",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 318,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 383,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 5",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 386,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 445,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 6",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 452,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 514,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FG-GAP 7",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00803"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 960,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1107,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 1159,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1246,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 1377,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1396,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 963,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 979,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Basic and acidic residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 997,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1006,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Polar residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1007,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1021,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Low complexity",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1060,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1071,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Low complexity",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1082,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1099,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Polar residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1162,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1182,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Low complexity",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1217,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1226,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Low complexity",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 69,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 69,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 209,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 209,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 322,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 322,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 584,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 584,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 598,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 598,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 741,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 741,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 783,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 783,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 833,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 833,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 959,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 959,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1005,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1005,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1299,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1299,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Glycosylation",
+        "location": {
+          "start": {
+            "value": 1307,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1307,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-linked (GlcNAc...) asparagine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ],
+        "featureId": ""
+      },
+      {
+        "type": "Alternative sequence",
+        "location": {
+          "start": {
+            "value": 225,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 249,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in isoform PS2M8",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000303",
+            "source": "PubMed",
+            "id": "12537569"
+          }
+        ],
+        "featureId": "VSP_002739",
+        "alternativeSequence": {}
+      },
+      {
+        "type": "Sequence conflict",
+        "location": {
+          "start": {
+            "value": 29,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 29,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in Ref. 1; AAC12788",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "A",
+          "alternativeSequences": [
+            "G"
+          ]
+        }
+      },
+      {
+        "type": "Sequence conflict",
+        "location": {
+          "start": {
+            "value": 968,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 976,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in Ref. 1; AAC12788",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "SPKQVEQRR",
+          "alternativeSequences": [
+            "RSQASGATA"
+          ]
+        }
+      },
+      {
+        "type": "Sequence conflict",
+        "location": {
+          "start": {
+            "value": 1063,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1064,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in Ref. 1",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "alternativeSequence": {}
+      },
+      {
+        "type": "Sequence conflict",
+        "location": {
+          "start": {
+            "value": 1235,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1235,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in Ref. 1; AAC12788",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "N",
+          "alternativeSequences": [
+            "D"
+          ]
+        }
+      },
+      {
+        "type": "Sequence conflict",
+        "location": {
+          "start": {
+            "value": 1242,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1242,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in Ref. 1; AAC12788",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "E",
+          "alternativeSequences": [
+            "K"
+          ]
+        }
+      },
+      {
+        "type": "Sequence conflict",
+        "location": {
+          "start": {
+            "value": 1245,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1245,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in Ref. 1; AAC12788",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "L",
+          "alternativeSequences": [
+            "Q"
+          ]
+        }
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0025",
+        "category": "Coding sequence diversity",
+        "name": "Alternative splicing"
+      },
+      {
+        "id": "KW-0130",
+        "category": "Biological process",
+        "name": "Cell adhesion"
+      },
+      {
+        "id": "KW-1003",
+        "category": "Cellular component",
+        "name": "Cell membrane"
+      },
+      {
+        "id": "KW-1015",
+        "category": "PTM",
+        "name": "Disulfide bond"
+      },
+      {
+        "id": "KW-0325",
+        "category": "PTM",
+        "name": "Glycoprotein"
+      },
+      {
+        "id": "KW-0401",
+        "category": "Molecular function",
+        "name": "Integrin"
+      },
+      {
+        "id": "KW-0472",
+        "category": "Cellular component",
+        "name": "Membrane"
+      },
+      {
+        "id": "KW-0552",
+        "category": "Biological process",
+        "name": "Olfaction"
+      },
+      {
+        "id": "KW-0675",
+        "category": "Molecular function",
+        "name": "Receptor"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "id": "KW-0677",
+        "category": "Domain",
+        "name": "Repeat"
+      },
+      {
+        "id": "KW-0716",
+        "category": "Biological process",
+        "name": "Sensory transduction"
+      },
+      {
+        "id": "KW-0732",
+        "category": "Domain",
+        "name": "Signal"
+      },
+      {
+        "id": "KW-0812",
+        "category": "Domain",
+        "name": "Transmembrane"
+      },
+      {
+        "id": "KW-1133",
+        "category": "Domain",
+        "name": "Transmembrane helix"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "2961459",
+          "citationType": "journal article",
+          "authors": [
+            "Bogaert T.",
+            "Brown N.H.",
+            "Wilcox M."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "2961459"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/0092-8674(87)90580-0"
+            }
+          ],
+          "title": "The Drosophila PS2 antigen is an invertebrate integrin that, like the fibronectin receptor, becomes localized to muscle attachments.",
+          "publicationDate": "1987",
+          "journal": "Cell",
+          "firstPage": "929",
+          "lastPage": "940",
+          "volume": "51"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [MRNA] (ISOFORM PS2C)",
+          "IDENTIFICATION BY MASS SPECTROMETRY",
+          "TISSUE SPECIFICITY",
+          "DEVELOPMENTAL STAGE"
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "10731132",
+          "citationType": "journal article",
+          "authors": [
+            "Adams M.D.",
+            "Celniker S.E.",
+            "Holt R.A.",
+            "Evans C.A.",
+            "Gocayne J.D.",
+            "Amanatides P.G.",
+            "Scherer S.E.",
+            "Li P.W.",
+            "Hoskins R.A.",
+            "Galle R.F.",
+            "George R.A.",
+            "Lewis S.E.",
+            "Richards S.",
+            "Ashburner M.",
+            "Henderson S.N.",
+            "Sutton G.G.",
+            "Wortman J.R.",
+            "Yandell M.D.",
+            "Zhang Q.",
+            "Chen L.X.",
+            "Brandon R.C.",
+            "Rogers Y.-H.C.",
+            "Blazej R.G.",
+            "Champe M.",
+            "Pfeiffer B.D.",
+            "Wan K.H.",
+            "Doyle C.",
+            "Baxter E.G.",
+            "Helt G.",
+            "Nelson C.R.",
+            "Miklos G.L.G.",
+            "Abril J.F.",
+            "Agbayani A.",
+            "An H.-J.",
+            "Andrews-Pfannkoch C.",
+            "Baldwin D.",
+            "Ballew R.M.",
+            "Basu A.",
+            "Baxendale J.",
+            "Bayraktaroglu L.",
+            "Beasley E.M.",
+            "Beeson K.Y.",
+            "Benos P.V.",
+            "Berman B.P.",
+            "Bhandari D.",
+            "Bolshakov S.",
+            "Borkova D.",
+            "Botchan M.R.",
+            "Bouck J.",
+            "Brokstein P.",
+            "Brottier P.",
+            "Burtis K.C.",
+            "Busam D.A.",
+            "Butler H.",
+            "Cadieu E.",
+            "Center A.",
+            "Chandra I.",
+            "Cherry J.M.",
+            "Cawley S.",
+            "Dahlke C.",
+            "Davenport L.B.",
+            "Davies P.",
+            "de Pablos B.",
+            "Delcher A.",
+            "Deng Z.",
+            "Mays A.D.",
+            "Dew I.",
+            "Dietz S.M.",
+            "Dodson K.",
+            "Doup L.E.",
+            "Downes M.",
+            "Dugan-Rocha S.",
+            "Dunkov B.C.",
+            "Dunn P.",
+            "Durbin K.J.",
+            "Evangelista C.C.",
+            "Ferraz C.",
+            "Ferriera S.",
+            "Fleischmann W.",
+            "Fosler C.",
+            "Gabrielian A.E.",
+            "Garg N.S.",
+            "Gelbart W.M.",
+            "Glasser K.",
+            "Glodek A.",
+            "Gong F.",
+            "Gorrell J.H.",
+            "Gu Z.",
+            "Guan P.",
+            "Harris M.",
+            "Harris N.L.",
+            "Harvey D.A.",
+            "Heiman T.J.",
+            "Hernandez J.R.",
+            "Houck J.",
+            "Hostin D.",
+            "Houston K.A.",
+            "Howland T.J.",
+            "Wei M.-H.",
+            "Ibegwam C.",
+            "Jalali M.",
+            "Kalush F.",
+            "Karpen G.H.",
+            "Ke Z.",
+            "Kennison J.A.",
+            "Ketchum K.A.",
+            "Kimmel B.E.",
+            "Kodira C.D.",
+            "Kraft C.L.",
+            "Kravitz S.",
+            "Kulp D.",
+            "Lai Z.",
+            "Lasko P.",
+            "Lei Y.",
+            "Levitsky A.A.",
+            "Li J.H.",
+            "Li Z.",
+            "Liang Y.",
+            "Lin X.",
+            "Liu X.",
+            "Mattei B.",
+            "McIntosh T.C.",
+            "McLeod M.P.",
+            "McPherson D.",
+            "Merkulov G.",
+            "Milshina N.V.",
+            "Mobarry C.",
+            "Morris J.",
+            "Moshrefi A.",
+            "Mount S.M.",
+            "Moy M.",
+            "Murphy B.",
+            "Murphy L.",
+            "Muzny D.M.",
+            "Nelson D.L.",
+            "Nelson D.R.",
+            "Nelson K.A.",
+            "Nixon K.",
+            "Nusskern D.R.",
+            "Pacleb J.M.",
+            "Palazzolo M.",
+            "Pittman G.S.",
+            "Pan S.",
+            "Pollard J.",
+            "Puri V.",
+            "Reese M.G.",
+            "Reinert K.",
+            "Remington K.",
+            "Saunders R.D.C.",
+            "Scheeler F.",
+            "Shen H.",
+            "Shue B.C.",
+            "Siden-Kiamos I.",
+            "Simpson M.",
+            "Skupski M.P.",
+            "Smith T.J.",
+            "Spier E.",
+            "Spradling A.C.",
+            "Stapleton M.",
+            "Strong R.",
+            "Sun E.",
+            "Svirskas R.",
+            "Tector C.",
+            "Turner R.",
+            "Venter E.",
+            "Wang A.H.",
+            "Wang X.",
+            "Wang Z.-Y.",
+            "Wassarman D.A.",
+            "Weinstock G.M.",
+            "Weissenbach J.",
+            "Williams S.M.",
+            "Woodage T.",
+            "Worley K.C.",
+            "Wu D.",
+            "Yang S.",
+            "Yao Q.A.",
+            "Ye J.",
+            "Yeh R.-F.",
+            "Zaveri J.S.",
+            "Zhan M.",
+            "Zhang G.",
+            "Zhao Q.",
+            "Zheng L.",
+            "Zheng X.H.",
+            "Zhong F.N.",
+            "Zhong W.",
+            "Zhou X.",
+            "Zhu S.C.",
+            "Zhu X.",
+            "Smith H.O.",
+            "Gibbs R.A.",
+            "Myers E.W.",
+            "Rubin G.M.",
+            "Venter J.C."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "10731132"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.287.5461.2185"
+            }
+          ],
+          "title": "The genome sequence of Drosophila melanogaster.",
+          "publicationDate": "2000",
+          "journal": "Science",
+          "firstPage": "2185",
+          "lastPage": "2195",
+          "volume": "287"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 3,
+        "citation": {
+          "id": "12537572",
+          "citationType": "journal article",
+          "authors": [
+            "Misra S.",
+            "Crosby M.A.",
+            "Mungall C.J.",
+            "Matthews B.B.",
+            "Campbell K.S.",
+            "Hradecky P.",
+            "Huang Y.",
+            "Kaminker J.S.",
+            "Millburn G.H.",
+            "Prochnik S.E.",
+            "Smith C.D.",
+            "Tupy J.L.",
+            "Whitfield E.J.",
+            "Bayraktaroglu L.",
+            "Berman B.P.",
+            "Bettencourt B.R.",
+            "Celniker S.E.",
+            "de Grey A.D.N.J.",
+            "Drysdale R.A.",
+            "Harris N.L.",
+            "Richter J.",
+            "Russo S.",
+            "Schroeder A.J.",
+            "Shu S.Q.",
+            "Stapleton M.",
+            "Yamada C.",
+            "Ashburner M.",
+            "Gelbart W.M.",
+            "Rubin G.M.",
+            "Lewis S.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12537572"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1186/gb-2002-3-12-research0083"
+            }
+          ],
+          "title": "Annotation of the Drosophila melanogaster euchromatic genome: a systematic review.",
+          "publicationDate": "2002",
+          "journal": "Genome Biol.",
+          "firstPage": "RESEARCH0083.1",
+          "lastPage": "RESEARCH0083.22",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "GENOME REANNOTATION"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 4,
+        "citation": {
+          "id": "12537569",
+          "citationType": "journal article",
+          "authors": [
+            "Stapleton M.",
+            "Carlson J.W.",
+            "Brokstein P.",
+            "Yu C.",
+            "Champe M.",
+            "George R.A.",
+            "Guarin H.",
+            "Kronmiller B.",
+            "Pacleb J.M.",
+            "Park S.",
+            "Wan K.H.",
+            "Rubin G.M.",
+            "Celniker S.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12537569"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1186/gb-2002-3-12-research0080"
+            }
+          ],
+          "title": "A Drosophila full-length cDNA resource.",
+          "publicationDate": "2002",
+          "journal": "Genome Biol.",
+          "firstPage": "RESEARCH0080.1",
+          "lastPage": "RESEARCH0080.8",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE MRNA] OF 213-757 (ISOFORM PS2M8)"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          },
+          {
+            "value": "Embryo",
+            "type": "TISSUE"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 5,
+        "citation": {
+          "id": "2507168",
+          "citationType": "journal article",
+          "authors": [
+            "Brown N.H.",
+            "King D.L.",
+            "Wilcox M.",
+            "Kafatos F.C."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "2507168"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/0092-8674(89)90880-5"
+            }
+          ],
+          "title": "Developmentally regulated alternative splicing of Drosophila integrin PS2 alpha transcripts.",
+          "publicationDate": "1989",
+          "journal": "Cell",
+          "firstPage": "185",
+          "lastPage": "195",
+          "volume": "59"
+        },
+        "referencePositions": [
+          "ALTERNATIVE SPLICING",
+          "DEVELOPMENTAL STAGE"
+        ]
+      },
+      {
+        "referenceNumber": 6,
+        "citation": {
+          "id": "8240969",
+          "citationType": "journal article",
+          "authors": [
+            "Wehrli M.",
+            "Diantonio A.",
+            "Fearnley I.M.",
+            "Smith R.J.",
+            "Wilcox M."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "8240969"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/0925-4773(93)90020-x"
+            }
+          ],
+          "title": "Cloning and characterization of alpha PS1, a novel Drosophila melanogaster integrin.",
+          "publicationDate": "1993",
+          "journal": "Mech. Dev.",
+          "firstPage": "21",
+          "lastPage": "36",
+          "volume": "43"
+        },
+        "referencePositions": [
+          "TISSUE SPECIFICITY",
+          "DEVELOPMENTAL STAGE"
+        ],
+        "referenceComments": [
+          {
+            "value": "Oregon-R",
+            "type": "STRAIN"
+          },
+          {
+            "value": "Embryo",
+            "type": "TISSUE"
+          },
+          {
+            "value": "Larva",
+            "type": "TISSUE"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 7,
+        "citation": {
+          "id": "7924982",
+          "citationType": "journal article",
+          "authors": [
+            "Fogerty F.J.",
+            "Fessler L.I.",
+            "Bunch T.A.",
+            "Yaron Y.",
+            "Parker C.G.",
+            "Nelson R.E.",
+            "Brower D.L.",
+            "Gullberg D.",
+            "Fessler J.H."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "7924982"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1242/dev.120.7.1747"
+            }
+          ],
+          "title": "Tiggrin, a novel Drosophila extracellular matrix protein that functions as a ligand for Drosophila alpha PS2 beta PS integrins.",
+          "publicationDate": "1994",
+          "journal": "Development",
+          "firstPage": "1747",
+          "lastPage": "1758",
+          "volume": "120"
+        },
+        "referencePositions": [
+          "FUNCTION"
+        ]
+      },
+      {
+        "referenceNumber": 8,
+        "citation": {
+          "id": "7972082",
+          "citationType": "journal article",
+          "authors": [
+            "Gotwals P.J.",
+            "Fessler L.I.",
+            "Wehrli M.",
+            "Hynes R.O."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "7972082"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1073/pnas.91.24.11447"
+            }
+          ],
+          "title": "Drosophila PS1 integrin is a laminin receptor and differs in ligand specificity from PS2.",
+          "publicationDate": "1994",
+          "journal": "Proc. Natl. Acad. Sci. U.S.A.",
+          "firstPage": "11447",
+          "lastPage": "11451",
+          "volume": "91"
+        },
+        "referencePositions": [
+          "FUNCTION"
+        ]
+      },
+      {
+        "referenceNumber": 9,
+        "citation": {
+          "id": "9660786",
+          "citationType": "journal article",
+          "authors": [
+            "Graner M.W.",
+            "Bunch T.A.",
+            "Baumgartner S.",
+            "Kerschen A.",
+            "Brower D.L."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9660786"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1074/jbc.273.29.18235"
+            }
+          ],
+          "title": "Splice variants of the Drosophila PS2 integrins differentially interact with RGD-containing fragments of the extracellular proteins tiggrin, ten-m, and D-laminin 2.",
+          "publicationDate": "1998",
+          "journal": "J. Biol. Chem.",
+          "firstPage": "18235",
+          "lastPage": "18241",
+          "volume": "273"
+        },
+        "referencePositions": [
+          "FUNCTION"
+        ]
+      },
+      {
+        "referenceNumber": 10,
+        "citation": {
+          "id": "10821184",
+          "citationType": "journal article",
+          "authors": [
+            "Ayyub C.",
+            "Rodrigues V.",
+            "Hasan G.",
+            "Siddiqi O."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "10821184"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1007/s004380051194"
+            }
+          ],
+          "title": "Genetic analysis of olfC demonstrates a role for the position-specific integrins in the olfactory system of Drosophila melanogaster.",
+          "publicationDate": "2000",
+          "journal": "Mol. Gen. Genet.",
+          "firstPage": "498",
+          "lastPage": "504",
+          "volume": "263"
+        },
+        "referencePositions": [
+          "FUNCTION"
+        ]
+      },
+      {
+        "referenceNumber": 11,
+        "citation": {
+          "id": "15469969",
+          "citationType": "journal article",
+          "authors": [
+            "Devenport D.",
+            "Brown N.H."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "15469969"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1242/dev.01427"
+            }
+          ],
+          "title": "Morphogenesis in the absence of integrins: mutation of both Drosophila beta subunits prevents midgut migration.",
+          "publicationDate": "2004",
+          "journal": "Development",
+          "firstPage": "5405",
+          "lastPage": "5415",
+          "volume": "131"
+        },
+        "referencePositions": [
+          "TISSUE SPECIFICITY"
+        ]
+      },
+      {
+        "referenceNumber": 12,
+        "citation": {
+          "id": "19035354",
+          "citationType": "journal article",
+          "authors": [
+            "Dinkins M.B.",
+            "Fratto V.M.",
+            "Lemosy E.K."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "19035354"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1002/dvdy.21802"
+            }
+          ],
+          "title": "Integrin alpha chains exhibit distinct temporal and spatial localization patterns in epithelial cells of the Drosophila ovary.",
+          "publicationDate": "2008",
+          "journal": "Dev. Dyn.",
+          "firstPage": "3927",
+          "lastPage": "3939",
+          "volume": "237"
+        },
+        "referencePositions": [
+          "SUBCELLULAR LOCATION",
+          "TISSUE SPECIFICITY"
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "M19059",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAC12788.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014298",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAF48661.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014298",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAN09423.2"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014298",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "ACZ95312.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014298",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "ACZ95313.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AY118840",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAM50700.1"
+          },
+          {
+            "key": "Status",
+            "value": "ALT_SEQ"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "PIR",
+        "id": "A29637",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "A29637"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001162777.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001169306.2"
+          }
+        ],
+        "isoformId": "P12080-1"
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001162778.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001169307.1"
+          }
+        ],
+        "isoformId": "P12080-1"
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_523378.2",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_078654.2"
+          }
+        ],
+        "isoformId": "P12080-1"
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_728021.2",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_167544.2"
+          }
+        ],
+        "isoformId": "P12080-2"
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID",
+        "id": "58994",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "29"
+          }
+        ]
+      },
+      {
+        "database": "DIP",
+        "id": "DIP-23111N",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "334"
+          }
+        ]
+      },
+      {
+        "database": "IntAct",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "7227.FBpp0290568",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "GlyCosmos",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "glycosylation",
+            "value": "12 sites, No reported glycans"
+          }
+        ]
+      },
+      {
+        "database": "GlyGen",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "glycosylation",
+            "value": "20 sites, 1 O-linked glycan (6 sites)"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "7227-FBpp0290568",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0074357",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0074131"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0001250"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0301353",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0290567"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0001250"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0301354",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0290568"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0001250"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "32661",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "dme:Dmel_CG9623",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "UCSC",
+        "id": "CG9623-RA",
+        "properties": [
+          {
+            "key": "OrganismName",
+            "value": "d. melanogaster"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "FB:FBgn0001250",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "32661",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FlyBase",
+        "id": "FBgn0001250",
+        "properties": [
+          {
+            "key": "GeneName",
+            "value": "if"
+          }
+        ]
+      },
+      {
+        "database": "VEuPathDB",
+        "id": "VectorBase:FBgn0001250",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG3637",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_004111_4_0_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "QVPCMLL",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "5317514at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-114608",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Platelet degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-1236973",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Cross-presentation of particulate exogenous antigens (phagosomes)"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-2129379",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Molecules associated with elastic fibres"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-216083",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Integrin cell surface interactions"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-2173789",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "TGF-beta receptor signaling activates SMADs"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-3000170",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Syndecan interactions"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-354192",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Integrin signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-445144",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Signal transduction by L1"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-6798695",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Neutrophil degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-9860927",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Turbulent (oscillatory, disturbed) flow shear stress activates signaling by PIEZO1 and integrins in endothelial cells"
+          }
+        ]
+      },
+      {
+        "database": "SignaLink",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID-ORCS",
+        "id": "32661",
+        "properties": [
+          {
+            "key": "hits",
+            "value": "0 hits in 3 CRISPR screens"
+          }
+        ]
+      },
+      {
+        "database": "GenomeRNAi",
+        "id": "32661",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:P12080",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000000803",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome X"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "FBgn0001250",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in indirect flight muscle cell (Drosophila) in body wall and 141 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "ExpressionAtlas",
+        "id": "P12080",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "baseline and differential"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0016324",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:apical plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:UniProtKB-SubCell"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0009925",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:basal plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "8898242"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0009986",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell surface"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005925",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:focal adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "19903692"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0008305",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:integrin complex"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "7972082"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0016328",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:lateral plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:UniProtKB-SubCell"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005886",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "16569666"
+          },
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "7972082"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0042383",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:sarcolemma"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "11784030"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0050840",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:extracellular matrix binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "7972082"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0046982",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:protein heterodimerization activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IPI:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000353",
+            "source": "PubMed",
+            "id": "7972082"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0038023",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:signaling receptor activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007475",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:apposition of dorsal and ventral imaginal disc-derived wing surfaces"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "NAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000303",
+            "source": "PubMed",
+            "id": "14519396"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007411",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:axon guidance"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "12040052"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007414",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:axonal defasciculation"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "17537798"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007298",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:border follicle cell migration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22827336"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0033627",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell adhesion mediated by integrin"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "7924982"
+          },
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "7972082"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0016477",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell migration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "TAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "10936444"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0098609",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell-cell adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0021551",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:central nervous system morphogenesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "24859129"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0035099",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:hemocyte migration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "20495554"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007157",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:heterophilic cell-cell adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "TAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "10908592"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007476",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:imaginal disc-derived wing morphogenesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "8898242"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007229",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:integrin-mediated signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0035160",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:maintenance of epithelial integrity, open tracheal system"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "16720877"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007494",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:midgut development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "TAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "10936444"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030239",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:myofibril assembly"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "11784030"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0051492",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:regulation of stress fiber assembly"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "19903692"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007431",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:salivary gland development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "TAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "12742168"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007435",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:salivary gland morphogenesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "19253394"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0045214",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:sarcomere organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "19879257"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0160175",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:somatic muscle attachment to chitin-based cuticle"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "11784030"
+          },
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "17618618"
+          },
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "24046451"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0034446",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:substrate adhesion-dependent cell spreading"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "7924982"
+          },
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "7972082"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007419",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:ventral cord development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "24859129"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.130.10.130:FF:000023",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "integrin alpha-PS2 isoform X1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.5.930:FF:000009",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "integrin alpha-PS2 isoform X2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.5.930",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Bicelle-embedded integrin alpha(iib) transmembrane segment"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.130.10.130",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin alpha, N-terminal"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.40.1460",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin domains. Chain A, domain 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.40.1510",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ntegrin, alpha v. Chain A, domain 3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.40.1530",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "ntegrin, alpha v. Chain A, domain 4"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR013517",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FG-GAP"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR013519",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Int_alpha_beta-p"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000413",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR018184",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_C_CS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR013649",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_Ig-like_1"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR048285",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_Ig-like_2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR048286",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_Ig-like_3"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR028994",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha_N"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR032695",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR23220",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRIN ALPHA"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR23220:SF133",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRIN ALPHA-PS2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF01839",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FG-GAP"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF08441",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_A_Ig_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF20805",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_A_Ig_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF20806",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_A_Ig_3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00357",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin_alpha"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR01185",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRINA"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00191",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Int_alpha"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF69318",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin alpha N-terminal domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF69179",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Integrin domains"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS51470",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FG_GAP"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "7"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00242",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "INTEGRIN_ALPHA"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MSGDSIHRRRMALHCPITSLILLLIAMSAHGYNIDLPSYVRFRQSSNSMFGFSIAMHKGRSGFYGNQNNVSLIVGAPKFDTSRYQQGVTEAGGVFKCSLNDDDCKLVPFDSKGNNRNVDKEVVDRKSYQWLGATVATGRDSDLVVACAPRYVFHTMTPSRAFRIDPVGTCFTSHNFEEFYEVSPCRTNNWGYHRQGSCQAGFSAAINGNGSRLFIGAPGSWYWQGQTYSIPPDAKFPFKPPLYQPFGTGGMASSHDVTRPENQVFSTSESASVNDDSYLGYSMVTGDFDGDRSEDVAIGMPRGGNLVGRIVVNRWNMANIFNITGRQIGEYFGYSLATSDVDGDGLDDLLIGAPMYTDPDNVEGKYDVGRVYILLQGGPTEEKRWTTEHIRDGYHSKGRFGLALTTLGDVNGDGYGDFAVGAPYDGPEGRGVVYIFHGSPMGPLAKPSQIIKSEQLVEGAPYPRTFGFALSGGLDMDGNTYPDLAVGAYSSDQVFIFKSRPVAAVNAETSFASNSKLISLDDRSCQLVRDHKKVPCMLLTTCWSYTGRYLPEQLDFDVSWLLDAKKLLNPRMFFLRDEGKNIRNQTIRLNYGQKYCLNETVYLLDKVQDKLTPLEVEARYNLRSSRPLDPMVRHRRSILEPVIDQNREIVLRDAINIQKNCGPDNICEPDLKLKVSTVDKYLFGSPEPLVIEVFISNTNEDAFEAAFYMVTPPDLQFRKLQQLGEKKDTPITCSPPTPENNHTLKCDIGNPLESGKIAHFKISLVPEEKYGSSSSYDFYWEANSTNLEKPGSEYDNKIRQSVGIWVDTDLDIKGTSLPDYQLYKADDYKELENATKEDDIGPQVVHIYEIRNNRPSIIEEAEVFIHLPYETIVGDPLMYLLNQPETGGKIQCDDVAFNEYNLLLDEKLVKKSYLQAQGAIWNSAQVSGQSSSSSSSGGASVHIEKARGEGFVRGVLVSNSTDAGDKLSPKQVEQRRQEDTLEALGDASFVHRDRASQAVQEPQVNQTSFTTYSTSSSSSGSGAPSAQLRGHSTQGHIQMAGPVQHTSSSSSSNYRSWPAQQQQQHQQLLLAGSGGSGLGSPVTFNDKSQFGGRNNNFHTGTLDLGTLNRGNVDNELYRSQGQYQNPSQSLGQSQGQFQANANQGHYQGQNQAQFQARNPGFQGQTSYQGQTQYSGQPGGYQTHHVTYSSGSKPYYGRENEDFYDEDNLQQATPGHWSSSSSSSSSSGTRRLRRSNDKDGATEKPLQIDLNSPCQSARCKSIRCVVTNLGTEDGDAAFVAIRARMVAKTMEKLASNVPLNVSTLAVANVTLLPFIGAPKDAIVKTHEIFYKAEPEPLQVPDVVPLWVVVLAACAGALIFLLLVWLLYKCGFFNRNRPTDHSQERQPLRNGYHGDEHL",
+      "length": 1396,
+      "molWeight": 154322,
+      "crc64": "2384B07DDBA28372",
+      "md5": "AAABBF0BE99BBB98233B4061351F45F5"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "SUBUNIT": 1,
+        "SUBCELLULAR LOCATION": 1,
+        "ALTERNATIVE PRODUCTS": 2,
+        "TISSUE SPECIFICITY": 1,
+        "DEVELOPMENTAL STAGE": 1,
+        "PTM": 1,
+        "SIMILARITY": 1,
+        "SEQUENCE CAUTION": 2
+      },
+      "countByFeatureType": {
+        "Signal": 1,
+        "Chain": 3,
+        "Topological domain": 2,
+        "Transmembrane": 1,
+        "Repeat": 7,
+        "Region": 3,
+        "Compositional bias": 7,
+        "Glycosylation": 12,
+        "Alternative sequence": 1,
+        "Sequence conflict": 6
+      },
+      "uniParcId": "UPI0000124B21"
+    }
+  }
+}

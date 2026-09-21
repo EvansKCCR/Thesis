@@ -1,0 +1,1706 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/Q9VZI3.json",
+  "retrieved_at": "2026-09-18T09:23:59.197161+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "Q9VZI3",
+    "secondaryAccessions": [
+      "A4V1G3",
+      "Q95SD2"
+    ],
+    "uniProtkbId": "UN112_DROME",
+    "entryAudit": {
+      "firstPublicDate": "2004-01-16",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "2000-05-01",
+      "entryVersion": 155,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 3.0,
+    "organism": {
+      "scientificName": "Drosophila melanogaster",
+      "commonName": "Fruit fly",
+      "taxonId": 7227,
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Arthropoda",
+        "Altocrustacea",
+        "Allotriocarida",
+        "Hexapoda",
+        "Insecta",
+        "Pterygota",
+        "Neoptera",
+        "Eumetabola",
+        "Endopterygota",
+        "Aparaglossata",
+        "Panorpida",
+        "Diptera",
+        "Brachycera",
+        "Muscomorpha",
+        "Ephydroidea",
+        "Drosophilidae",
+        "Drosophila",
+        "Sophophora"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "value": "Unc-112-related protein"
+        }
+      },
+      "alternativeNames": [
+        {
+          "fullName": {
+            "value": "Fermitin-1"
+          }
+        }
+      ]
+    },
+    "genes": [
+      {
+        "geneName": {
+          "value": "Fit1"
+        },
+        "orfNames": [
+          {
+            "value": "CG14991"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000250"
+              }
+            ],
+            "value": "Probably involved in cell adhesion"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000305"
+                }
+              ],
+              "value": "Cytoplasm",
+              "id": "SL-0086"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "value": "The FERM domain is not correctly detected by PROSITE or Pfam techniques because it contains the insertion of a PH domain"
+          }
+        ],
+        "commentType": "DOMAIN"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the kindlin family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      },
+      {
+        "commentType": "SEQUENCE CAUTION",
+        "sequenceCautionType": "Erroneous initiation",
+        "sequence": "AAL28401.1",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      }
+    ],
+    "features": [
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 708,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Unc-112-related protein",
+        "featureId": "PRO_0000219459"
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 274,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 602,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FERM"
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 400,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 508,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "PH",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00145"
+          }
+        ]
+      },
+      {
+        "type": "Modified residue",
+        "location": {
+          "start": {
+            "value": 181,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 181,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Phosphoserine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "18327897"
+          }
+        ]
+      },
+      {
+        "type": "Modified residue",
+        "location": {
+          "start": {
+            "value": 184,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 184,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Phosphoserine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "18327897"
+          }
+        ]
+      },
+      {
+        "type": "Modified residue",
+        "location": {
+          "start": {
+            "value": 199,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 199,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Phosphoserine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "18327897"
+          }
+        ]
+      },
+      {
+        "type": "Modified residue",
+        "location": {
+          "start": {
+            "value": 211,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 211,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Phosphothreonine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "18327897"
+          }
+        ]
+      },
+      {
+        "type": "Modified residue",
+        "location": {
+          "start": {
+            "value": 215,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 215,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Phosphoserine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "18327897"
+          }
+        ]
+      },
+      {
+        "type": "Modified residue",
+        "location": {
+          "start": {
+            "value": 234,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 234,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Phosphoserine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "18327897"
+          }
+        ]
+      },
+      {
+        "type": "Sequence conflict",
+        "location": {
+          "start": {
+            "value": 478,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 478,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in Ref. 3; AAL28401",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "I",
+          "alternativeSequences": [
+            "V"
+          ]
+        }
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0130",
+        "category": "Biological process",
+        "name": "Cell adhesion"
+      },
+      {
+        "id": "KW-0963",
+        "category": "Cellular component",
+        "name": "Cytoplasm"
+      },
+      {
+        "id": "KW-0597",
+        "category": "PTM",
+        "name": "Phosphoprotein"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "10731132",
+          "citationType": "journal article",
+          "authors": [
+            "Adams M.D.",
+            "Celniker S.E.",
+            "Holt R.A.",
+            "Evans C.A.",
+            "Gocayne J.D.",
+            "Amanatides P.G.",
+            "Scherer S.E.",
+            "Li P.W.",
+            "Hoskins R.A.",
+            "Galle R.F.",
+            "George R.A.",
+            "Lewis S.E.",
+            "Richards S.",
+            "Ashburner M.",
+            "Henderson S.N.",
+            "Sutton G.G.",
+            "Wortman J.R.",
+            "Yandell M.D.",
+            "Zhang Q.",
+            "Chen L.X.",
+            "Brandon R.C.",
+            "Rogers Y.-H.C.",
+            "Blazej R.G.",
+            "Champe M.",
+            "Pfeiffer B.D.",
+            "Wan K.H.",
+            "Doyle C.",
+            "Baxter E.G.",
+            "Helt G.",
+            "Nelson C.R.",
+            "Miklos G.L.G.",
+            "Abril J.F.",
+            "Agbayani A.",
+            "An H.-J.",
+            "Andrews-Pfannkoch C.",
+            "Baldwin D.",
+            "Ballew R.M.",
+            "Basu A.",
+            "Baxendale J.",
+            "Bayraktaroglu L.",
+            "Beasley E.M.",
+            "Beeson K.Y.",
+            "Benos P.V.",
+            "Berman B.P.",
+            "Bhandari D.",
+            "Bolshakov S.",
+            "Borkova D.",
+            "Botchan M.R.",
+            "Bouck J.",
+            "Brokstein P.",
+            "Brottier P.",
+            "Burtis K.C.",
+            "Busam D.A.",
+            "Butler H.",
+            "Cadieu E.",
+            "Center A.",
+            "Chandra I.",
+            "Cherry J.M.",
+            "Cawley S.",
+            "Dahlke C.",
+            "Davenport L.B.",
+            "Davies P.",
+            "de Pablos B.",
+            "Delcher A.",
+            "Deng Z.",
+            "Mays A.D.",
+            "Dew I.",
+            "Dietz S.M.",
+            "Dodson K.",
+            "Doup L.E.",
+            "Downes M.",
+            "Dugan-Rocha S.",
+            "Dunkov B.C.",
+            "Dunn P.",
+            "Durbin K.J.",
+            "Evangelista C.C.",
+            "Ferraz C.",
+            "Ferriera S.",
+            "Fleischmann W.",
+            "Fosler C.",
+            "Gabrielian A.E.",
+            "Garg N.S.",
+            "Gelbart W.M.",
+            "Glasser K.",
+            "Glodek A.",
+            "Gong F.",
+            "Gorrell J.H.",
+            "Gu Z.",
+            "Guan P.",
+            "Harris M.",
+            "Harris N.L.",
+            "Harvey D.A.",
+            "Heiman T.J.",
+            "Hernandez J.R.",
+            "Houck J.",
+            "Hostin D.",
+            "Houston K.A.",
+            "Howland T.J.",
+            "Wei M.-H.",
+            "Ibegwam C.",
+            "Jalali M.",
+            "Kalush F.",
+            "Karpen G.H.",
+            "Ke Z.",
+            "Kennison J.A.",
+            "Ketchum K.A.",
+            "Kimmel B.E.",
+            "Kodira C.D.",
+            "Kraft C.L.",
+            "Kravitz S.",
+            "Kulp D.",
+            "Lai Z.",
+            "Lasko P.",
+            "Lei Y.",
+            "Levitsky A.A.",
+            "Li J.H.",
+            "Li Z.",
+            "Liang Y.",
+            "Lin X.",
+            "Liu X.",
+            "Mattei B.",
+            "McIntosh T.C.",
+            "McLeod M.P.",
+            "McPherson D.",
+            "Merkulov G.",
+            "Milshina N.V.",
+            "Mobarry C.",
+            "Morris J.",
+            "Moshrefi A.",
+            "Mount S.M.",
+            "Moy M.",
+            "Murphy B.",
+            "Murphy L.",
+            "Muzny D.M.",
+            "Nelson D.L.",
+            "Nelson D.R.",
+            "Nelson K.A.",
+            "Nixon K.",
+            "Nusskern D.R.",
+            "Pacleb J.M.",
+            "Palazzolo M.",
+            "Pittman G.S.",
+            "Pan S.",
+            "Pollard J.",
+            "Puri V.",
+            "Reese M.G.",
+            "Reinert K.",
+            "Remington K.",
+            "Saunders R.D.C.",
+            "Scheeler F.",
+            "Shen H.",
+            "Shue B.C.",
+            "Siden-Kiamos I.",
+            "Simpson M.",
+            "Skupski M.P.",
+            "Smith T.J.",
+            "Spier E.",
+            "Spradling A.C.",
+            "Stapleton M.",
+            "Strong R.",
+            "Sun E.",
+            "Svirskas R.",
+            "Tector C.",
+            "Turner R.",
+            "Venter E.",
+            "Wang A.H.",
+            "Wang X.",
+            "Wang Z.-Y.",
+            "Wassarman D.A.",
+            "Weinstock G.M.",
+            "Weissenbach J.",
+            "Williams S.M.",
+            "Woodage T.",
+            "Worley K.C.",
+            "Wu D.",
+            "Yang S.",
+            "Yao Q.A.",
+            "Ye J.",
+            "Yeh R.-F.",
+            "Zaveri J.S.",
+            "Zhan M.",
+            "Zhang G.",
+            "Zhao Q.",
+            "Zheng L.",
+            "Zheng X.H.",
+            "Zhong F.N.",
+            "Zhong W.",
+            "Zhou X.",
+            "Zhu S.C.",
+            "Zhu X.",
+            "Smith H.O.",
+            "Gibbs R.A.",
+            "Myers E.W.",
+            "Rubin G.M.",
+            "Venter J.C."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "10731132"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.287.5461.2185"
+            }
+          ],
+          "title": "The genome sequence of Drosophila melanogaster.",
+          "publicationDate": "2000",
+          "journal": "Science",
+          "firstPage": "2185",
+          "lastPage": "2195",
+          "volume": "287"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "12537572",
+          "citationType": "journal article",
+          "authors": [
+            "Misra S.",
+            "Crosby M.A.",
+            "Mungall C.J.",
+            "Matthews B.B.",
+            "Campbell K.S.",
+            "Hradecky P.",
+            "Huang Y.",
+            "Kaminker J.S.",
+            "Millburn G.H.",
+            "Prochnik S.E.",
+            "Smith C.D.",
+            "Tupy J.L.",
+            "Whitfield E.J.",
+            "Bayraktaroglu L.",
+            "Berman B.P.",
+            "Bettencourt B.R.",
+            "Celniker S.E.",
+            "de Grey A.D.N.J.",
+            "Drysdale R.A.",
+            "Harris N.L.",
+            "Richter J.",
+            "Russo S.",
+            "Schroeder A.J.",
+            "Shu S.Q.",
+            "Stapleton M.",
+            "Yamada C.",
+            "Ashburner M.",
+            "Gelbart W.M.",
+            "Rubin G.M.",
+            "Lewis S.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12537572"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1186/gb-2002-3-12-research0083"
+            }
+          ],
+          "title": "Annotation of the Drosophila melanogaster euchromatic genome: a systematic review.",
+          "publicationDate": "2002",
+          "journal": "Genome Biol.",
+          "firstPage": "RESEARCH0083.1",
+          "lastPage": "RESEARCH0083.22",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "GENOME REANNOTATION"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 3,
+        "citation": {
+          "id": "12537569",
+          "citationType": "journal article",
+          "authors": [
+            "Stapleton M.",
+            "Carlson J.W.",
+            "Brokstein P.",
+            "Yu C.",
+            "Champe M.",
+            "George R.A.",
+            "Guarin H.",
+            "Kronmiller B.",
+            "Pacleb J.M.",
+            "Park S.",
+            "Wan K.H.",
+            "Rubin G.M.",
+            "Celniker S.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12537569"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1186/gb-2002-3-12-research0080"
+            }
+          ],
+          "title": "A Drosophila full-length cDNA resource.",
+          "publicationDate": "2002",
+          "journal": "Genome Biol.",
+          "firstPage": "RESEARCH0080.1",
+          "lastPage": "RESEARCH0080.8",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE MRNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          },
+          {
+            "value": "Embryo",
+            "type": "TISSUE"
+          },
+          {
+            "value": "Ovary",
+            "type": "TISSUE"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 4,
+        "citation": {
+          "id": "18327897",
+          "citationType": "journal article",
+          "authors": [
+            "Zhai B.",
+            "Villen J.",
+            "Beausoleil S.A.",
+            "Mintseris J.",
+            "Gygi S.P."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "18327897"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1021/pr700696a"
+            }
+          ],
+          "title": "Phosphoproteome analysis of Drosophila melanogaster embryos.",
+          "publicationDate": "2008",
+          "journal": "J. Proteome Res.",
+          "firstPage": "1675",
+          "lastPage": "1682",
+          "volume": "7"
+        },
+        "referencePositions": [
+          "PHOSPHORYLATION [LARGE SCALE ANALYSIS] AT SER-181; SER-184; SER-199; THR-211; SER-215 AND SER-234",
+          "IDENTIFICATION BY MASS SPECTROMETRY"
+        ],
+        "referenceComments": [
+          {
+            "value": "Embryo",
+            "type": "TISSUE"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "AE014296",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAF47838.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014296",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAG22245.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AY060853",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAL28401.1"
+          },
+          {
+            "key": "Status",
+            "value": "ALT_INIT"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AY118556",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAM49925.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_647858.2",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_139601.4"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_728936.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_168060.3"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "Q9VZI3",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "Q9VZI3",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID",
+        "id": "63968",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "Q9VZI3",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "306"
+          }
+        ]
+      },
+      {
+        "database": "IntAct",
+        "id": "Q9VZI3",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "7227.FBpp0073066",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "iPTMnet",
+        "id": "Q9VZI3",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "7227-FBpp0073066",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "Q9VZI3",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "DNASU",
+        "id": "38488",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0073209",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0073065"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0035498"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0073210",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0073066"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0035498"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "38488",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "dme:Dmel_CG14991",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "FB:FBgn0035498",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "38488",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FlyBase",
+        "id": "FBgn0035498",
+        "properties": [
+          {
+            "key": "GeneName",
+            "value": "Fit1"
+          }
+        ]
+      },
+      {
+        "database": "VEuPathDB",
+        "id": "VectorBase:FBgn0035498",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG3727",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_011611_0_0_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "Q9VZI3",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "PEHGIHY",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "10057618at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "Q9VZI3",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-114608",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Platelet degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-446353",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Cell-extracellular matrix interactions"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-9013149",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RAC1 GTPase cycle"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-9013423",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RAC3 GTPase cycle"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID-ORCS",
+        "id": "38488",
+        "properties": [
+          {
+            "key": "hits",
+            "value": "0 hits in 3 CRISPR screens"
+          }
+        ]
+      },
+      {
+        "database": "GenomeRNAi",
+        "id": "38488",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:Q9VZI3",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000000803",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome 3L"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "FBgn0035498",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in crop (Drosophila) and 186 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030055",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell-substrate junction"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005737",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoplasm"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "ISS:UniProtKB"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0050839",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:cell adhesion molecule binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "ISS:UniProtKB"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005178",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:integrin binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0048738",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cardiac muscle tissue development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "23690969"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007160",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell-matrix adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "ISS:UniProtKB"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0050829",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:defense response to Gram-negative bacterium"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "19046341"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007229",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:integrin-mediated signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd13205",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_C_fermitin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd17095",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_F0_kindlins"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd17096",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_F1_kindlins"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd01237",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_fermitin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.30.29.30:FF:000037",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Fermitin family homolog 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.30.29.30:FF:000502",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Unc-112-related protein"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.80.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "-"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.10.20.90",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Phosphatidylinositol 3-kinase Catalytic Subunit, Chain A, domain 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.30.29.30",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Pleckstrin-homology domain (PH domain)/Phosphotyrosine-binding domain (PTB)"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019749",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Band_41_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR014352",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM/acyl-CoA-bd_prot_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR035963",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019748",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_central"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR037843",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kindlin/fermitin"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR040790",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kindlin_2_N"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR011993",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001849",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR037837",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_Kindlin/fermitin"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR16160",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERMITIN 2-RELATED"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR16160:SF13",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERMITIN 2-RELATED"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00373",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_M"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF18124",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kindlin_2_N"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00169",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00295",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "B41"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00233",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF50729",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH domain-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47031",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Second domain of FERM"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00661",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50003",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH_DOMAIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MIHVGENTWNLRILITDLQVEKTLRVKGDQHIGGVMLNLVDPELPKDWSDHALWWPAKNIWLTRTRSTLDQAGVQSDSFLHFTPMHKTLRVQMPDLRYLDYRVNFSAKTFGAVVSLCKDLDIRYPEELSFCKPLEPEHLKKNFSKLPQRKIPVAEANGIAYVQPALDTNSFVPITGAYNGSNGSLDRSHNGNLLCAPASPYTRRAATAPGTPISSPTGTWKHNSTGYASYDSNSSFGDLQENLAMSPRSPSPDVRARLVRPKSRVEKARLNVGWLDSSLSIMEQGVREYDTLCLRFKYFTFFDLNPKYDQVRINQLYEQAKWSILNEELEPTEEETLMFAALQFQVNHQTDLHPPGIDSGIDTSSQETGGEDDIDSALNELQITLEGPGGGKDQGNITRIPELSDYLKFLKPQRFTLKGYKRYFFTYRDLHLHLYKSQDESRRGAPTISINLKGCEVTPDVNLAQGKFAIRLEVPSEIRNGPNSEVWVRCDNEEQYAKWMAACRLAAKGRSLADSSYDSEVSSIRSLLQMQKPAQGAPLTVNPRSVEPMDYLSPKMMRKLSSKAVQRILEAHANVRQLSLMDAKMKYIQAWQSLPDFGVTLFIIKFDGHKKEELLGVANNRIMRMDLNTGDHIKTWRYNTMKAWNVNWGIKCMMIQLQDENIVFSVQSADCKVVHEFIGGYIFMSMRSKENNQTLNEEMFHKLTGGWS",
+      "length": 708,
+      "molWeight": 80497,
+      "crc64": "6935C0CBE9B43D21",
+      "md5": "5200CF1F2F9A41E801D11357236B55B8"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "SUBCELLULAR LOCATION": 1,
+        "DOMAIN": 1,
+        "SIMILARITY": 1,
+        "SEQUENCE CAUTION": 1
+      },
+      "countByFeatureType": {
+        "Chain": 1,
+        "Domain": 2,
+        "Modified residue": 6,
+        "Sequence conflict": 1
+      },
+      "uniParcId": "UPI000007FC99"
+    }
+  }
+}

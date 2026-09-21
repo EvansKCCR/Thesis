@@ -1,0 +1,97 @@
+Pfam accession,Domain or family,Adhesome role
+PF01839,FG-GAP repeat,Integrin alpha extracellular head
+PF00092,von Willebrand factor type A domain,Integrin ligand recognition
+PF00362,Integrin beta chain VWA domain,Integrin beta receptor architecture
+PF08725,Integrin beta cytoplasmic domain,Adaptor docking at beta tail
+PF00373,FERM central domain,Integrin-tail and membrane-proximal scaffolding
+PF00640,Phosphotyrosine interaction domain (PTB/PID),NPxY motif recognition
+PF08726,Ca2+ insensitive EF hand,Cytoskeletal calcium-insensitive EF-hand module
+PF01608,I/LWEQ domain,Actin linkage
+PF00018,SH3 domain,Proline-rich motif recognition
+PF00017,SH2 domain,Phosphotyrosine recognition
+PF07714,Protein tyrosine and serine/threonine kinase,Adhesion kinase signalling
+PF00069,Protein kinase domain,Kinase signalling
+PF02259,FAT domain,"PIKK FAT domain; generic signalling/competitor context, not FAK focal adhesion targeting"
+PF00412,LIM domain,Adhesion scaffolding and targeting
+PF00307,Calponin homology (CH) domain,Actin binding and cytoskeletal linkage
+PF00435,Spectrin repeat,Cytoskeletal scaffolding
+PF00630,Filamin/ABP280 repeat,Actin-linked mechanosensitive scaffold
+PF01044,Vinculin family,Adhesion reinforcement
+PF02218,Repeat in HS1/Cortactin,Arp2/3-associated actin regulation
+PF00241,Cofilin/tropomyosin-type actin-binding protein,Actin filament turnover
+PF00022,Actin,Cytoskeletal filament
+PF04062,ARP2/3 complex ARPC3 (21 kDa) subunit,Actin nucleation complex
+PF00235,Profilin,Actin monomer regulation
+PF00400,"WD domain, G-beta repeat",Multivalent scaffolding
+PF01344,Kelch motif,Actin-associated scaffolding
+PF00651,BTB/POZ domain,Adaptor assembly
+PF07707,BTB And C-terminal Kelch,Kelch-protein architecture
+PF00568,WH1 domain,Proline-rich ligand recognition
+PF02208,Sorbin homologous domain,Adhesion adaptor targeting
+PF12026,Crk-Associated Substrate C-terminal domain,Mechanosensitive phosphotyrosine scaffold
+PF01146,Caveolin,Caveolar membrane scaffold
+PF00769,Ezrin/radixin/moesin family C terminal,Actin linkage
+PF00169,PH domain,Membrane phosphoinositide binding
+PF00788,Ras association (RalGDS/AF-6) domain,Small-GTPase interaction
+PF08947,BPS (Between PH and SH2),Adaptor signalling
+PF00595,PDZ domain,Scaffold assembly
+PF00536,SAM domain (Sterile alpha motif),Protein interaction
+PF00168,C2 domain,Membrane interaction
+PF00102,Protein-tyrosine phosphatase,Adhesion signal dephosphorylation
+PF01412,Putative GTPase activating protein for Arf,Arf-family GTPase regulation
+PF00620,RhoGAP domain,Rho-family GTPase regulation
+PF00621,RhoGEF domain,Rho-family nucleotide exchange
+PF00616,GTPase-activator protein for Ras-like GTPase,Ras-family GTPase regulation
+PF00617,RasGEF domain,Ras-family nucleotide exchange
+PF00618,RasGEF N-terminal motif,RasGEF regulation
+PF06920,"DHR-2, Lobe A",Rac-family nucleotide exchange
+PF04727,ELMO/CED-12 family,DOCK-ELMO Rac activation
+PF00786,P21-Rho-binding domain,Rho-GTPase effector binding
+PF00071,Ras family,Actin-signalling switch
+PF00025,ADP-ribosylation factor family,Membrane trafficking switch
+PF01477,PLAT/LH2 domain,Lipid-surface and extracellular interaction
+PF00151,Lipase,Extracellular lipid hydrolysis
+PF00130,Phorbol esters/diacylglycerol binding domain (C1 domain),Diacylglycerol or protein interaction
+PF01369,Sec7 domain,Arf-family nucleotide exchange
+PF03114,BAR domain,Membrane curvature and scaffolding
+PF00614,Phospholipase D,Phospholipid signalling
+PF00388,"Phosphatidylinositol-specific phospholipase C, X domain",Phosphoinositide hydrolysis
+PF00387,"Phosphatidylinositol-specific phospholipase C, Y domain",Phosphoinositide hydrolysis
+PF03372,Endonuclease/Exonuclease/phosphatase family,Phosphoinositide turnover
+PF01504,Phosphatidylinositol-4-phosphate 5-Kinase,Phosphoinositide synthesis
+PF00454,Phosphatidylinositol 3- and 4-kinase,Phosphoinositide signalling
+PF00613,"Phosphoinositide 3-kinase family, accessory domain (PIK domain)",PI3K architecture
+PF00792,Phosphoinositide 3-kinase C2,Membrane association
+PF02192,"PI3-kinase family, p85-binding domain",PI3K regulation
+PF10409,C2 domain of PTEN tumour-suppressor protein,Membrane targeting
+PF00023,Ankyrin repeat,Protein interaction scaffold
+PF00036,EF hand domain,Calcium-dependent regulation
+PF00481,Protein phosphatase 2C,Serine/threonine dephosphorylation
+PF00149,Calcineurin-like phosphoesterase,Serine/threonine dephosphorylation
+PF00782,"Dual specificity phosphatase, catalytic domain",Phosphatase signalling
+PF00648,Calpain family cysteine protease,Adhesion protein proteolysis
+PF01067,"Calpain large subunit, domain III",Calpain architecture
+PF00656,Caspase domain,Proteolytic signalling
+PF00413,Matrixin,ECM proteolysis
+PF00045,Hemopexin,Metalloprotease substrate interaction
+PF00097,"Zinc finger, C3HC4 type (RING finger)",E3 ubiquitin ligase activity
+PF00627,UBA/TS-N domain,Ubiquitin recognition
+PF00041,Fibronectin type III domain,Extracellular recognition; generic domain requiring family evidence
+PF01391,Collagen triple helix repeat (20 copies),Collagen-like extracellular matrix
+PF00054,Laminin G domain,Extracellular ligand recognition
+PF02210,Laminin G domain,Extracellular ligand recognition
+PF00052,Laminin B (Domain IV),Extracellular matrix architecture
+PF00053,Laminin EGF domain,Extracellular matrix architecture
+PF00055,Laminin N-terminal (Domain VI),Extracellular matrix architecture
+PF00357,Integrin alpha cytoplasmic region,v3 alpha-integrin / FAK / kindlin architecture calibration
+PF08441,Integrin alpha Ig-like domain 1,v3 alpha-integrin / FAK / kindlin architecture calibration
+PF20805,Integrin alpha Ig-like domain 2,v3 alpha-integrin / FAK / kindlin architecture calibration
+PF20806,Integrin alpha Ig-like domain 3,v3 alpha-integrin / FAK / kindlin architecture calibration
+PF03623,Focal adhesion targeting region,v3 alpha-integrin / FAK / kindlin architecture calibration
+PF18124,Kindlin-2 N-terminal domain,v3 alpha-integrin / FAK / kindlin architecture calibration
+PF18038,FERM N-terminal domain,v3 alpha-integrin / FAK / kindlin architecture calibration
+PF21477,"FAK1/PYK2, FERM domain C-lobe",v3 alpha-integrin / FAK / kindlin architecture calibration
+PF00039,Fibronectin type I domain,ECM architecture context; not diagnostic alone
+PF00040,Fibronectin type II domain,ECM architecture context; not diagnostic alone
+PF01033,Somatomedin B domain,ECM architecture context; not diagnostic alone
+PF12796,Ankyrin repeats (3 copies),Alternative ILK ankyrin model

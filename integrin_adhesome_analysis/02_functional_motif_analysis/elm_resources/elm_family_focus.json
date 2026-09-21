@@ -1,0 +1,57 @@
+{
+  "version": "1.0.0",
+  "scope": "Review priorities, not validated family signatures. All supplied ELM classes are scanned in all families. Empty focus lists do not disable scanning. Partner-binding motifs belong to the ligand, not automatically to the named binder.",
+  "families": {
+    "actin": [],
+    "alpha_actinin": [
+      {"elm_class": "LIG_Vh1_VBS_1", "context": "whole_sequence", "note": "Candidate vinculin-binding helix; domain architecture, helix conformation and accessibility require review."}
+    ],
+    "cofilin": [],
+    "collagen_like": [
+      {"elm_class": "LIG_Integrin_collagen_1", "context": "domain", "regions": ["PF01391"], "note": "Encoded precursor pattern; hydroxylation, triple helix and integrin subtype specificity are not established."}
+    ],
+    "FAK": [
+      {"elm_class": "LIG_SH3_1", "note": "Generic SH3 ligand candidate; not FAK identity or binding evidence."},
+      {"elm_class": "LIG_SH3_2", "note": "Generic SH3 ligand candidate; review position and accessibility."},
+      {"elm_class": "LIG_SH2_SFK_2", "note": "Phosphotyrosine-dependent ligand candidate; phosphorylation and Y397 correspondence cannot be inferred."}
+    ],
+    "fibronectin_like_candidate": [
+      {"elm_class": "LIG_Integrin_RGD_1", "context": "domain", "regions": ["PF00041"], "note": "FNIII-context candidate; neither fibronectin identity nor binding is established."},
+      {"elm_class": "LIG_Integrin_RGDSP_6", "context": "domain", "regions": ["PF00041"], "note": "RGD subtype sequence only; no receptor subtype assignment."},
+      {"elm_class": "LIG_Integrin_isoDGR_2", "note": "NGR precursor only; deamidation to isoDGR is unverified."}
+    ],
+    "filamin": [],
+    "ILK": [],
+    "integrin_alpha": [],
+    "integrin_beta": [
+      {"elm_class": "LIG_PTB_Apo_2", "context": "c_terminal_window", "window": 100, "regions": ["cytoplasmic_tail"], "note": "Generic phosphorylation-independent PTB-ligand class; compatible sequence is not specific talin/kindlin binding proof."},
+      {"elm_class": "LIG_PTB_Phospho_1", "context": "c_terminal_window", "window": 100, "regions": ["cytoplasmic_tail"], "note": "Phosphorylation-dependent PTB-ligand candidate; phosphorylation is not assessed."}
+    ],
+    "kindlin": [],
+    "laminin_like": [],
+    "paxillin_like": [
+      {"elm_class": "LIG_FAT_LD_1", "note": "ELM LD-helix candidate; inspect relationship to C-terminal LIM domains, helix conformation and binding partner."}
+    ],
+    "profilin": [],
+    "PTP_PEST": [
+      {"elm_class": "LIG_SH3_1", "note": "Generic SH3 ligand; does not distinguish PTP-PEST from other phosphatases."},
+      {"elm_class": "LIG_SH3_2", "note": "Generic SH3 ligand; noncatalytic homology still required."}
+    ],
+    "Src": [
+      {"elm_class": "LIG_SH2_SFK_CTail_3", "context": "c_terminal_window", "window": 50, "note": "SFK regulatory-tail candidate; no phosphorylation or inhibitory activity claim."},
+      {"elm_class": "MOD_TYR_CSK", "context": "c_terminal_window", "window": 50, "note": "Candidate Csk target pattern; no transfer of human Y530 numbering."},
+      {"elm_class": "MOD_NMyristoyl", "context": "n_terminal_window", "window": 10, "note": "N-terminal myristoylation-compatible sequence only; modification is unverified and not universal to all SFKs."},
+      {"elm_class": "LIG_SH3_4", "note": "Reference SRC linker-class screen; positions are not transferred from human SRC."}
+    ],
+    "talin": [
+      {"elm_class": "LIG_Vh1_VBS_1", "note": "Candidate vinculin-binding helix; force-dependent exposure and binding require structural/experimental evidence."}
+    ],
+    "vinculin": [
+      {"elm_class": "LIG_EVH1_1", "note": "Candidate EVH1 ligand; proline-rich context/accessibility required, not vinculin identity."}
+    ],
+    "zyxin_like": [
+      {"elm_class": "LIG_EVH1_1", "note": "Candidate Ena/VASP EVH1 ligand; LIM architecture and homologous context remain necessary."},
+      {"elm_class": "LIG_PROFILIN_1", "note": "Exploratory polyproline ligand screen; generic interaction potential, not a zyxin signature."}
+    ]
+  }
+}

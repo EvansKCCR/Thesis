@@ -1,0 +1,3300 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/G5EE56.json",
+  "retrieved_at": "2026-09-18T09:24:29.219332+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "G5EE56",
+    "secondaryAccessions": [
+      "W6RRW6",
+      "W6RTE9",
+      "W6SBD5"
+    ],
+    "uniProtkbId": "SRC1_CAEEL",
+    "entryAudit": {
+      "firstPublicDate": "2015-10-14",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "2011-12-14",
+      "entryVersion": 107,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 5.0,
+    "organism": {
+      "scientificName": "Caenorhabditis elegans",
+      "taxonId": 6239,
+      "evidences": [
+        {
+          "evidenceCode": "ECO:0000312",
+          "source": "Proteomes",
+          "id": "UP000001940"
+        }
+      ],
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Nematoda",
+        "Chromadorea",
+        "Rhabditida",
+        "Rhabditina",
+        "Rhabditomorpha",
+        "Rhabditoidea",
+        "Rhabditidae",
+        "Peloderinae",
+        "Caenorhabditis"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000305"
+            }
+          ],
+          "value": "Tyrosine protein-kinase src-1"
+        },
+        "ecNumbers": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12527374"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "19210548"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "20226672"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "35929733"
+              }
+            ],
+            "value": "2.7.10.2"
+          }
+        ]
+      },
+      "alternativeNames": [
+        {
+          "fullName": {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000312",
+                "source": "WormBase",
+                "id": "Y92H12A.1a"
+              }
+            ],
+            "value": "SRC oncogene related protein 1"
+          }
+        }
+      ]
+    },
+    "genes": [
+      {
+        "geneName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000312",
+              "source": "WormBase",
+              "id": "Y92H12A.1a"
+            }
+          ],
+          "value": "src-1"
+        },
+        "orfNames": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000312",
+                "source": "WormBase",
+                "id": "Y92H12A.1a"
+              }
+            ],
+            "value": "Y92H12A.1"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12110172"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12527374"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16024786"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16251208"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "19210548"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "20226672"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "22293500"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "35929733"
+              }
+            ],
+            "value": "Non-receptor tyrosine-protein kinase which plays a role in endoderm development by controlling spindle orientation in EMS blastomere, probably downstream of receptor mes-1. Also involved in embryonic body morphogenesis, especially in the formation of the pharynx and the intestine (PubMed:12110172, PubMed:12527374, PubMed:19210548). May be dispensable for pharyngeal muscle organization in the adult (PubMed:19210548). Probably phosphorylates netrin receptor unc-5, to regulate distal tip cell (DTC) migration during gonad development and in axon repulsion (PubMed:16024786, PubMed:16251208). Plays a role in the migration of the QR neuroblast, a precursor of the AVM neuron, and in the migration of the axon cone of AVM, ALM, CAN and PVM neurons (PubMed:16251208, PubMed:22293500). May act downstream of migratory protein mig-13 to control AVM neuron migration (PubMed:22293500). Probably downstream of integrin ina-1/pat-3, plays a role in the clearance of apoptotic cells during mid-embryogenesis (PubMed:20226672). Phosphorylates ced-1 at 'Tyr-1019' which promotes ced-1 proteasomal degradation, maintaining appropriate ced-1 levels for apoptotic cell clearance (PubMed:35929733)"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "commentType": "CATALYTIC ACTIVITY",
+        "reaction": {
+          "name": "L-tyrosyl-[protein] + ATP = O-phospho-L-tyrosyl-[protein] + ADP + H(+)",
+          "reactionCrossReferences": [
+            {
+              "database": "Rhea",
+              "id": "RHEA:10596"
+            },
+            {
+              "database": "Rhea",
+              "id": "RHEA-COMP:10136"
+            },
+            {
+              "database": "Rhea",
+              "id": "RHEA-COMP:20101"
+            },
+            {
+              "database": "ChEBI",
+              "id": "CHEBI:15378"
+            },
+            {
+              "database": "ChEBI",
+              "id": "CHEBI:30616"
+            },
+            {
+              "database": "ChEBI",
+              "id": "CHEBI:46858"
+            },
+            {
+              "database": "ChEBI",
+              "id": "CHEBI:61978"
+            },
+            {
+              "database": "ChEBI",
+              "id": "CHEBI:456216"
+            }
+          ],
+          "ecNumber": "2.7.10.2",
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000269",
+              "source": "PubMed",
+              "id": "12527374"
+            },
+            {
+              "evidenceCode": "ECO:0000269",
+              "source": "PubMed",
+              "id": "19210548"
+            },
+            {
+              "evidenceCode": "ECO:0000269",
+              "source": "PubMed",
+              "id": "20226672"
+            },
+            {
+              "evidenceCode": "ECO:0000269",
+              "source": "PubMed",
+              "id": "35929733"
+            }
+          ]
+        }
+      },
+      {
+        "commentType": "COFACTOR",
+        "cofactors": [
+          {
+            "name": "Mg(2+)",
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305",
+                "source": "PubMed",
+                "id": "20226672"
+              }
+            ],
+            "cofactorCrossReference": {
+              "database": "ChEBI",
+              "id": "CHEBI:18420"
+            }
+          },
+          {
+            "name": "Mn(2+)",
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "20226672"
+              }
+            ],
+            "cofactorCrossReference": {
+              "database": "ChEBI",
+              "id": "CHEBI:29035"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12527374"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "20226672"
+              },
+              {
+                "evidenceCode": "ECO:0000305",
+                "source": "PubMed",
+                "id": "19210548"
+              }
+            ],
+            "value": "May be activated by autophosphorylation (PubMed:19210548, PubMed:20226672). May be inhibited by csk-1-mediated phosphorylation (PubMed:12527374)"
+          }
+        ],
+        "commentType": "ACTIVITY REGULATION"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16024786"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "20226672"
+              }
+            ],
+            "value": "Interacts (via SH2 domain and SH3 domain) with unc-5 (via cytoplasmic domain); the interaction requires kinase activity (PubMed:16024786). Interacts (when activated and phosphorylated at 'Tyr-416') with ina-1 (via cytoplasmic domain) and with ced-2 (via SH2 domain) (PubMed:20226672)"
+          }
+        ],
+        "commentType": "SUBUNIT"
+      },
+      {
+        "commentType": "INTERACTION",
+        "interactions": [
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "G5EE56",
+              "intActId": "EBI-6538807"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "Q9BIF4",
+              "geneName": "ehs-1",
+              "intActId": "EBI-11466207"
+            },
+            "numberOfExperiments": 3,
+            "organismDiffer": false
+          },
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "G5EE56",
+              "intActId": "EBI-6538807"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "Q09442",
+              "geneName": "sap-49",
+              "intActId": "EBI-2316106"
+            },
+            "numberOfExperiments": 3,
+            "organismDiffer": false
+          }
+        ]
+      },
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "note": {
+          "texts": [
+            {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "20226672"
+                }
+              ],
+              "value": "Co-localizes with ina-1 at the site of the phagosomal cup formation during apoptotic cell engulfment"
+            }
+          ]
+        },
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "20226672"
+                }
+              ],
+              "value": "Cell membrane",
+              "id": "SL-0039"
+            },
+            "topology": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000255"
+                }
+              ],
+              "value": "Lipid-anchor",
+              "id": "SL-9901"
+            },
+            "orientation": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "20226672"
+                }
+              ],
+              "value": "Cytoplasmic side",
+              "id": "SL-9910"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "20226672"
+                }
+              ],
+              "value": "Cell projection, phagocytic cup",
+              "id": "SL-0473"
+            }
+          }
+        ]
+      },
+      {
+        "commentType": "ALTERNATIVE PRODUCTS",
+        "events": [
+          "Alternative splicing"
+        ],
+        "isoforms": [
+          {
+            "name": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000312",
+                  "source": "WormBase",
+                  "id": "Y92H12A.1a"
+                }
+              ],
+              "value": "a"
+            },
+            "isoformIds": [
+              "G5EE56-1"
+            ],
+            "isoformSequenceStatus": "Displayed"
+          },
+          {
+            "name": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000312",
+                  "source": "WormBase",
+                  "id": "Y92H12A.1b"
+                }
+              ],
+              "value": "b"
+            },
+            "isoformIds": [
+              "G5EE56-2"
+            ],
+            "sequenceIds": [
+              "VSP_057939"
+            ],
+            "isoformSequenceStatus": "Described"
+          },
+          {
+            "name": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000312",
+                  "source": "WormBase",
+                  "id": "Y92H12A.1c"
+                }
+              ],
+              "value": "c"
+            },
+            "isoformIds": [
+              "G5EE56-3"
+            ],
+            "sequenceIds": [
+              "VSP_057938"
+            ],
+            "isoformSequenceStatus": "Described"
+          },
+          {
+            "name": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000312",
+                  "source": "WormBase",
+                  "id": "Y92H12A.1d"
+                }
+              ],
+              "value": "d"
+            },
+            "isoformIds": [
+              "G5EE56-4"
+            ],
+            "sequenceIds": [
+              "VSP_057937"
+            ],
+            "isoformSequenceStatus": "Described"
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12527374"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16251208"
+              }
+            ],
+            "value": "Expressed in some neurons (ASE, ADF, AVA, AUA, RMDV and BAG) in the head region, anchor cell, vulva, cells around anus, body wall muscle, pharyngeal muscles in procorpus and metacorpus (PubMed:12527374). Expressed in gonadal distal tip cells (PubMed:12527374, PubMed:16251208)"
+          }
+        ],
+        "commentType": "TISSUE SPECIFICITY"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12527374"
+              }
+            ],
+            "value": "May be phosphorylated on Tyr-528 by csk-1"
+          }
+        ],
+        "commentType": "PTM"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "12527374"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16024786"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16251208"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "20226672"
+              }
+            ],
+            "value": "RNAi-mediated knockdown causes a growth arrest between gastrulation and the 2-fold stage and an increase in number of apoptotic cell corpses at the comma and 1.5-fold stages (PubMed:12527374, PubMed:16024786, PubMed:20226672). The few hermaphrodite animals reaching adulthood have gonadal defects characterized by the formation of a straight gonad resulting from defects in distal tip cells migration during the first and second turns (PubMed:16024786, PubMed:16251208)"
+          }
+        ],
+        "commentType": "DISRUPTION PHENOTYPE"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the protein kinase superfamily. Tyr protein kinase family. SRC subfamily"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Initiator methionine",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Removed",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 2,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 533,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Tyrosine protein-kinase src-1",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "featureId": "PRO_0000434507"
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 71,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 132,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "SH3",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00192"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 138,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 237,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "SH2",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00191"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 262,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 521,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Protein kinase",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00159"
+          }
+        ]
+      },
+      {
+        "type": "Active site",
+        "location": {
+          "start": {
+            "value": 381,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 381,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Proton acceptor",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00159"
+          }
+        ]
+      },
+      {
+        "type": "Binding site",
+        "location": {
+          "start": {
+            "value": 268,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 276,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "featureCrossReferences": [
+          {
+            "database": "ChEBI",
+            "id": "CHEBI:30616"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00159"
+          }
+        ],
+        "ligand": {
+          "name": "ATP",
+          "id": "ChEBI:CHEBI:30616"
+        }
+      },
+      {
+        "type": "Binding site",
+        "location": {
+          "start": {
+            "value": 290,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 290,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "featureCrossReferences": [
+          {
+            "database": "ChEBI",
+            "id": "CHEBI:30616"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00159"
+          }
+        ],
+        "ligand": {
+          "name": "ATP",
+          "id": "ChEBI:CHEBI:30616"
+        }
+      },
+      {
+        "type": "Modified residue",
+        "location": {
+          "start": {
+            "value": 416,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 416,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Phosphotyrosine; by autocatalysis",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "19210548"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "20226672"
+          }
+        ]
+      },
+      {
+        "type": "Modified residue",
+        "location": {
+          "start": {
+            "value": 528,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 528,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Phosphotyrosine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "12527374"
+          }
+        ]
+      },
+      {
+        "type": "Lipidation",
+        "location": {
+          "start": {
+            "value": 2,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "N-myristoyl glycine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Alternative sequence",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 308,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in isoform d",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "featureId": "VSP_057937",
+        "alternativeSequence": {}
+      },
+      {
+        "type": "Alternative sequence",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 56,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in isoform c",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "featureId": "VSP_057938",
+        "alternativeSequence": {}
+      },
+      {
+        "type": "Alternative sequence",
+        "location": {
+          "start": {
+            "value": 26,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 26,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in isoform b",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "featureId": "VSP_057939",
+        "alternativeSequence": {
+          "originalSequence": "R",
+          "alternativeSequences": [
+            "RYPRR"
+          ]
+        }
+      },
+      {
+        "type": "Mutagenesis",
+        "location": {
+          "start": {
+            "value": 108,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 109,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Partial loss of interaction with unc-5.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "16024786"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "WW",
+          "alternativeSequences": [
+            "RR"
+          ]
+        }
+      },
+      {
+        "type": "Mutagenesis",
+        "location": {
+          "start": {
+            "value": 165,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 165,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Loss of interaction with unc-5.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "16024786"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "R",
+          "alternativeSequences": [
+            "A"
+          ]
+        }
+      },
+      {
+        "type": "Mutagenesis",
+        "location": {
+          "start": {
+            "value": 290,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 290,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Probable loss of kinase activity. Gonadal defects characterized by the formation of a straight gonad resulting from defects in the first and second turns during development. Abnormal migration of AVM and abnormal guidance of PVM neuron axon.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "16024786"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "16251208"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "K",
+          "alternativeSequences": [
+            "M"
+          ]
+        }
+      },
+      {
+        "type": "Mutagenesis",
+        "location": {
+          "start": {
+            "value": 416,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 416,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Abolishes phosphorylation which results in loss of kinase activity. Loss of interaction with ina-1 and ced-2.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "19210548"
+          },
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "20226672"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "Y",
+          "alternativeSequences": [
+            "F"
+          ]
+        }
+      },
+      {
+        "type": "Mutagenesis",
+        "location": {
+          "start": {
+            "value": 528,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 528,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Abolishes phosphorylation which results in constitutive activation.",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "12527374"
+          }
+        ],
+        "alternativeSequence": {
+          "originalSequence": "Y",
+          "alternativeSequences": [
+            "F"
+          ]
+        }
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0025",
+        "category": "Coding sequence diversity",
+        "name": "Alternative splicing"
+      },
+      {
+        "id": "KW-0067",
+        "category": "Ligand",
+        "name": "ATP-binding"
+      },
+      {
+        "id": "KW-1003",
+        "category": "Cellular component",
+        "name": "Cell membrane"
+      },
+      {
+        "id": "KW-0966",
+        "category": "Cellular component",
+        "name": "Cell projection"
+      },
+      {
+        "id": "KW-0418",
+        "category": "Molecular function",
+        "name": "Kinase"
+      },
+      {
+        "id": "KW-0449",
+        "category": "PTM",
+        "name": "Lipoprotein"
+      },
+      {
+        "id": "KW-0460",
+        "category": "Ligand",
+        "name": "Magnesium"
+      },
+      {
+        "id": "KW-0464",
+        "category": "Ligand",
+        "name": "Manganese"
+      },
+      {
+        "id": "KW-0472",
+        "category": "Cellular component",
+        "name": "Membrane"
+      },
+      {
+        "id": "KW-0479",
+        "category": "Ligand",
+        "name": "Metal-binding"
+      },
+      {
+        "id": "KW-0519",
+        "category": "PTM",
+        "name": "Myristate"
+      },
+      {
+        "id": "KW-0547",
+        "category": "Ligand",
+        "name": "Nucleotide-binding"
+      },
+      {
+        "id": "KW-0597",
+        "category": "PTM",
+        "name": "Phosphoprotein"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "id": "KW-0727",
+        "category": "Domain",
+        "name": "SH2 domain"
+      },
+      {
+        "id": "KW-0728",
+        "category": "Domain",
+        "name": "SH3 domain"
+      },
+      {
+        "id": "KW-0808",
+        "category": "Molecular function",
+        "name": "Transferase"
+      },
+      {
+        "id": "KW-0829",
+        "category": "Molecular function",
+        "name": "Tyrosine-protein kinase"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "12110172",
+          "citationType": "journal article",
+          "authors": [
+            "Bei Y.",
+            "Hogan J.",
+            "Berkowitz L.A.",
+            "Soto M.",
+            "Rocheleau C.E.",
+            "Pang K.M.",
+            "Collins J.",
+            "Mello C.C."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12110172"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/s1534-5807(02)00185-5"
+            }
+          ],
+          "title": "SRC-1 and Wnt signaling act together to specify endoderm and to control cleavage orientation in early C. elegans embryos.",
+          "publicationDate": "2002",
+          "journal": "Dev. Cell",
+          "firstPage": "113",
+          "lastPage": "125",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [MRNA] (ISOFORM A)",
+          "FUNCTION"
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "12527374",
+          "citationType": "journal article",
+          "authors": [
+            "Hirose T.",
+            "Koga M.",
+            "Ohshima Y.",
+            "Okada M."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12527374"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/s0014-5793(02)03819-x"
+            }
+          ],
+          "title": "Distinct roles of the Src family kinases, SRC-1 and KIN-22, that are negatively regulated by CSK-1 in C. elegans.",
+          "publicationDate": "2003",
+          "journal": "FEBS Lett.",
+          "firstPage": "133",
+          "lastPage": "138",
+          "volume": "534"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [MRNA] (ISOFORM A)",
+          "FUNCTION",
+          "CATALYTIC ACTIVITY",
+          "ACTIVITY REGULATION",
+          "PHOSPHORYLATION AT TYR-528",
+          "DISRUPTION PHENOTYPE",
+          "MUTAGENESIS OF TYR-528"
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 3,
+        "citation": {
+          "id": "9851916",
+          "citationType": "journal article",
+          "authoringGroup": [
+            "The C. elegans sequencing consortium"
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9851916"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.282.5396.2012"
+            }
+          ],
+          "title": "Genome sequence of the nematode C. elegans: a platform for investigating biology.",
+          "publicationDate": "1998",
+          "journal": "Science",
+          "firstPage": "2012",
+          "lastPage": "2018",
+          "volume": "282"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000312",
+                "source": "Proteomes",
+                "id": "UP000001940"
+              }
+            ],
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000312",
+            "source": "Proteomes",
+            "id": "UP000001940"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 4,
+        "citation": {
+          "id": "16251208",
+          "citationType": "journal article",
+          "authors": [
+            "Itoh B.",
+            "Hirose T.",
+            "Takata N.",
+            "Nishiwaki K.",
+            "Koga M.",
+            "Ohshima Y.",
+            "Okada M."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "16251208"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1242/dev.02103"
+            }
+          ],
+          "title": "SRC-1, a non-receptor type of protein tyrosine kinase, controls the direction of cell and growth cone migration in C. elegans.",
+          "publicationDate": "2005",
+          "journal": "Development",
+          "firstPage": "5161",
+          "lastPage": "5172",
+          "volume": "132"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "TISSUE SPECIFICITY",
+          "DISRUPTION PHENOTYPE",
+          "MUTAGENESIS OF LYS-290"
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 5,
+        "citation": {
+          "id": "16024786",
+          "citationType": "journal article",
+          "authors": [
+            "Lee J.",
+            "Li W.",
+            "Guan K.L."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "16024786"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1128/mcb.25.15.6485-6495.2005"
+            }
+          ],
+          "title": "SRC-1 mediates UNC-5 signaling in Caenorhabditis elegans.",
+          "publicationDate": "2005",
+          "journal": "Mol. Cell. Biol.",
+          "firstPage": "6485",
+          "lastPage": "6495",
+          "volume": "25"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "INTERACTION WITH UNC-5",
+          "DISRUPTION PHENOTYPE",
+          "MUTAGENESIS OF 108-TRP-TRP-109; ARG-165 AND LYS-290"
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 6,
+        "citation": {
+          "id": "19210548",
+          "citationType": "journal article",
+          "authors": [
+            "Takata N.",
+            "Itoh B.",
+            "Misaki K.",
+            "Hirose T.",
+            "Yonemura S.",
+            "Okada M."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "19210548"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1111/j.1365-2443.2008.01275.x"
+            }
+          ],
+          "title": "Non-receptor tyrosine kinase CSK-1 controls pharyngeal muscle organization in Caenorhabditis elegans.",
+          "publicationDate": "2009",
+          "journal": "Genes Cells",
+          "firstPage": "381",
+          "lastPage": "393",
+          "volume": "14"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "CATALYTIC ACTIVITY",
+          "ACTIVITY REGULATION",
+          "PHOSPHORYLATION AT TYR-416",
+          "MUTAGENESIS OF TYR-416"
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 7,
+        "citation": {
+          "id": "20226672",
+          "citationType": "journal article",
+          "authors": [
+            "Hsu T.Y.",
+            "Wu Y.C."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "20226672"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/j.cub.2010.01.062"
+            }
+          ],
+          "title": "Engulfment of apoptotic cells in C. elegans is mediated by integrin alpha/SRC signaling.",
+          "publicationDate": "2010",
+          "journal": "Curr. Biol.",
+          "firstPage": "477",
+          "lastPage": "486",
+          "volume": "20"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "CATALYTIC ACTIVITY",
+          "COFACTOR",
+          "ACTIVITY REGULATION",
+          "INTERACTION WITH INA-1 AND CED-2",
+          "SUBCELLULAR LOCATION",
+          "PHOSPHORYLATION AT TYR-416",
+          "DISRUPTION PHENOTYPE",
+          "MUTAGENESIS OF TYR-416"
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 8,
+        "citation": {
+          "id": "22293500",
+          "citationType": "journal article",
+          "authors": [
+            "Masuda H.",
+            "Nakamura K.",
+            "Takata N.",
+            "Itoh B.",
+            "Hirose T.",
+            "Moribe H.",
+            "Mekada E.",
+            "Okada M."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "22293500"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/j.febslet.2012.01.031"
+            }
+          ],
+          "title": "MIG-13 controls anteroposterior cell migration by interacting with UNC-71/ADM-1 and SRC-1 in Caenorhabditis elegans.",
+          "publicationDate": "2012",
+          "journal": "FEBS Lett.",
+          "firstPage": "740",
+          "lastPage": "746",
+          "volume": "586"
+        },
+        "referencePositions": [
+          "FUNCTION"
+        ]
+      },
+      {
+        "referenceNumber": 9,
+        "citation": {
+          "id": "35929733",
+          "citationType": "journal article",
+          "authors": [
+            "Yuan L.",
+            "Li P.",
+            "Jing H.",
+            "Zheng Q.",
+            "Xiao H."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "35929733"
+            },
+            {
+              "database": "DOI",
+              "id": "10.7554/elife.76436"
+            }
+          ],
+          "title": "trim-21 promotes proteasomal degradation of CED-1 for apoptotic cell clearance in C. elegans.",
+          "publicationDate": "2022",
+          "journal": "Elife",
+          "firstPage": "0",
+          "lastPage": "0",
+          "volume": "11"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "CATALYTIC ACTIVITY"
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "AF475094",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAL84635.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AF419171",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAN31394.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "BX284601",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CCD71465.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "BX284601",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CDM63506.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "BX284601",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CDM63507.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "BX284601",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CDM63508.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001293421.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001306492.4"
+          }
+        ],
+        "isoformId": "G5EE56-3"
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001293422.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001306493.3"
+          }
+        ],
+        "isoformId": "G5EE56-4"
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001364774.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001377653.2"
+          }
+        ],
+        "isoformId": "G5EE56-1"
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001364829.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001377652.2"
+          }
+        ],
+        "isoformId": "G5EE56-2"
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "G5EE56",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "G5EE56",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "G5EE56",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "8"
+          }
+        ]
+      },
+      {
+        "database": "IntAct",
+        "id": "G5EE56",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "78"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "6239.Y92H12A.1b.2",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "iPTMnet",
+        "id": "G5EE56",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "6239-Y92H12A.1b.2",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "G5EE56",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "Y92H12A.1a.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "Y92H12A.1a.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00005077"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "Y92H12A.1b.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "Y92H12A.1b.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00005077"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "Y92H12A.1c.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "Y92H12A.1c.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00005077"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "Y92H12A.1d.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "Y92H12A.1d.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00005077"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "171722",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "cel:CELE_Y92H12A.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "WB:WBGene00005077",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "171722",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "WormBase",
+        "id": "Y92H12A.1a",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE39993"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00005077"
+          },
+          {
+            "key": "GeneName",
+            "value": "src-1"
+          }
+        ],
+        "isoformId": "G5EE56-1"
+      },
+      {
+        "database": "WormBase",
+        "id": "Y92H12A.1b",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE49528"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00005077"
+          },
+          {
+            "key": "GeneName",
+            "value": "src-1"
+          }
+        ],
+        "isoformId": "G5EE56-2"
+      },
+      {
+        "database": "WormBase",
+        "id": "Y92H12A.1c",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE49606"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00005077"
+          },
+          {
+            "key": "GeneName",
+            "value": "src-1"
+          }
+        ],
+        "isoformId": "G5EE56-3"
+      },
+      {
+        "database": "WormBase",
+        "id": "Y92H12A.1d",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE49574"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00005077"
+          },
+          {
+            "key": "GeneName",
+            "value": "src-1"
+          }
+        ],
+        "isoformId": "G5EE56-4"
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG0197",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "G5EE56",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "QVEIGYR",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "4062651at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "G5EE56",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-1227986",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Signaling by ERBB2"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-1251985",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Nuclear signaling by ERBB4"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-1253288",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Downregulation of ERBB4 signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-1257604",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "PIP3 activates AKT signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-177929",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Signaling by EGFR"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-186763",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Downstream signal transduction"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-2454202",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Fc epsilon receptor (FCERI) signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-354192",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Integrin signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-354194",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "GRB2:SOS provides linkage to MAPK signaling for Integrins"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-373753",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Nephrin family interactions"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-375165",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "NCAM signaling for neurite out-growth"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-3928662",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "EPHB-mediated forward signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-3928663",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "EPHA-mediated growth cone collapse"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-3928664",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Ephrin signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-3928665",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "EPH-ephrin mediated repulsion of cells"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-399955",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "SEMA3A-Plexin repulsion signaling by inhibiting Integrin adhesion"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-399956",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "CRMPs in Sema3A signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-418592",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "ADP signalling through P2Y purinoceptor 1"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-418594",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "G alpha (i) signalling events"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-418885",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "DCC mediated attractive signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-430116",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "GP1b-IX-V activation signalling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-432142",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Platelet sensitization by LDL"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-437239",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Recycling pathway of L1"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-4420097",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "VEGFA-VEGFR2 Pathway"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-456926",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Thrombin signalling through proteinase activated receptors (PARs)"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-5621575",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "CD209 (DC-SIGN) signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-5673001",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RAF/MAP kinase cascade"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-5674135",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "MAP2K and MAPK activation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-6798695",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Neutrophil degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-6811558",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "PI5P, PP2A and IER3 Regulate PI3K/AKT Signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-8874081",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "MET activates PTK2 signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-8934903",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Receptor Mediated Mitophagy"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-8941858",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Regulation of RUNX3 expression and activity"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9009391",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Extra-nuclear estrogen signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9013407",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RHOH GTPase cycle"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-912631",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Regulation of signaling by CBL"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9958810",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "SRC activates STAT3 in a quantitative manner, through Cadherin-11 (CDH11), RAC1 and gp130 (IL6ST)"
+          }
+        ]
+      },
+      {
+        "database": "SignaLink",
+        "id": "G5EE56",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:G5EE56",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000001940",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome I"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "WBGene00005077",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in embryo and 3 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0043292",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:contractile muscle fiber"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "19210548"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0001891",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:phagocytic cup"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "20226672"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005886",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "EXP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "20226672"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005524",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:ATP binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0004715",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:non-membrane spanning protein tyrosine kinase activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "19210548"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0004713",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:protein tyrosine kinase activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "20226672"
+          },
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "32513699"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005102",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:signaling receptor binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0008595",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:anterior/posterior axis specification, embryo"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "12110172"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030154",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell differentiation"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007169",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell surface receptor protein tyrosine kinase signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0071679",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:commissural neuron axon guidance"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "16024786"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0009792",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:embryo development ending in birth or egg hatching"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "19210548"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0048557",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:embryonic digestive tract morphogenesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "12110172"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0001714",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:endodermal cell fate specification"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "15572126"
+          },
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "15979606"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0000132",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:establishment of mitotic spindle orientation"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "12110172"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0035262",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:gonad morphogenesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "16024786"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0070986",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:left/right axis specification"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "12110172"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0038007",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:netrin-activated signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "16024786"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0040019",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of embryonic development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:UniProtKB"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "12527374"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd05034",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PTKc_Src_like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd09933",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2_Src_family"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd11845",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3_Src_like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.10.510.10:FF:000399",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Tyrosine-protein kinase"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.30.30.40:FF:000253",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Tyrosine-protein kinase"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "3.30.200.20:FF:000053",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Tyrosine-protein kinase"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "3.30.505.10:FF:000115",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Tyrosine-protein kinase"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.30.200.20",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Phosphorylase Kinase, domain 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.30.505.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2 domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.30.30.40",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3 Domains"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.10.510.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Transferase(Phosphotransferase) domain 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR011009",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kinase-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR050198",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Non-receptor_tyrosine_kinases"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000719",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Prot_kinase_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR017441",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Protein_kinase_ATP_BS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001245",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Ser-Thr/Tyr_kinase_cat_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000980",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036860",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036028",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001452",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR008266",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Tyr_kinase_AS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR020635",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Tyr_kinase_cat_dom"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR24418",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TYROSINE-PROTEIN KINASE"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF07714",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PK_Tyr_Ser-Thr"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00017",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00018",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00401",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2DOMAIN"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00452",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3DOMAIN"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00109",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TYRKINASE"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00252",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00326",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00219",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TyrKc"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF56112",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Protein kinase-like (PK-like)"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF55550",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2 domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF50044",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3-domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00107",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROTEIN_KINASE_ATP"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50011",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROTEIN_KINASE_DOM"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00109",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROTEIN_KINASE_TYR"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50001",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50002",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MGCLFSKERRSGGSDMGVSERIDVSRFQTPQQQTVFHVNNGGNEGTISQLNGTSDGMMGNGRGGGGGGGAQERETLVALYPYDSRADGDLSFQKGDAMYLLDHSNCDWWYVRHQRTGQTGYVPRNFVAKQQTIESEEWYAGKIPRNRAERLVLSSHLPKGTFLIREREADTREFALTIRDTDDQRNGGTVKHYKIKRLDHDQGYFITTRRTFRSLQELVRYYSDVPDGLCCQLTFPAPRLAPTRPDLSHDTQQNWEIPRNQLHLKRKLGDGNFGEVWYGKWRGIVEVAIKTMKPGTMSPEAFLQEAQIMKQCDHPNLVKLYAVCTREEPFYIITEYMINGSLLQYLRTDGSTLGIQALVDMAAQIANGMMYLEERKLVHRDLAARNVLVGDKISGVPVVKVADFGLARKLMEEDIYEARTGAKFPIKWTAPEAATCGNFTVKSDVWSYGILLYEIMTKGQVPYPGMHNREVVEQVELGYRMPMPRGCPEQIYEEVLLKCWDKTPDRRPTFDTLYHFFDDYFVSTQPNYAPPSA",
+      "length": 533,
+      "molWeight": 60661,
+      "crc64": "803E6B7E35A14BF1",
+      "md5": "23E64225448D850C438B82AA93F4F3B1"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "CATALYTIC ACTIVITY": 1,
+        "COFACTOR": 1,
+        "ACTIVITY REGULATION": 1,
+        "SUBUNIT": 1,
+        "INTERACTION": 2,
+        "SUBCELLULAR LOCATION": 1,
+        "ALTERNATIVE PRODUCTS": 4,
+        "TISSUE SPECIFICITY": 1,
+        "PTM": 1,
+        "DISRUPTION PHENOTYPE": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Initiator methionine": 1,
+        "Chain": 1,
+        "Domain": 3,
+        "Active site": 1,
+        "Binding site": 2,
+        "Modified residue": 2,
+        "Lipidation": 1,
+        "Alternative sequence": 3,
+        "Mutagenesis": 5
+      },
+      "uniParcId": "UPI0000083CDE"
+    }
+  }
+}

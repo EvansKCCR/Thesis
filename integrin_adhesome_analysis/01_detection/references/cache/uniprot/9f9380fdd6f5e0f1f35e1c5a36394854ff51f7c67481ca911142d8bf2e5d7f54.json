@@ -1,0 +1,670 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/A0A8W8MQ58.json",
+  "retrieved_at": "2026-09-18T09:50:31.122360+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB unreviewed (TrEMBL)",
+    "primaryAccession": "A0A8W8MQ58",
+    "uniProtkbId": "A0A8W8MQ58_MAGGI",
+    "entryAudit": {
+      "firstPublicDate": "2022-12-14",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "2022-12-14",
+      "entryVersion": 12,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 2.0,
+    "organism": {
+      "scientificName": "Magallana gigas",
+      "commonName": "Pacific oyster",
+      "synonyms": [
+        "Crassostrea gigas"
+      ],
+      "taxonId": 29159,
+      "evidences": [
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "EnsemblMetazoa",
+          "id": "G35429.18:cds"
+        },
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "Proteomes",
+          "id": "UP000005408"
+        }
+      ],
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Spiralia",
+        "Lophotrochozoa",
+        "Mollusca",
+        "Bivalvia",
+        "Autobranchia",
+        "Pteriomorphia",
+        "Ostreida",
+        "Ostreoidea",
+        "Ostreidae",
+        "Magallana"
+      ]
+    },
+    "proteinExistence": "3: Inferred from homology",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000256",
+              "source": "ARBA",
+              "id": "ARBA00014125"
+            }
+          ],
+          "value": "Vinculin"
+        }
+      }
+    },
+    "comments": [
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "ARBA",
+                  "id": "ARBA00004536"
+                }
+              ],
+              "value": "Cell junction, adherens junction",
+              "id": "SL-0009"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "ARBA",
+                  "id": "ARBA00004413"
+                }
+              ],
+              "value": "Cell membrane",
+              "id": "SL-0039"
+            },
+            "topology": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "ARBA",
+                  "id": "ARBA00004413"
+                }
+              ],
+              "value": "Peripheral membrane protein",
+              "id": "SL-9903"
+            },
+            "orientation": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "ARBA",
+                  "id": "ARBA00004413"
+                }
+              ],
+              "value": "Cytoplasmic side",
+              "id": "SL-9910"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000256",
+                  "source": "ARBA",
+                  "id": "ARBA00004245"
+                }
+              ],
+              "value": "Cytoplasm, cytoskeleton",
+              "id": "SL-0090"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000256",
+                "source": "ARBA",
+                "id": "ARBA00008376"
+              }
+            ],
+            "value": "Belongs to the vinculin/alpha-catenin family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 727,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 842,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 759,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 769,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Low complexity",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 785,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 798,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Basic and acidic residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 813,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 831,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Pro residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      }
+    ],
+    "keywords": [
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023203"
+          }
+        ],
+        "id": "KW-0009",
+        "category": "Molecular function",
+        "name": "Actin-binding"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022889"
+          }
+        ],
+        "id": "KW-0130",
+        "category": "Biological process",
+        "name": "Cell adhesion"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022949"
+          }
+        ],
+        "id": "KW-0965",
+        "category": "Cellular component",
+        "name": "Cell junction"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022475"
+          }
+        ],
+        "id": "KW-1003",
+        "category": "Cellular component",
+        "name": "Cell membrane"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022490"
+          }
+        ],
+        "id": "KW-0963",
+        "category": "Cellular component",
+        "name": "Cytoplasm"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023212"
+          }
+        ],
+        "id": "KW-0206",
+        "category": "Cellular component",
+        "name": "Cytoskeleton"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023136"
+          }
+        ],
+        "id": "KW-0472",
+        "category": "Cellular component",
+        "name": "Membrane"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000005408"
+          }
+        ],
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022737"
+          }
+        ],
+        "id": "KW-0677",
+        "category": "Domain",
+        "name": "Repeat"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "CI-E6JCAUNHOEA0L",
+          "citationType": "submission",
+          "authoringGroup": [
+            "EnsemblMetazoa"
+          ],
+          "publicationDate": "AUG-2022",
+          "submissionDatabase": "UniProtKB"
+        },
+        "referencePositions": [
+          "IDENTIFICATION"
+        ],
+        "referenceComments": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EnsemblMetazoa",
+                "id": "G35429.18:cds"
+              }
+            ],
+            "value": "05x7-T-G4-1.051#20",
+            "type": "STRAIN"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "EnsemblMetazoa",
+            "id": "G35429.18:cds"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "AlphaFoldDB",
+        "id": "A0A8W8MQ58",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "G35429.18",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "G35429.18:cds"
+          },
+          {
+            "key": "GeneId",
+            "value": "G35429"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000005408",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Unassembled WGS sequence"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0015629",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:actin cytoskeleton"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005912",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:adherens junction"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:UniProtKB-SubCell"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005886",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:UniProtKB-SubCell"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0051015",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:actin filament binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005198",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:structural molecule activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007155",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.230:FF:000010",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin a"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.120.230",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Alpha-catenin/vinculin-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.120.810",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin, Vh2 four-helix bundle"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036723",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Alpha-catenin/vinculin-like_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR017997",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR006077",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin/catenin"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000633",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin_CS"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR46180",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "VINCULIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF01044",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00806",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "VINCULIN"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47220",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "alpha-catenin/vinculin-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "6"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00664",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "VINCULIN_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MNSCNSSCITIQYNVSRLVILHEEAEDGNAMPDLARPVQTVKLAVDNLVKVGYDTINSSEDQILKQDMPPALNRVEEASLLLLQASEMLRADPYSAPARKKLIEGSRGILQGTSSLLLAFDESEVRKIIRVCKNVLEYLAITEVVERMEDLVTYVRNLTPVLTRMTKEVDAREKELTHQVHREMLVRSLEQVKNLTPVLISGIKTFITVKDSGKNPQDTQANRDYLVRKMSDEIHEIIRVLQLTTYDEEEWDADDITVMKKAQSGIEQKMKQATDWLQDPAALIGSLGDKALHQVLDDARKIAERCTNPADRDQILKTVGDIESMVDALCELRQLGKGDSPQAMSLAREIQKKLGDLQNMTNVAIANTERSGIRRPAPTVDGKVEQARTWLANPGMDDKGLGEQATRLVVSEGRKIANSCPEPMRKELLRLCDETEILTNQLADLIRNGQGNSPQARAIANHLSEKLFQLKNKIKEALINQVAEDFIDISTPLKHLSEASIVPIGTPGRDQNFAEKSQNFEGHANKLADTAKMVATAGGCRNKKTVEEIFKTSAQVDDLTPQVTTAAKIVFQDPGNQAAQEHFDLMKKRWMDNMERLRGLVDEAVDSSALIKAEEEGIMRDTERVEDAIQMKDPPRIGAHASNIARRANRVLQVAQQEAENSEDPKYVDHVNQAASNLRSTIAPMVQGAKGVSMNPADTNAQQNWRKANQTLIDAVRDVRGAVTVDAGVDQFPPPPPPDLSELKISDLYGPPRWEPITPSRARPQAAPVPVSPRPPRAPVFSPHSDPHYRNVNTRDSEPEPPEETPPAYGGAPPRPPLPNDNATPPRPPPPETDDEDEAAFPTPQANQPIMMAAHALHMEAKQWSSKDNDIIAAAKKMALLMAKLSQLVRGEGGSKKDLIATAKSIAESSEEVTRLAKKLAAECTDKQMRKNLLQVCERIPTIGTQLKILSTVKATMLGAQEPIPAPDGSEIECGSKEDQEATEMLVGNAQNLMQAVKETVRAAEAASIKIRVDSGYTIRWLRRRPWYTSMDLGLCYKAPRG",
+      "length": 1042,
+      "molWeight": 115146,
+      "crc64": "871EBB9A7F18A3F4",
+      "md5": "A25AB8931A0B7F90210CF5456AA80D84"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "SUBCELLULAR LOCATION": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Region": 1,
+        "Compositional bias": 3
+      },
+      "uniParcId": "UPI0020AFC944"
+    }
+  }
+}

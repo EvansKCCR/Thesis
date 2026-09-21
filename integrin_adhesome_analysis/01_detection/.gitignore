@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+databases/**/*.h3f
+databases/**/*.h3i
+databases/**/*.h3m
+databases/**/*.h3p

@@ -1,0 +1,18 @@
+{
+  "gff": "C:\\Users\\eaasa\\Desktop\\Evans_PHD_Thesis\\Integrin_analysis\\04_phylogenetic_classification\\orthofinder_project\\01_raw_proteomes\\Homo_sapiens.gff",
+  "gff_sha256": "cb83677489562c165a046c8833813e81d36f0b703d2ebbb2e3c6adb84a5c0780",
+  "fasta": "C:\\Users\\eaasa\\Desktop\\Evans_PHD_Thesis\\Integrin_analysis\\04_phylogenetic_classification\\orthofinder_project\\01_raw_proteomes\\Homo_sapiens.faa",
+  "fasta_sha256": "cbac7abbff75d82baa659e8a0b0ab95d1bc7a8ab90c1fe74d141235e6ada891e",
+  "annotation_metadata": [
+    "#!gff-spec-version 1.21",
+    "#!processor NCBI annotwriter",
+    "#!genome-build GRCh38.p14",
+    "#!genome-build-accession NCBI_Assembly:GCF_000001405.40",
+    "#!annotation-date 08/01/2025",
+    "#!annotation-source NCBI RefSeq GCF_000001405.40-RS_2025_08"
+  ],
+  "mapped_proteins": 136807,
+  "genes": 20076,
+  "gff_proteins_absent_from_fasta": 0,
+  "mapping_sha256": "8c881ec210d809f5506bd1fd4b232eac0b1a0d0fa725cf4f2ccd6fcaa7a30b33"
+}

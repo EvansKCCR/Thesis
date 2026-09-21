@@ -1,0 +1,1369 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/U4PBJ9.json",
+  "retrieved_at": "2026-09-18T09:28:05.537800+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB unreviewed (TrEMBL)",
+    "primaryAccession": "U4PBJ9",
+    "uniProtkbId": "U4PBJ9_CAEEL",
+    "entryAudit": {
+      "firstPublicDate": "2013-12-11",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "2013-12-11",
+      "entryVersion": 75,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 2.0,
+    "organism": {
+      "scientificName": "Caenorhabditis elegans",
+      "taxonId": 6239,
+      "evidences": [
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "EMBL",
+          "id": "CDH93092.1"
+        },
+        {
+          "evidenceCode": "ECO:0000313",
+          "source": "Proteomes",
+          "id": "UP000001940"
+        }
+      ],
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Nematoda",
+        "Chromadorea",
+        "Rhabditida",
+        "Rhabditina",
+        "Rhabditomorpha",
+        "Rhabditoidea",
+        "Rhabditidae",
+        "Peloderinae",
+        "Caenorhabditis"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "submissionNames": [
+        {
+          "fullName": {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "CDH93092.1"
+              }
+            ],
+            "value": "Calponin-homology (CH) domain-containing protein"
+          }
+        }
+      ]
+    },
+    "genes": [
+      {
+        "geneName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000313",
+              "source": "EMBL",
+              "id": "CDH93092.1"
+            },
+            {
+              "evidenceCode": "ECO:0000313",
+              "source": "WormBase",
+              "id": "Y66H1B.2l"
+            }
+          ],
+          "value": "fln-1"
+        },
+        "orfNames": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "CDH93092.1"
+              }
+            ],
+            "value": "CELE_Y66H1B.2"
+          },
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "WormBase",
+                "id": "Y66H1B.2l"
+              }
+            ],
+            "value": "Y66H1B.2"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000256",
+                "source": "ARBA",
+                "id": "ARBA00009238"
+              }
+            ],
+            "value": "Belongs to the filamin family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 26,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 132,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Calponin-homology (CH)",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "PROSITE",
+            "id": "PS50021"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 150,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 255,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Calponin-homology (CH)",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000259",
+            "source": "PROSITE",
+            "id": "PS50021"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 254,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 356,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 369,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 444,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 543,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 634,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 638,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 734,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 735,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 830,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 923,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1019,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 1406,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1475,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 1475,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1567,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 1564,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1653,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 1656,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1748,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 1773,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1846,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 1849,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1941,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 1963,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2037,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 2040,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2131,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 2165,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 2259,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Filamin",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00087"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 1347,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1393,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1347,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1356,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Basic and acidic residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 1371,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 1388,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Polar residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      }
+    ],
+    "keywords": [
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00023203"
+          }
+        ],
+        "id": "KW-0009",
+        "category": "Molecular function",
+        "name": "Actin-binding"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0007829",
+            "source": "PeptideAtlas",
+            "id": "U4PBJ9"
+          }
+        ],
+        "id": "KW-1267",
+        "category": "Technical term",
+        "name": "Proteomics identification"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000001940"
+          }
+        ],
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "ARBA",
+            "id": "ARBA00022737"
+          }
+        ],
+        "id": "KW-0677",
+        "category": "Domain",
+        "name": "Repeat"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "9851916",
+          "citationType": "journal article",
+          "authoringGroup": [
+            "The C. elegans sequencing consortium"
+          ],
+          "authors": [
+            "Sulson J.E.",
+            "Waterston R."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9851916"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.282.5396.2012"
+            }
+          ],
+          "title": "Genome sequence of the nematode C. elegans: a platform for investigating biology.",
+          "publicationDate": "1998",
+          "journal": "Science",
+          "firstPage": "2012",
+          "lastPage": "2018",
+          "volume": "282"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "EMBL",
+                "id": "CDH93092.1"
+              },
+              {
+                "evidenceCode": "ECO:0000313",
+                "source": "Proteomes",
+                "id": "UP000001940"
+              }
+            ],
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "EMBL",
+            "id": "CDH93092.1"
+          },
+          {
+            "evidenceCode": "ECO:0000313",
+            "source": "Proteomes",
+            "id": "UP000001940"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "BX284604",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CDH93092.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001294364.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001307435.3"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "U4PBJ9",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "U4PBJ9",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "U4PBJ9",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "676"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "6239.Y66H1B.2l.2",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "6239-Y66H1B.2l.2",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "U4PBJ9",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "176855",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "WB:WBGene00022048",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "176855",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "WormBase",
+        "id": "Y66H1B.2l",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE48665"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00022048"
+          },
+          {
+            "key": "GeneName",
+            "value": "fln-1"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG0518",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "U4PBJ9",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "HMIPHFP",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "18740at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-114608",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Platelet degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-1169408",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "ISG15 antiviral mechanism"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-446353",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Cell-extracellular matrix interactions"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-5627123",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RHO GTPases activate PAKs"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000001940",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome IV"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "WBGene00022048",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in adult organism and 4 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "ExpressionAtlas",
+        "id": "U4PBJ9",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "baseline and differential"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0051015",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:actin filament binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030036",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:actin cytoskeleton organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007411",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:axon guidance"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "25358863"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007413",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:axonal fasciculation"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "25358863"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0071526",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:semaphorin-plexin signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:WormBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "25358863"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd21311",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH_dFLNA-like_rpt1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd21230",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH_FLN_rpt2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.40.10:FF:000140",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FiLamiN (Actin binding protein) homolog"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.40.10:FF:001719",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FiLamiN (Actin binding protein) homolog"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.40.10:FF:001876",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FiLamiN (Actin binding protein) homolog"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.40.10:FF:001886",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FiLamiN (Actin binding protein) homolog"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.10.418.10:FF:000006",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Filamin-B isoform A"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "2.60.40.10:FF:000096",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "filamin-C isoform X2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.10.418.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Calponin-like domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.60.40.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Immunoglobulins"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "15"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001715",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036872",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR044801",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Filamin"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001298",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Filamin/ABP280_rpt"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR017868",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Filamin/ABP280_rpt-like"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR013783",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Ig-like_fold"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR014756",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Ig_E-set"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR38537:SF8",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FILAMIN-A"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR38537",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "JITTERBUG, ISOFORM N"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00307",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00630",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Filamin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "13"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00033",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00557",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "IG_FLMN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "15"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47576",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Calponin-homology domain, CH-domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF81296",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "E set domains"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "16"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50021",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CH"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50194",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FILAMIN_REPEAT"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "15"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MAQPKRLDQEEEVVPAIRHDDAEWKIIQQNTFTRWVKNHLQKAGETIESLETDFSDGLKLIALAQVLSHKNVGKFNKKVAFRSQKLENVSLALNFFQNEENIKIINIDSTHIVDHNKKLILGLVWTLILHYSISMGWIQEKREDGDNKEETPKQKLLNWIRNRLPVSGMPISNFTSDWNDGVALGALVNSMAPGALEDWENWSPNDALENTEKAMKSAQDLLKVAPLIAPAEMIHPEIDEMSVMTYLSQFPATKPIIMKPKVQATISNLDKILQVNDPREFDLKLSRDGFKPKVSIRDEDGQDIHLSLKKVEDKENAYKVKFTPTKIGFIHVDVAANDVHTFETQTIPEASVICQVVPIARLLDYNKTAKVGDDVKFAVVDAIEGPVEAIVVDPTGKEHRMVILDGTSPGEHSFEYKIPCIGLHSVNVFHKKLPLTGSPFPLRGKPKNSFKVWGRGIAPEGIRKNDVVGVHVESLDPEENIANANISLEVLKPSDGSHLPVSVGYNDESQSMDFEYSPKQAPDDLEVLVKVAGEVIESHKIHVAPESSSKIRAFGAGLEGGIVNEPCVFDVEMNGESKDLSFAVEGPSKAEIGCQERPDGSAILSYTPTVAGVYKVGVLADGKHIQDSPFVLRVTEPIEGLKPSATRVTGIDESKVYNVGEKIPFRVDTRLCGVDLVPKVEILDPELNPISYGAREITPGLFEYTLIPDAPIKHKIDVSVAGVSVPGAPFSVKVKEPTDASKLKIFGPGVDGPVYSKEPTRFTIDATQAGPGAVEVALRDDQGENVDLDVLDNQDGSFTVKYTAQRPGAYQLNVVFAGEEISPIEINVKPNVDVSGIRVEGLENENLLIGSHLRPTINIGKLEPKSKGLQLIDEVNGKRYNVPMKINPDGTYSTDTPLMEVGEHKLQLLFDEIPVKEAVVEVIKGTDVNKCKAYGPGLEQAVVGEKAVFELDLDGAGEGALSMEMRGPAKAESRIQDRGNGKCSVEYVAKAPGDYEMAIKFGKDEQKEHVKGSPFKAVVDYKKDPSQITISGLDQPNYRLNQPINFVIDTSKTKDLPVKATVPSDFAQLQPVVSRSPSNPRHHNVRFVPSGKPNVSIPIEIIYDGLKIDEKLVKVLPEVEPQLIKILHDKKKDSLTTTPITTNASHEGHVPFDVRDCGNVKKIESRVFGPDGKERLNHVRSTEQNGIYDVSFPTDMAGEYCVVFYINGQEVAARVPVMAEKIGRKEDVIKEEIVFHPEIAEHSPTVLTYNHPIDAKKKKAHPAIQVLAAKPDAVRLEHIQELVDNGHRVADRIVFTATKLGTNTLDVFYGGEHVDHVEYEAIGKLEYERIQAERAKVVVEKEDDVDKYEKQYKDEPSSAPADPRVAPTNGKEPTTAQESKKNGNQQKLAPSAEIEHKPLEKYFTFQFNVRDLGYQPKDLEAIVMPPTQKKEVAEIIDNLDGTILVKYTPKVHGSHELSILQNGAQLQGTPIKFYVDAYGDGWATVYGPGLQNAVVGEPATFTVCAKGSQAKELSVSIEGPAKSQIKIHDNKDGTCSAAWVPPVPGEYKVHVKLGGKAVKDSPFRVLVMGEGQKRSHLSVGSTSEVALPITQQELKGISASIKSPGGIEEPCFVRLLDGGRLGVSFTPREAGEHLITVKRDGKLVPKAPFKIKVDKTQVGDASKVEVSGSGKAKGITLQANELLVDTSKAGYGGLSVSVQGPSKAELTCKEVKSGLIKVLYTPTEPGVYAIAIKFADHHVKDSPLTVQCTGKSAGRVIQTIQKDVEQHGICLPDQESHLFLKLLNTSPMDITARLMDPKGHTDDIEMRDLGQQYYQLKFTPKMEGIHTLSVMYKDAHVNGSPFQFTVGSFSEGGAHKVRAAGQGVVRGETGTFNAFNIYHREAGVGAVAVTIEGPSKATLEFKDHNDGNCHVDYKVATPGEYVVAVKFNDQHIPDSPFKVYIAPATGEVRKLELAQFHGQGIPAGKAFTFTVLTHRAKGHLEAKVVTPNNEVDTIDIVPIEDGESYAMRFVPKETGNHFIHVTLDGAPMRESPFRLRVGGKDLCDPTAISASGDGLVKGTTGQKCEFVINTANAGAGILTVQMDGPSKATLDAYELEKGYKVRYTPLAPGSYFASVKYNGIHAPGSPFKIPVEGKELGGNGYNETSHVKIDAVAKTSKGTVAVVPEYQGDAAKVTAKGAGLNKFFPGRPAAFQIDTGLAGTNLLMVGVVTTKGPCEEVVVRHQGSGHYVCSYRIPDRVKGFVFIKYGDKEIPGSPFAIEP",
+      "length": 2259,
+      "molWeight": 246552,
+      "crc64": "2DAE299A95EAD7C8",
+      "md5": "A50126CB4D520DBB6485629CB5A4470B"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Domain": 2,
+        "Repeat": 15,
+        "Region": 1,
+        "Compositional bias": 2
+      },
+      "uniParcId": "UPI0003B06E61"
+    }
+  }
+}

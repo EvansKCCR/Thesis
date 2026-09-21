@@ -1,0 +1,787 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/Q9XW16.json",
+  "retrieved_at": "2026-09-18T09:24:26.556558+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "Q9XW16",
+    "secondaryAccessions": [
+      "Q5GHR2"
+    ],
+    "uniProtkbId": "PROF1_CAEEL",
+    "entryAudit": {
+      "firstPublicDate": "2004-12-07",
+      "lastAnnotationUpdateDate": "2026-06-10",
+      "lastSequenceUpdateDate": "1999-11-01",
+      "entryVersion": 136,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 2.0,
+    "organism": {
+      "scientificName": "Caenorhabditis elegans",
+      "taxonId": 6239,
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Nematoda",
+        "Chromadorea",
+        "Rhabditida",
+        "Rhabditina",
+        "Rhabditomorpha",
+        "Rhabditoidea",
+        "Rhabditidae",
+        "Peloderinae",
+        "Caenorhabditis"
+      ]
+    },
+    "proteinExistence": "2: Evidence at transcript level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "value": "Profilin-1"
+        }
+      }
+    },
+    "genes": [
+      {
+        "geneName": {
+          "value": "pfn-1"
+        },
+        "orfNames": [
+          {
+            "value": "Y18D10A.20"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16317718"
+              }
+            ],
+            "value": "Binds to actin and affects the structure of the cytoskeleton. At high concentrations, profilin prevents the polymerization of actin, whereas it enhances it at low concentrations. By binding to PIP2, it inhibits the formation of IP3 and DG. Also binds to poly(L-proline) and phosphatidylinositol 4,5-bisphosphate micelles"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000250"
+              }
+            ],
+            "value": "Occurs in many kinds of cells as a complex with monomeric actin in a 1:1 ratio"
+          }
+        ],
+        "commentType": "SUBUNIT"
+      },
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "note": {
+          "texts": [
+            {
+              "value": "Also localized at cell-cell contacts at the early embryonic stages"
+            }
+          ]
+        },
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000269",
+                  "source": "PubMed",
+                  "id": "16317718"
+                }
+              ],
+              "value": "Cytoplasm, cytoskeleton",
+              "id": "SL-0090"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "16317718"
+              }
+            ],
+            "value": "Expressed in the nerve ring during late embryonic stages. In adults, expression is seen in the neurons, vulva and somatic gonad"
+          }
+        ],
+        "commentType": "TISSUE SPECIFICITY"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the profilin family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 132,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Profilin-1",
+        "featureId": "PRO_0000199590"
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0009",
+        "category": "Molecular function",
+        "name": "Actin-binding"
+      },
+      {
+        "id": "KW-0963",
+        "category": "Cellular component",
+        "name": "Cytoplasm"
+      },
+      {
+        "id": "KW-0206",
+        "category": "Cellular component",
+        "name": "Cytoskeleton"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "16317718",
+          "citationType": "journal article",
+          "authors": [
+            "Polet D.",
+            "Lambrechts A.",
+            "Ono K.",
+            "Mah A.",
+            "Peelman F.",
+            "Vandekerckhove J.",
+            "Baillie D.L.",
+            "Ampe C.",
+            "Ono S."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "16317718"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1002/cm.20102"
+            }
+          ],
+          "title": "Caenorhabditis elegans expresses three functional profilins in a tissue-specific manner.",
+          "publicationDate": "2006",
+          "journal": "Cell Motil. Cytoskeleton",
+          "firstPage": "14",
+          "lastPage": "28",
+          "volume": "63"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [MRNA]",
+          "FUNCTION",
+          "SUBCELLULAR LOCATION",
+          "TISSUE SPECIFICITY"
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "9851916",
+          "citationType": "journal article",
+          "authoringGroup": [
+            "The C. elegans sequencing consortium"
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9851916"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.282.5396.2012"
+            }
+          ],
+          "title": "Genome sequence of the nematode C. elegans: a platform for investigating biology.",
+          "publicationDate": "1998",
+          "journal": "Science",
+          "firstPage": "2012",
+          "lastPage": "2018",
+          "volume": "282"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "AY530908",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAT01433.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AL034393",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CAA22318.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "PIR",
+        "id": "T26527",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "T26527"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_493258.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_060857.9"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "Q9XW16",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "Q9XW16",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID",
+        "id": "38558",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "37"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "Q9XW16",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "6239.Y18D10A.20.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "6239-Y18D10A.20.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "Q9XW16",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "Y18D10A.20.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "Y18D10A.20.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00003989"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "173161",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "cel:CELE_Y18D10A.20",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "UCSC",
+        "id": "Y18D10A.20",
+        "properties": [
+          {
+            "key": "OrganismName",
+            "value": "c. elegans"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "WB:WBGene00003989",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "173161",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "WormBase",
+        "id": "Y18D10A.20",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE21418"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00003989"
+          },
+          {
+            "key": "GeneName",
+            "value": "pfn-1"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG1755",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_120772_3_0_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "Q9XW16",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "SLYDHIE",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "421374at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "Q9XW16",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:Q9XW16",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000001940",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome I"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "WBGene00003989",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in germ line (C elegans) and 4 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005938",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell cortex"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005856",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoskeleton"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:UniProtKB-SubCell"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0003785",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:actin monomer binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd00148",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROF"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "3.30.450.30:FF:000020",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Profilin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.30.450.30",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Dynein light chain 2a, cytoplasmic"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR048278",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PFN"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR005455",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PFN_euk"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036140",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PFN_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR027310",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Profilin_CS"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR11604",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROFILIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR11604:SF6",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROFILIN-1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00235",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Profilin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00392",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROF"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF55770",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Profilin (actin-binding protein)"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00414",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROFILIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MSGWNAYIDTMTAAAPSIKRCAIVGAADGSVWARTEADNVFKASEEELKTFVALFNDVTQVPAKGADIEGVHYVVPRTEESLIFGKKENTGFFAVKTKSAVLIAVYEGPNEVAAQVRKAVESMQTYLNNAGY",
+      "length": 132,
+      "molWeight": 14255,
+      "crc64": "9801D9AC314E95E1",
+      "md5": "F863DB0F1D48F5B2FD39C823B5A3C326"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "SUBUNIT": 1,
+        "SUBCELLULAR LOCATION": 1,
+        "TISSUE SPECIFICITY": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Chain": 1
+      },
+      "uniParcId": "UPI00000799DD"
+    }
+  }
+}

@@ -1,0 +1,1621 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/Q95YD4.json",
+  "retrieved_at": "2026-09-18T09:24:27.777164+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "Q95YD4",
+    "secondaryAccessions": [
+      "Q8T879"
+    ],
+    "uniProtkbId": "KIN32_CAEEL",
+    "entryAudit": {
+      "firstPublicDate": "2015-10-14",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "2001-12-01",
+      "entryVersion": 187,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 4.0,
+    "organism": {
+      "scientificName": "Caenorhabditis elegans",
+      "taxonId": 6239,
+      "evidences": [
+        {
+          "evidenceCode": "ECO:0000312",
+          "source": "Proteomes",
+          "id": "UP000001940"
+        }
+      ],
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Nematoda",
+        "Chromadorea",
+        "Rhabditida",
+        "Rhabditina",
+        "Rhabditomorpha",
+        "Rhabditoidea",
+        "Rhabditidae",
+        "Peloderinae",
+        "Caenorhabditis"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000305"
+            }
+          ],
+          "value": "Inactive tyrosine-protein kinase kin-32"
+        }
+      }
+    },
+    "genes": [
+      {
+        "geneName": {
+          "evidences": [
+            {
+              "evidenceCode": "ECO:0000312",
+              "source": "WormBase",
+              "id": "C30F8.4a"
+            }
+          ],
+          "value": "kin-32"
+        },
+        "orfNames": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000312",
+                "source": "WormBase",
+                "id": "C30F8.4a"
+              }
+            ],
+            "value": "C30F8.4"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "18297732"
+              }
+            ],
+            "value": "Has apparently no tyrosine kinase activity in vitro when expressed in mammalian cells"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "commentType": "ALTERNATIVE PRODUCTS",
+        "events": [
+          "Alternative splicing"
+        ],
+        "isoforms": [
+          {
+            "name": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000312",
+                  "source": "WormBase",
+                  "id": "C30F8.4a"
+                }
+              ],
+              "value": "a"
+            },
+            "isoformIds": [
+              "Q95YD4-1"
+            ],
+            "isoformSequenceStatus": "Displayed"
+          },
+          {
+            "name": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000312",
+                  "source": "WormBase",
+                  "id": "C30F8.4b"
+                }
+              ],
+              "value": "b"
+            },
+            "isoformIds": [
+              "Q95YD4-2"
+            ],
+            "sequenceIds": [
+              "VSP_057893"
+            ],
+            "isoformSequenceStatus": "Described"
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "18297732"
+              }
+            ],
+            "value": "Expressed in body wall muscles and some neurons in the head"
+          }
+        ],
+        "commentType": "TISSUE SPECIFICITY"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "18297732"
+              }
+            ],
+            "value": "RNAi-mediated knockdown causes no obvious phenotype"
+          }
+        ],
+        "commentType": "DISRUPTION PHENOTYPE"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the protein kinase superfamily. Tyr protein kinase family. FAK subfamily"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 867,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Inactive tyrosine-protein kinase kin-32",
+        "featureId": "PRO_0000434040"
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 3,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 327,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "FERM",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00084"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 367,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 631,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Protein kinase",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00159"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 737,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 847,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Focal AT",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 674,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 729,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Coiled coil",
+        "location": {
+          "start": {
+            "value": 662,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 691,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 683,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 694,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Acidic residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 698,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 724,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Polar residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Binding site",
+        "location": {
+          "start": {
+            "value": 373,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 381,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "featureCrossReferences": [
+          {
+            "database": "ChEBI",
+            "id": "CHEBI:30616"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00159"
+          }
+        ],
+        "ligand": {
+          "name": "ATP",
+          "id": "ChEBI:CHEBI:30616"
+        }
+      },
+      {
+        "type": "Binding site",
+        "location": {
+          "start": {
+            "value": 400,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 400,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "",
+        "featureCrossReferences": [
+          {
+            "database": "ChEBI",
+            "id": "CHEBI:30616"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00159"
+          }
+        ],
+        "ligand": {
+          "name": "ATP",
+          "id": "ChEBI:CHEBI:30616"
+        }
+      },
+      {
+        "type": "Alternative sequence",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 69,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "in isoform b",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ],
+        "featureId": "VSP_057893",
+        "alternativeSequence": {}
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0025",
+        "category": "Coding sequence diversity",
+        "name": "Alternative splicing"
+      },
+      {
+        "id": "KW-0067",
+        "category": "Ligand",
+        "name": "ATP-binding"
+      },
+      {
+        "id": "KW-0175",
+        "category": "Domain",
+        "name": "Coiled coil"
+      },
+      {
+        "id": "KW-0547",
+        "category": "Ligand",
+        "name": "Nucleotide-binding"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "9851916",
+          "citationType": "journal article",
+          "authoringGroup": [
+            "The C. elegans sequencing consortium"
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9851916"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.282.5396.2012"
+            }
+          ],
+          "title": "Genome sequence of the nematode C. elegans: a platform for investigating biology.",
+          "publicationDate": "1998",
+          "journal": "Science",
+          "firstPage": "2012",
+          "lastPage": "2018",
+          "volume": "282"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000312",
+                "source": "Proteomes",
+                "id": "UP000001940"
+              }
+            ],
+            "value": "Bristol N2",
+            "type": "STRAIN"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000312",
+            "source": "Proteomes",
+            "id": "UP000001940"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "18297732",
+          "citationType": "journal article",
+          "authors": [
+            "Cram E.J.",
+            "Fontanez K.M.",
+            "Schwarzbauer J.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "18297732"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1002/dvdy.21457"
+            }
+          ],
+          "title": "Functional characterization of KIN-32, the Caenorhabditis elegans homolog of focal adhesion kinase.",
+          "publicationDate": "2008",
+          "journal": "Dev. Dyn.",
+          "firstPage": "837",
+          "lastPage": "846",
+          "volume": "237"
+        },
+        "referencePositions": [
+          "TISSUE SPECIFICITY",
+          "FUNCTION",
+          "LACK OF CATALYTIC ACTIVITY",
+          "DISRUPTION PHENOTYPE"
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000305"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "BX284601",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CCD66186.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "BX284601",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CCD66187.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_740841.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_170854.6"
+          }
+        ],
+        "isoformId": "Q95YD4-1"
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_740842.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_170855.6"
+          }
+        ],
+        "isoformId": "Q95YD4-2"
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "Q95YD4",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "Q95YD4",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "Q95YD4",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "1085"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "6239.C30F8.4a.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "6239-C30F8.4a.1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "C30F8.4a.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "C30F8.4a.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00002213"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "C30F8.4b.1",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "C30F8.4b.1"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00002213"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "C30F8.4b.2",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "C30F8.4b.2"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00002213"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "172135",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "cel:CELE_C30F8.4",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "UCSC",
+        "id": "C30F8.4a.1",
+        "properties": [
+          {
+            "key": "OrganismName",
+            "value": "c. elegans"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "WB:WBGene00002213",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "172135",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "WormBase",
+        "id": "C30F8.4a",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE25798"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00002213"
+          },
+          {
+            "key": "GeneName",
+            "value": "kin-32"
+          }
+        ],
+        "isoformId": "Q95YD4-1"
+      },
+      {
+        "database": "WormBase",
+        "id": "C30F8.4b",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CE30493"
+          },
+          {
+            "key": "GeneId",
+            "value": "WBGene00002213"
+          },
+          {
+            "key": "GeneName",
+            "value": "kin-32"
+          }
+        ],
+        "isoformId": "Q95YD4-2"
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG4257",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_002646_1_0_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "Q95YD4",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "RYDEQTT",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "9976756at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "Q95YD4",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-2029482",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Regulation of actin dynamics for phagocytic cup formation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-354192",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Integrin signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-354194",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "GRB2:SOS provides linkage to MAPK signaling for Integrins"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-375165",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "NCAM signaling for neurite out-growth"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-3928662",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "EPHB-mediated forward signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-418885",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "DCC mediated attractive signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-4420097",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "VEGFA-VEGFR2 Pathway"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-5663213",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RHO GTPases Activate WASPs and WAVEs"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-5673001",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RAF/MAP kinase cascade"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-8874081",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "MET activates PTK2 signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9009391",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Extra-nuclear estrogen signaling"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9013420",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "RHOU GTPase cycle"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-CEL-9860927",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Turbulent (oscillatory, disturbed) flow shear stress activates signaling by PIEZO1 and integrins in endothelial cells"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:Q95YD4",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000001940",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome I"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "WBGene00002213",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in pharyngeal muscle cell (C elegans) and 3 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005925",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:focal adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005886",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005524",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:ATP binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0004713",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:protein tyrosine kinase activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007172",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:signal complex assembly"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd13190",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_C_FAK1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.10.510.10:FF:001699",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Inactive tyrosine-protein kinase kin-32"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.330:FF:000024",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Inactive tyrosine-protein kinase kin-32"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.80.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "-"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.120.330",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Nucleotidyltransferases domain 2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.10.20.90",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Phosphatidylinositol 3-kinase Catalytic Subunit, Chain A, domain 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.30.200.20",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Phosphorylase Kinase, domain 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.30.29.30",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Pleckstrin-homology domain (PH domain)/Phosphotyrosine-binding domain (PTB)"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.10.510.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Transferase(Phosphotransferase) domain 1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR019749",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Band_41_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR049385",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FAK1-like_FERM_C"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR041784",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FAK1/PYK2_FERM_C"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR014352",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM/acyl-CoA-bd_prot_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR035963",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000299",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036137",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Focal_adhe_kin_target_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR005189",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Focal_adhesion_kin_target_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR011009",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Kinase-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR050198",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Non-receptor_tyrosine_kinases"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR011993",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000719",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Prot_kinase_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR017441",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Protein_kinase_ATP_BS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001245",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Ser-Thr/Tyr_kinase_cat_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR008266",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Tyr_kinase_AS"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR020635",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Tyr_kinase_cat_dom"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR029071",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Ubiquitin-like_domsf"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR24418",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TYROSINE-PROTEIN KINASE"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF21477",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_C_FAK1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF03623",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Focal_AT"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF07714",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PK_Tyr_Ser-Thr"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00109",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TYRKINASE"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00295",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "B41"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00219",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "TyrKc"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF68993",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FAT domain of focal adhesion kinase"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF50729",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PH domain-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF56112",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Protein kinase-like (PK-like)"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47031",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Second domain of FERM"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF54236",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Ubiquitin-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50057",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "FERM_3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00107",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROTEIN_KINASE_ATP"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50011",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROTEIN_KINASE_DOM"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00109",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROTEIN_KINASE_TYR"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MEGLARVFLIGGASKAVRYDEQTTIERVIHVVARGIGISQVAVAHFALRLVTGPSPQTAGSGDSLWLHPMLRITQLPHIYARHLPIGVCDEIKLEMRMRFMPQSVYELQATDSSAFVYLHEQVVDEFFSHVAWRSSVEVALEVAALKVCRDFAEHQHNKGADHHLEDLDIEACIQSLIPNVLHNPGFKHSHLKKTFTAYIKKFSATSPNESIIRSLALLLEVVKFDVELFKASLGAGWTKPVELVVGPHTGLSYRLNERCDSSRLLELRTIAEITIRKMENGSEKTLMQLNLSGAAKPVLITLSTEELSQSLAHLLDGYQMLYNQRDSVFKLKGIERCETLTMHEATIRPKTPNNIDSNIRLRRELITLKELIGGGQFGNVYKAVYHDLEKDERIAVAVKVCKTDAEPADTQLILQESSLMRNFRHSNIIQLIGVCVDQPMWLVLELAPKGELREYLQQEKDWLPLRILTLFCSQICDSLVYLHSTRFVHRDIAARNILVCSPQCVKLADFGLSRALDYDAVYTASRGKLPIKWLAPESVNYRQFSMASDVWMFGVCMWEIFSLGVKPWAGVTNSDVIMHIEQGSRPPCPEKCPTALYNFIRSKMWAIEPHKRPTVDQIYAIIEDVRQQIIQNIPPEQIIVGKPMTAAGVIVAEMSSLPGLTLYRTMEDQKRQAEEDAKWLEQEDDEDEDDQDIDQIPSTSHSSVENIRTSNGYLHHTPTSTRSLRFEDKTSRGLRRSVDGVCDAVTKLQNSFNNLTHNDDFLHSVKEVTSQLREMLIVASGMRDRVTTTTQRTDVDMTKTLIANDMKQMSRVMGKLQVNGHQATYNTLRRDVVRICGELAVNCTTLQLQLTQPPLENEFSSLLSNC",
+      "length": 867,
+      "molWeight": 97999,
+      "crc64": "148D9DFD4AC276EF",
+      "md5": "663955C5E1FBA7C183D5C0AB614FB24D"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "ALTERNATIVE PRODUCTS": 2,
+        "TISSUE SPECIFICITY": 1,
+        "DISRUPTION PHENOTYPE": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Chain": 1,
+        "Domain": 3,
+        "Region": 1,
+        "Coiled coil": 1,
+        "Compositional bias": 2,
+        "Binding site": 2,
+        "Alternative sequence": 1
+      },
+      "uniParcId": "UPI0000082ABD"
+    }
+  }
+}

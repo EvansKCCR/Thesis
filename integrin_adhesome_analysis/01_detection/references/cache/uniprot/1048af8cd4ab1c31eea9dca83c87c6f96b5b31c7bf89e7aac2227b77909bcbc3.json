@@ -1,0 +1,2073 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/P25843.json",
+  "retrieved_at": "2026-09-18T09:24:07.124685+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "P25843",
+    "secondaryAccessions": [
+      "Q3YMV6",
+      "Q9VMJ9"
+    ],
+    "uniProtkbId": "PROF_DROME",
+    "entryAudit": {
+      "firstPublicDate": "1992-05-01",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "1992-05-01",
+      "entryVersion": 188,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 5.0,
+    "organism": {
+      "scientificName": "Drosophila melanogaster",
+      "commonName": "Fruit fly",
+      "taxonId": 7227,
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Arthropoda",
+        "Altocrustacea",
+        "Allotriocarida",
+        "Hexapoda",
+        "Insecta",
+        "Pterygota",
+        "Neoptera",
+        "Eumetabola",
+        "Endopterygota",
+        "Aparaglossata",
+        "Panorpida",
+        "Diptera",
+        "Brachycera",
+        "Muscomorpha",
+        "Ephydroidea",
+        "Drosophilidae",
+        "Drosophila",
+        "Sophophora"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "value": "Profilin"
+        }
+      },
+      "alternativeNames": [
+        {
+          "fullName": {
+            "value": "Protein chickadee"
+          }
+        }
+      ]
+    },
+    "genes": [
+      {
+        "geneName": {
+          "value": "chic"
+        },
+        "synonyms": [
+          {
+            "value": "chi"
+          }
+        ],
+        "orfNames": [
+          {
+            "value": "CG9553"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "1339308"
+              },
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "37041188"
+              }
+            ],
+            "value": "Binds to actin and affects the structure of the cytoskeleton (PubMed:1339308). At high concentrations, profilin prevents the polymerization of actin, whereas it enhances it at low concentrations (PubMed:1339308). By binding to PIP2, it may inhibit the formation of IP3 and DG (PubMed:1339308). This profilin is required for intercellular cytoplasm transport during Drosophila oogenesis (PubMed:1339308). Function in neurons is essential for adult survival, and is important for climbing behavior and activity (PubMed:37041188)"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "texts": [
+          {
+            "value": "Occurs in many kinds of cells as a complex with monomeric actin in a 1:1 ratio"
+          }
+        ],
+        "commentType": "SUBUNIT"
+      },
+      {
+        "commentType": "INTERACTION",
+        "interactions": [
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "P25843",
+              "intActId": "EBI-156199"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "Q24306",
+              "geneName": "Diap1",
+              "intActId": "EBI-456419"
+            },
+            "numberOfExperiments": 2,
+            "organismDiffer": false
+          },
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "P25843",
+              "intActId": "EBI-156199"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "Q8T4F7",
+              "geneName": "ena",
+              "intActId": "EBI-466810"
+            },
+            "numberOfExperiments": 3,
+            "organismDiffer": false
+          },
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "P25843",
+              "intActId": "EBI-156199"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "P40792",
+              "geneName": "Rac1",
+              "intActId": "EBI-74845"
+            },
+            "numberOfExperiments": 3,
+            "organismDiffer": false
+          }
+        ]
+      },
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "subcellularLocations": [
+          {
+            "location": {
+              "value": "Cytoplasm, cytoskeleton",
+              "id": "SL-0090"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "15917496"
+              }
+            ],
+            "value": "Expressed in ovary and head"
+          }
+        ],
+        "commentType": "TISSUE SPECIFICITY"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "37041188"
+              }
+            ],
+            "value": "RNAi-mediated knockdown in the neurons of adult males significantly reduces survival to 27 percent (PubMed:37041188). Adult survival begins to decrease from approximately day 9 post eclosion (PubMed:37041188). Pan-neuronal or glutamatergic neuron-specific RNAi-mediated knockdown decreases adult climbing behavior (PubMed:37041188). Glutamatergic neuron-specific RNAi-mediated knockdown also decreases activity throughout the day (during both light and dark cycles) (PubMed:37041188)"
+          }
+        ],
+        "commentType": "DISRUPTION PHENOTYPE"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the profilin family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 126,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Profilin",
+        "featureId": "PRO_0000199597"
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0009",
+        "category": "Molecular function",
+        "name": "Actin-binding"
+      },
+      {
+        "id": "KW-0963",
+        "category": "Cellular component",
+        "name": "Cytoplasm"
+      },
+      {
+        "id": "KW-0206",
+        "category": "Cellular component",
+        "name": "Cytoskeleton"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "1339308",
+          "citationType": "journal article",
+          "authors": [
+            "Cooley L.",
+            "Verheyen E.",
+            "Caverly K."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "1339308"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/0092-8674(92)90128-y"
+            }
+          ],
+          "title": "Chickadee encodes a profilin required for intercellular cytoplasm transport during Drosophila oogenesis.",
+          "publicationDate": "1992",
+          "journal": "Cell",
+          "firstPage": "173",
+          "lastPage": "184",
+          "volume": "69"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [MRNA]"
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "15917496",
+          "citationType": "journal article",
+          "authors": [
+            "Jagadeeshan S.",
+            "Singh R.S."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "15917496"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1093/molbev/msi175"
+            }
+          ],
+          "title": "Rapidly evolving genes of Drosophila: differing levels of selective pressure in testis, ovary, and head tissues between sibling species.",
+          "publicationDate": "2005",
+          "journal": "Mol. Biol. Evol.",
+          "firstPage": "1793",
+          "lastPage": "1801",
+          "volume": "22"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [MRNA]",
+          "TISSUE SPECIFICITY"
+        ],
+        "referenceComments": [
+          {
+            "value": "Head",
+            "type": "TISSUE"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 3,
+        "citation": {
+          "id": "10731132",
+          "citationType": "journal article",
+          "authors": [
+            "Adams M.D.",
+            "Celniker S.E.",
+            "Holt R.A.",
+            "Evans C.A.",
+            "Gocayne J.D.",
+            "Amanatides P.G.",
+            "Scherer S.E.",
+            "Li P.W.",
+            "Hoskins R.A.",
+            "Galle R.F.",
+            "George R.A.",
+            "Lewis S.E.",
+            "Richards S.",
+            "Ashburner M.",
+            "Henderson S.N.",
+            "Sutton G.G.",
+            "Wortman J.R.",
+            "Yandell M.D.",
+            "Zhang Q.",
+            "Chen L.X.",
+            "Brandon R.C.",
+            "Rogers Y.-H.C.",
+            "Blazej R.G.",
+            "Champe M.",
+            "Pfeiffer B.D.",
+            "Wan K.H.",
+            "Doyle C.",
+            "Baxter E.G.",
+            "Helt G.",
+            "Nelson C.R.",
+            "Miklos G.L.G.",
+            "Abril J.F.",
+            "Agbayani A.",
+            "An H.-J.",
+            "Andrews-Pfannkoch C.",
+            "Baldwin D.",
+            "Ballew R.M.",
+            "Basu A.",
+            "Baxendale J.",
+            "Bayraktaroglu L.",
+            "Beasley E.M.",
+            "Beeson K.Y.",
+            "Benos P.V.",
+            "Berman B.P.",
+            "Bhandari D.",
+            "Bolshakov S.",
+            "Borkova D.",
+            "Botchan M.R.",
+            "Bouck J.",
+            "Brokstein P.",
+            "Brottier P.",
+            "Burtis K.C.",
+            "Busam D.A.",
+            "Butler H.",
+            "Cadieu E.",
+            "Center A.",
+            "Chandra I.",
+            "Cherry J.M.",
+            "Cawley S.",
+            "Dahlke C.",
+            "Davenport L.B.",
+            "Davies P.",
+            "de Pablos B.",
+            "Delcher A.",
+            "Deng Z.",
+            "Mays A.D.",
+            "Dew I.",
+            "Dietz S.M.",
+            "Dodson K.",
+            "Doup L.E.",
+            "Downes M.",
+            "Dugan-Rocha S.",
+            "Dunkov B.C.",
+            "Dunn P.",
+            "Durbin K.J.",
+            "Evangelista C.C.",
+            "Ferraz C.",
+            "Ferriera S.",
+            "Fleischmann W.",
+            "Fosler C.",
+            "Gabrielian A.E.",
+            "Garg N.S.",
+            "Gelbart W.M.",
+            "Glasser K.",
+            "Glodek A.",
+            "Gong F.",
+            "Gorrell J.H.",
+            "Gu Z.",
+            "Guan P.",
+            "Harris M.",
+            "Harris N.L.",
+            "Harvey D.A.",
+            "Heiman T.J.",
+            "Hernandez J.R.",
+            "Houck J.",
+            "Hostin D.",
+            "Houston K.A.",
+            "Howland T.J.",
+            "Wei M.-H.",
+            "Ibegwam C.",
+            "Jalali M.",
+            "Kalush F.",
+            "Karpen G.H.",
+            "Ke Z.",
+            "Kennison J.A.",
+            "Ketchum K.A.",
+            "Kimmel B.E.",
+            "Kodira C.D.",
+            "Kraft C.L.",
+            "Kravitz S.",
+            "Kulp D.",
+            "Lai Z.",
+            "Lasko P.",
+            "Lei Y.",
+            "Levitsky A.A.",
+            "Li J.H.",
+            "Li Z.",
+            "Liang Y.",
+            "Lin X.",
+            "Liu X.",
+            "Mattei B.",
+            "McIntosh T.C.",
+            "McLeod M.P.",
+            "McPherson D.",
+            "Merkulov G.",
+            "Milshina N.V.",
+            "Mobarry C.",
+            "Morris J.",
+            "Moshrefi A.",
+            "Mount S.M.",
+            "Moy M.",
+            "Murphy B.",
+            "Murphy L.",
+            "Muzny D.M.",
+            "Nelson D.L.",
+            "Nelson D.R.",
+            "Nelson K.A.",
+            "Nixon K.",
+            "Nusskern D.R.",
+            "Pacleb J.M.",
+            "Palazzolo M.",
+            "Pittman G.S.",
+            "Pan S.",
+            "Pollard J.",
+            "Puri V.",
+            "Reese M.G.",
+            "Reinert K.",
+            "Remington K.",
+            "Saunders R.D.C.",
+            "Scheeler F.",
+            "Shen H.",
+            "Shue B.C.",
+            "Siden-Kiamos I.",
+            "Simpson M.",
+            "Skupski M.P.",
+            "Smith T.J.",
+            "Spier E.",
+            "Spradling A.C.",
+            "Stapleton M.",
+            "Strong R.",
+            "Sun E.",
+            "Svirskas R.",
+            "Tector C.",
+            "Turner R.",
+            "Venter E.",
+            "Wang A.H.",
+            "Wang X.",
+            "Wang Z.-Y.",
+            "Wassarman D.A.",
+            "Weinstock G.M.",
+            "Weissenbach J.",
+            "Williams S.M.",
+            "Woodage T.",
+            "Worley K.C.",
+            "Wu D.",
+            "Yang S.",
+            "Yao Q.A.",
+            "Ye J.",
+            "Yeh R.-F.",
+            "Zaveri J.S.",
+            "Zhan M.",
+            "Zhang G.",
+            "Zhao Q.",
+            "Zheng L.",
+            "Zheng X.H.",
+            "Zhong F.N.",
+            "Zhong W.",
+            "Zhou X.",
+            "Zhu S.C.",
+            "Zhu X.",
+            "Smith H.O.",
+            "Gibbs R.A.",
+            "Myers E.W.",
+            "Rubin G.M.",
+            "Venter J.C."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "10731132"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.287.5461.2185"
+            }
+          ],
+          "title": "The genome sequence of Drosophila melanogaster.",
+          "publicationDate": "2000",
+          "journal": "Science",
+          "firstPage": "2185",
+          "lastPage": "2195",
+          "volume": "287"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 4,
+        "citation": {
+          "id": "12537572",
+          "citationType": "journal article",
+          "authors": [
+            "Misra S.",
+            "Crosby M.A.",
+            "Mungall C.J.",
+            "Matthews B.B.",
+            "Campbell K.S.",
+            "Hradecky P.",
+            "Huang Y.",
+            "Kaminker J.S.",
+            "Millburn G.H.",
+            "Prochnik S.E.",
+            "Smith C.D.",
+            "Tupy J.L.",
+            "Whitfield E.J.",
+            "Bayraktaroglu L.",
+            "Berman B.P.",
+            "Bettencourt B.R.",
+            "Celniker S.E.",
+            "de Grey A.D.N.J.",
+            "Drysdale R.A.",
+            "Harris N.L.",
+            "Richter J.",
+            "Russo S.",
+            "Schroeder A.J.",
+            "Shu S.Q.",
+            "Stapleton M.",
+            "Yamada C.",
+            "Ashburner M.",
+            "Gelbart W.M.",
+            "Rubin G.M.",
+            "Lewis S.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12537572"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1186/gb-2002-3-12-research0083"
+            }
+          ],
+          "title": "Annotation of the Drosophila melanogaster euchromatic genome: a systematic review.",
+          "publicationDate": "2002",
+          "journal": "Genome Biol.",
+          "firstPage": "RESEARCH0083.1",
+          "lastPage": "RESEARCH0083.22",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "GENOME REANNOTATION"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 5,
+        "citation": {
+          "id": "12537569",
+          "citationType": "journal article",
+          "authors": [
+            "Stapleton M.",
+            "Carlson J.W.",
+            "Brokstein P.",
+            "Yu C.",
+            "Champe M.",
+            "George R.A.",
+            "Guarin H.",
+            "Kronmiller B.",
+            "Pacleb J.M.",
+            "Park S.",
+            "Wan K.H.",
+            "Rubin G.M.",
+            "Celniker S.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12537569"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1186/gb-2002-3-12-research0080"
+            }
+          ],
+          "title": "A Drosophila full-length cDNA resource.",
+          "publicationDate": "2002",
+          "journal": "Genome Biol.",
+          "firstPage": "RESEARCH0080.1",
+          "lastPage": "RESEARCH0080.8",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE MRNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          },
+          {
+            "value": "Embryo",
+            "type": "TISSUE"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 6,
+        "citation": {
+          "id": "37041188",
+          "citationType": "journal article",
+          "authors": [
+            "Vaikakkara Chithran A.",
+            "Allan D.W.",
+            "O'Connor T.P."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "37041188"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1038/s41598-023-32943-4"
+            }
+          ],
+          "title": "Adult expression of Semaphorins and Plexins is essential for motor neuron survival.",
+          "publicationDate": "2023",
+          "journal": "Sci. Rep.",
+          "firstPage": "5894",
+          "lastPage": "5894",
+          "volume": "13"
+        },
+        "referencePositions": [
+          "FUNCTION",
+          "DISRUPTION PHENOTYPE"
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "M84528",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAA28418.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "M84529",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAA28419.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "DQ062770",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAY56643.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014134",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAF52315.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014134",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAF52316.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014134",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAN10565.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014134",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAS64643.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AY069444",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAL39589.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AY128443",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAM75036.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "PIR",
+        "id": "A38154",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "A38154"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001245905.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001258976.2"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001245906.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001258977.2"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_477016.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_057668.6"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_599131.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_134304.3"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_723136.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_164667.2"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_995635.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_205913.3"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "P25843",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "P25843",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID",
+        "id": "59999",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "72"
+          }
+        ]
+      },
+      {
+        "database": "DIP",
+        "id": "DIP-22165N",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "P25843",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "372"
+          }
+        ]
+      },
+      {
+        "database": "IntAct",
+        "id": "P25843",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "181"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "7227.FBpp0089196",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "7227-FBpp0089196",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "P25843",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "DNASU",
+        "id": "33834",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0079233",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0078864"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0000308"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0079234",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0078865"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0000308"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0079235",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0078866"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0000308"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0079236",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0089196"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0000308"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0309212",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0301151"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0000308"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0309213",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0301152"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0000308"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "33834",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "dme:Dmel_CG9553",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "UCSC",
+        "id": "CG9553-RA",
+        "properties": [
+          {
+            "key": "OrganismName",
+            "value": "d. melanogaster"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "FB:FBgn0000308",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "33834",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FlyBase",
+        "id": "FBgn0000308",
+        "properties": [
+          {
+            "key": "GeneName",
+            "value": "chic"
+          }
+        ]
+      },
+      {
+        "database": "VEuPathDB",
+        "id": "VectorBase:FBgn0000308",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG1755",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_120772_1_1_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "P25843",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "HHAENVQ",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "421374at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "P25843",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SignaLink",
+        "id": "P25843",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID-ORCS",
+        "id": "33834",
+        "properties": [
+          {
+            "key": "hits",
+            "value": "1 hit in 1 CRISPR screen"
+          }
+        ]
+      },
+      {
+        "database": "GenomeRNAi",
+        "id": "33834",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:P25843",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000000803",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome 2L"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "FBgn0000308",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in adult differentiating enterocyte in digestive tract and 286 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "ExpressionAtlas",
+        "id": "P25843",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "baseline and differential"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005938",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell cortex"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005737",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoplasm"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "22976306"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005856",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoskeleton"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:UniProtKB-SubCell"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0043005",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:neuron projection"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "24656828"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0048471",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:perinuclear region of cytoplasm"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "22976306"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0003785",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:actin monomer binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007015",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:actin filament organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "11584269"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030041",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:actin filament polymerization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "TAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "12147138"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0000915",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:actomyosin contractile ring assembly"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "TAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "12386932"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007420",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:brain development"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "15964283"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0000902",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell morphogenesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "12975351"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007391",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:dorsal closure"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "TAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "12147138"
+          },
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "12231351"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007488",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:histoblast morphogenesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "17166923"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0035193",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:larval central nervous system remodeling"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "11030623"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007436",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:larval salivary gland morphogenesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "19064711"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0032507",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:maintenance of protein location in cell"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "16174742"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0036098",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:male germ-line stem cell population maintenance"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "24346697"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0000281",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:mitotic cytokinesis"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "16174742"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0016322",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:neuron remodeling"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "24656828"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030717",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:oocyte karyosome formation"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "15979065"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007300",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:ovarian nurse cell to oocyte transport"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "HMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0007001",
+            "source": "PubMed",
+            "id": "1783295"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0045451",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:pole plasm oskar mRNA localization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "TAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "11700288"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0048842",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of axon extension involved in axon guidance"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:CACAO"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "10069335"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0048680",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of axon regeneration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "24656828"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0051491",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of filopodium assembly"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "21464901"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0035019",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:somatic stem cell population maintenance"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "24346697"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0042060",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:wound healing"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "22976306"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd00148",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROF"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "3.30.450.30:FF:000001",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Profilin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.30.450.30",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Dynein light chain 2a, cytoplasmic"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR048278",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PFN"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR005455",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PFN_euk"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036140",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PFN_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR027310",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Profilin_CS"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR11604",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROFILIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR11604:SF0",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROFILIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00235",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Profilin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00392",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROFILIN"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR01640",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROFILINPLNT"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00392",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROF"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF55770",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Profilin (actin-binding protein)"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00414",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "PROFILIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MSWQDYVDNQLLASQCVTKACIAGHDGNIWAQSSGFEVTKEELSKLISGFDQQDGLTSNGVTLAGQRYIYLSGTDRVVRAKLGRSGVHCMKTTQAVIVSIYEDPVQPQQAASVVEKLGDYLITCGY",
+      "length": 126,
+      "molWeight": 13723,
+      "crc64": "6E2942C12A81ADEA",
+      "md5": "9F75C804240CCFC8243C92CEEAEB2A1E"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "SUBUNIT": 1,
+        "INTERACTION": 3,
+        "SUBCELLULAR LOCATION": 1,
+        "TISSUE SPECIFICITY": 1,
+        "DISRUPTION PHENOTYPE": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Chain": 1
+      },
+      "uniParcId": "UPI0000000F89"
+    }
+  }
+}

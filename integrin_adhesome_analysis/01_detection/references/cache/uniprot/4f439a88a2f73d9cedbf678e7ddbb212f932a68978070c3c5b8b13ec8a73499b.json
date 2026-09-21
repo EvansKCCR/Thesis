@@ -1,0 +1,1843 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/O46037.json",
+  "retrieved_at": "2026-09-18T09:23:16.703963+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "O46037",
+    "uniProtkbId": "VINC_DROME",
+    "entryAudit": {
+      "firstPublicDate": "2004-07-19",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "1998-06-01",
+      "entryVersion": 172,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 4.0,
+    "organism": {
+      "scientificName": "Drosophila melanogaster",
+      "commonName": "Fruit fly",
+      "taxonId": 7227,
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Arthropoda",
+        "Altocrustacea",
+        "Allotriocarida",
+        "Hexapoda",
+        "Insecta",
+        "Pterygota",
+        "Neoptera",
+        "Eumetabola",
+        "Endopterygota",
+        "Aparaglossata",
+        "Panorpida",
+        "Diptera",
+        "Brachycera",
+        "Muscomorpha",
+        "Ephydroidea",
+        "Drosophilidae",
+        "Drosophila",
+        "Sophophora"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "value": "Vinculin"
+        }
+      }
+    },
+    "genes": [
+      {
+        "geneName": {
+          "value": "Vinc"
+        },
+        "orfNames": [
+          {
+            "value": "CG3299"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000250",
+                "source": "UniProtKB",
+                "id": "P12003"
+              }
+            ],
+            "value": "Involved in cell adhesion. May be involved in the attachment of the actin-based microfilaments to the plasma membrane"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000250"
+              }
+            ],
+            "value": "Exhibits self-association properties"
+          }
+        ],
+        "commentType": "SUBUNIT"
+      },
+      {
+        "commentType": "INTERACTION",
+        "interactions": [
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "O46037",
+              "intActId": "EBI-121490"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "A1Z866",
+              "geneName": "CAP",
+              "intActId": "EBI-148231"
+            },
+            "numberOfExperiments": 3,
+            "organismDiffer": false
+          },
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "O46037",
+              "intActId": "EBI-121490"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "Q8INW7",
+              "geneName": "Pax",
+              "intActId": "EBI-175835"
+            },
+            "numberOfExperiments": 3,
+            "organismDiffer": false
+          }
+        ]
+      },
+      {
+        "commentType": "SUBCELLULAR LOCATION",
+        "note": {
+          "texts": [
+            {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000250",
+                  "source": "UniProtKB",
+                  "id": "P12003"
+                }
+              ],
+              "value": "Cytoplasmic face of adhesion plaques"
+            }
+          ]
+        },
+        "subcellularLocations": [
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000250",
+                  "source": "UniProtKB",
+                  "id": "P85972"
+                }
+              ],
+              "value": "Cytoplasm, cytoskeleton",
+              "id": "SL-0090"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000250",
+                  "source": "UniProtKB",
+                  "id": "P12003"
+                }
+              ],
+              "value": "Cell junction, adherens junction",
+              "id": "SL-0009"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000250",
+                  "source": "UniProtKB",
+                  "id": "P12003"
+                }
+              ],
+              "value": "Cell membrane",
+              "id": "SL-0039"
+            },
+            "topology": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000250",
+                  "source": "UniProtKB",
+                  "id": "P12003"
+                }
+              ],
+              "value": "Peripheral membrane protein",
+              "id": "SL-9903"
+            },
+            "orientation": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000250",
+                  "source": "UniProtKB",
+                  "id": "P12003"
+                }
+              ],
+              "value": "Cytoplasmic side",
+              "id": "SL-9910"
+            }
+          },
+          {
+            "location": {
+              "evidences": [
+                {
+                  "evidenceCode": "ECO:0000250",
+                  "source": "UniProtKB",
+                  "id": "P12003"
+                }
+              ],
+              "value": "Cell junction",
+              "id": "SL-0038"
+            }
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the vinculin/alpha-catenin family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 961,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Vinculin",
+        "featureId": "PRO_0000064259"
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 258,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 362,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "1",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Repeat",
+        "location": {
+          "start": {
+            "value": 371,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 470,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "2",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 258,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 470,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "2 X repeats",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255"
+          }
+        ]
+      },
+      {
+        "type": "Region",
+        "location": {
+          "start": {
+            "value": 720,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 778,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Disordered",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Compositional bias",
+        "location": {
+          "start": {
+            "value": 723,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 738,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Pro residues",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000256",
+            "source": "SAM",
+            "id": "MobiDB-lite"
+          }
+        ]
+      },
+      {
+        "type": "Modified residue",
+        "location": {
+          "start": {
+            "value": 774,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 774,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Phosphothreonine",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000269",
+            "source": "PubMed",
+            "id": "17372656"
+          }
+        ]
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0009",
+        "category": "Molecular function",
+        "name": "Actin-binding"
+      },
+      {
+        "id": "KW-0130",
+        "category": "Biological process",
+        "name": "Cell adhesion"
+      },
+      {
+        "id": "KW-0965",
+        "category": "Cellular component",
+        "name": "Cell junction"
+      },
+      {
+        "id": "KW-1003",
+        "category": "Cellular component",
+        "name": "Cell membrane"
+      },
+      {
+        "id": "KW-0963",
+        "category": "Cellular component",
+        "name": "Cytoplasm"
+      },
+      {
+        "id": "KW-0206",
+        "category": "Cellular component",
+        "name": "Cytoskeleton"
+      },
+      {
+        "id": "KW-0472",
+        "category": "Cellular component",
+        "name": "Membrane"
+      },
+      {
+        "id": "KW-0597",
+        "category": "PTM",
+        "name": "Phosphoprotein"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "id": "KW-0677",
+        "category": "Domain",
+        "name": "Repeat"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "9280281",
+          "citationType": "journal article",
+          "authors": [
+            "Alatortsev V.E.",
+            "Kramerova I.A.",
+            "Frolov M.V.",
+            "Lavrov S.A.",
+            "Westphal E.D."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "9280281"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/s0014-5793(97)00901-0"
+            }
+          ],
+          "title": "Vinculin gene is non-essential in Drosophila melanogaster.",
+          "publicationDate": "1997",
+          "journal": "FEBS Lett.",
+          "firstPage": "197",
+          "lastPage": "201",
+          "volume": "413"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [GENOMIC DNA]"
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "10731132",
+          "citationType": "journal article",
+          "authors": [
+            "Adams M.D.",
+            "Celniker S.E.",
+            "Holt R.A.",
+            "Evans C.A.",
+            "Gocayne J.D.",
+            "Amanatides P.G.",
+            "Scherer S.E.",
+            "Li P.W.",
+            "Hoskins R.A.",
+            "Galle R.F.",
+            "George R.A.",
+            "Lewis S.E.",
+            "Richards S.",
+            "Ashburner M.",
+            "Henderson S.N.",
+            "Sutton G.G.",
+            "Wortman J.R.",
+            "Yandell M.D.",
+            "Zhang Q.",
+            "Chen L.X.",
+            "Brandon R.C.",
+            "Rogers Y.-H.C.",
+            "Blazej R.G.",
+            "Champe M.",
+            "Pfeiffer B.D.",
+            "Wan K.H.",
+            "Doyle C.",
+            "Baxter E.G.",
+            "Helt G.",
+            "Nelson C.R.",
+            "Miklos G.L.G.",
+            "Abril J.F.",
+            "Agbayani A.",
+            "An H.-J.",
+            "Andrews-Pfannkoch C.",
+            "Baldwin D.",
+            "Ballew R.M.",
+            "Basu A.",
+            "Baxendale J.",
+            "Bayraktaroglu L.",
+            "Beasley E.M.",
+            "Beeson K.Y.",
+            "Benos P.V.",
+            "Berman B.P.",
+            "Bhandari D.",
+            "Bolshakov S.",
+            "Borkova D.",
+            "Botchan M.R.",
+            "Bouck J.",
+            "Brokstein P.",
+            "Brottier P.",
+            "Burtis K.C.",
+            "Busam D.A.",
+            "Butler H.",
+            "Cadieu E.",
+            "Center A.",
+            "Chandra I.",
+            "Cherry J.M.",
+            "Cawley S.",
+            "Dahlke C.",
+            "Davenport L.B.",
+            "Davies P.",
+            "de Pablos B.",
+            "Delcher A.",
+            "Deng Z.",
+            "Mays A.D.",
+            "Dew I.",
+            "Dietz S.M.",
+            "Dodson K.",
+            "Doup L.E.",
+            "Downes M.",
+            "Dugan-Rocha S.",
+            "Dunkov B.C.",
+            "Dunn P.",
+            "Durbin K.J.",
+            "Evangelista C.C.",
+            "Ferraz C.",
+            "Ferriera S.",
+            "Fleischmann W.",
+            "Fosler C.",
+            "Gabrielian A.E.",
+            "Garg N.S.",
+            "Gelbart W.M.",
+            "Glasser K.",
+            "Glodek A.",
+            "Gong F.",
+            "Gorrell J.H.",
+            "Gu Z.",
+            "Guan P.",
+            "Harris M.",
+            "Harris N.L.",
+            "Harvey D.A.",
+            "Heiman T.J.",
+            "Hernandez J.R.",
+            "Houck J.",
+            "Hostin D.",
+            "Houston K.A.",
+            "Howland T.J.",
+            "Wei M.-H.",
+            "Ibegwam C.",
+            "Jalali M.",
+            "Kalush F.",
+            "Karpen G.H.",
+            "Ke Z.",
+            "Kennison J.A.",
+            "Ketchum K.A.",
+            "Kimmel B.E.",
+            "Kodira C.D.",
+            "Kraft C.L.",
+            "Kravitz S.",
+            "Kulp D.",
+            "Lai Z.",
+            "Lasko P.",
+            "Lei Y.",
+            "Levitsky A.A.",
+            "Li J.H.",
+            "Li Z.",
+            "Liang Y.",
+            "Lin X.",
+            "Liu X.",
+            "Mattei B.",
+            "McIntosh T.C.",
+            "McLeod M.P.",
+            "McPherson D.",
+            "Merkulov G.",
+            "Milshina N.V.",
+            "Mobarry C.",
+            "Morris J.",
+            "Moshrefi A.",
+            "Mount S.M.",
+            "Moy M.",
+            "Murphy B.",
+            "Murphy L.",
+            "Muzny D.M.",
+            "Nelson D.L.",
+            "Nelson D.R.",
+            "Nelson K.A.",
+            "Nixon K.",
+            "Nusskern D.R.",
+            "Pacleb J.M.",
+            "Palazzolo M.",
+            "Pittman G.S.",
+            "Pan S.",
+            "Pollard J.",
+            "Puri V.",
+            "Reese M.G.",
+            "Reinert K.",
+            "Remington K.",
+            "Saunders R.D.C.",
+            "Scheeler F.",
+            "Shen H.",
+            "Shue B.C.",
+            "Siden-Kiamos I.",
+            "Simpson M.",
+            "Skupski M.P.",
+            "Smith T.J.",
+            "Spier E.",
+            "Spradling A.C.",
+            "Stapleton M.",
+            "Strong R.",
+            "Sun E.",
+            "Svirskas R.",
+            "Tector C.",
+            "Turner R.",
+            "Venter E.",
+            "Wang A.H.",
+            "Wang X.",
+            "Wang Z.-Y.",
+            "Wassarman D.A.",
+            "Weinstock G.M.",
+            "Weissenbach J.",
+            "Williams S.M.",
+            "Woodage T.",
+            "Worley K.C.",
+            "Wu D.",
+            "Yang S.",
+            "Yao Q.A.",
+            "Ye J.",
+            "Yeh R.-F.",
+            "Zaveri J.S.",
+            "Zhan M.",
+            "Zhang G.",
+            "Zhao Q.",
+            "Zheng L.",
+            "Zheng X.H.",
+            "Zhong F.N.",
+            "Zhong W.",
+            "Zhou X.",
+            "Zhu S.C.",
+            "Zhu X.",
+            "Smith H.O.",
+            "Gibbs R.A.",
+            "Myers E.W.",
+            "Rubin G.M.",
+            "Venter J.C."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "10731132"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.287.5461.2185"
+            }
+          ],
+          "title": "The genome sequence of Drosophila melanogaster.",
+          "publicationDate": "2000",
+          "journal": "Science",
+          "firstPage": "2185",
+          "lastPage": "2195",
+          "volume": "287"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 3,
+        "citation": {
+          "id": "12537572",
+          "citationType": "journal article",
+          "authors": [
+            "Misra S.",
+            "Crosby M.A.",
+            "Mungall C.J.",
+            "Matthews B.B.",
+            "Campbell K.S.",
+            "Hradecky P.",
+            "Huang Y.",
+            "Kaminker J.S.",
+            "Millburn G.H.",
+            "Prochnik S.E.",
+            "Smith C.D.",
+            "Tupy J.L.",
+            "Whitfield E.J.",
+            "Bayraktaroglu L.",
+            "Berman B.P.",
+            "Bettencourt B.R.",
+            "Celniker S.E.",
+            "de Grey A.D.N.J.",
+            "Drysdale R.A.",
+            "Harris N.L.",
+            "Richter J.",
+            "Russo S.",
+            "Schroeder A.J.",
+            "Shu S.Q.",
+            "Stapleton M.",
+            "Yamada C.",
+            "Ashburner M.",
+            "Gelbart W.M.",
+            "Rubin G.M.",
+            "Lewis S.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12537572"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1186/gb-2002-3-12-research0083"
+            }
+          ],
+          "title": "Annotation of the Drosophila melanogaster euchromatic genome: a systematic review.",
+          "publicationDate": "2002",
+          "journal": "Genome Biol.",
+          "firstPage": "RESEARCH0083.1",
+          "lastPage": "RESEARCH0083.22",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "GENOME REANNOTATION"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 4,
+        "citation": {
+          "id": "10731137",
+          "citationType": "journal article",
+          "authors": [
+            "Benos P.V.",
+            "Gatt M.K.",
+            "Ashburner M.",
+            "Murphy L.",
+            "Harris D.",
+            "Barrell B.G.",
+            "Ferraz C.",
+            "Vidal S.",
+            "Brun C.",
+            "Demailles J.",
+            "Cadieu E.",
+            "Dreano S.",
+            "Gloux S.",
+            "Lelaure V.",
+            "Mottier S.",
+            "Galibert F.",
+            "Borkova D.",
+            "Minana B.",
+            "Kafatos F.C.",
+            "Louis C.",
+            "Siden-Kiamos I.",
+            "Bolshakov S.",
+            "Papagiannakis G.",
+            "Spanos L.",
+            "Cox S.",
+            "Madueno E.",
+            "de Pablos B.",
+            "Modolell J.",
+            "Peter A.",
+            "Schoettler P.",
+            "Werner M.",
+            "Mourkioti F.",
+            "Beinert N.",
+            "Dowe G.",
+            "Schaefer U.",
+            "Jaeckle H.",
+            "Bucheton A.",
+            "Callister D.M.",
+            "Campbell L.A.",
+            "Darlamitsou A.",
+            "Henderson N.S.",
+            "McMillan P.J.",
+            "Salles C.",
+            "Tait E.A.",
+            "Valenti P.",
+            "Saunders R.D.C.",
+            "Glover D.M."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "10731137"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.287.5461.2220"
+            }
+          ],
+          "title": "From sequence to chromosome: the tip of the X chromosome of D. melanogaster.",
+          "publicationDate": "2000",
+          "journal": "Science",
+          "firstPage": "2220",
+          "lastPage": "2222",
+          "volume": "287"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Oregon-R",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 5,
+        "citation": {
+          "id": "12537569",
+          "citationType": "journal article",
+          "authors": [
+            "Stapleton M.",
+            "Carlson J.W.",
+            "Brokstein P.",
+            "Yu C.",
+            "Champe M.",
+            "George R.A.",
+            "Guarin H.",
+            "Kronmiller B.",
+            "Pacleb J.M.",
+            "Park S.",
+            "Wan K.H.",
+            "Rubin G.M.",
+            "Celniker S.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12537569"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1186/gb-2002-3-12-research0080"
+            }
+          ],
+          "title": "A Drosophila full-length cDNA resource.",
+          "publicationDate": "2002",
+          "journal": "Genome Biol.",
+          "firstPage": "RESEARCH0080.1",
+          "lastPage": "RESEARCH0080.8",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE MRNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          },
+          {
+            "value": "Embryo",
+            "type": "TISSUE"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 6,
+        "citation": {
+          "id": "17372656",
+          "citationType": "journal article",
+          "authors": [
+            "Bodenmiller B.",
+            "Mueller L.N.",
+            "Pedrioli P.G.A.",
+            "Pflieger D.",
+            "Juenger M.A.",
+            "Eng J.K.",
+            "Aebersold R.",
+            "Tao W.A."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "17372656"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1039/b617545g"
+            }
+          ],
+          "title": "An integrated chemical, mass spectrometric and computational strategy for (quantitative) phosphoproteomics: application to Drosophila melanogaster Kc167 cells.",
+          "publicationDate": "2007",
+          "journal": "Mol. Biosyst.",
+          "firstPage": "275",
+          "lastPage": "286",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "PHOSPHORYLATION [LARGE SCALE ANALYSIS] AT THR-774",
+          "IDENTIFICATION BY MASS SPECTROMETRY"
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "AE014298",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAF45752.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AL009193",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "CAA15691.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AY128501",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAM75094.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001284813.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001297884.1"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_001284814.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_001297885.1"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_476820.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_057472.3"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID",
+        "id": "57740",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "16"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "751"
+          }
+        ]
+      },
+      {
+        "database": "IntAct",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "138"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "7227.FBpp0309623",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "GlyGen",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "glycosylation",
+            "value": "1 site"
+          }
+        ]
+      },
+      {
+        "database": "iPTMnet",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "7227-FBpp0309623",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "DNASU",
+        "id": "31201",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0070420",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0070404"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0004397"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0342770",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0309622"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0004397"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0342771",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0309623"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0004397"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "31201",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "dme:Dmel_CG3299",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "FB:FBgn0004397",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "31201",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FlyBase",
+        "id": "FBgn0004397",
+        "properties": [
+          {
+            "key": "GeneName",
+            "value": "Vinc"
+          }
+        ]
+      },
+      {
+        "database": "VEuPathDB",
+        "id": "VectorBase:FBgn0004397",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG3681",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_012338_0_0_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OMA",
+        "id": "ANNLCEL",
+        "properties": [
+          {
+            "key": "Fingerprint",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "29742at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-114608",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Platelet degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-445355",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Smooth Muscle Contraction"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-6798695",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Neutrophil degranulation"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-9764561",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Regulation of CDH1 Function"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-9958825",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Activation of STAT3 by cadherin engagement"
+          }
+        ]
+      },
+      {
+        "database": "SignaLink",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID-ORCS",
+        "id": "31201",
+        "properties": [
+          {
+            "key": "hits",
+            "value": "0 hits in 1 CRISPR screen"
+          }
+        ]
+      },
+      {
+        "database": "GenomeRNAi",
+        "id": "31201",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:O46037",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000000803",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome X"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "FBgn0004397",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in outer photoreceptor cell (Drosophila) in insect head and 137 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "ExpressionAtlas",
+        "id": "O46037",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "baseline and differential"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0015629",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:actin cytoskeleton"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005912",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:adherens junction"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0070161",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:anchoring junction"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "ISS:UniProtKB"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0044291",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cell-cell contact zone"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005737",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoplasm"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0098592",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoplasmic side of apical plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "27831494"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005856",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoskeleton"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005925",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:focal adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005886",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:plasma membrane"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "ISS:UniProtKB"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0051015",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:actin filament binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0045294",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:alpha-catenin binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0008013",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:beta-catenin binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005198",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:structural molecule activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IEA:InterPro"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007155",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell adhesion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.230:FF:000010",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin a"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.230:FF:000021",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin, isoform B"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.230:FF:000024",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin, isoform B"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.230:FF:000025",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin, isoform B"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.810:FF:000004",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin, isoform B"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "1.20.120.810:FF:000008",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin, isoform B"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.120.230",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Alpha-catenin/vinculin-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "1.20.120.810",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin, Vh2 four-helix bundle"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036723",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Alpha-catenin/vinculin-like_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR017997",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR006077",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin/catenin"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000633",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin_CS"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR46180",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "VINCULIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF01044",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Vinculin"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00806",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "VINCULIN"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF47220",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "alpha-catenin/vinculin-like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "6"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS00664",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "VINCULIN_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MPVFHTKTIESILDPVAQQVSRLVILHEEAEDGNAMPDLSRPVQVVSAAVANLVKVGRDTINSSDDKILRQDMPSALHRVEGASQLLEEASDMLRSDPYSGPARKKLIEGSRGILQGTSSLLLCFDESEVRKIIQECKRVLDYLAVAEVINTMEQLVQFLKDLSPCLSKVHREVGAREKELTHQVHSEILVRCLEQVKTLAPILICSMKVYIHIVEQQGRGAEEAAENRNYLAARMSDELQEIIRVLQLTTYDEDTSELDNLTVLKKLSNAISNKMEQANEWLSNPYALRGGVGEKALRQVIDNATEISERCLPQDSYPIRKLADEVTAMANTLCELRQEGKGQSPQAESLVRGIRDRMGELKSLVHQAVLGVDKAGVQQTAHTIQGRLEQAVKWLQHPEINDGGLGERAINLIVEEGRKVAEGCPGHQKAEIQQLCDEVERLKRQAAGSGPAAKQAAKQLTQKLYELKAAIQNALVNRIVQDFMDVSTPLKQFTEAVLQPEGTPGREQNFNQKSNNLQAFSDRASKTSRMVAAGGACGNKKIAEILLSSAAQVDSLTPQLISAGRIRMNYPGSKAADEHLQNLKQQYADTVLRMRTLCDQATDPADFIKTSEEHMQVYAKLCEDAIHARQPQKMVDNTSNIARLINRVLLVAKQEADNSEDPVFTERLNAAANRLERSLPAMVGDAKLVATNIADPAAAAAWKNSFQRLLGDVREVRDAIAPPQPPPLPTSLPPPIPELSALHLSNQNAERAPPRPPLPREGLAPVRPPPPETDDEDEGVFRTMPHANQPILIAARGLHQEVRQWSSKDNEIIAAAKRMAILMARLSELVLSDSRGSKRELIATAKKIAEASEDVTRLAKELARQCTDRRIRTNLLQVCERIPTIGTQLKILSTVKATMLGAQGSDEDREATEMLVGNAQNLMQSVKETVRAAEGASIKIRSDQTSNRLQWVRRQPWYQY",
+      "length": 961,
+      "molWeight": 106302,
+      "crc64": "17E50E11F507C875",
+      "md5": "7BA1CABC671DBBFD1D32E5BB45C63106"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "SUBUNIT": 1,
+        "INTERACTION": 2,
+        "SUBCELLULAR LOCATION": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Chain": 1,
+        "Repeat": 2,
+        "Region": 2,
+        "Compositional bias": 1,
+        "Modified residue": 1
+      },
+      "uniParcId": "UPI000007753A"
+    }
+  }
+}
