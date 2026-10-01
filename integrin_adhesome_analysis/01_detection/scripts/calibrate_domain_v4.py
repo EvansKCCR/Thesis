@@ -26,7 +26,7 @@ def main():
         scan(argparse.Namespace(out=str(out/'domains'),library=str(library),
             manifest=str(root/'config/adhesome_pfam_manifest.csv'),proteome=str(refs/'metazoan_references.faa'),
             cpu=2,max_i=0.001,max_c=0.001,min_coverage=0.35))
-    rules=json.loads((root/'config/family_rules.json').read_text())['families']
+    rules=json.loads((root/'config/family_rules_v4.json').read_text())['families']
     hits=defaultdict(list)
     for row in table(out/'domains/domains.csv'):
         hits[row['query_name']].append(row)
@@ -46,7 +46,7 @@ def main():
     counts={family:dict(positive_references=sum(r['expected_positive'] for r in rows if r['tested_family']==family),
         positive_complete=sum(r['expected_positive'] and r['complete'] for r in rows if r['tested_family']==family),
         competitor_complete=sum(not r['expected_positive'] and r['complete'] for r in rows if r['tested_family']==family)) for family in FAMILIES}
-    save_json(out/'calibration.json',dict(counts=counts,rules_sha256=digest(root/'config/family_rules.json'),
+    save_json(out/'calibration.json',dict(counts=counts,rules_sha256=digest(root/'config/family_rules_v4.json'),
         library_sha256=digest(library),references_sha256=digest(refs/'metazoan_references.faa'),
         interpretation='Same-panel architecture calibration, not an independent accuracy or orthology benchmark; complete architecture alone does not assign a family.'))
     print(json.dumps(counts,indent=2),flush=True)

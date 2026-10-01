@@ -1,0 +1,1658 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/Q9XYM0.json",
+  "retrieved_at": "2026-09-29T06:32:37.600925+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "entryType": "UniProtKB reviewed (Swiss-Prot)",
+    "primaryAccession": "Q9XYM0",
+    "secondaryAccessions": [
+      "Q53XD2"
+    ],
+    "uniProtkbId": "CRK_DROME",
+    "entryAudit": {
+      "firstPublicDate": "2001-02-21",
+      "lastAnnotationUpdateDate": "2026-09-02",
+      "lastSequenceUpdateDate": "1999-11-01",
+      "entryVersion": 175,
+      "sequenceVersion": 1
+    },
+    "annotationScore": 5.0,
+    "organism": {
+      "scientificName": "Drosophila melanogaster",
+      "commonName": "Fruit fly",
+      "taxonId": 7227,
+      "lineage": [
+        "Eukaryota",
+        "Metazoa",
+        "Ecdysozoa",
+        "Arthropoda",
+        "Altocrustacea",
+        "Allotriocarida",
+        "Hexapoda",
+        "Insecta",
+        "Pterygota",
+        "Neoptera",
+        "Eumetabola",
+        "Endopterygota",
+        "Aparaglossata",
+        "Panorpida",
+        "Diptera",
+        "Brachycera",
+        "Muscomorpha",
+        "Ephydroidea",
+        "Drosophilidae",
+        "Drosophila",
+        "Sophophora"
+      ]
+    },
+    "proteinExistence": "1: Evidence at protein level",
+    "proteinDescription": {
+      "recommendedName": {
+        "fullName": {
+          "value": "Adapter molecule Crk"
+        }
+      }
+    },
+    "genes": [
+      {
+        "geneName": {
+          "value": "Crk"
+        },
+        "orfNames": [
+          {
+            "value": "CG1587"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "10072777"
+              }
+            ],
+            "value": "Adapter protein which interacts with C-terminal portion of mbc, homolog of human DOCK180. May play a role in cellular processes throughout development"
+          }
+        ],
+        "commentType": "FUNCTION"
+      },
+      {
+        "commentType": "INTERACTION",
+        "interactions": [
+          {
+            "interactantOne": {
+              "uniProtKBAccession": "Q9XYM0",
+              "intActId": "EBI-99477"
+            },
+            "interactantTwo": {
+              "uniProtKBAccession": "Q9VCH4",
+              "geneName": "mbc",
+              "intActId": "EBI-177001"
+            },
+            "numberOfExperiments": 3,
+            "organismDiffer": false
+          }
+        ]
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "10072777"
+              }
+            ],
+            "value": "Embryonic zygotic expression is seen in invaginating presumptive mesoderm and ectodermally derived tissues during gastrulation. At stage 8, expression is also seen in anterior and posterior midgut and cephalic furrow. By stage 9, expression is highest in visceral mesoderm of anterior and posterior midgut, ventral nerve cord and somatic mesoderm"
+          }
+        ],
+        "commentType": "TISSUE SPECIFICITY"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000269",
+                "source": "PubMed",
+                "id": "10072777"
+              }
+            ],
+            "value": "Expressed both maternally and zygotically throughout embryogenesis, declines during larval stages and reappears during pupation"
+          }
+        ],
+        "commentType": "DEVELOPMENTAL STAGE"
+      },
+      {
+        "texts": [
+          {
+            "evidences": [
+              {
+                "evidenceCode": "ECO:0000305"
+              }
+            ],
+            "value": "Belongs to the CRK family"
+          }
+        ],
+        "commentType": "SIMILARITY"
+      }
+    ],
+    "features": [
+      {
+        "type": "Chain",
+        "location": {
+          "start": {
+            "value": 1,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 271,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "Adapter molecule Crk",
+        "featureId": "PRO_0000079350"
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 12,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 104,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "SH2",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00191"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 106,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 166,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "SH3 1",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00192"
+          }
+        ]
+      },
+      {
+        "type": "Domain",
+        "location": {
+          "start": {
+            "value": 199,
+            "modifier": "EXACT"
+          },
+          "end": {
+            "value": 260,
+            "modifier": "EXACT"
+          }
+        },
+        "description": "SH3 2",
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000255",
+            "source": "PROSITE-ProRule",
+            "id": "PRU00192"
+          }
+        ]
+      }
+    ],
+    "keywords": [
+      {
+        "id": "KW-0217",
+        "category": "Molecular function",
+        "name": "Developmental protein"
+      },
+      {
+        "id": "KW-1185",
+        "category": "Technical term",
+        "name": "Reference proteome"
+      },
+      {
+        "id": "KW-0677",
+        "category": "Domain",
+        "name": "Repeat"
+      },
+      {
+        "id": "KW-0727",
+        "category": "Domain",
+        "name": "SH2 domain"
+      },
+      {
+        "id": "KW-0728",
+        "category": "Domain",
+        "name": "SH3 domain"
+      }
+    ],
+    "references": [
+      {
+        "referenceNumber": 1,
+        "citation": {
+          "id": "10072777",
+          "citationType": "journal article",
+          "authors": [
+            "Galletta B.J.",
+            "Niu X.-P.",
+            "Erickson M.R.",
+            "Abmayr S.M."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "10072777"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1016/s0378-1119(99)00010-4"
+            }
+          ],
+          "title": "Identification of a Drosophila homologue to vertebrate Crk by interaction with MBC.",
+          "publicationDate": "1999",
+          "journal": "Gene",
+          "firstPage": "243",
+          "lastPage": "252",
+          "volume": "228"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [MRNA]",
+          "FUNCTION",
+          "TISSUE SPECIFICITY",
+          "DEVELOPMENTAL STAGE"
+        ],
+        "referenceComments": [
+          {
+            "value": "Embryo",
+            "type": "TISSUE"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 2,
+        "citation": {
+          "id": "10731132",
+          "citationType": "journal article",
+          "authors": [
+            "Adams M.D.",
+            "Celniker S.E.",
+            "Holt R.A.",
+            "Evans C.A.",
+            "Gocayne J.D.",
+            "Amanatides P.G.",
+            "Scherer S.E.",
+            "Li P.W.",
+            "Hoskins R.A.",
+            "Galle R.F.",
+            "George R.A.",
+            "Lewis S.E.",
+            "Richards S.",
+            "Ashburner M.",
+            "Henderson S.N.",
+            "Sutton G.G.",
+            "Wortman J.R.",
+            "Yandell M.D.",
+            "Zhang Q.",
+            "Chen L.X.",
+            "Brandon R.C.",
+            "Rogers Y.-H.C.",
+            "Blazej R.G.",
+            "Champe M.",
+            "Pfeiffer B.D.",
+            "Wan K.H.",
+            "Doyle C.",
+            "Baxter E.G.",
+            "Helt G.",
+            "Nelson C.R.",
+            "Miklos G.L.G.",
+            "Abril J.F.",
+            "Agbayani A.",
+            "An H.-J.",
+            "Andrews-Pfannkoch C.",
+            "Baldwin D.",
+            "Ballew R.M.",
+            "Basu A.",
+            "Baxendale J.",
+            "Bayraktaroglu L.",
+            "Beasley E.M.",
+            "Beeson K.Y.",
+            "Benos P.V.",
+            "Berman B.P.",
+            "Bhandari D.",
+            "Bolshakov S.",
+            "Borkova D.",
+            "Botchan M.R.",
+            "Bouck J.",
+            "Brokstein P.",
+            "Brottier P.",
+            "Burtis K.C.",
+            "Busam D.A.",
+            "Butler H.",
+            "Cadieu E.",
+            "Center A.",
+            "Chandra I.",
+            "Cherry J.M.",
+            "Cawley S.",
+            "Dahlke C.",
+            "Davenport L.B.",
+            "Davies P.",
+            "de Pablos B.",
+            "Delcher A.",
+            "Deng Z.",
+            "Mays A.D.",
+            "Dew I.",
+            "Dietz S.M.",
+            "Dodson K.",
+            "Doup L.E.",
+            "Downes M.",
+            "Dugan-Rocha S.",
+            "Dunkov B.C.",
+            "Dunn P.",
+            "Durbin K.J.",
+            "Evangelista C.C.",
+            "Ferraz C.",
+            "Ferriera S.",
+            "Fleischmann W.",
+            "Fosler C.",
+            "Gabrielian A.E.",
+            "Garg N.S.",
+            "Gelbart W.M.",
+            "Glasser K.",
+            "Glodek A.",
+            "Gong F.",
+            "Gorrell J.H.",
+            "Gu Z.",
+            "Guan P.",
+            "Harris M.",
+            "Harris N.L.",
+            "Harvey D.A.",
+            "Heiman T.J.",
+            "Hernandez J.R.",
+            "Houck J.",
+            "Hostin D.",
+            "Houston K.A.",
+            "Howland T.J.",
+            "Wei M.-H.",
+            "Ibegwam C.",
+            "Jalali M.",
+            "Kalush F.",
+            "Karpen G.H.",
+            "Ke Z.",
+            "Kennison J.A.",
+            "Ketchum K.A.",
+            "Kimmel B.E.",
+            "Kodira C.D.",
+            "Kraft C.L.",
+            "Kravitz S.",
+            "Kulp D.",
+            "Lai Z.",
+            "Lasko P.",
+            "Lei Y.",
+            "Levitsky A.A.",
+            "Li J.H.",
+            "Li Z.",
+            "Liang Y.",
+            "Lin X.",
+            "Liu X.",
+            "Mattei B.",
+            "McIntosh T.C.",
+            "McLeod M.P.",
+            "McPherson D.",
+            "Merkulov G.",
+            "Milshina N.V.",
+            "Mobarry C.",
+            "Morris J.",
+            "Moshrefi A.",
+            "Mount S.M.",
+            "Moy M.",
+            "Murphy B.",
+            "Murphy L.",
+            "Muzny D.M.",
+            "Nelson D.L.",
+            "Nelson D.R.",
+            "Nelson K.A.",
+            "Nixon K.",
+            "Nusskern D.R.",
+            "Pacleb J.M.",
+            "Palazzolo M.",
+            "Pittman G.S.",
+            "Pan S.",
+            "Pollard J.",
+            "Puri V.",
+            "Reese M.G.",
+            "Reinert K.",
+            "Remington K.",
+            "Saunders R.D.C.",
+            "Scheeler F.",
+            "Shen H.",
+            "Shue B.C.",
+            "Siden-Kiamos I.",
+            "Simpson M.",
+            "Skupski M.P.",
+            "Smith T.J.",
+            "Spier E.",
+            "Spradling A.C.",
+            "Stapleton M.",
+            "Strong R.",
+            "Sun E.",
+            "Svirskas R.",
+            "Tector C.",
+            "Turner R.",
+            "Venter E.",
+            "Wang A.H.",
+            "Wang X.",
+            "Wang Z.-Y.",
+            "Wassarman D.A.",
+            "Weinstock G.M.",
+            "Weissenbach J.",
+            "Williams S.M.",
+            "Woodage T.",
+            "Worley K.C.",
+            "Wu D.",
+            "Yang S.",
+            "Yao Q.A.",
+            "Ye J.",
+            "Yeh R.-F.",
+            "Zaveri J.S.",
+            "Zhan M.",
+            "Zhang G.",
+            "Zhao Q.",
+            "Zheng L.",
+            "Zheng X.H.",
+            "Zhong F.N.",
+            "Zhong W.",
+            "Zhou X.",
+            "Zhu S.C.",
+            "Zhu X.",
+            "Smith H.O.",
+            "Gibbs R.A.",
+            "Myers E.W.",
+            "Rubin G.M.",
+            "Venter J.C."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "10731132"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1126/science.287.5461.2185"
+            }
+          ],
+          "title": "The genome sequence of Drosophila melanogaster.",
+          "publicationDate": "2000",
+          "journal": "Science",
+          "firstPage": "2185",
+          "lastPage": "2195",
+          "volume": "287"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 3,
+        "citation": {
+          "id": "12537572",
+          "citationType": "journal article",
+          "authors": [
+            "Misra S.",
+            "Crosby M.A.",
+            "Mungall C.J.",
+            "Matthews B.B.",
+            "Campbell K.S.",
+            "Hradecky P.",
+            "Huang Y.",
+            "Kaminker J.S.",
+            "Millburn G.H.",
+            "Prochnik S.E.",
+            "Smith C.D.",
+            "Tupy J.L.",
+            "Whitfield E.J.",
+            "Bayraktaroglu L.",
+            "Berman B.P.",
+            "Bettencourt B.R.",
+            "Celniker S.E.",
+            "de Grey A.D.N.J.",
+            "Drysdale R.A.",
+            "Harris N.L.",
+            "Richter J.",
+            "Russo S.",
+            "Schroeder A.J.",
+            "Shu S.Q.",
+            "Stapleton M.",
+            "Yamada C.",
+            "Ashburner M.",
+            "Gelbart W.M.",
+            "Rubin G.M.",
+            "Lewis S.E."
+          ],
+          "citationCrossReferences": [
+            {
+              "database": "PubMed",
+              "id": "12537572"
+            },
+            {
+              "database": "DOI",
+              "id": "10.1186/gb-2002-3-12-research0083"
+            }
+          ],
+          "title": "Annotation of the Drosophila melanogaster euchromatic genome: a systematic review.",
+          "publicationDate": "2002",
+          "journal": "Genome Biol.",
+          "firstPage": "RESEARCH0083.1",
+          "lastPage": "RESEARCH0083.22",
+          "volume": "3"
+        },
+        "referencePositions": [
+          "GENOME REANNOTATION"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          }
+        ]
+      },
+      {
+        "referenceNumber": 4,
+        "citation": {
+          "id": "CI-82OGHUFT84PEU",
+          "citationType": "submission",
+          "authors": [
+            "Stapleton M.",
+            "Carlson J.",
+            "Chavez C.",
+            "Frise E.",
+            "George R.",
+            "Pacleb J.",
+            "Park S.",
+            "Wan K.",
+            "Yu C.",
+            "Rubin G.M.",
+            "Celniker S."
+          ],
+          "publicationDate": "APR-2004",
+          "submissionDatabase": "EMBL/GenBank/DDBJ databases"
+        },
+        "referencePositions": [
+          "NUCLEOTIDE SEQUENCE [LARGE SCALE MRNA]"
+        ],
+        "referenceComments": [
+          {
+            "value": "Berkeley",
+            "type": "STRAIN"
+          },
+          {
+            "value": "Embryo",
+            "type": "TISSUE"
+          }
+        ]
+      }
+    ],
+    "uniProtKBCrossReferences": [
+      {
+        "database": "EMBL",
+        "id": "AF112976",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAD28428.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014135",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAF59362.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "AE014135",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAN06519.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "Genomic_DNA"
+          }
+        ]
+      },
+      {
+        "database": "EMBL",
+        "id": "BT012456",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "AAS93727.1"
+          },
+          {
+            "key": "Status",
+            "value": "-"
+          },
+          {
+            "key": "MoleculeType",
+            "value": "mRNA"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_651908.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_143651.6"
+          }
+        ]
+      },
+      {
+        "database": "RefSeq",
+        "id": "NP_726549.1",
+        "properties": [
+          {
+            "key": "NucleotideSequenceId",
+            "value": "NM_166743.3"
+          }
+        ]
+      },
+      {
+        "database": "AlphaFoldDB",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "SMR",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID",
+        "id": "68612",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "62"
+          }
+        ]
+      },
+      {
+        "database": "DIP",
+        "id": "DIP-21287N",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FunCoup",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "Number of interactors",
+            "value": "1351"
+          }
+        ]
+      },
+      {
+        "database": "IntAct",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "Interactions",
+            "value": "24"
+          }
+        ]
+      },
+      {
+        "database": "MINT",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "STRING",
+        "id": "7227.FBpp0088182",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PaxDb",
+        "id": "7227-FBpp0088182",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PeptideAtlas",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "DNASU",
+        "id": "43775",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0089112",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0088181"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0024811"
+          }
+        ]
+      },
+      {
+        "database": "EnsemblMetazoa",
+        "id": "FBtr0089113",
+        "properties": [
+          {
+            "key": "ProteinId",
+            "value": "FBpp0088182"
+          },
+          {
+            "key": "GeneId",
+            "value": "FBgn0024811"
+          }
+        ]
+      },
+      {
+        "database": "GeneID",
+        "id": "43775",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "KEGG",
+        "id": "dme:Dmel_CG1587",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "UCSC",
+        "id": "CG1587-RA",
+        "properties": [
+          {
+            "key": "OrganismName",
+            "value": "d. melanogaster"
+          }
+        ]
+      },
+      {
+        "database": "AGR",
+        "id": "FB:FBgn0024811",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "CTD",
+        "id": "1398",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "FlyBase",
+        "id": "FBgn0024811",
+        "properties": [
+          {
+            "key": "GeneName",
+            "value": "Crk"
+          }
+        ]
+      },
+      {
+        "database": "VEuPathDB",
+        "id": "VectorBase:FBgn0024811",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "eggNOG",
+        "id": "KOG4792",
+        "properties": [
+          {
+            "key": "ToxonomicScope",
+            "value": "Eukaryota"
+          }
+        ]
+      },
+      {
+        "database": "HOGENOM",
+        "id": "CLU_060542_0_0_1",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "InParanoid",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "OrthoDB",
+        "id": "9204160at2759",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PhylomeDB",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-186763",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Downstream signal transduction"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-8849471",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "PTK6 Regulates RHO GTPases, RAS GTPase and MAP kinases"
+          }
+        ]
+      },
+      {
+        "database": "Reactome",
+        "id": "R-DME-912631",
+        "properties": [
+          {
+            "key": "PathwayName",
+            "value": "Regulation of signaling by CBL"
+          }
+        ]
+      },
+      {
+        "database": "SignaLink",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "BioGRID-ORCS",
+        "id": "43775",
+        "properties": [
+          {
+            "key": "hits",
+            "value": "0 hits in 3 CRISPR screens"
+          }
+        ]
+      },
+      {
+        "database": "GenomeRNAi",
+        "id": "43775",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "PRO",
+        "id": "PR:Q9XYM0",
+        "properties": [
+          {
+            "key": "Description",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "database": "Proteomes",
+        "id": "UP000000803",
+        "properties": [
+          {
+            "key": "Component",
+            "value": "Chromosome 4"
+          }
+        ]
+      },
+      {
+        "database": "Bgee",
+        "id": "FBgn0024811",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "Expressed in cleaving embryo and 265 other cell types or tissues"
+          }
+        ]
+      },
+      {
+        "database": "ExpressionAtlas",
+        "id": "Q9XYM0",
+        "properties": [
+          {
+            "key": "ExpressionPatterns",
+            "value": "baseline and differential"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0005737",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "C:cytoplasm"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0030971",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:receptor tyrosine kinase binding"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IPI:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000353",
+            "source": "PubMed",
+            "id": "15457211"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0035591",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "F:signaling adaptor activity"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007298",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:border follicle cell migration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "18163987"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0016477",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:cell migration"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007167",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:enzyme-linked receptor protein signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IBA:GO_Central"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0048013",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:ephrin receptor signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "ISS:UniProtKB"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0046529",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:imaginal disc fusion, thorax closure"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IGI:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000316",
+            "source": "PubMed",
+            "id": "15457211"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0007520",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:myoblast fusion"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "TAS:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000304",
+            "source": "PubMed",
+            "id": "12111720"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0006911",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:phagocytosis, engulfment"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "24361692"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0046330",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:positive regulation of JNK cascade"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IDA:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000314",
+            "source": "PubMed",
+            "id": "15457211"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0032956",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:regulation of actin cytoskeleton organization"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "ISS:UniProtKB"
+          }
+        ]
+      },
+      {
+        "database": "GO",
+        "id": "GO:0048010",
+        "properties": [
+          {
+            "key": "GoTerm",
+            "value": "P:vascular endothelial growth factor receptor signaling pathway"
+          },
+          {
+            "key": "GoEvidenceType",
+            "value": "IMP:FlyBase"
+          }
+        ],
+        "evidences": [
+          {
+            "evidenceCode": "ECO:0000315",
+            "source": "PubMed",
+            "id": "15457211"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd09926",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2_CRK_like"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd11759",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3_CRK_C"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "CDD",
+        "id": "cd11758",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3_CRK_N"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "FunFam",
+        "id": "3.30.505.10:FF:000026",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "adapter molecule crk isoform X1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "3.30.505.10",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2 domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Gene3D",
+        "id": "2.30.30.40",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3 Domains"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR035458",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CRK_SH3_C"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR035457",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CRK_SH3_N"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR000980",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036860",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR036028",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3-like_dom_sf"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR001452",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3_domain"
+          }
+        ]
+      },
+      {
+        "database": "InterPro",
+        "id": "IPR051184",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "Tyrosine-phos_adapter"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR19969:SF5",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "CRK-LIKE PROTEIN"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PANTHER",
+        "id": "PTHR19969",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2-SH3 ADAPTOR PROTEIN-RELATED"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00017",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF00018",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3_1"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "Pfam",
+        "id": "PF07653",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3_2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00401",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2DOMAIN"
+          }
+        ]
+      },
+      {
+        "database": "PRINTS",
+        "id": "PR00452",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3DOMAIN"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00252",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SMART",
+        "id": "SM00326",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF55550",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2 domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "SUPFAM",
+        "id": "SSF50044",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3-domain"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50001",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH2"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "database": "PROSITE",
+        "id": "PS50002",
+        "properties": [
+          {
+            "key": "EntryName",
+            "value": "SH3"
+          },
+          {
+            "key": "MatchStatus",
+            "value": "2"
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "value": "MDTFDVSDRNSWYFGPMSRQDATEVLMNERERGVFLVRDSNSIAGDYVLCVREDTKVSNYIINKVQQQDQIVYRIGDQSFDNLPKLLTFYTLHYLDTTPLKRPACRRVEKVIGKFDFVGSDQDDLPFQRGEVLTIVRKDEDQWWTARNSSGKIGQIPVPYIQQYDDYMDEDAIDKNEPSISGSSNVFESTLKRTDLNRKLPAYARVKQSRVPNAYDKTALKLEIGDIIKVTKTNINGQWEGELNGKNGHFPFTHVEFVDDCDLSKNSTEIC",
+      "length": 271,
+      "molWeight": 31205,
+      "crc64": "D1B4FE43150932DC",
+      "md5": "B192592F38A71AA40367048A02B272E7"
+    },
+    "extraAttributes": {
+      "countByCommentType": {
+        "FUNCTION": 1,
+        "INTERACTION": 1,
+        "TISSUE SPECIFICITY": 1,
+        "DEVELOPMENTAL STAGE": 1,
+        "SIMILARITY": 1
+      },
+      "countByFeatureType": {
+        "Chain": 1,
+        "Domain": 3
+      },
+      "uniParcId": "UPI00001246B2"
+    }
+  }
+}

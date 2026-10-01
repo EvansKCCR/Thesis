@@ -1,0 +1,9 @@
+{
+  "url": "https://rest.uniprot.org/uniprotkb/search?query=%28gene_exact%3AShc%29+AND+%28organism_id%3A7227%29+AND+%28reviewed%3Atrue%29&format=json&size=25",
+  "retrieved_at": "2026-09-29T06:32:38.255572+00:00",
+  "uniprot_release": "2026_03",
+  "release_date": "02-September-2026",
+  "data": {
+    "results": []
+  }
+}

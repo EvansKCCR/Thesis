@@ -1,5 +1,5 @@
 {
-  "status": "Comparative v4: reference-calibrated ECM domain combinations and alternative ankyrin models for ILK; alpha/FAK variants retained. Evidence tiers are not statistical probabilities.",
+  "status": "Comparative v5: separate Syk/Csk and Nck/Grb2/Crk/Shc families; v4 architectures retained. Evidence tiers are not probabilities.",
   "families": {
     "integrin_alpha": {
       "module": "integrin_receptors",
@@ -715,6 +715,178 @@
       "screening_only": true,
       "min_partial_fraction": 0.5,
       "classification_note": "Generic FN1/FN2/SMB/hemopexin domain bucket; extracellular location and adhesome membership are not inferred from a domain alone."
+    },
+    "Syk": {
+      "module": "downstream_signalling",
+      "min_length": 350,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00017": 2,
+          "PF07714": 1
+        },
+        {
+          "PF00017": 2,
+          "PF00069": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00017"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "Syk/ZAP70 family, not a one-to-one SYK orthology call. Tandem SH2 before kinase plus reciprocal family evidence; incomplete sequences stay provisional."
+    },
+    "Csk": {
+      "module": "downstream_signalling",
+      "min_length": 300,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "CSK/MATK family. Shares SH3-SH2-kinase architecture with Src; reciprocal competition is essential. No Csk-specific motif or catalytic activity is inferred."
+    },
+    "Nck": {
+      "module": "downstream_signalling",
+      "min_length": 200,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00018": 3,
+          "PF00017": 1
+        },
+        {
+          "PF00018": 2,
+          "PF00017": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "NCK1/NCK2/dock family. Usually three SH3 domains before SH2; two detected SH3 are an allowed comparative alternative because NCK2 has an SH3_9 call outside the current HMM panel. No vertebrate paralogue assignment."
+    },
+    "Grb2": {
+      "module": "downstream_signalling",
+      "min_length": 140,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00018": 2,
+          "PF00017": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF00018"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "GRB2/drk family architecture; reciprocal evidence required. Shared architectures cannot resolve vertebrate paralogues."
+    },
+    "Crk": {
+      "module": "downstream_signalling",
+      "min_length": 140,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00017": 1,
+          "PF00018": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00017"
+        ],
+        [
+          "PF00018"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "CRK/CRKL family. SH2 before SH3 permits CRK-I and SH3_2 domains not represented in the current panel; reciprocal family evidence required."
+    },
+    "Shc": {
+      "module": "downstream_signalling",
+      "min_length": 250,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00640": 1,
+          "PF00017": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00640"
+        ],
+        [
+          "PF00017"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "SHC1/2/3/4 family. PTB/PID before SH2 with reciprocal family evidence; no phosphosite or vertebrate paralogue assignment."
     }
   },
   "screening_notes": "Expected architectures and lengths describe reference-like proteins, not universal metazoan requirements. Comparative mode retains incomplete architectures and generic-domain candidates without assigning family identity. Screening anchors are recruitment evidence, not necessarily family-specific domains.",

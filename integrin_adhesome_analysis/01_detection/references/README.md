@@ -1,3 +1,9 @@
+# Active v5 references
+
+The active panel has 71 forward and 142 reciprocal sequences, adding Syk/Csk and Nck/Grb2/Crk/Shc families. Seeds and paired files are under `seeds/schistosome_v5/` and `schistosome_v5/`. The builder defaults to v5. See [v5 methods](../docs/SIGNALLING_EXPANSION_V5.md).
+
+The following v4 provenance describes the preserved reference set used for the latest completed species results.
+
 # Final reference resources
 
 `schistosome_v4/` contains 55 forward-search sequences (26 curated seeds, 20 computational spiralian anchors and nine supplemental family references) and a targeted 126-sequence reciprocal panel. Active accession-pinned seeds are in `seeds/schistosome_v4/`. The original motif library is retained in `motifs/`.

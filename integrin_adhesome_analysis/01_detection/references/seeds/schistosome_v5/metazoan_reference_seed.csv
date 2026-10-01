@@ -1,0 +1,143 @@
+reference_id,family,module,species,taxon_id,gene,accession,evidence_source,experimental_evidence,role,identity_mode,phylogenetic_group,family_assignment_basis,anchor_limitations
+Hsa_ITGA5,integrin_alpha,,Homo sapiens,9606,ITGA5,P08648,,,family_member,,,,
+Hsa_ITGAV,integrin_alpha,,Homo sapiens,9606,ITGAV,P06756,,,family_member,,,,
+Hsa_ITGA1,integrin_alpha,,Homo sapiens,9606,ITGA1,P56199,,,family_member,,,,
+Hsa_ITGA2,integrin_alpha,,Homo sapiens,9606,ITGA2,P17301,,,family_member,,,,
+Hsa_ITGA3,integrin_alpha,,Homo sapiens,9606,ITGA3,P26006,,,family_member,,,,
+Hsa_ITGA4,integrin_alpha,,Homo sapiens,9606,ITGA4,P13612,,,family_member,,,,
+Hsa_ITGA6,integrin_alpha,,Homo sapiens,9606,ITGA6,P23229,,,family_member,,,,
+Hsa_ITGB1,integrin_beta,,Homo sapiens,9606,ITGB1,P05556,,,family_member,,,,
+Hsa_ITGB2,integrin_beta,,Homo sapiens,9606,ITGB2,P05107,,,family_member,,,,
+Hsa_ITGB3,integrin_beta,,Homo sapiens,9606,ITGB3,P05106,,,family_member,,,,
+Hsa_ITGB4,integrin_beta,,Homo sapiens,9606,ITGB4,P16144,,,family_member,,,,
+Hsa_ITGB5,integrin_beta,,Homo sapiens,9606,ITGB5,P18084,,,family_member,,,,
+Hsa_COL1A1,collagen_like,,Homo sapiens,9606,COL1A1,P02452,,,family_member,,,,
+Hsa_COL4A1,collagen_like,,Homo sapiens,9606,COL4A1,P02462,,,family_member,,,,
+Hsa_LAMA1,laminin_like,,Homo sapiens,9606,LAMA1,P25391,,,family_member,,,,
+Hsa_LAMA5,laminin_like,,Homo sapiens,9606,LAMA5,O15230,,,family_member,,,,
+Hsa_FN1,fibronectin_like,,Homo sapiens,9606,FN1,P02751,,,family_member,,,,
+Hsa_TLN1,talin,,Homo sapiens,9606,TLN1,Q9Y490,,,family_member,,,,
+Hsa_TLN2,talin,,Homo sapiens,9606,TLN2,Q9Y4G6,,,family_member,,,,
+Hsa_FERMT1,kindlin,,Homo sapiens,9606,FERMT1,Q9BQL6,,,family_member,,,,
+Hsa_FERMT2,kindlin,,Homo sapiens,9606,FERMT2,Q96AC1,,,family_member,,,,
+Hsa_FERMT3,kindlin,,Homo sapiens,9606,FERMT3,Q86UX7,,,family_member,,,,
+Hsa_VCL,vinculin,,Homo sapiens,9606,VCL,P18206,,,family_member,,,,
+Hsa_FLNA,filamin,,Homo sapiens,9606,FLNA,P21333,,,family_member,,,,
+Hsa_FLNB,filamin,,Homo sapiens,9606,FLNB,O75369,,,family_member,,,,
+Hsa_ACTN1,alpha_actinin,,Homo sapiens,9606,ACTN1,P12814,,,family_member,,,,
+Hsa_ACTN4,alpha_actinin,,Homo sapiens,9606,ACTN4,O43707,,,family_member,,,,
+Hsa_ACTB,actin,,Homo sapiens,9606,ACTB,P60709,,,family_member,,,,
+Hsa_ACTG1,actin,,Homo sapiens,9606,ACTG1,P63261,,,family_member,,,,
+Hsa_CFL1,cofilin,,Homo sapiens,9606,CFL1,P23528,,,family_member,,,,
+Hsa_DSTN,cofilin,,Homo sapiens,9606,DSTN,P60981,,,family_member,,,,
+Hsa_PFN1,profilin,,Homo sapiens,9606,PFN1,P07737,,,family_member,,,,
+Hsa_PFN2,profilin,,Homo sapiens,9606,PFN2,P35080,,,family_member,,,,
+Hsa_PXN,paxillin_like,,Homo sapiens,9606,PXN,P49023,,,family_member,,,,
+Hsa_TGFB1I1,paxillin_like,,Homo sapiens,9606,TGFB1I1,O43294,,,family_member,,,,
+Hsa_LPXN,paxillin_like,,Homo sapiens,9606,LPXN,O60711,,,family_member,,,,
+Hsa_ZYX,zyxin_like,,Homo sapiens,9606,ZYX,Q15942,,,family_member,,,,
+Hsa_LPP,zyxin_like,,Homo sapiens,9606,LPP,Q93052,,,family_member,,,,
+Hsa_TRIP6,zyxin_like,,Homo sapiens,9606,TRIP6,Q15654,,,family_member,,,,
+Hsa_PTK2,FAK,,Homo sapiens,9606,PTK2,Q05397,,,family_member,,,,
+Hsa_PTK2B,FAK,,Homo sapiens,9606,PTK2B,Q14289,,,family_member,,,,
+Hsa_SRC,Src,,Homo sapiens,9606,SRC,P12931,,,family_member,,,,
+Hsa_FYN,Src,,Homo sapiens,9606,FYN,P06241,,,family_member,,,,
+Hsa_LYN,Src,,Homo sapiens,9606,LYN,P07948,,,family_member,,,,
+Hsa_PTPN12,PTP_PEST,,Homo sapiens,9606,PTPN12,Q05209,,,family_member,,,,
+Hsa_PTPRF,LAR_RPTP,,Homo sapiens,9606,PTPRF,P10586,,,family_member,,,,
+Hsa_PTPRA,RPTP_alpha_epsilon,,Homo sapiens,9606,PTPRA,P18433,,,family_member,,,,
+Hsa_ILK,ILK,,Homo sapiens,9606,ILK,Q13418,,,family_member,,,,
+Dme_if,integrin_alpha,,Drosophila melanogaster,7227,if,P12080,,,family_member,,,,
+Dme_mys,integrin_beta,,Drosophila melanogaster,7227,mys,P11584,,,family_member,,,,
+Dme_vkg,collagen_like,,Drosophila melanogaster,7227,vkg,Q9VMV5,,,family_member,,,,
+Dme_LanA,laminin_like,,Drosophila melanogaster,7227,LanA,Q00174,,,family_member,,,,
+Dme_rhea,talin,,Drosophila melanogaster,7227,rhea,Q9VSL8,,,family_member,,,,
+Dme_Fit1,kindlin,,Drosophila melanogaster,7227,Fit1,Q9VZI3,,,family_member,,,,
+Dme_Vinc,vinculin,,Drosophila melanogaster,7227,Vinc,O46037,,,family_member,,,,
+Dme_cher,filamin,,Drosophila melanogaster,7227,cher,Q9VEN1,,,family_member,,,,
+Dme_Actn,alpha_actinin,,Drosophila melanogaster,7227,Actn,P18091,,,family_member,,,,
+Dme_Act5C,actin,,Drosophila melanogaster,7227,Act5C,P10987,,,family_member,,,,
+Dme_tsr,cofilin,,Drosophila melanogaster,7227,tsr,P45594,,,family_member,,,,
+Dme_chic,profilin,,Drosophila melanogaster,7227,chic,P25843,,,family_member,,,,
+Dme_Pax,paxillin_like,,Drosophila melanogaster,7227,Pax,Q2PDT4,,,family_member,,,,
+Dme_Zyx,zyxin_like,,Drosophila melanogaster,7227,Zyx,Q9N675,,,family_member,,,,
+Dme_Fak56D,FAK,,Drosophila melanogaster,7227,Fak56D,Q5BIG9,,,family_member,,,,
+Dme_Src42A,Src,,Drosophila melanogaster,7227,Src42A,Q9V9J3,,,family_member,,,,
+Cel_pat2,integrin_alpha,,Caenorhabditis elegans,6239,pat-2,P34446,,,family_member,,,,
+Cel_pat3,integrin_beta,,Caenorhabditis elegans,6239,pat-3,Q27874,,,family_member,,,,
+Cel_emb9,collagen_like,,Caenorhabditis elegans,6239,emb-9,P17139,,,family_member,,,,
+Cel_epi1,laminin_like,,Caenorhabditis elegans,6239,epi-1,Q21313,,,family_member,,,,
+Cel_tln1,talin,,Caenorhabditis elegans,6239,tln-1,G5EGK1,,,family_member,,,,
+Cel_unc112,kindlin,,Caenorhabditis elegans,6239,unc-112,Q18685,,,family_member,,,,
+Cel_deb1,vinculin,,Caenorhabditis elegans,6239,deb-1,P19826,,,family_member,,,,
+Cel_fln1,filamin,,Caenorhabditis elegans,6239,fln-1,U4PBJ9,,,family_member,,,,
+Cel_atn1,alpha_actinin,,Caenorhabditis elegans,6239,atn-1,Q23158,,,family_member,,,,
+Cel_act1,actin,,Caenorhabditis elegans,6239,act-1,P0DM41,,,family_member,,,,
+Cel_pfn1,profilin,,Caenorhabditis elegans,6239,pfn-1,Q9XW16,,,family_member,,,,
+Cel_pxl1,paxillin_like,,Caenorhabditis elegans,6239,pxl-1,Q09476,,,family_member,,,,
+Cel_zyx1,zyxin_like,,Caenorhabditis elegans,6239,zyx-1,Q9U3F4,,,family_member,,,,
+Cel_kin32,FAK,,Caenorhabditis elegans,6239,kin-32,Q95YD4,,,family_member,,,,
+Cel_src1,Src,,Caenorhabditis elegans,6239,src-1,G5EE56,,,family_member,,,,
+Hsa_CTNNA1,non_adhesome,,Homo sapiens,9606,CTNNA1,P35221,,,competitor,,,,
+Hsa_EPB41,non_adhesome,,Homo sapiens,9606,EPB41,P11171,,,competitor,,,,
+Hsa_SPTA1,non_adhesome,,Homo sapiens,9606,SPTA1,P02549,,,competitor,,,,
+Hsa_NCAM1,non_adhesome,,Homo sapiens,9606,NCAM1,P13591,,,competitor,,,,
+Hsa_LMO2,non_adhesome,,Homo sapiens,9606,LMO2,P25791,,,competitor,,,,
+Hsa_EGFR,non_adhesome,,Homo sapiens,9606,EGFR,P00533,,,competitor,,,,
+Hsa_CDK2,non_adhesome,,Homo sapiens,9606,CDK2,P24941,,,competitor,,,,
+Hsa_PTPN3,non_adhesome,,Homo sapiens,9606,PTPN3,P26045,,,competitor,,,,
+Hsa_ABL1,non_adhesome,,Homo sapiens,9606,ABL1,P00519,,,competitor,,,,
+Hsa_FES,non_adhesome,,Homo sapiens,9606,FES,P07332,,,competitor,,,,
+Hsa_PTPN1,non_adhesome,,Homo sapiens,9606,PTPN1,P18031,,,competitor,,,,
+Hsa_PTPN6,non_adhesome,,Homo sapiens,9606,PTPN6,P29350,,,competitor,,,,
+Hsa_PTEN,non_adhesome,,Homo sapiens,9606,PTEN,P60484,,,competitor,,,,
+Hsa_PTPN18,PTP_PEST,,Homo sapiens,9606,PTPN18,Q99952,,,family_member,,,,
+Hsa_PTPN22,PTP_PEST,,Homo sapiens,9606,PTPN22,Q9Y2R2,,,family_member,,,,
+Hsa_PTPRD,LAR_RPTP,,Homo sapiens,9606,PTPRD,P23468,,,family_member,,,,
+Hsa_PTPRS,LAR_RPTP,,Homo sapiens,9606,PTPRS,Q13332,,,family_member,,,,
+Hsa_PTPRE,RPTP_alpha_epsilon,,Homo sapiens,9606,PTPRE,P23469,,,family_member,,,,
+Smed_integrin_beta_A0A1P8CUU0,integrin_beta,integrin_receptors,Schmidtea mediterranea,79327,,A0A1P8CUU0,UniProtKB:A0A1P8CUU0,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Platyhelminthes,Concordant UniProt protein annotation and Pfam cross-references: PF00362,Partial beta-integrin anchor; lacks a detected cytoplasmic-tail signature
+Mlig_integrin_beta_A0A267DDL4,integrin_beta,integrin_receptors,Macrostomum lignano,282301,BOX15_Mlig031584g1,A0A267DDL4,UniProtKB:A0A267DDL4,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Platyhelminthes,"Concordant UniProt protein annotation and Pfam cross-references: PF00362,PF08725",Predicted family anchor; requires reciprocal/phylogenetic validation
+Mlig_integrin_alpha_A0A267GGD9,integrin_alpha,integrin_receptors,Macrostomum lignano,282301,BOX15_Mlig015394g1,A0A267GGD9,UniProtKB:A0A267GGD9,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Platyhelminthes,"Concordant UniProt protein annotation and Pfam cross-references: PF01839,PF20805",Predicted family anchor; requires reciprocal/phylogenetic validation
+Mlig_vinculin_A0A267GAK8,vinculin,actin_linking,Macrostomum lignano,282301,BOX15_Mlig000152g1,A0A267GAK8,UniProtKB:A0A267GAK8,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Platyhelminthes,Concordant UniProt protein annotation and Pfam cross-references: PF01044,Predicted family anchor; requires reciprocal/phylogenetic validation
+Mlig_alpha_actinin_A0A267DFV1,alpha_actinin,actin_linking,Macrostomum lignano,282301,BOX15_Mlig007449g5,A0A267DFV1,UniProtKB:A0A267DFV1,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Platyhelminthes,"Concordant UniProt protein annotation and Pfam cross-references: PF00307,PF00435",Predicted family anchor; requires reciprocal/phylogenetic validation
+Lgig_integrin_beta_V4AU86,integrin_beta,integrin_receptors,Lottia gigantea,225164,LOTGIDRAFT_174238,V4AU86,UniProtKB:V4AU86,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Mollusca,"Concordant UniProt protein annotation and Pfam cross-references: PF00362,PF08725",Paralog representative; orthology to other beta-integrins not established
+Lgig_integrin_beta_V3Z1U4,integrin_beta,integrin_receptors,Lottia gigantea,225164,LOTGIDRAFT_196574,V3Z1U4,UniProtKB:V3Z1U4,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Mollusca,"Concordant UniProt protein annotation and Pfam cross-references: PF00362,PF08725",Additional paralog representative
+Lgig_vinculin_V4CRI1,vinculin,actin_linking,Lottia gigantea,225164,LOTGIDRAFT_102378,V4CRI1,UniProtKB:V4CRI1,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Mollusca,Concordant UniProt protein annotation and Pfam cross-references: PF01044,Predicted family anchor; requires reciprocal/phylogenetic validation
+Ctel_integrin_beta_X2BBV3,integrin_beta,integrin_receptors,Capitella teleta,283909,,X2BBV3,UniProtKB:X2BBV3,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Annelida,"Concordant UniProt protein annotation and Pfam cross-references: PF00362,PF08725",Predicted family anchor; requires reciprocal/phylogenetic validation
+Ctel_integrin_beta_X2BBX2,integrin_beta,integrin_receptors,Capitella teleta,283909,,X2BBX2,UniProtKB:X2BBX2,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Annelida,"Concordant UniProt protein annotation and Pfam cross-references: PF00362,PF08725",Additional paralog representative
+Ctel_vinculin_R7UJS7,vinculin,actin_linking,Capitella teleta,283909,,R7UJS7,UniProtKB:R7UJS7,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Annelida,Concordant UniProt protein annotation and Pfam cross-references: PF01044,Predicted family anchor; requires reciprocal/phylogenetic validation
+Cgig_talin_A0A8W8NQ89,talin,membrane_proximal_adaptors,Magallana gigas,29159,,A0A8W8NQ89,UniProtKB:A0A8W8NQ89,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Mollusca,"Concordant UniProt protein annotation and Pfam cross-references: PF01608,PF09141,PF09379",Predicted family anchor; requires reciprocal/phylogenetic validation
+Cgig_integrin_beta_Q95P95,integrin_beta,integrin_receptors,Magallana gigas,29159,IBCGH,Q95P95,UniProtKB:Q95P95,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Mollusca,"Concordant UniProt protein annotation and Pfam cross-references: PF00362,PF08725",Predicted family anchor; requires reciprocal/phylogenetic validation
+Cgig_vinculin_A0A8W8MQ58,vinculin,actin_linking,Magallana gigas,29159,,A0A8W8MQ58,UniProtKB:A0A8W8MQ58,Computational phylogenetic anchor; experimentally verified adhesome membership not asserted.,phylogenetic_anchor,accession_taxon,Mollusca,Concordant UniProt protein annotation and Pfam cross-references: PF01044,"Representative annotation, not experimentally verified adhesion membership"
+Mlig_kindlin_A0A267DJG1,kindlin,membrane_proximal_adaptors,Macrostomum lignano,282301,BOX15_Mlig007286g3,A0A267DJG1,UniProtKB:A0A267DJG1,Computational domain-architecture anchor; no experimentally verified adhesome claim.,phylogenetic_anchor,accession_taxon,Platyhelminthes,"Concordant diagnostic Pfam cross-references: PF00169,PF00373,PF18124",Computational architecture selection; independent phylogeny not performed; representative selection does not establish one-to-one orthology
+Lgig_kindlin_V3ZRW4,kindlin,membrane_proximal_adaptors,Lottia gigantea,225164,LOTGIDRAFT_215642,V3ZRW4,UniProtKB:V3ZRW4,Computational domain-architecture anchor; no experimentally verified adhesome claim.,phylogenetic_anchor,accession_taxon,Mollusca,"Concordant diagnostic Pfam cross-references: PF00169,PF00373,PF18124",Computational architecture selection; independent phylogeny not performed; representative selection does not establish one-to-one orthology
+Ctel_kindlin_R7UBB8,kindlin,membrane_proximal_adaptors,Capitella teleta,283909,,R7UBB8,UniProtKB:R7UBB8,Computational domain-architecture anchor; no experimentally verified adhesome claim.,phylogenetic_anchor,accession_taxon,Annelida,"Concordant diagnostic Pfam cross-references: PF00169,PF00373,PF18124",Computational architecture selection; independent phylogeny not performed; representative selection does not establish one-to-one orthology
+Lgig_FAK_V3ZMB0,FAK,downstream_signalling,Lottia gigantea,225164,LOTGIDRAFT_120690,V3ZMB0,UniProtKB:V3ZMB0,Computational domain-architecture anchor; no experimentally verified adhesome claim.,phylogenetic_anchor,accession_taxon,Mollusca,"Concordant diagnostic Pfam cross-references: PF00373,PF03623,PF07714,PF21477",Computational architecture selection; independent phylogeny not performed; representative selection does not establish one-to-one orthology
+Ctel_FAK_R7TYU7,FAK,downstream_signalling,Capitella teleta,283909,,R7TYU7,UniProtKB:R7TYU7,Computational domain-architecture anchor; no experimentally verified adhesome claim.,phylogenetic_anchor,accession_taxon,Annelida,"Concordant diagnostic Pfam cross-references: PF00373,PF03623,PF07714,PF21477",Computational architecture selection; independent phylogeny not performed; representative selection does not establish one-to-one orthology
+Cgig_FAK_A0A8W8JWJ5,FAK,downstream_signalling,Crassostrea gigas,29159,,A0A8W8JWJ5,UniProtKB:A0A8W8JWJ5,Computational domain-architecture anchor; no experimentally verified adhesome claim.,phylogenetic_anchor,accession_taxon,Mollusca,"Concordant diagnostic Pfam cross-references: PF00373,PF03623,PF07714,PF21477",Computational architecture selection; independent phylogeny not performed; representative selection does not establish one-to-one orthology
+Hsa_VTN,vitronectin_like,extracellular_matrix,Homo sapiens,9606,VTN,P04004,UniProtKB:P04004,Annotated ECM family reference/competitor; specific adhesome experiments not automatically asserted.,family_member,,,,
+Hsa_ENPP1,non_adhesome,extracellular_matrix,Homo sapiens,9606,ENPP1,P22413,UniProtKB:P22413,Annotated ECM family reference/competitor; specific adhesome experiments not automatically asserted.,competitor,,,,
+Hsa_ENPP2,non_adhesome,extracellular_matrix,Homo sapiens,9606,ENPP2,Q13822,UniProtKB:Q13822,Annotated ECM family reference/competitor; specific adhesome experiments not automatically asserted.,competitor,,,,
+Hsa_HPX,non_adhesome,extracellular_matrix,Homo sapiens,9606,HPX,P02790,UniProtKB:P02790,Annotated ECM family reference/competitor; specific adhesome experiments not automatically asserted.,competitor,,,,
+Hsa_MMP2,non_adhesome,extracellular_matrix,Homo sapiens,9606,MMP2,P08253,UniProtKB:P08253,Annotated ECM family reference/competitor; specific adhesome experiments not automatically asserted.,competitor,,,,
+Hsa_MMP9,non_adhesome,extracellular_matrix,Homo sapiens,9606,MMP9,P14780,UniProtKB:P14780,Annotated ECM family reference/competitor; specific adhesome experiments not automatically asserted.,competitor,,,,
+Hsa_PLAT,non_adhesome,extracellular_matrix,Homo sapiens,9606,PLAT,P00750,UniProtKB:P00750,Annotated ECM family reference/competitor; specific adhesome experiments not automatically asserted.,competitor,,,,
+Hsa_PLA2R1,non_adhesome,extracellular_matrix,Homo sapiens,9606,PLA2R1,Q13018,UniProtKB:Q13018,Annotated ECM family reference/competitor; specific adhesome experiments not automatically asserted.,competitor,,,,
+Hsa_SYK,Syk,downstream_signalling,Homo sapiens,9606,SYK,P43405,UniProtKB:P43405,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_ZAP70,Syk,downstream_signalling,Homo sapiens,9606,ZAP70,P43403,UniProtKB:P43403,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_CSK,Csk,downstream_signalling,Homo sapiens,9606,CSK,P41240,UniProtKB:P41240,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_MATK,Csk,downstream_signalling,Homo sapiens,9606,MATK,P42679,UniProtKB:P42679,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_NCK1,Nck,downstream_signalling,Homo sapiens,9606,NCK1,P16333,UniProtKB:P16333,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_NCK2,Nck,downstream_signalling,Homo sapiens,9606,NCK2,O43639,UniProtKB:O43639,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_GRB2,Grb2,downstream_signalling,Homo sapiens,9606,GRB2,P62993,UniProtKB:P62993,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_CRK,Crk,downstream_signalling,Homo sapiens,9606,CRK,P46108,UniProtKB:P46108,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_CRKL,Crk,downstream_signalling,Homo sapiens,9606,CRKL,P46109,UniProtKB:P46109,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_SHC1,Shc,downstream_signalling,Homo sapiens,9606,SHC1,P29353,UniProtKB:P29353,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_SHC2,Shc,downstream_signalling,Homo sapiens,9606,SHC2,P98077,UniProtKB:P98077,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_SHC3,Shc,downstream_signalling,Homo sapiens,9606,SHC3,Q92529,UniProtKB:Q92529,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Hsa_SHC4,Shc,downstream_signalling,Homo sapiens,9606,SHC4,Q6S5L8,UniProtKB:Q6S5L8,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Dme_dock,Nck,downstream_signalling,Drosophila melanogaster,7227,dock,Q8IPW2,UniProtKB:Q8IPW2,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Dme_drk,Grb2,downstream_signalling,Drosophila melanogaster,7227,drk,Q08012,UniProtKB:Q08012,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Dme_Crk,Crk,downstream_signalling,Drosophila melanogaster,7227,Crk,Q9XYM0,UniProtKB:Q9XYM0,Annotated family reference; exact experimental annotations archived; adhesome function is not automatically verified.,family_member,,,Reviewed UniProt family annotation and domain architecture,Human or insect reference; not a spiralian anchor or one-to-one orthology claim.
+Dme_Shark,non_adhesome,,Drosophila melanogaster,7227,Shark,Q24145,UniProtKB:Q24145,,competitor,,,Related SH2/ankyrin kinase competitor; not a target-family orthology assertion,

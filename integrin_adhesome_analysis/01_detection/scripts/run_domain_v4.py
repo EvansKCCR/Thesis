@@ -19,6 +19,7 @@ def main():
         '--input-dir', str(args.input_dir.resolve()),
         '--library', str(root / 'databases/pfam/adhesome_v4.hmm'),
         '--reference-set', str(root / 'references/schistosome_v4'),
+        '--rules', str(root / 'config/family_rules_v4.json'),
         '--out', str(args.out.resolve()), '--cpu', str(args.cpu),
     ], check=True, cwd=root)
 
