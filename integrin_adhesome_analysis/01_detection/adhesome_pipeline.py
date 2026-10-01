@@ -13,7 +13,7 @@ from parse_adhesome_domtblout import parse, FIELDS
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 CONFIG = PROJECT_ROOT / 'config'
-REFERENCE_SET = PROJECT_ROOT / 'references' / 'schistosome_v4'
+REFERENCE_SET = PROJECT_ROOT / 'references' / 'schistosome_v5'
 
 MODULES = {'extracellular_matrix', 'integrin_receptors', 'membrane_proximal_adaptors',
            'actin_linking', 'focal_adhesion_scaffolds', 'downstream_signalling'}

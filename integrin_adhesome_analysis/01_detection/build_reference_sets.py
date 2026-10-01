@@ -13,7 +13,7 @@ import urllib.request
 from adhesome_core import table, write_table, write_fasta, save_json, digest, sequence_dict
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_SEEDS = ROOT / 'references' / 'seeds' / 'schistosome_v4'
+DEFAULT_SEEDS = ROOT / 'references' / 'seeds' / 'schistosome_v5'
 
 class UniProtClient:
     def __init__(self, cache, offline=False):
@@ -236,7 +236,7 @@ def main():
     p.add_argument('--anchor-seed',default=str(DEFAULT_SEEDS/'phylogenetic_anchor_seed.csv'))
     p.add_argument('--supplemental-seed',default=str(DEFAULT_SEEDS/'supplemental_reference_seed.csv'))
     p.add_argument('--rules',default=str(ROOT/'config/family_rules.json'))
-    p.add_argument('--out',default=str(ROOT/'references/schistosome_v4'))
+    p.add_argument('--out',default=str(ROOT/'references/schistosome_v5'))
     p.add_argument('--cache',default=str(ROOT/'references/cache/uniprot'))
     p.add_argument('--offline',action='store_true')
     p.add_argument('--repair-identity',action='store_true',help='Resolve incorrect supplied accessions by unique gene/taxon match, retaining provenance')
