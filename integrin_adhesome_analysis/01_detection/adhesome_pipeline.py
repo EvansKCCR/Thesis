@@ -407,11 +407,13 @@ def discover_proteomes(root, settings, excluded=None):
             continue
         # Match filenames and folders relative to the input root, never unrelated ancestors.
         label = re.sub(r'[^a-z0-9]', '', str(path.relative_to(root)).lower())
-        candidates = []
-        for species in settings['proteomes']:
-            epithet = species['species'].split()[-1].lower()
-            if path.name.lower() == Path(species['path']).name.lower() or epithet in label or path.stem.lower() == species['code'].lower():
-                candidates.append(species['code'])
+        # Explicit filenames/codes take precedence over broad species-name hints.
+        candidates = [species['code'] for species in settings['proteomes']
+                      if path.name.lower() == Path(species['path']).name.lower()
+                      or path.stem.lower() == species['code'].lower()]
+        if not candidates:
+            candidates = [species['code'] for species in settings['proteomes']
+                          if species['species'].split()[-1].lower() in label]
         if len(candidates) > 1:
             raise ValueError(f'Ambiguous species assignment: {path}')
         if candidates:

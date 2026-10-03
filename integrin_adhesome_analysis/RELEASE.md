@@ -15,3 +15,5 @@ Integrated source package, organized on 2026-10-03.
 Fibronectin inclusion update: six integration tests passed, including fibronectin screening export/native topology return and fibronectin candidates through custom/expanded reference panels and final audit. Original unresolved detection statuses are preserved. Generic FNIII screening cannot establish family assignment. No analysis outputs were retained.
 
 General target update: configurable one-or-more target proteomes using targets.example.json and --targets-config. Handoff species determine panel target/reference roles; custom orthology extraction no longer assumes Schistosoma. Seven integration tests pass, including two-target raw preparation and single non-schistosome target handoff/expanded-panel audit. Six orthology/phylogeny tests pass; two Biopython-dependent tests remain skipped.
+
+General-target edge cases: eight integration tests and 65 detection tests pass. Explicit FASTA filenames/codes take precedence over species-name hints. Targets without exported candidates remain required in the orthology panel and are not reclassified as reference species.

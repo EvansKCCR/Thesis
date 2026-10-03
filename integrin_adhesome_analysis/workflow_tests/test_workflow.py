@@ -20,9 +20,10 @@ class WorkflowTests(unittest.TestCase):
             config=json.loads((w.ROOT/'targets.example.json').read_text())
             config['proteomes']=[]
             for code in ('TargetX','TargetY'):
-                (inputs/f'{code}.faa').write_text('>protein1 gene=gene1\n'+'M'+'A'*40+'\n')
-                config['proteomes'].append(dict(code=code,species='Example '+code,assembly='fixture',
-                    path=code+'.faa',gene_regex=r'gene=(\S+)'))
+                filename=f'custom_{code}_shared.faa'
+                (inputs/filename).write_text('>protein1 gene=gene1\n'+'M'+'A'*40+'\n')
+                config['proteomes'].append(dict(code=code,species='Example shared',assembly='fixture',
+                    path=filename,gene_regex=r'gene=(\S+)'))
             w.dump(root/'targets.json',config)
             w.execute([sys.executable,w.DETECT/'adhesome_pipeline.py','batch','--prepare-only',
                 '--config',root/'targets.json','--input-dir',inputs,'--out',root/'prepared'],root/'logs')
@@ -178,6 +179,20 @@ class WorkflowTests(unittest.TestCase):
             (root/'TargetA.faa').write_text('>TargetA__g\nMCCC\n')
             with self.assertRaisesRegex(ValueError,'sequence changed'):
                 w.calibrate(argparse.Namespace(handoff=h,panel=root/'panel.json',out=root/'badpanel'))
+
+    def test_target_without_candidates_still_required_in_panel(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            h,a,panel=self.fixture(root)
+            w.seal(h,'handoff',target_species=['TargetA','EmptyTarget'])
+            with self.assertRaisesRegex(ValueError,'every handoff target'):
+                w.calibrate(argparse.Namespace(handoff=h,panel=root/'panel.json',out=root/'missing'))
+            config=json.loads((root/'panel.json').read_text())
+            w.write_fasta(root/'EmptyTarget.faa',{'EmptyTarget__g':'MAAA'})
+            config['proteomes'].append(dict(species='EmptyTarget',fasta='EmptyTarget.faa',gene_level=True,source='fixture'))
+            w.dump(root/'panel_complete.json',config)
+            w.calibrate(argparse.Namespace(handoff=h,panel=root/'panel_complete.json',out=root/'complete'))
+            self.assertEqual(json.loads((root/'complete/targets.json').read_text()),['EmptyTarget','TargetA'])
 
 
 if __name__ == '__main__':
