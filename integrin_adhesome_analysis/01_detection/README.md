@@ -35,6 +35,5 @@ For standalone parsing, supply `--model-metadata databases/pfam/adhesome_v4.hmm.
 
 See [latest results](results/species_reference_v4/DOMAIN_RESULTS.md), [methods and limitations](docs/DOMAIN_RECALIBRATION_V4.md), and [reference provenance](references/README.md). Confidence labels are evidence tiers, not probabilities or proof of experimental adhesion function. Calibration uses the development panel, not independent validation.
 
-Cleanup preserves latest result contents and downstream paths. Historical command logs retain original absolute paths; `docs/cleanup_manifest.json` records removals, checksums and prepared-input relocation. No older pipeline versions or result trees are required for a new full run.
 
 V4 reference resources and `config/family_rules_v4.json` are retained for exact interpretation of existing results. V5 uses the unchanged v4 HMM library.

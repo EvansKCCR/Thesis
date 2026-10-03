@@ -1,0 +1,418 @@
+#!/usr/bin/env python3
+"""Resumable integration of detection, external context, motifs, orthology and audit.
+
+Python >=3.11. Commands write new directories and never overwrite completed runs.
+See WORKFLOW.md for the input contracts and examples.
+"""
+import argparse
+import csv
+import hashlib
+import json
+import re
+import shutil
+import subprocess
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+DETECT = ROOT/'01_detection'
+MOTIF = ROOT/'03_functional_motif_annotation'
+ORTH = ROOT/'04_orthology_phylogenetic_classification/scripts'
+AUDIT = ROOT/'05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py'
+TARGETS = {'Shae', 'Sjap', 'Sman'}
+
+
+def digest(path):
+    with Path(path).open('rb') as f:
+        return hashlib.file_digest(f, 'sha256').hexdigest()
+
+
+def dump(path, value):
+    Path(path).write_text(json.dumps(value, indent=2)+'\n', encoding='utf-8')
+
+
+def read(path, delimiter='\t'):
+    with Path(path).open(encoding='utf-8-sig', newline='') as f:
+        return list(csv.DictReader(f, delimiter=delimiter))
+
+
+def write(path, rows, fields=None):
+    fields = fields or list(dict.fromkeys(k for row in rows for k in row))
+    with Path(path).open('w', encoding='utf-8', newline='') as f:
+        w = csv.DictWriter(f, fieldnames=fields, delimiter='\t', extrasaction='ignore')
+        w.writeheader()
+        w.writerows(rows)
+
+
+def fasta(path):
+    result, ident, chunks = {}, None, []
+    def save():
+        if ident is not None:
+            seq = ''.join(chunks).upper()
+            if ident in result or not seq or set(seq)-set('ACDEFGHIKLMNPQRSTVWYBXZJUO'):
+                raise ValueError(f'Duplicate ID, empty or invalid sequence: {path}: {ident}')
+            result[ident] = seq
+    for line in Path(path).read_text(encoding='utf-8-sig').splitlines():
+        if line.startswith('>'):
+            save()
+            if not line[1:].strip():
+                raise ValueError(f'Empty FASTA header: {path}')
+            ident, chunks = line[1:].split()[0], []
+        elif line.strip():
+            if ident is None:
+                raise ValueError(f'Sequence before header: {path}')
+            chunks.append(''.join(line.split()))
+    save()
+    if not result:
+        raise ValueError(f'Empty FASTA: {path}')
+    return result
+
+
+def write_fasta(path, seqs):
+    Path(path).write_text(''.join(f'>{k}\n{v}\n' for k,v in sorted(seqs.items())), encoding='ascii')
+
+
+def execute(command, logdir):
+    logdir.mkdir(parents=True, exist_ok=True)
+    n = len(list(logdir.glob('command_*.json')))+1
+    record = dict(command=[str(x) for x in command], cwd=str(ROOT), status='running')
+    dest = logdir/f'command_{n:03}.json'
+    dump(dest, record)
+    with (logdir/f'command_{n:03}.log').open('w', encoding='utf-8') as log:
+        try:
+            proc = subprocess.run(record['command'], cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
+            record.update(status='complete' if proc.returncode == 0 else 'failed', exit_code=proc.returncode)
+        except OSError as exc:
+            record.update(status='failed', error=str(exc))
+            dump(dest, record)
+            raise
+    dump(dest, record)
+    if proc.returncode:
+        raise ValueError(f'Command failed; inspect {logdir}/command_{n:03}.log')
+
+
+def seal(folder, kind, **metadata):
+    files = {str(p.relative_to(folder)): digest(p) for p in folder.rglob('*') if p.is_file() and p.name != 'workflow_manifest.json'}
+    dump(folder/'workflow_manifest.json', dict(kind=kind, files=files, **metadata))
+
+
+def verify(folder, kind):
+    data = json.loads((folder/'workflow_manifest.json').read_text(encoding='utf-8'))
+    if data['kind'] != kind:
+        raise ValueError(f'Expected {kind}: {folder}')
+    for name, value in data['files'].items():
+        if digest(folder/name) != value:
+            raise ValueError(f'Changed workflow input: {folder/name}')
+    return data
+
+
+def start(args):
+    out = args.out.resolve()
+    out.mkdir(parents=True, exist_ok=False)
+    detection = args.detection.resolve() if args.detection else out/'detection'
+    if not args.detection:
+        cmd = [sys.executable, DETECT/'scripts/run_domain_v5.py', '--out', detection, '--cpu', args.threads]
+        if args.input_dir:
+            cmd += ['--input-dir', args.input_dir.resolve()]
+        execute(cmd, out/'logs')
+    hypotheses, sequences, families, sources, species = [], {}, defaultdict(dict), {}, set()
+    for table in sorted(detection.glob('*/candidates/candidates.csv')):
+        sp = table.parents[1].name
+        species.add(sp)
+        source = table.parents[1]/'prepared'/f'{sp}.faa'
+        seqs = fasta(source)
+        sources[str(table)] = digest(table)
+        sources[str(source)] = digest(source)
+        for row in read(table, ','):
+            if row['status'] not in ('supported_candidate', 'provisional'):
+                continue
+            pid, family = row['protein_id'], row['family']
+            if not re.fullmatch(r'[A-Za-z0-9_-]+', family):
+                raise ValueError(f'Unsafe family: {family}')
+            seq = seqs[pid]
+            if pid in sequences and sequences[pid] != seq:
+                raise ValueError(f'Conflicting protein ID: {pid}')
+            sequences[pid] = seq
+            families[family][pid] = seq
+            hypotheses.append(dict(row, Specie=sp, sequence_sha256=hashlib.sha256(seq.encode()).hexdigest(),
+                                   hypothesis_tier='supported' if row['status']=='supported_candidate' else 'provisional'))
+    if species != TARGETS or not hypotheses:
+        raise ValueError('Expected all three target species and nonempty supported/provisional hypotheses')
+    (out/'families').mkdir()
+    for family, seqs in families.items():
+        write_fasta(out/'families'/f'{family}.faa', seqs)
+    write(out/'hypotheses.tsv', hypotheses)
+    for tier in ('supported', 'provisional'):
+        write(out/f'{tier}_hypotheses.tsv', [r for r in hypotheses if r['hypothesis_tier']==tier], list(hypotheses[0]))
+    write_fasta(out/'external_candidates.faa', sequences)
+    write(out/'external_evidence_template.tsv', [dict(protein_id=k, sequence_sha256=hashlib.sha256(v.encode()).hexdigest(),
+          DeepLoc_2_1='', DeepTMHMM='', SignalP_v6_0='', NCBI_CDD_architecture='', source='') for k,v in sorted(sequences.items())])
+    domains = sorted(detection.glob('*/domains/domains.csv'))
+    source_fastas = sorted(detection.glob('*/prepared/*.faa'))
+    execute([sys.executable, MOTIF/'import_domain_regions.py', '--input-dir', out/'families',
+             '--domains', *domains, '--source-fasta', *source_fastas, '--out', out/'verified_regions.tsv'], out/'logs')
+    provenance = json.loads((out/'verified_regions.provenance.json').read_text(encoding='utf-8'))
+    if provenance['unverified_records']:
+        raise ValueError('Unverified domain source sequences; inspect provenance')
+    sources.update(provenance['inputs'])
+    seal(out, 'handoff', detection=str(detection), sources=sources,
+         state='awaiting_external_context', hypotheses=len(hypotheses), proteins=len(sequences))
+    print(f'Handoff ready: {out}/external_candidates.faa ({len(sequences)} proteins; {len(hypotheses)} hypotheses)')
+
+
+def context_rows(path, sequences):
+    rows = read(path)
+    seen = set()
+    required = {'protein_id','sequence_sha256','DeepLoc_2_1','DeepTMHMM','SignalP_v6_0','NCBI_CDD_architecture','source'}
+    if not rows or not required <= rows[0].keys():
+        raise ValueError('External evidence must use the generated template columns')
+    for row in rows:
+        pid = row['protein_id']
+        if pid in seen or pid not in sequences:
+            raise ValueError(f'Duplicate/unknown external protein: {pid}')
+        seen.add(pid)
+        if row['sequence_sha256'] != hashlib.sha256(sequences[pid].encode()).hexdigest():
+            raise ValueError(f'External evidence sequence hash mismatch: {pid}')
+        if any(row[k] for k in required-{'protein_id','sequence_sha256','source'}) and not row['source'].strip():
+            raise ValueError(f'External evidence requires a source: {pid}')
+    return rows
+
+
+def resume(args):
+    handoff = args.handoff.resolve()
+    verify(handoff, 'handoff')
+    if not any((args.topology_file, args.context_dir, args.external_evidence, args.allow_missing_context)):
+        raise ValueError('Supply external results or explicitly use --allow-missing-context')
+    out = args.out.resolve()
+    seqs = fasta(handoff/'external_candidates.faa')
+    external = context_rows(args.external_evidence, seqs) if args.external_evidence else []
+    out.mkdir(parents=True, exist_ok=False)
+    cmd = [sys.executable, MOTIF/'family_motifs.py', '--input-dir', handoff/'families',
+           '--regions', handoff/'verified_regions.tsv', '--out', out/'motifs']
+    inputs = {}
+    for flag in ('topology_file','context_dir','evidence'):
+        value = getattr(args, flag)
+        if value:
+            paths = value.rglob('*') if value.is_dir() else [value]
+            inputs.update({str(p.resolve()):digest(p) for p in paths if p.is_file()})
+            if flag == 'context_dir':
+                staged = out/'context'
+                staged.mkdir()
+                aliases = {
+                    'DeepLoc_adhesome_candidate_list.csv':'adhesome_DeepLoc_results.csv',
+                    'SignalP_adhesome_candidate_list.txt':'adhesome_SiganP_prediction_results.txt',
+                    'NCBI_CDD_adhesome_hitdata.txt':'adhesome_NCBI_CDD_hitdata.txt',
+                    'deeptmhmm_predicted_topologies.3line':'adhesome_predicted_topologies.3line'}
+                for canonical, alternative in aliases.items():
+                    source = value/canonical if (value/canonical).exists() else value/alternative
+                    if canonical.endswith('.3line') and args.topology_file:
+                        continue
+                    shutil.copyfile(source, staged/canonical)
+                value = staged
+            cmd += ['--'+flag.replace('_','-'), value.resolve()]
+    if args.external_evidence:
+        inputs[str(args.external_evidence.resolve())] = digest(args.external_evidence)
+        write(out/'external_evidence.tsv', external)
+    execute(cmd, out/'logs')
+    seal(out, 'annotation', handoff=str(handoff), handoff_manifest=digest(handoff/'workflow_manifest.json'), sources=inputs,
+         context_policy='missing_allowed' if args.allow_missing_context else 'external_supplied')
+    print(f'Annotation complete: {out}. Prepare/calibrate a reference panel next.')
+
+
+def calibrate(args):
+    handoff = args.handoff.resolve()
+    verify(handoff, 'handoff')
+    config = json.loads(args.panel.read_text(encoding='utf-8'))
+    entries = config['proteomes']
+    codes = [e['species'] for e in entries]
+    if len(codes)!=len(set(codes)) or not TARGETS < set(codes) or any(not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', s) for s in codes):
+        raise ValueError('Panel requires unique safe species codes, three targets, and at least one reference')
+    out = args.out.resolve()
+    out.mkdir(parents=True, exist_ok=False)
+    (out/'proteomes').mkdir()
+    allseqs, sources, counts = {}, {}, []
+    for entry in entries:
+        sp = entry['species']
+        source = (args.panel.resolve().parent/entry['fasta']).resolve()
+        if not entry.get('source') or entry.get('gene_level') is not True:
+            raise ValueError(f'{sp}: declare gene_level=true and document the proteome source/release')
+        seqs = fasta(source)
+        if any(not re.fullmatch(re.escape(sp)+r'__[A-Za-z0-9_.-]+', k) for k in seqs):
+            raise ValueError(f'{sp}: expected gene-level IDs {sp}__gene_id; prepare/collapse raw isoforms first')
+        allseqs.update(seqs)
+        write_fasta(out/'proteomes'/f'{sp}.faa', seqs)
+        sources[str(source)] = digest(source)
+        counts.append(dict(species=sp, genes=len(seqs), source=entry['source']))
+    candidates = fasta(handoff/'external_candidates.faa')
+    mapping = []
+    for pid, seq in candidates.items():
+        if allseqs.get(pid) != seq:
+            raise ValueError(f'Candidate missing or sequence changed in whole-proteome panel: {pid}')
+        mapping.append(dict(candidate_set='workflow',candidate_id=pid,prepared_id=pid,status='matched'))
+    write(out/'candidate_audit.tsv', mapping)
+    write(out/'proteome_summary.tsv', counts)
+    dump(out/'species.json', codes)
+    dump(out/'panel.snapshot.json', config)
+    seal(out, 'panel', handoff=str(handoff), handoff_manifest=digest(handoff/'workflow_manifest.json'), sources=sources,
+         interpretation='Reference-panel sensitivity analysis, not independent biological validation')
+    print(f'Panel ready: {out}. Rerun orthology for this panel; prior runs remain unchanged.')
+
+
+def orthology(args):
+    panel = args.panel.resolve()
+    panel_meta = verify(panel, 'panel')
+    out = args.out.resolve()
+    out.mkdir(parents=True, exist_ok=False)
+    if args.results:
+        results = args.results.resolve()
+        # Bind external results to the exact input panel, not merely matching species labels.
+        if not args.input_manifest or digest(args.input_manifest) != digest(panel/'workflow_manifest.json'):
+            raise ValueError('External results require --input-manifest from the panel used for inference')
+    else:
+        execute(['orthofinder','-f',panel/'proteomes','-t',args.threads,'-a',args.analysis_threads,'-o',out/'inference'], out/'logs')
+        hits = list((out/'inference').glob('Results_*'))
+        if len(hits)!=1:
+            raise ValueError('Cannot identify one Results_* directory; use explicit --results on a new output')
+        results = hits[0]
+    execute([sys.executable, ORTH/'pipeline.py','extract','--results',results,
+             '--candidate-set','workflow','--candidate-audit',panel/'candidate_audit.tsv',
+             '--species-list',panel/'species.json','--output',out/'candidates'], out/'logs')
+    report = read(out/'candidates/candidate_report.tsv')
+    reference_columns = [k for k in report[0] if k.endswith('_orthologues')]
+    review = []
+    for row in report:
+        support = [k.removesuffix('_orthologues') for k in reference_columns if row[k]]
+        ambiguous = any('many' in v for k,v in row.items() if k.endswith('_relationship'))
+        review.append(dict(candidate_id=row['candidate_id'], reference_count=len(support),
+                           references=';'.join(support), calibration_review='no_direct_reference' if not support else 'duplication_or_paralogy_review' if ambiguous else 'direct_reference_detected'))
+    write(out/'calibration_review.tsv', review)
+    if args.compare:
+        previous = verify(args.compare.resolve(), 'orthology')
+        previous_panel = verify(Path(previous['panel']), 'panel')
+        if previous_panel['handoff_manifest'] != panel_meta['handoff_manifest']:
+            raise ValueError('Calibration comparison requires the same sequence-verified handoff')
+        old = {r['candidate_id']:r for r in read(args.compare/'calibration_review.tsv')}
+        if set(old) != {r['candidate_id'] for r in review}:
+            raise ValueError('Calibration comparison requires the same candidate set')
+        write(out/'calibration_comparison.tsv', [dict(candidate_id=r['candidate_id'],
+              previous_references=old[r['candidate_id']]['references'], current_references=r['references'],
+              previous_review=old[r['candidate_id']]['calibration_review'], current_review=r['calibration_review']) for r in review])
+    seal(out, 'orthology', panel=str(panel), panel_manifest=digest(panel/'workflow_manifest.json'), results=str(results))
+    print(f'Orthology complete: {out}; inspect calibration_review.tsv before final audit.')
+
+
+def audit(args):
+    annotation, orthology_dir = args.annotation.resolve(), args.orthology.resolve()
+    ann = verify(annotation, 'annotation')
+    ort = verify(orthology_dir, 'orthology')
+    panel = Path(ort['panel'])
+    pan = verify(panel, 'panel')
+    handoff = Path(ann['handoff'])
+    verify(handoff, 'handoff')
+    if ann['handoff_manifest'] != pan['handoff_manifest'] or digest(handoff/'workflow_manifest.json') != ann['handoff_manifest']:
+        raise ValueError('Annotation and orthology must use the same unchanged handoff')
+    if digest(panel/'workflow_manifest.json') != ort['panel_manifest']:
+        raise ValueError('Orthology panel manifest changed')
+    rows = read(handoff/'hypotheses.tsv')
+    reports = {r['candidate_id']:r for r in read(orthology_dir/'candidates/candidate_report.tsv')}
+    sites, contexts, cdd = defaultdict(list), {}, defaultdict(list)
+    for r in read(annotation/'motifs/adhesion_motif_annotations.tsv'):
+        sites[r['family'],r['sequence_id']].append(r)
+    context_path = annotation/'motifs/sequence_context.tsv'
+    if context_path.exists():
+        contexts = {(r['family'],r['sequence_id']):r for r in read(context_path)}
+    cdd_path = annotation/'motifs/CDD_specific_hits.tsv'
+    if cdd_path.exists():
+        for r in read(cdd_path):
+            cdd[r['family'],r['sequence_id']].append(f"{r['short_name']}:{r['start']}-{r['end']}")
+    external = {r['protein_id']:r for r in read(annotation/'external_evidence.tsv')} if (annotation/'external_evidence.tsv').exists() else {}
+    topology = defaultdict(set)
+    for r in read(annotation/'motifs/used_regions.tsv'):
+        if r['region'] in ('transmembrane', 'signal_peptide'):
+            topology[r['family'],r['sequence_id']].add('TM' if r['region']=='transmembrane' else 'SP')
+    names = {'Hsap':'H. sapiens','Cele':'C. elegans','Dmel':'D. melanogaster','Mmus':'M. musculus','Xlae':'X. laevis'}
+    for row in rows:
+        pid, fam = row['protein_id'], row['family']
+        report = reports[pid]
+        refs = [k.removesuffix('_orthologues') for k,v in report.items() if k.endswith('_orthologues') and v]
+        row['Orthology_reference_support'] = '; '.join(names.get(s,s) for s in refs)
+        row['Orthology_direct_reference_count'] = len(refs)
+        row['Orthology_HOG_status'] = report['HOG_status']
+        row['Orthology_HOG'] = report['HOG']
+        row['Orthology_interpretation'] = 'Direct pairwise evidence only; family-specific reference labels not inferred'
+        ss = sites[fam,pid]
+        row['MotifPrediction_candidate_tiers'] = ';'.join(sorted({r['candidate_tier'] for r in ss}))
+        row['MotifPrediction_context_supported_count'] = sum(r['candidate_tier'] in ('context_supported_candidate','high_confidence_hypothesis') for r in ss)
+        row['MotifPrediction_priority_site_count'] = sum(r['candidate_tier']=='sequence_only_candidate' for r in ss)
+        ctx, ext = contexts.get((fam,pid), {}), external.get(pid, {})
+        row['DeepLoc_2.1'] = ext.get('DeepLoc_2_1') or ctx.get('deeploc_localizations','')
+        row['SignalP.v6.0'] = ext.get('SignalP_v6_0') or ctx.get('signalp_prediction','')
+        row['DeepTMHMM'] = ext.get('DeepTMHMM') or ';'.join(sorted(topology[fam,pid]))
+        row['NCBI_CDD_architecture'] = ';'.join(filter(None, [ext.get('NCBI_CDD_architecture',''), *cdd[fam,pid]]))
+        row['External_evidence_source'] = ext.get('source','')
+        row['domain_match'] = str(row['domain_match']).lower() in ('true','1')
+    from openpyxl import Workbook
+    out = args.out.resolve()
+    out.mkdir(parents=True, exist_ok=False)
+    write(out/'joined_evidence.tsv', rows)
+    wb = Workbook()
+    sh = wb.active
+    sh.title = 'candidates'
+    fields = list(dict.fromkeys(k for r in rows for k in r))
+    sh.append(fields)
+    for row in rows:
+        sh.append([row.get(k) for k in fields])
+    wb.save(out/'audit_input.xlsx')
+    execute([sys.executable,AUDIT,out/'audit_input.xlsx',out/'audited_candidates.xlsx','--keep-all-audited'],out/'logs')
+    seal(out, 'audit', annotation=str(annotation), orthology=str(orthology_dir),
+         annotation_manifest=digest(annotation/'workflow_manifest.json'), orthology_manifest=digest(orthology_dir/'workflow_manifest.json'))
+    print(f'Workflow complete: {out}/audited_candidates.xlsx')
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(description=__doc__)
+    sub = p.add_subparsers(dest='command', required=True)
+    s = sub.add_parser('start', help='Run/reuse detection and export supported/provisional hypotheses')
+    s.add_argument('--detection', type=Path, help='Existing batch detection output root')
+    s.add_argument('--input-dir', type=Path)
+    s.add_argument('--threads', type=int, default=8)
+    s.set_defaults(func=start)
+    s = sub.add_parser('resume', help='Import external context and run motif annotation')
+    s.add_argument('--handoff', type=Path, required=True)
+    for flag in ('topology-file','context-dir','external-evidence','evidence'):
+        s.add_argument('--'+flag, type=Path)
+    s.add_argument('--allow-missing-context', action='store_true')
+    s.set_defaults(func=resume)
+    s = sub.add_parser('calibrate', help='Prepare a new complete gene-level reference panel')
+    s.add_argument('--handoff', type=Path, required=True)
+    s.add_argument('--panel', type=Path, required=True)
+    s.set_defaults(func=calibrate)
+    s = sub.add_parser('orthology', help='Run OrthoFinder or import results, then extract and review support')
+    s.add_argument('--panel', type=Path, required=True)
+    s.add_argument('--results', type=Path)
+    s.add_argument('--input-manifest', type=Path)
+    s.add_argument('--compare', type=Path)
+    s.add_argument('--threads', type=int, default=16)
+    s.add_argument('--analysis-threads', type=int, default=8)
+    s.set_defaults(func=orthology)
+    s = sub.add_parser('audit', help='Join all evidence and run conservative family audit')
+    s.add_argument('--annotation', type=Path, required=True)
+    s.add_argument('--orthology', type=Path, required=True)
+    s.set_defaults(func=audit)
+    for s in sub.choices.values():
+        s.add_argument('--out', type=Path, required=True, help='New output directory')
+    args = p.parse_args(argv)
+    try:
+        for name in ('threads','analysis_threads'):
+            if hasattr(args,name) and getattr(args,name)<1:
+                raise ValueError('Thread counts must be positive')
+        args.func(args)
+        return 0
+    except (ValueError, OSError, KeyError) as exc:
+        print(f'ERROR: {exc}', file=sys.stderr)
+        return 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())
