@@ -1,0 +1,94 @@
+import tempfile
+import unittest
+import argparse
+import importlib.util
+import json
+from pathlib import Path
+from unittest.mock import patch
+from phylogeny import alignment_qc, fasta, load_sequences, annotate, run
+from pipeline import write_tsv, read_tsv, digest
+
+
+class PhylogenyTests(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec('Bio'), 'Biopython required')
+    def test_rooting_and_duplication_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder=Path(tmp)
+            work=folder/'inference'
+            work.mkdir()
+            tree=work/'tree'
+            tree.write_text('(Cele__o:1,(Shae__a:1,Shae__b:1)99/100:1,Hsap__h:1);')
+            write_tsv(folder/'orthology_edges.tsv',['candidate_id','orthologue_id'],
+                      [dict(candidate_id='Shae__a',orthologue_id='Hsap__h')])
+            write_tsv(folder/'duplication_evidence.tsv',['Genes 1','Genes 2'],
+                      [{'Genes 1':'Shae__a','Genes 2':'Shae__b'}])
+            annotate(tree,work,[])
+            _,rows=read_tsv(work/'branch_evidence.tsv')
+            self.assertTrue(all('unrooted split' in r['interpretation'] for r in rows))
+            self.assertTrue(all(not r['exact_duplication_rows'] for r in rows))
+            annotate(tree,work,['Cele__o'])
+            _,rows=read_tsv(work/'branch_evidence.tsv')
+            matched=[r for r in rows if r['exact_duplication_rows']=='1']
+            self.assertEqual(len(matched),1)
+            self.assertEqual(matched[0]['support_label'],'99/100')
+
+    @unittest.skipUnless(importlib.util.find_spec('Bio'), 'Biopython required')
+    def test_inference_driver_with_simulated_external_tools(self):
+        # Tests orchestration only; this does not validate MAFFT/trimAl/IQ-TREE themselves.
+        with tempfile.TemporaryDirectory() as tmp:
+            project=Path(tmp)
+            group=project/'OG1'
+            group.mkdir()
+            seqs={'Cele__o':'ACDE'*20,'Hsap__h':'ACDF'*20,'Shae__a':'FGDE'*20,'Shae__b':'FGDF'*20}
+            fasta(group/'members.faa',seqs)
+            write_tsv(group/'orthology_edges.tsv',['candidate_id','orthologue_id'],[])
+            write_tsv(group/'duplication_evidence.tsv',['Genes 1','Genes 2'],[])
+            (project/'manifest.json').write_text(json.dumps({'groups':[dict(group='OG1',status='ready',
+                files={p.name:digest(p) for p in group.iterdir()})]}))
+            args=argparse.Namespace(project=project,hog=None,outgroup=[],threads=1,seed=123,min_sites=50,
+                max_gap=0.9,mafft='mafft',trimal='trimal',iqtree='iqtree2',aligner='linsi')
+            def fake_run(command,**kwargs):
+                if '--version' in command:
+                    return argparse.Namespace(stdout='simulated version',stderr='',returncode=0)
+                if command[0]=='mafft':
+                    kwargs['stdout'].write((group/'members.faa').read_text())
+                elif command[0]=='trimal':
+                    Path(command[command.index('-out')+1]).write_text((group/'members.faa').read_text())
+                else:
+                    prefix=command[command.index('--prefix')+1]
+                    Path(prefix+'.treefile').write_text('(Cele__o:1,Hsap__h:1,(Shae__a:1,Shae__b:1)90/99:1);')
+                    self.assertIn('-bnni',command)
+                    self.assertIn('-keep-ident',command)
+                return argparse.Namespace(returncode=0)
+            with patch('phylogeny.shutil.which',side_effect=lambda s:s),patch('phylogeny.subprocess.run',side_effect=fake_run):
+                run(args)
+            record=json.loads((group/'inference/run.json').read_text())
+            self.assertEqual(record['status'],'complete')
+            self.assertEqual(len(record['commands']),3)
+            self.assertTrue((group/'inference/branch_evidence.tsv').is_file())
+
+    def test_fasta_roundtrip_and_alignment_statistics(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'aligned.faa'
+            seqs={'a':'ACDE','b':'ACDF','c':'FGDE','d':'FGDF'}
+            fasta(path,seqs)
+            self.assertEqual(load_sequences(path),seqs)
+            _,_,qc=alignment_qc(path,seqs,4,0.9)
+            self.assertEqual(qc['parsimony_informative_sites'],3)
+            self.assertEqual(qc['distinct_aligned_sequences'],4)
+
+    def test_rejects_changed_ids_lengths_and_poor_sequences(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'aligned.faa'
+            for seqs,expected in [({'a':'AAAA'},['b']),({'a':'AAAA','b':'AAA'},['a','b']),
+                                  ({'a':'----','b':'AAAA'},['a','b']),({'a':'XXXX'},['a'])]:
+                fasta(path,seqs)
+                with self.assertRaises(ValueError):
+                    alignment_qc(path,expected,1,0.9)
+            fasta(path,{'a':'AAA'})
+            with self.assertRaises(ValueError):
+                alignment_qc(path,['a'],50,0.9)
+
+
+if __name__=='__main__':
+    unittest.main()

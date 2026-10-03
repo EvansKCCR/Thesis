@@ -1,0 +1,4 @@
+{"proteomes":[
+{"species":"TargetA","fasta":"runs/handoff/detection/TargetA/prepared/TargetA.faa","gene_level":true,"source":"Current target proteome: record assembly/release and source"},
+{"species":"ReferenceA","fasta":"inputs/reference_gene_level/ReferenceA.faa","gene_level":true,"source":"Replace with reference assembly/release, URL and preparation provenance"}
+]}

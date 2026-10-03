@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+runs/
+inputs/
+returned/
+results/
+01_detection/proteome_fasta_files/
+04_orthology_phylogenetic_classification/01_raw_proteomes/
+04_orthology_phylogenetic_classification/02_primary_proteomes/
+04_orthology_phylogenetic_classification/03_qc/
+04_orthology_phylogenetic_classification/04_results/

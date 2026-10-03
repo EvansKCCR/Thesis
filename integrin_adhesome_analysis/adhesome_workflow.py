@@ -16,11 +16,12 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+VERSION = '1.0.0'
 DETECT = ROOT/'01_detection'
 MOTIF = ROOT/'03_functional_motif_annotation'
 ORTH = ROOT/'04_orthology_phylogenetic_classification/scripts'
 AUDIT = ROOT/'05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py'
-TARGETS = {'Shae', 'Sjap', 'Sman'}
+FIBRONECTIN_FAMILIES = {'fibronectin_like', 'fibronectin_III_ligand', 'fibronectin_like_candidate'}
 
 
 def digest(path):
@@ -94,7 +95,7 @@ def execute(command, logdir):
 
 def seal(folder, kind, **metadata):
     files = {str(p.relative_to(folder)): digest(p) for p in folder.rglob('*') if p.is_file() and p.name != 'workflow_manifest.json'}
-    dump(folder/'workflow_manifest.json', dict(kind=kind, files=files, **metadata))
+    dump(folder/'workflow_manifest.json', dict(workflow_version=VERSION, kind=kind, files=files, **metadata))
 
 
 def verify(folder, kind):
@@ -108,6 +109,24 @@ def verify(folder, kind):
 
 
 def start(args):
+    if not args.detection and not args.input_dir:
+        raise ValueError('Supply --input-dir with target proteomes, or --detection with existing detection output')
+    config_path = getattr(args, 'targets_config', None)
+    expected = None
+    if config_path:
+        config = json.loads(config_path.read_text(encoding='utf-8'))
+        entries = config['proteomes']
+        codes = [r['code'] for r in entries]
+        if not codes or len(codes)!=len(set(codes)) or any(not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', s) or '__' in s for s in codes):
+            raise ValueError('Target config requires unique safe species codes without double underscores')
+        for entry in entries:
+            if not entry.get('species') or not entry.get('path') or not entry.get('gene_regex') or not entry.get('assembly'):
+                raise ValueError('Each target requires code, species, assembly, path and gene_regex')
+            if re.compile(entry['gene_regex']).groups < 1:
+                raise ValueError('gene_regex must capture the explicit gene ID in its first group')
+        expected = set(codes)
+    if not args.detection and not config_path:
+        raise ValueError('New detection requires --targets-config with the target species and gene-ID rules')
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
     detection = args.detection.resolve() if args.detection else out/'detection'
@@ -115,34 +134,46 @@ def start(args):
         cmd = [sys.executable, DETECT/'scripts/run_domain_v5.py', '--out', detection, '--cpu', args.threads]
         if args.input_dir:
             cmd += ['--input-dir', args.input_dir.resolve()]
+        cmd += ['--config', config_path.resolve()]
         execute(cmd, out/'logs')
     hypotheses, sequences, families, sources, species = [], {}, defaultdict(dict), {}, set()
     for table in sorted(detection.glob('*/candidates/candidates.csv')):
         sp = table.parents[1].name
+        if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', sp) or '__' in sp:
+            raise ValueError(f'Unsafe target species code: {sp}')
         species.add(sp)
         source = table.parents[1]/'prepared'/f'{sp}.faa'
         seqs = fasta(source)
         sources[str(table)] = digest(table)
         sources[str(source)] = digest(source)
         for row in read(table, ','):
-            if row['status'] not in ('supported_candidate', 'provisional'):
+            fibronectin = row['family'] in FIBRONECTIN_FAMILIES
+            if row['status'] not in ('supported_candidate', 'provisional') and not (fibronectin and row['status']=='unresolved'):
                 continue
             pid, family = row['protein_id'], row['family']
+            if not pid.startswith(sp+'__'):
+                raise ValueError(f'Candidate ID does not match target species: {pid}')
             if not re.fullmatch(r'[A-Za-z0-9_-]+', family):
                 raise ValueError(f'Unsafe family: {family}')
             seq = seqs[pid]
             if pid in sequences and sequences[pid] != seq:
                 raise ValueError(f'Conflicting protein ID: {pid}')
             sequences[pid] = seq
-            families[family][pid] = seq
+            motif_family = 'fibronectin_like_candidate' if fibronectin else family
+            families[motif_family][pid] = seq
             hypotheses.append(dict(row, Specie=sp, sequence_sha256=hashlib.sha256(seq.encode()).hexdigest(),
+                                   motif_family=motif_family,
+                                   export_basis='fibronectin_screening_followup_not_family_assignment' if fibronectin and row['status']=='unresolved' else 'detection_evidence_tier',
                                    hypothesis_tier='supported' if row['status']=='supported_candidate' else 'provisional'))
-    if species != TARGETS or not hypotheses:
-        raise ValueError('Expected all three target species and nonempty supported/provisional hypotheses')
+    if not species or not hypotheses or (expected is not None and species != expected):
+        raise ValueError('Expected configured target species and nonempty supported/provisional hypotheses')
     (out/'families').mkdir()
     for family, seqs in families.items():
         write_fasta(out/'families'/f'{family}.faa', seqs)
     write(out/'hypotheses.tsv', hypotheses)
+    fibronectin_rows = [r for r in hypotheses if r['family'] in FIBRONECTIN_FAMILIES]
+    write(out/'fibronectin_like_hypotheses.tsv', fibronectin_rows, list(hypotheses[0]))
+    write_fasta(out/'fibronectin_like_candidates.faa', {r['protein_id']:sequences[r['protein_id']] for r in fibronectin_rows})
     for tier in ('supported', 'provisional'):
         write(out/f'{tier}_hypotheses.tsv', [r for r in hypotheses if r['hypothesis_tier']==tier], list(hypotheses[0]))
     write_fasta(out/'external_candidates.faa', sequences)
@@ -156,8 +187,10 @@ def start(args):
     if provenance['unverified_records']:
         raise ValueError('Unverified domain source sequences; inspect provenance')
     sources.update(provenance['inputs'])
+    if config_path:
+        sources[str(config_path.resolve())] = digest(config_path)
     seal(out, 'handoff', detection=str(detection), sources=sources,
-         state='awaiting_external_context', hypotheses=len(hypotheses), proteins=len(sequences))
+         target_species=sorted(species), state='awaiting_external_context', hypotheses=len(hypotheses), proteins=len(sequences))
     print(f'Handoff ready: {out}/external_candidates.faa ({len(sequences)} proteins; {len(hypotheses)} hypotheses)')
 
 
@@ -222,12 +255,13 @@ def resume(args):
 
 def calibrate(args):
     handoff = args.handoff.resolve()
-    verify(handoff, 'handoff')
+    handoff_meta = verify(handoff, 'handoff')
+    targets = set(handoff_meta.get('target_species') or [r['Specie'] for r in read(handoff/'hypotheses.tsv')])
     config = json.loads(args.panel.read_text(encoding='utf-8'))
     entries = config['proteomes']
     codes = [e['species'] for e in entries]
-    if len(codes)!=len(set(codes)) or not TARGETS < set(codes) or any(not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', s) for s in codes):
-        raise ValueError('Panel requires unique safe species codes, three targets, and at least one reference')
+    if len(codes)!=len(set(codes)) or not targets < set(codes) or any(not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', s) or '__' in s for s in codes):
+        raise ValueError('Panel requires unique safe species codes, every handoff target, and at least one reference')
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
     (out/'proteomes').mkdir()
@@ -253,6 +287,7 @@ def calibrate(args):
     write(out/'candidate_audit.tsv', mapping)
     write(out/'proteome_summary.tsv', counts)
     dump(out/'species.json', codes)
+    dump(out/'targets.json', sorted(targets))
     dump(out/'panel.snapshot.json', config)
     seal(out, 'panel', handoff=str(handoff), handoff_manifest=digest(handoff/'workflow_manifest.json'), sources=sources,
          interpretation='Reference-panel sensitivity analysis, not independent biological validation')
@@ -277,7 +312,7 @@ def orthology(args):
         results = hits[0]
     execute([sys.executable, ORTH/'pipeline.py','extract','--results',results,
              '--candidate-set','workflow','--candidate-audit',panel/'candidate_audit.tsv',
-             '--species-list',panel/'species.json','--output',out/'candidates'], out/'logs')
+             '--species-list',panel/'species.json','--target-species',panel/'targets.json','--output',out/'candidates'], out/'logs')
     report = read(out/'candidates/candidate_report.tsv')
     reference_columns = [k for k in report[0] if k.endswith('_orthologues')]
     review = []
@@ -333,7 +368,7 @@ def audit(args):
             topology[r['family'],r['sequence_id']].add('TM' if r['region']=='transmembrane' else 'SP')
     names = {'Hsap':'H. sapiens','Cele':'C. elegans','Dmel':'D. melanogaster','Mmus':'M. musculus','Xlae':'X. laevis'}
     for row in rows:
-        pid, fam = row['protein_id'], row['family']
+        pid, fam = row['protein_id'], row.get('motif_family') or row['family']
         report = reports[pid]
         refs = [k.removesuffix('_orthologues') for k,v in report.items() if k.endswith('_orthologues') and v]
         row['Orthology_reference_support'] = '; '.join(names.get(s,s) for s in refs)
@@ -372,10 +407,12 @@ def audit(args):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--version', action='version', version='adhesome-workflow '+VERSION)
     sub = p.add_subparsers(dest='command', required=True)
     s = sub.add_parser('start', help='Run/reuse detection and export supported/provisional hypotheses')
     s.add_argument('--detection', type=Path, help='Existing batch detection output root')
     s.add_argument('--input-dir', type=Path)
+    s.add_argument('--targets-config', type=Path, help='JSON target proteome configuration; required for new detection')
     s.add_argument('--threads', type=int, default=8)
     s.set_defaults(func=start)
     s = sub.add_parser('resume', help='Import external context and run motif annotation')
