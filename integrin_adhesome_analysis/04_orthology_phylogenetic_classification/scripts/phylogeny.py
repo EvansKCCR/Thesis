@@ -38,7 +38,9 @@ def prepare(args):
     configure_species(getattr(args, 'species_list', None))
     fields, rows = read_tsv(args.hogs)
     active_species = table_species(fields)
-    files = [args.hogs,args.orthologues,args.duplications]+[args.proteomes/f'{s}.faa' for s in active_species]
+    if args.duplications is None and not getattr(args,'allow_missing_duplications',False):
+        raise ValueError('Supply duplication evidence or explicitly allow it to remain unavailable')
+    files = [args.hogs,args.orthologues]+([args.duplications] if args.duplications else [])+[args.proteomes/f'{s}.faa' for s in active_species]
     for path in files:
         if not path.is_file():
             raise ValueError(f'Missing input: {path}')
@@ -59,7 +61,7 @@ def prepare(args):
             raise ValueError(f'Incorrect species prefix in {sp}.faa')
         sequences.update(seqs)
     _, orthologues = read_tsv(args.orthologues)
-    dupfields, duplications = read_tsv(args.duplications)
+    dupfields, duplications = read_tsv(args.duplications) if args.duplications else (['Genes 1','Genes 2'],[])
     plans = []
     for row in rows:
         group = row[key]
@@ -74,7 +76,8 @@ def prepare(args):
         plans.append((group,row,ids))
     args.output.mkdir(parents=True, exist_ok=False)
     manifest = {'created_utc':datetime.now(timezone.utc).isoformat(),
-        'inputs':{str(p.resolve()):digest(p) for p in files}, 'species':active_species, 'groups':[]}
+        'inputs':{str(p.resolve()):digest(p) for p in files}, 'species':active_species,
+        'duplication_evidence_status':'provided' if args.duplications else 'unavailable_not_evidence_of_no_duplication', 'groups':[]}
     summary = []
     for group,row,ids in plans:
         folder = args.output/group
@@ -95,6 +98,7 @@ def prepare(args):
         # Gene names, rather than old gene-tree node numbers, link external evidence to a new tree.
         events = [r for r in duplications if (members(r.get('Genes 1',''))|members(r.get('Genes 2',''))) & ids]
         write_tsv(folder/'duplication_evidence.tsv',dupfields,events)
+        dump(folder/'duplication_status.json',dict(status=manifest['duplication_evidence_status']))
         status = 'ready' if len(ids)>=4 else 'too_few_taxa_for_supported_tree'
         entry = dict(group=group,sequences=len(ids),unique_sequences=len(set(chosen.values())),
                      candidates=len(matched & ids),orthology_edges=len(edges),duplication_rows=len(events),status=status)
@@ -250,8 +254,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(required=True)
     p = sub.add_parser('prepare')
-    for name in ('hogs','orthologues','duplications','proteomes','output'):
+    for name in ('hogs','orthologues','proteomes','output'):
         p.add_argument('--'+name,type=Path,required=True)
+    p.add_argument('--duplications',type=Path)
+    p.add_argument('--allow-missing-duplications',action='store_true',help='Keep unavailable duplication evidence explicitly unknown')
     p.add_argument('--hog',action='append',help='Repeat to select groups; default all rows')
     p.add_argument('--species-list',type=Path,help='JSON list of species codes for a custom panel')
     p.set_defaults(func=prepare)

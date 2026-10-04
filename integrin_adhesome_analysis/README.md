@@ -34,3 +34,5 @@ Fibronectin-like screening candidates are explicitly preserved as provisional fo
 Target inputs are configurable: use targets.example.json for one or more species and pass --targets-config targets.json to start. There is no three-species restriction. panel.example.json illustrates one target and one reference; expand both templates as required.
 
 For step-by-step reference preparation and orthology/phylogeny commands, start with [ORTHOLOGY_PHYLOGENY_GUIDE.md](ORTHOLOGY_PHYLOGENY_GUIDE.md).
+
+Default resume is now continuous: annotation -> automatic reference preparation from input/reference_raw -> generated panel -> orthology -> phylogeny -> final audit. See [automated-run instructions](ORTHOLOGY_PHYLOGENY_GUIDE.md). Use continue with an existing annotation for reference-panel expansion without repeating motif annotation.

@@ -6,12 +6,55 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import adhesome_workflow as w
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_automatic_references_and_continuous_downstream(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            h,a,unused=self.fixture(root)
+            target=root/'detection/TargetA/prepared/TargetA.faa'
+            target.parent.mkdir(parents=True)
+            w.write_fasta(target,{'TargetA__g':'MAAA'})
+            w.seal(h,'handoff',target_species=['TargetA'],detection=str(root/'detection'),sources={str(target.resolve()):w.digest(target)})
+            w.seal(a,'annotation',handoff=str(h),handoff_manifest=w.digest(h/'workflow_manifest.json'))
+            raw=root/'reference_raw'
+            raw.mkdir()
+            (raw/'RefA.faa').write_text('>p1\nMAAA\n>p2\nMA\n')
+            (raw/'RefA.gff3').write_text('chr\tx\tCDS\t1\t9\t.\t+\t0\tprotein_id=p1;Dbxref=GeneID:1\nchr\tx\tCDS\t1\t9\t.\t+\t0\tprotein_id=p2;Dbxref=GeneID:1\n')
+            (raw/'RefB.faa').write_text('>b gene=geneB\nMAAA\n')
+            (raw/'RefC.faa').write_text('>c\nMAAA\n')
+            (raw/'RefC.protein_gene.tsv').write_text('protein_id\tgene_id\nc\tgeneC\n')
+            actual_execute=w.execute
+            commands=[]
+            def simulated(command,logs):
+                commands.append([str(x) for x in command])
+                if str(command[0])=='orthofinder':
+                    result=Path(command[command.index('-o')+1])/'Results_fixture'
+                    (result/'Phylogenetic_Hierarchical_Orthogroups').mkdir(parents=True)
+                    (result/'Orthologues').mkdir()
+                    w.write(result/'Phylogenetic_Hierarchical_Orthogroups/N0.tsv',[
+                        dict(HOG='HOG1',TargetA='TargetA__g',RefA='RefA__GeneID_1',RefB='RefB__geneB',RefC='RefC__geneC')])
+                    for ref,gene in [('RefA','GeneID_1'),('RefB','geneB'),('RefC','geneC')]:
+                        w.write(result/f'Orthologues/{ref}.tsv',[dict(Orthogroup='OG1',TargetA='TargetA__g',**{ref:ref+'__'+gene})])
+                elif 'phylogeny.py' in str(command[1]) and command[2]=='run':
+                    # External inference is simulated; preparation is exercised for real.
+                    return
+                else:
+                    actual_execute(command,logs)
+            out=root/'automatic'
+            with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=simulated):
+                w.downstream(argparse.Namespace(annotation=a,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,skip_phylogeny=False))
+            self.assertTrue((out/'final/audited_candidates.xlsx').exists())
+            self.assertEqual(w.fasta(out/'references/RefA/prepared/RefA.faa'),{'RefA__GeneID_1':'MAAA'})
+            self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['duplication_evidence_status'],'unavailable_not_evidence_of_no_duplication')
+            self.assertTrue(any('phylogeny.py' in c[1] and c[2]=='run' for c in commands))
+            self.assertEqual(w.verify(out,'completed_workflow')['kind'],'completed_workflow')
+
     def test_general_target_preparation(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
@@ -63,7 +106,7 @@ class WorkflowTests(unittest.TestCase):
             w.write(root/'returned.tsv',evidence)
             annotation=root/'annotation'
             w.resume(argparse.Namespace(handoff=handoff,out=annotation,topology_file=topology,
-                context_dir=None,external_evidence=root/'returned.tsv',evidence=None,allow_missing_context=False))
+                context_dir=None,external_evidence=root/'returned.tsv',evidence=None,allow_missing_context=False,annotation_only=True))
             audit=w.read(annotation/'motifs/topology_audit.tsv')
             self.assertEqual({r['status'] for r in audit},{'exact_sequence_verified'})
             self.assertEqual({r['family'] for r in audit},{'fibronectin_like_candidate'})

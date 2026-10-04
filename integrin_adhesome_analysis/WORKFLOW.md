@@ -1,3 +1,7 @@
+# Default: continuous execution after resume
+
+Follow [the automated-run guide](ORTHOLOGY_PHYLOGENY_GUIDE.md). Put complete reference FASTAs and matching GFF/TSV files in input/reference_raw. Resume now runs annotation, automatic reference preparation, panel construction, OrthoFinder, phylogeny and final audit. No manual panel JSON is required. The modular commands below remain available for advanced/manual use; add --annotation-only to resume if deliberately following that route.
+
 # Integrated adhesome workflow — version 1.0.0
 
 This is a source distribution of integrated workflow for integrin adhesome mapping from proteomes. It contains scripts, tests,
@@ -97,74 +101,32 @@ context. Optional `--evidence` accepts the motif module's site-specific TSV:
 Use tabs, one-based inclusive intervals and supported/contradicted statuses.
 Predictions and source assertions remain distinct from experimental validation.
 
-## 3. Whole-proteome orthology and calibration
+## 3. Automatic orthology, phylogeny and reference calibration
 
-For explicit folder navigation, raw-reference preparation and matching run paths, follow [ORTHOLOGY_PHYLOGENY_GUIDE.md](ORTHOLOGY_PHYLOGENY_GUIDE.md). Run all commands from the package root.
+After motif annotation, the default `resume` command automatically reads
+`input/reference_raw`, prepares gene-level references, constructs a panel from
+all handoff targets plus those references, runs OrthoFinder, prepares/runs
+phylogenies, and writes the final audit. You do not prepare references or write
+panel JSON manually. See [the automatic guide](ORTHOLOGY_PHYLOGENY_GUIDE.md) for
+accepted annotations, outputs, and commands to expand the panel using `continue`.
 
-Edit `panel.example.json` to point at complete gene-level reference proteomes and
-record their assembly/release, source and preparation provenance. Paths are
-relative to the JSON file. Target entries point at this run's full detection
-proteomes. Reference FASTAs must have unique `SpeciesCode__gene_id` headers and
-one representative per explicit gene ID. Prepare/collapse raw reference isoforms
-using a gene mapping before this step; never infer genes by trimming accession
-versions. Use scripts/prepare_reference.py with an explicit protein-to-gene TSV; the step-by-step guide gives the complete command and optional NCBI GFF mapping step.
-
-```bash
-python adhesome_workflow.py calibrate --handoff runs/handoff --panel panel.example.json --out runs/panel_initial
-python adhesome_workflow.py orthology --panel runs/panel_initial --out runs/orthology_initial --threads 16 --analysis-threads 8
-```
-
-The panel validates full target candidate-sequence identity and records hashes.
-`gene_level: true` and `source` are required declarations; they do not prove
-biological proteome completeness. OrthoFinder runs on the whole proteomes and
-only then extracts candidate HOGs and direct orthologues.
-
-Review `calibration_review.tsv` for absent reference evidence and ambiguous
-relationships. To add references, copy the panel JSON, append complete reference
-proteomes with new unique species codes, and create a new panel and inference:
-
-```bash
-python adhesome_workflow.py calibrate --handoff runs/handoff --panel panel.expanded.json --out runs/panel_expanded
-python adhesome_workflow.py orthology --panel runs/panel_expanded --compare runs/orthology_initial --out runs/orthology_expanded
-```
-
-`calibration_comparison.tsv` compares reference support by stable candidate ID.
-HOG IDs are not transferable between inference runs. This is panel sensitivity
-analysis, not confidence fitting or independent validation. Both comparisons must
-use the same sequence-verified handoff. Existing runs are preserved.
-
-For inference executed elsewhere, use `--results /path/to/Results_DATE` and
-`--input-manifest /path/to/the/panel/workflow_manifest.json` on the orthology
-command. The manifest must match the selected panel; its association with an
-external results directory is a user provenance assertion. Wrapper-executed runs
-record the exact invocation directly.
-
-Per-HOG phylogenies remain an optional review module. Use stage 04's
-`scripts/phylogeny.py prepare` with the extracted HOG, direct-orthologue and
-actual duplication-event TSVs, panel `proteomes/`, and
-`--species-list runs/panel_expanded/species.json`; then use `phylogeny.py run`.
-See its `--help` for required options. Do not fabricate missing duplication
-records. Trees are not automatically converted into family-support scores.
+Use `--annotation-only` only if you deliberately want to stop after motifs. The
+optional low-level `calibrate`, `orthology` and `audit` commands remain documented
+in [the manual route](MANUAL_ORTHOLOGY_PHYLOGENY.md).
 
 ## 4. Final conservative audit
 
-```bash
-python adhesome_workflow.py audit --annotation runs/annotation --orthology runs/orthology_expanded --out runs/final
-```
+For `resume --out runs/resumed`, the automatic final result is
+`runs/resumed/downstream/final/audited_candidates.xlsx`. The same directory holds
+`joined_evidence.tsv`, `audit_input.xlsx` and provenance. Every run retains
+alternative hypotheses and conservative architecture gates. Missing duplication
+evidence is explicitly unknown; it is not fabricated as negative evidence.
 
-The final module joins original detection hypotheses, native/returned context,
-motif annotations and direct orthology evidence into `joined_evidence.tsv` and
-`audit_input.xlsx`, then creates `audited_candidates.xlsx`. The workbook retains
-all hypotheses plus collapsed species/protein rows. Architecture gates remain
-mandatory; HOG membership alone is not direct orthology, and reference gene/family
-labels are not fabricated. New reference species count in direct support.
-
-All commands require new output directories. Manifests record workflow version,
-input/output hashes and module provenance; failed commands retain diagnostic logs
-without a completion manifest. Resume from the last completed module into a new
-output directory after correcting inputs. The final audit rejects mismatched or
-changed handoffs/panels. Re-run only orthology and audit when expanding a panel.
-
+The annotation manifest records completion of annotation only. The downstream
+manifest is written only after all requested downstream stages and the final
+audit complete successfully. Failed stages preserve logs and return nonzero.
+Use `continue --annotation runs/resumed --out runs/downstream_retry` after
+correcting dependencies or input errors; already successful annotation is reused.
 ## Tests
 
 ```bash

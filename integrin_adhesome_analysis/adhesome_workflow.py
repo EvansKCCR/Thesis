@@ -250,7 +250,48 @@ def resume(args):
     execute(cmd, out/'logs')
     seal(out, 'annotation', handoff=str(handoff), handoff_manifest=digest(handoff/'workflow_manifest.json'), sources=inputs,
          context_policy='missing_allowed' if args.allow_missing_context else 'external_supplied')
-    print(f'Annotation complete: {out}. Prepare/calibrate a reference panel next.')
+    print(f'Annotation complete: {out}.')
+    if not getattr(args, 'annotation_only', False):
+        downstream(argparse.Namespace(annotation=out,out=out/'downstream',
+            reference_raw=args.reference_raw,threads=args.threads,analysis_threads=args.analysis_threads,
+            compare=args.compare,skip_phylogeny=args.skip_phylogeny))
+
+
+def downstream(args):
+    annotation=args.annotation.resolve()
+    meta=verify(annotation,'annotation')
+    handoff=Path(meta['handoff'])
+    verify(handoff,'handoff')
+    if digest(handoff/'workflow_manifest.json')!=meta['handoff_manifest']:
+        raise ValueError('Annotation handoff changed')
+    programs=['orthofinder']+([] if args.skip_phylogeny else ['mafft','trimal','iqtree2'])
+    missing=[name for name in programs if not shutil.which(name)]
+    if missing:
+        raise ValueError('Missing downstream executables on PATH: '+', '.join(missing)+'. Annotation is preserved; use continue after installing dependencies.')
+    out=args.out.resolve()
+    out.mkdir(parents=True,exist_ok=False)
+    execute([sys.executable,ORTH/'prepare_references.py','--raw',args.reference_raw.resolve(),
+             '--handoff',handoff,'--out',out/'references'],out/'logs')
+    calibrate(argparse.Namespace(handoff=handoff,panel=out/'references/panel.auto.json',out=out/'panel'))
+    orthology(argparse.Namespace(panel=out/'panel',out=out/'orthology',results=None,input_manifest=None,
+        threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare))
+    candidates=out/'orthology/candidates'
+    if not args.skip_phylogeny:
+        if read(candidates/'candidate_HOGs.tsv'):
+            cmd=[sys.executable,ORTH/'phylogeny.py','prepare','--hogs',candidates/'candidate_HOGs.tsv',
+                 '--orthologues',candidates/'direct_orthologues.tsv','--proteomes',out/'panel/proteomes',
+                 '--species-list',out/'panel/species.json','--output',out/'phylogeny']
+            dup=candidates/'candidate_duplications.tsv'
+            cmd+=['--duplications',dup] if dup.exists() else ['--allow-missing-duplications']
+            execute(cmd,out/'logs')
+            execute([sys.executable,ORTH/'phylogeny.py','run','--project',out/'phylogeny','--threads',args.threads],out/'logs')
+        else:
+            dump(out/'phylogeny_status.json',dict(status='no_candidate_groups',trees_inferred=0))
+    else:
+        dump(out/'phylogeny_status.json',dict(status='explicitly_skipped'))
+    audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final'))
+    seal(out,'completed_workflow',annotation=str(annotation))
+    print(f'Continuous workflow complete: {out}/final/audited_candidates.xlsx')
 
 
 def calibrate(args):
@@ -420,7 +461,18 @@ def main(argv=None):
     for flag in ('topology-file','context-dir','external-evidence','evidence'):
         s.add_argument('--'+flag, type=Path)
     s.add_argument('--allow-missing-context', action='store_true')
+    s.add_argument('--annotation-only',action='store_true',help='Stop after motif annotation instead of continuing automatically')
     s.set_defaults(func=resume)
+    s = sub.add_parser('continue',help='Run automatic reference preparation, orthology, phylogeny and audit from an existing annotation')
+    s.add_argument('--annotation',type=Path,required=True)
+    s.set_defaults(func=downstream)
+    for name in ('resume','continue'):
+        command=sub.choices[name]
+        command.add_argument('--reference-raw',type=Path,default=ROOT/'input/reference_raw')
+        command.add_argument('--threads',type=int,default=8)
+        command.add_argument('--analysis-threads',type=int,default=8)
+        command.add_argument('--compare',type=Path,help='Previous orthology output for reference-panel comparison')
+        command.add_argument('--skip-phylogeny',action='store_true')
     s = sub.add_parser('calibrate', help='Prepare a new complete gene-level reference panel')
     s.add_argument('--handoff', type=Path, required=True)
     s.add_argument('--panel', type=Path, required=True)
