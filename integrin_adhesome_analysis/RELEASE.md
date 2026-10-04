@@ -17,3 +17,5 @@ Fibronectin inclusion update: six integration tests passed, including fibronecti
 General target update: configurable one-or-more target proteomes using targets.example.json and --targets-config. Handoff species determine panel target/reference roles; custom orthology extraction no longer assumes Schistosoma. Seven integration tests pass, including two-target raw preparation and single non-schistosome target handoff/expanded-panel audit. Six orthology/phylogeny tests pass; two Biopython-dependent tests remain skipped.
 
 General-target edge cases: eight integration tests and 65 detection tests pass. Explicit FASTA filenames/codes take precedence over species-name hints. Targets without exported candidates remain required in the orthology panel and are not reclassified as reference species.
+
+Preparation documentation update: added ORTHOLOGY_PHYLOGENY_GUIDE.md with a single working directory and explicit raw-reference, panel, orthology and phylogeny paths. Added prepare_reference.py for validated gene-level FASTA preparation from protein-to-gene TSVs. Seven stage-04 tests passed; two Biopython-dependent tests skipped. No biological runs were generated.

@@ -99,14 +99,15 @@ Predictions and source assertions remain distinct from experimental validation.
 
 ## 3. Whole-proteome orthology and calibration
 
+For explicit folder navigation, raw-reference preparation and matching run paths, follow [ORTHOLOGY_PHYLOGENY_GUIDE.md](ORTHOLOGY_PHYLOGENY_GUIDE.md). Run all commands from the package root.
+
 Edit `panel.example.json` to point at complete gene-level reference proteomes and
 record their assembly/release, source and preparation provenance. Paths are
 relative to the JSON file. Target entries point at this run's full detection
 proteomes. Reference FASTAs must have unique `SpeciesCode__gene_id` headers and
 one representative per explicit gene ID. Prepare/collapse raw reference isoforms
 using a gene mapping before this step; never infer genes by trimming accession
-versions. The existing stage-04 preparation scripts support the established
-five/eight-species profiles and explicit human/GFF gene maps.
+versions. Use scripts/prepare_reference.py with an explicit protein-to-gene TSV; the step-by-step guide gives the complete command and optional NCBI GFF mapping step.
 
 ```bash
 python adhesome_workflow.py calibrate --handoff runs/handoff --panel panel.example.json --out runs/panel_initial
