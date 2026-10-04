@@ -3,9 +3,11 @@ import unittest
 import argparse
 import importlib.util
 import json
+import subprocess
+import types
 from pathlib import Path
 from unittest.mock import patch
-from phylogeny import alignment_qc, fasta, load_sequences, annotate, run
+from phylogeny import alignment_qc, fasta, load_sequences, annotate, run, trim_input, restore_trimmed, failure_category
 from pipeline import write_tsv, read_tsv, digest
 
 
@@ -53,12 +55,13 @@ class PhylogenyTests(unittest.TestCase):
                 if command[0]=='mafft':
                     kwargs['stdout'].write((group/'members.faa').read_text())
                 elif command[0]=='trimal':
-                    Path(command[command.index('-out')+1]).write_text((group/'members.faa').read_text())
+                    Path(command[command.index('-out')+1]).write_text(Path(command[command.index('-in')+1]).read_text())
                 else:
                     prefix=command[command.index('--prefix')+1]
                     Path(prefix+'.treefile').write_text('(Cele__o:1,Hsap__h:1,(Shae__a:1,Shae__b:1)90/99:1);')
                     self.assertIn('-bnni',command)
                     self.assertIn('-keep-ident',command)
+                    self.assertEqual(command[command.index('-T')+1],'2')
                 return argparse.Namespace(returncode=0)
             with patch('phylogeny.shutil.which',side_effect=lambda s:s),patch('phylogeny.subprocess.run',side_effect=fake_run):
                 run(args)
@@ -76,6 +79,61 @@ class PhylogenyTests(unittest.TestCase):
             _,_,qc=alignment_qc(path,seqs,4,0.9)
             self.assertEqual(qc['parsimony_informative_sites'],3)
             self.assertEqual(qc['distinct_aligned_sequences'],4)
+
+    def test_trimming_aliases_and_qc_diagnostics(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            seqs={'Species__very_long_identifier_1':'ACDE','Species__very_long_identifier_2':'ACDF'}
+            aliases=trim_input(seqs,root)
+            restore_trimmed(root/'trimal_input.faa',aliases,root/'restored.faa')
+            self.assertEqual(load_sequences(root/'restored.faa'),seqs)
+            fasta(root/'bad.faa',{next(iter(aliases)):'ACDE'})
+            with self.assertRaisesRegex(ValueError,'membership'):
+                restore_trimmed(root/'bad.faa',aliases,root/'bad_restored.faa')
+            self.assertTrue((root/'bad.membership.json').exists())
+            fasta(root/'gaps.faa',{'x':'----','y':'ACDE'})
+            with self.assertRaisesRegex(ValueError,'gaps'):
+                alignment_qc(root/'gaps.faa',{'x','y'},1,0.9)
+            self.assertTrue((root/'gaps.sequence_qc.tsv').exists())
+
+    def test_tool_failure_retry_and_intentional_skip(self):
+        with tempfile.TemporaryDirectory() as td:
+            project=Path(td)
+            group=project/'OG1'
+            group.mkdir()
+            fasta(group/'members.faa',{'a':'ACDE'*20,'b':'ACDF'*20,'c':'FGDE'*20,'d':'FGDF'*20})
+            (project/'manifest.json').write_text(json.dumps({'groups':[
+                dict(group='OG1',status='ready',files={'members.faa':digest(group/'members.faa')}),
+                dict(group='OG2',status='too_few_taxa_for_supported_tree',files={})]}))
+            args=argparse.Namespace(project=project,hog=None,outgroup=[],threads=8,iqtree_threads=2,seed=1,min_sites=50,
+                max_gap=0.9,mafft='mafft',trimal='trimal',iqtree='iqtree2',aligner='linsi',allow_partial=True,retry_failed=False)
+            bio=types.ModuleType('Bio')
+            bio.Phylo=object()
+            def fake(command,**kw):
+                if '--version' in command:
+                    return argparse.Namespace(stdout='test',stderr='')
+                if command[0]=='mafft':
+                    kw['stdout'].write((group/'members.faa').read_text())
+                elif command[0]=='trimal':
+                    Path(command[command.index('-out')+1]).write_text(Path(command[command.index('-in')+1]).read_text())
+                else:
+                    self.assertEqual(command[command.index('-T')+1],'2')
+                    kw['stderr'].write('fixture IQ-TREE error; cause must be inspected')
+                    raise subprocess.CalledProcessError(2,command)
+            with patch.dict('sys.modules',{'Bio':bio}),patch('phylogeny.shutil.which',side_effect=lambda s:s),patch('phylogeny.subprocess.run',side_effect=fake):
+                run(args)
+                record=json.loads((group/'inference/run.json').read_text())
+                self.assertEqual(record['failure_category'],'tool_failure')
+                self.assertEqual(record['exit_code'],2)
+                self.assertIn('fixture IQ-TREE error',record['stderr_tail'])
+                summary=json.loads((project/'run_summary.json').read_text())
+                self.assertEqual(summary['counts'],{'failed':1,'skipped':1})
+                args.retry_failed=True
+                args.allow_partial=False
+                with self.assertRaisesRegex(ValueError,'groups failed'):
+                    run(args)
+                self.assertTrue((group/'inference_attempt_001/run.json').exists())
+            self.assertEqual(failure_category(ValueError('excessive gaps'),'trimmed_alignment_qc'),'alignment_qc_failure')
 
     def test_rejects_changed_ids_lengths_and_poor_sequences(self):
         with tempfile.TemporaryDirectory() as tmp:

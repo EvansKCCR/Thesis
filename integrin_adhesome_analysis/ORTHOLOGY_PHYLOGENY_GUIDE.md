@@ -109,7 +109,7 @@ python adhesome_workflow.py continue --annotation runs/resumed --out runs/downst
 ```
 
 This uses the same automatic reference preparation and downstream sequence.
-Use a new output directory after correcting a failure. This reuses annotation
+Use recover for a checkpointed failure (see below). For a new downstream analysis, use a new output directory. Continue reuses annotation
 but reruns downstream computation; it does not resume midway through an external
 OrthoFinder/IQ-TREE process.
 
@@ -128,3 +128,97 @@ Optional controls: `--annotation-only` on `resume` restores an intentional stop
 after motif annotation; `--skip-phylogeny` runs reference preparation, orthology
 and audit without custom gene-tree inference. The lower-level manual modules
 remain available in `MANUAL_ORTHOLOGY_PHYLOGENY.md` for specialist use.
+## Phylogeny failures and recovery
+
+IQ-TREE now defaults to **two threads independently of MAFFT/OrthoFinder**.
+Override using `--iqtree-threads` on `resume`, `continue`, or `phylogeny.py run`.
+The workflow writes `phylogeny/run_summary.tsv` and `run_summary.json`, with
+separate complete, failed and skipped groups.
+
+| Symptom | Recorded category | Action |
+|---|---|---|
+| IQ-TREE nonzero exit, including 2 | tool_failure at iqtree | Inspect the stderr path and tail in run.json, command stderr log, and gene_tree.log if present. Exit 2 alone does not prove a resource problem. |
+| Excessive gaps, no standard residues, insufficient informative sites | alignment_qc_failure | Inspect aligned.sequence_qc.tsv / trimmed.sequence_qc.tsv and alignment quality; lowering threads cannot repair the data. |
+| Alignment/trimming identifier changes | identifier_mismatch | Inspect membership JSON and trimal_identifiers.tsv. Short reversible IDs protect trimAl input; genuine membership changes still fail validation. |
+| Fewer than four input sequences | skipped / too_few_taxa | Intentional exclusion from supported tree inference; not an execution failure. |
+
+There is no automatic deletion of problematic taxa, relaxation of QC thresholds,
+or fabricated tree for a failed alignment. A family/HOG with heterogeneous domain
+architecture may require a biologically justified alignment strategy or curated
+homologous region selection before rerunning in a new prepared project.
+
+For an interrupted run whose downstream completion manifest has **not** been
+written, retry only failed groups after reviewing their errors:
+
+```bash
+python 04_orthology_phylogenetic_classification/scripts/phylogeny.py run --project runs/resumed/downstream/phylogeny --threads 2 --iqtree-threads 2 --retry-failed
+```
+
+Previous failures move to `inference_attempt_001`, etc.; completed groups are
+preserved. A run marked running/incomplete is not automatically overwritten.
+After successful recovery, the final audit can be invoked without repeating
+OrthoFinder:
+
+```bash
+python adhesome_workflow.py audit --annotation runs/resumed --orthology runs/resumed/downstream/orthology --out runs/final_recovered
+```
+
+Strict failure remains the default. To deliberately finish the audit even if some
+groups fail in a new run, pass `--allow-partial-phylogeny` to resume/continue.
+The phylogeny summary retains `partial_failure`, and the downstream manifest
+records `completed_with_phylogeny_failures`. Such an audit does not imply all trees
+succeeded. Do not mutate already sealed completed downstream runs; create a new
+run/project for subsequent revisions. Low-level `phylogeny.py run --allow-partial`
+is the equivalent explicit option when using the standalone runner.
+## Resume a failed run from its checkpoints
+
+After fixing the reported cause, run from the package root:
+
+```bash
+python adhesome_workflow.py recover --run runs/resumed --threads 2 --iqtree-threads 2
+```
+
+You may instead pass `--run runs/resumed/downstream`. For a run created by
+`continue --out runs/expanded`, use `--run runs/expanded`. The failed run's saved
+annotation, references, panel and settings are reused; optional thread flags
+override resource settings for the retried work. Do not launch recovery while
+another process is still writing to that run.
+
+`recovery.json` records running/failed/completed checkpoints and file hashes for:
+reference preparation, panel construction, orthology, phylogeny preparation,
+phylogeny inference and final audit. Each completed stage is verified and reused.
+A changed/missing completed output is rejected rather than silently reused.
+Recovery is for the same scientific inputs/settings; use a new `continue` run
+for reference-panel expansion or changed biological inputs.
+
+- If extraction failed after OrthoFinder succeeded, its verified inference
+  outputs are reused and only extraction/downstream stages are retried.
+- If tree inference failed, references, panel, orthology and phylogeny preparation
+  are reused. Failed tree groups are retried; completed groups are retained.
+- If final audit failed, completed computational stages are reused.
+- If an external OrthoFinder invocation itself failed, that invocation is rerun.
+  Recovery is not a promise to resume inside OrthoFinder's search algorithm.
+- Incomplete non-resumable stage folders are archived as `*_attempt_001`, etc.
+  Old outputs/logs are preserved. Tree attempts retain their per-group archives.
+- Annotation must have completed before these downstream checkpoints exist. If
+  annotation itself failed, rerun `resume` into a new annotation output folder;
+  the completed detection handoff is still reused.
+
+A successfully completed sealed run is checked and left unchanged. Recovery
+rejects tree attempts still marked running/incomplete rather than assuming an
+active process has stopped; inspect those before attempting a retry.
+
+### Older failed runs without recovery.json
+
+For a pre-checkpoint run where reference preparation and panel validation
+completed, adopt its verified existing stages:
+
+```bash
+python adhesome_workflow.py recover --run runs/resumed/downstream --adopt-existing --annotation runs/resumed --threads 2 --iqtree-threads 2
+```
+
+Adoption validates annotation/panel linkage, generated panel consistency,
+orthology manifests if present, and prepared phylogeny input hashes. It then
+creates checkpoints and resumes. It will not adopt a run already sealed complete.
+If an older run failed before a valid reference panel was produced, use `continue`
+from its completed annotation to create a new downstream run instead.

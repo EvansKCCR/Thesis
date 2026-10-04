@@ -31,6 +31,8 @@ class WorkflowTests(unittest.TestCase):
             (raw/'RefC.protein_gene.tsv').write_text('protein_id\tgene_id\nc\tgeneC\n')
             actual_execute=w.execute
             commands=[]
+            fail_tree=[True]
+            fail_extract=[True]
             def simulated(command,logs):
                 commands.append([str(x) for x in command])
                 if str(command[0])=='orthofinder':
@@ -43,12 +45,36 @@ class WorkflowTests(unittest.TestCase):
                         w.write(result/f'Orthologues/{ref}.tsv',[dict(Orthogroup='OG1',TargetA='TargetA__g',**{ref:ref+'__'+gene})])
                 elif 'phylogeny.py' in str(command[1]) and command[2]=='run':
                     # External inference is simulated; preparation is exercised for real.
+                    if fail_tree[0]:
+                        fail_tree[0]=False
+                        raise ValueError('simulated tree tool failure')
+                    w.dump(Path(command[command.index('--project')+1])/'run_summary.json',dict(status='complete'))
                     return
+                elif 'pipeline.py' in str(command[1]) and command[2]=='extract' and fail_extract[0]:
+                    fail_extract[0]=False
+                    raise ValueError('simulated extraction failure')
                 else:
                     actual_execute(command,logs)
             out=root/'automatic'
             with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=simulated):
-                w.downstream(argparse.Namespace(annotation=a,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,skip_phylogeny=False))
+                with self.assertRaisesRegex(ValueError,'simulated extraction failure'):
+                    w.downstream(argparse.Namespace(annotation=a,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,skip_phylogeny=False))
+                self.assertTrue((out/'orthology/inference_complete.json').exists())
+                with self.assertRaisesRegex(ValueError,'simulated tree tool failure'):
+                    w.recover(argparse.Namespace(run=out,threads=2,analysis_threads=None,iqtree_threads=2))
+                self.assertEqual(sum(c[0]=='orthofinder' for c in commands),1)
+                state=json.loads((out/'recovery.json').read_text())
+                self.assertEqual(state['stages']['orthology']['status'],'complete')
+                self.assertEqual(state['stages']['phylogeny_run']['status'],'failed')
+                boundary=len(commands)
+                # Simulate an older run without a recovery file; adopt only verified stages.
+                (out/'recovery.json').unlink()
+                w.recover(argparse.Namespace(run=out,threads=2,analysis_threads=None,iqtree_threads=2,
+                    adopt_existing=True,annotation=a))
+                recovered=commands[boundary:]
+                self.assertFalse(any(c[0]=='orthofinder' for c in recovered))
+                self.assertFalse(any('prepare_references.py' in c[1] for c in recovered))
+                self.assertTrue(any('--retry-failed' in c for c in recovered))
             self.assertTrue((out/'final/audited_candidates.xlsx').exists())
             self.assertEqual(w.fasta(out/'references/RefA/prepared/RefA.faa'),{'RefA__GeneID_1':'MAAA'})
             self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['duplication_evidence_status'],'unavailable_not_evidence_of_no_duplication')

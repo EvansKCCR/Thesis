@@ -158,3 +158,7 @@ final family-assignment gate. Competing family hypotheses remain distinct while
 sequences are deduplicated. Returned evidence uses the same exact sequence/hash
 checks. No separate orthology reference panel is needed.
 All handoff target species, including targets with no exported hypotheses, must be represented in each orthology panel, with at least one additional reference species. Target membership is recorded in the handoff manifest and panel targets.json. With --detection, targets are inferred from the supplied detection batch; --targets-config can additionally validate the expected species set.
+
+## Checkpoint recovery
+
+Use python adhesome_workflow.py recover --run runs/resumed --threads 2 --iqtree-threads 2 to reuse verified completed downstream stages and retry unfinished work. Older failed runs can be adopted with --adopt-existing --annotation runs/resumed. See the recovery section in [the guide](ORTHOLOGY_PHYLOGENY_GUIDE.md) for limits and exact paths. Continue creates a new downstream run; recover repairs the existing failed run.

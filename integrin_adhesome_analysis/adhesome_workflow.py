@@ -254,7 +254,8 @@ def resume(args):
     if not getattr(args, 'annotation_only', False):
         downstream(argparse.Namespace(annotation=out,out=out/'downstream',
             reference_raw=args.reference_raw,threads=args.threads,analysis_threads=args.analysis_threads,
-            compare=args.compare,skip_phylogeny=args.skip_phylogeny))
+            compare=args.compare,skip_phylogeny=args.skip_phylogeny,
+            iqtree_threads=args.iqtree_threads,allow_partial_phylogeny=args.allow_partial_phylogeny))
 
 
 def downstream(args):
@@ -264,17 +265,59 @@ def downstream(args):
     verify(handoff,'handoff')
     if digest(handoff/'workflow_manifest.json')!=meta['handoff_manifest']:
         raise ValueError('Annotation handoff changed')
-    programs=['orthofinder']+([] if args.skip_phylogeny else ['mafft','trimal','iqtree2'])
+    out=args.out.resolve()
+    recovering=getattr(args,'recovering',False)
+    if recovering and (out/'workflow_manifest.json').exists():
+        verify(out,'completed_workflow')
+        print(f'Run already completed: {out}')
+        return
+    out.mkdir(parents=True,exist_ok=recovering)
+    checkpoint=out/'recovery.json'
+    if recovering:
+        state=json.loads(checkpoint.read_text())
+        if state['annotation_sha256']!=digest(annotation/'workflow_manifest.json'):
+            raise ValueError('Annotation changed since failed run; create a new run')
+    else:
+        state=dict(settings={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items() if k!='func'},
+                   annotation_sha256=digest(annotation/'workflow_manifest.json'),stages={})
+        for key in ('annotation','out','reference_raw','compare'):
+            if state['settings'].get(key) is not None:
+                state['settings'][key]=str(Path(state['settings'][key]).resolve())
+        dump(checkpoint,state)
+    programs=[]
+    if state['stages'].get('orthology',{}).get('status')!='complete' and not (out/'orthology/inference_complete.json').exists():
+        programs.append('orthofinder')
+    if not args.skip_phylogeny and state['stages'].get('phylogeny_run',{}).get('status')!='complete':
+        programs+=['mafft','trimal','iqtree2']
     missing=[name for name in programs if not shutil.which(name)]
     if missing:
-        raise ValueError('Missing downstream executables on PATH: '+', '.join(missing)+'. Annotation is preserved; use continue after installing dependencies.')
-    out=args.out.resolve()
-    out.mkdir(parents=True,exist_ok=False)
-    execute([sys.executable,ORTH/'prepare_references.py','--raw',args.reference_raw.resolve(),
-             '--handoff',handoff,'--out',out/'references'],out/'logs')
-    calibrate(argparse.Namespace(handoff=handoff,panel=out/'references/panel.auto.json',out=out/'panel'))
-    orthology(argparse.Namespace(panel=out/'panel',out=out/'orthology',results=None,input_manifest=None,
-        threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare))
+        raise ValueError('Missing executables for unfinished stages: '+', '.join(missing)+'. Install dependencies, then use recover --run '+str(out))
+    def stage(name,folder,action,preserve=False):
+        previous=state['stages'].get(name,{})
+        if previous.get('status')=='complete':
+            for filename,sha in previous['files'].items():
+                if digest(out/filename)!=sha:
+                    raise ValueError(f'Completed checkpoint changed: {filename}')
+            print(f'REUSE {name}',flush=True)
+            return
+        if folder.exists() and not preserve:
+            archive_attempt(folder)
+        state['stages'][name]=dict(status='running')
+        dump(checkpoint,state)
+        try:
+            action()
+            files={str(p.relative_to(out)):digest(p) for p in folder.rglob('*') if p.is_file()}
+            state['stages'][name]=dict(status='complete',files=files)
+            dump(checkpoint,state)
+        except Exception as exc:
+            state['stages'][name]=dict(status='failed',error=str(exc))
+            dump(checkpoint,state)
+            raise
+    stage('references',out/'references',lambda:execute([sys.executable,ORTH/'prepare_references.py','--raw',args.reference_raw.resolve(),
+             '--handoff',handoff,'--out',out/'references'],out/'logs'))
+    stage('panel',out/'panel',lambda:calibrate(argparse.Namespace(handoff=handoff,panel=out/'references/panel.auto.json',out=out/'panel')))
+    stage('orthology',out/'orthology',lambda:orthology(argparse.Namespace(panel=out/'panel',out=out/'orthology',results=None,input_manifest=None,
+        threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare,recovering=recovering)),preserve=True)
     candidates=out/'orthology/candidates'
     if not args.skip_phylogeny:
         if read(candidates/'candidate_HOGs.tsv'):
@@ -283,15 +326,92 @@ def downstream(args):
                  '--species-list',out/'panel/species.json','--output',out/'phylogeny']
             dup=candidates/'candidate_duplications.tsv'
             cmd+=['--duplications',dup] if dup.exists() else ['--allow-missing-duplications']
-            execute(cmd,out/'logs')
-            execute([sys.executable,ORTH/'phylogeny.py','run','--project',out/'phylogeny','--threads',args.threads],out/'logs')
+            stage('phylogeny_prepare',out/'phylogeny',lambda:execute(cmd,out/'logs'))
+            tree_cmd=[sys.executable,ORTH/'phylogeny.py','run','--project',out/'phylogeny','--threads',args.threads,
+                      '--iqtree-threads',getattr(args,'iqtree_threads',2)]
+            if getattr(args,'allow_partial_phylogeny',False):
+                tree_cmd+=['--allow-partial']
+            if recovering:
+                tree_cmd+=['--retry-failed']
+            stage('phylogeny_run',out/'phylogeny',lambda:execute(tree_cmd,out/'logs'),preserve=True)
         else:
             dump(out/'phylogeny_status.json',dict(status='no_candidate_groups',trees_inferred=0))
     else:
         dump(out/'phylogeny_status.json',dict(status='explicitly_skipped'))
-    audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final'))
-    seal(out,'completed_workflow',annotation=str(annotation))
-    print(f'Continuous workflow complete: {out}/final/audited_candidates.xlsx')
+    stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final')))
+    summary=out/'phylogeny/run_summary.json'
+    tree_status=json.loads(summary.read_text())['status'] if summary.exists() else 'not_run'
+    seal(out,'completed_workflow',annotation=str(annotation),phylogeny_status=tree_status,
+         completion_status='completed_with_phylogeny_failures' if tree_status=='partial_failure' else 'complete')
+    print(f'Workflow audit ready (phylogeny: {tree_status}): {out}/final/audited_candidates.xlsx')
+
+
+def archive_attempt(folder):
+    """Preserve incomplete outputs beside their stage; never delete previous evidence."""
+    number=1
+    while folder.with_name(folder.name+f'_attempt_{number:03d}').exists():
+        number+=1
+    folder.rename(folder.with_name(folder.name+f'_attempt_{number:03d}'))
+
+
+def recover(args):
+    run=args.run.resolve()
+    if not (run/'recovery.json').exists() and (run/'downstream/recovery.json').exists():
+        run=run/'downstream'
+    if not (run/'recovery.json').exists() and getattr(args,'adopt_existing',False):
+        if (run/'downstream/panel').exists():
+            run=run/'downstream'
+        annotation=(args.annotation or run.parent).resolve()
+        ann=verify(annotation,'annotation')
+        if (run/'workflow_manifest.json').exists():
+            raise ValueError('Existing run is sealed as complete; do not modify it in place')
+        panel=verify(run/'panel','panel')
+        if panel['handoff_manifest']!=ann['handoff_manifest']:
+            raise ValueError('Existing panel and annotation use different handoffs')
+        generated=json.loads((run/'references/panel.auto.json').read_text())
+        if generated!=json.loads((run/'panel/panel.snapshot.json').read_text()):
+            raise ValueError('Generated reference panel differs from staged panel')
+        state=dict(annotation_sha256=digest(annotation/'workflow_manifest.json'),stages={},settings=dict(
+            annotation=str(annotation),out=str(run),reference_raw=str(ROOT/'input/reference_raw'),
+            threads=args.threads or 8,analysis_threads=args.analysis_threads or 8,iqtree_threads=args.iqtree_threads or 2,
+            compare=None,skip_phylogeny=False,allow_partial_phylogeny=False))
+        def adopt(name,files):
+            state['stages'][name]=dict(status='complete',files={str(p.relative_to(run)):digest(p) for p in files if p.is_file()})
+        adopt('references',(run/'references').rglob('*'))
+        adopt('panel',(run/'panel').rglob('*'))
+        if (run/'orthology/workflow_manifest.json').exists():
+            orth=verify(run/'orthology','orthology')
+            if orth['panel_manifest']!=digest(run/'panel/workflow_manifest.json'):
+                raise ValueError('Existing orthology used a different panel')
+            adopt('orthology',(run/'orthology').rglob('*'))
+        phylo=run/'phylogeny/manifest.json'
+        if phylo.exists() and 'orthology' in state['stages']:
+            preparation=json.loads(phylo.read_text())
+            prepared_files=[phylo,run/'phylogeny/groups.tsv']
+            for path,sha in preparation['inputs'].items():
+                if digest(path)!=sha:
+                    raise ValueError(f'Phylogeny preparation input changed: {path}')
+            for group in preparation['groups']:
+                for name,sha in group['files'].items():
+                    path=run/'phylogeny'/group['group']/name
+                    if digest(path)!=sha:
+                        raise ValueError(f'Prepared group changed: {path}')
+                    prepared_files.append(path)
+            adopt('phylogeny_prepare',prepared_files)
+        dump(run/'recovery.json',state)
+    if not (run/'recovery.json').exists():
+        raise ValueError('No recovery checkpoint found. For a run created before checkpoints were added, use --adopt-existing and --annotation with its completed annotation directory.')
+    state=json.loads((run/'recovery.json').read_text())
+    settings=state['settings']
+    for key in ('annotation','out','reference_raw','compare'):
+        if settings.get(key) is not None:
+            settings[key]=Path(settings[key])
+    settings['out']=run
+    for key in ('threads','analysis_threads','iqtree_threads'):
+        if getattr(args,key) is not None:
+            settings[key]=getattr(args,key)
+    settings['recovering']=True
+    downstream(argparse.Namespace(**settings))
 
 
 def calibrate(args):
@@ -339,18 +459,34 @@ def orthology(args):
     panel = args.panel.resolve()
     panel_meta = verify(panel, 'panel')
     out = args.out.resolve()
-    out.mkdir(parents=True, exist_ok=False)
+    recovering=getattr(args,'recovering',False)
+    out.mkdir(parents=True, exist_ok=recovering)
     if args.results:
         results = args.results.resolve()
         # Bind external results to the exact input panel, not merely matching species labels.
         if not args.input_manifest or digest(args.input_manifest) != digest(panel/'workflow_manifest.json'):
             raise ValueError('External results require --input-manifest from the panel used for inference')
     else:
-        execute(['orthofinder','-f',panel/'proteomes','-t',args.threads,'-a',args.analysis_threads,'-o',out/'inference'], out/'logs')
+        receipt=out/'inference_complete.json'
+        if recovering and receipt.exists():
+            saved=json.loads(receipt.read_text())
+            if saved['panel_manifest']!=digest(panel/'workflow_manifest.json'):
+                raise ValueError('Panel changed since inference')
+            for name,sha in saved.get('files',{}).items():
+                if digest(out/'inference'/name)!=sha:
+                    raise ValueError(f'Completed inference output changed: {name}')
+        else:
+            if (out/'inference').exists():
+                archive_attempt(out/'inference')
+            execute(['orthofinder','-f',panel/'proteomes','-t',args.threads,'-a',args.analysis_threads,'-o',out/'inference'], out/'logs')
+            dump(receipt,dict(panel_manifest=digest(panel/'workflow_manifest.json'),
+                files={str(p.relative_to(out/'inference')):digest(p) for p in (out/'inference').rglob('*') if p.is_file()}))
         hits = list((out/'inference').glob('Results_*'))
         if len(hits)!=1:
             raise ValueError('Cannot identify one Results_* directory; use explicit --results on a new output')
         results = hits[0]
+    if recovering and (out/'candidates').exists():
+        archive_attempt(out/'candidates')
     execute([sys.executable, ORTH/'pipeline.py','extract','--results',results,
              '--candidate-set','workflow','--candidate-audit',panel/'candidate_audit.tsv',
              '--species-list',panel/'species.json','--target-species',panel/'targets.json','--output',out/'candidates'], out/'logs')
@@ -473,6 +609,8 @@ def main(argv=None):
         command.add_argument('--analysis-threads',type=int,default=8)
         command.add_argument('--compare',type=Path,help='Previous orthology output for reference-panel comparison')
         command.add_argument('--skip-phylogeny',action='store_true')
+        command.add_argument('--iqtree-threads',type=int,default=2)
+        command.add_argument('--allow-partial-phylogeny',action='store_true',help='Continue to audit while retaining an explicit partial-failure phylogeny summary')
     s = sub.add_parser('calibrate', help='Prepare a new complete gene-level reference panel')
     s.add_argument('--handoff', type=Path, required=True)
     s.add_argument('--panel', type=Path, required=True)
@@ -491,10 +629,17 @@ def main(argv=None):
     s.set_defaults(func=audit)
     for s in sub.choices.values():
         s.add_argument('--out', type=Path, required=True, help='New output directory')
+    s=sub.add_parser('recover',help='Resume a checkpointed failed downstream run in place')
+    s.add_argument('--run',type=Path,required=True,help='Failed downstream directory or its parent annotation directory')
+    s.add_argument('--adopt-existing',action='store_true',help='Validate and checkpoint an older failed run that predates recovery support')
+    s.add_argument('--annotation',type=Path,help='Completed annotation directory for adoption of an older failed run')
+    for name in ('threads','analysis-threads','iqtree-threads'):
+        s.add_argument('--'+name,type=int,default=None)
+    s.set_defaults(func=recover)
     args = p.parse_args(argv)
     try:
-        for name in ('threads','analysis_threads'):
-            if hasattr(args,name) and getattr(args,name)<1:
+        for name in ('threads','analysis_threads','iqtree_threads'):
+            if getattr(args,name,None) is not None and getattr(args,name)<1:
                 raise ValueError('Thread counts must be positive')
         args.func(args)
         return 0

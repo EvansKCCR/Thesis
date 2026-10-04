@@ -113,7 +113,8 @@ def prepare(args):
 def alignment_qc(path, expected, min_sites, max_gap):
     seqs = load_sequences(path)
     if set(seqs) != set(expected):
-        raise ValueError(f'{path}: alignment changed sequence identifiers')
+        dump(path.with_suffix('.membership.json'),dict(missing=sorted(set(expected)-set(seqs)),unexpected=sorted(set(seqs)-set(expected))))
+        raise ValueError(f'{path}: alignment changed sequence identifiers; inspect {path.with_suffix(".membership.json")}')
     lengths = {len(s) for s in seqs.values()}
     if len(lengths)!=1:
         raise ValueError(f'{path}: unequal alignment lengths')
@@ -122,6 +123,7 @@ def alignment_qc(path, expected, min_sites, max_gap):
         raise ValueError(f'{path}: only {length} sites; minimum is {min_sites}')
     rows = [dict(sequence_id=n,sites=length,gap_fraction=s.count('-')/length,
                  informative_residues=sum(c in 'ACDEFGHIKLMNPQRSTVWY' for c in s)) for n,s in seqs.items()]
+    write_tsv(path.with_suffix('.sequence_qc.tsv'),list(rows[0]),rows)
     if any(r['gap_fraction']>max_gap or r['informative_residues']==0 for r in rows):
         raise ValueError(f'{path}: excessive gaps or no standard residues in a sequence; review alignment')
     informative = 0
@@ -130,6 +132,34 @@ def alignment_qc(path, expected, min_sites, max_gap):
         informative += sum(v>=2 for v in counts.values())>=2
     return seqs, rows, dict(sites=length,parsimony_informative_sites=informative,
                             distinct_aligned_sequences=len(set(seqs.values())))
+
+
+def trim_input(aligned, work):
+    """Use short, unique transport IDs so trimming cannot truncate biological IDs."""
+    aliases = {f'S{i:07d}':name for i,name in enumerate(sorted(aligned),1)}
+    fasta(work/'trimal_input.faa',{alias:aligned[name] for alias,name in aliases.items()})
+    write_tsv(work/'trimal_identifiers.tsv',['alias','sequence_id'],
+              [dict(alias=a,sequence_id=n) for a,n in aliases.items()])
+    return aliases
+
+
+def restore_trimmed(path, aliases, output):
+    seqs = load_sequences(path)
+    if set(seqs)!=set(aliases):
+        dump(path.with_suffix('.membership.json'),dict(missing_aliases=sorted(set(aliases)-set(seqs)),unexpected_aliases=sorted(set(seqs)-set(aliases))))
+        raise ValueError('trimAl changed sequence identifiers/membership; inspect trimmed alias membership report')
+    fasta(output,{aliases[a]:seq for a,seq in seqs.items()})
+
+
+def failure_category(exc, stage):
+    if isinstance(exc,subprocess.CalledProcessError):
+        return 'tool_failure'
+    message=str(exc).lower()
+    if 'identifier' in message or 'membership' in message or 'tree tips' in message:
+        return 'identifier_mismatch'
+    if any(word in message for word in ('gaps','residues','sites','aligned sequences','alignment lengths','column subsequence')):
+        return 'alignment_qc_failure'
+    return 'processing_failure'
 
 
 def annotate(treefile, folder, outgroups):
@@ -172,14 +202,21 @@ def annotate(treefile, folder, outgroups):
 
 
 def run(args):
-    from Bio import Phylo  # Fail before starting expensive computation if unavailable.
     manifest = json.loads((args.project/'manifest.json').read_text())
     groups = [g for g in manifest['groups'] if not args.hog or g['group'] in args.hog]
     if args.hog and set(args.hog)-{g['group'] for g in groups}:
         raise ValueError('Unknown selected group')
     if args.outgroup and len(groups)!=1:
         raise ValueError('Specify exactly one --hog when providing --outgroup')
-    if args.threads<1 or args.seed<1 or args.min_sites<1 or not 0<=args.max_gap<1:
+    if groups and all(g['status']!='ready' for g in groups):
+        skipped=[dict(group=g['group'],status='skipped',category='too_few_taxa',stage='preparation',error=g['status'],stderr_log='') for g in groups]
+        write_tsv(args.project/'run_summary.tsv',list(skipped[0]),skipped)
+        dump(args.project/'run_summary.json',dict(status='complete',counts={'skipped':len(skipped)},groups=skipped))
+        print(f'SKIP: {len(skipped)} groups have too few taxa; no tree inference attempted')
+        return
+    from Bio import Phylo  # Fail before starting expensive computation if unavailable.
+    iq_threads=getattr(args,'iqtree_threads',2)
+    if args.threads<1 or iq_threads<1 or args.seed<1 or args.min_sites<1 or not 0<=args.max_gap<1:
         raise ValueError('Invalid threads/seed/QC settings')
     tools = {name:shutil.which(value) for name,value in
              [('mafft',args.mafft),('trimal',args.trimal),('iqtree',args.iqtree)]}
@@ -197,8 +234,20 @@ def run(args):
                 raise ValueError(f'Prepared input changed: {folder/name}; prepare a new project')
         if group['status']!='ready':
             print(f'SKIP {group["group"]}: {group["status"]}')
+            statuses.append(dict(group=group['group'],status='skipped',category='too_few_taxa',stage='preparation',error=group['status'],stderr_log=''))
             continue
         work = folder/'inference'
+        if work.exists() and getattr(args,'retry_failed',False):
+            previous=json.loads((work/'run.json').read_text())
+            if previous['status']=='complete':
+                statuses.append(dict(group=group['group'],status='complete',category='previously_complete',stage='complete',error='',stderr_log=''))
+                continue
+            if previous['status']!='failed':
+                raise ValueError(f'{work}: run is not marked failed; inspect before retrying')
+            attempt=1
+            while (folder/f'inference_attempt_{attempt:03d}').exists():
+                attempt+=1
+            work.rename(folder/f'inference_attempt_{attempt:03d}')
         work.mkdir(exist_ok=False)
         info = {'versions':versions,'settings':vars(args).copy(),'commands':[], 'status':'running',
                 'input_hashes':group['files'],'started_utc':datetime.now(timezone.utc).isoformat()}
@@ -207,18 +256,26 @@ def run(args):
             info['commands'].append(command)
             dump(work/'run.json',info)
             index = len(info['commands'])
+            info['last_stderr_log']=str(work/f'command_{index}.stderr.log')
             with (work/f'command_{index}.stderr.log').open('w') as err, (work/(stdout_name or f'command_{index}.stdout.log')).open('w') as out:
                 subprocess.run(command,stdout=out,stderr=err,check=True)
+        stage='input'
         try:
             raw = load_sequences(folder/'members.faa')
             if args.outgroup and not set(args.outgroup)<set(raw):
                 raise ValueError('Outgroup must be a proper subset of this group')
             method = ['--localpair','--maxiterate','1000'] if args.aligner=='linsi' else ['--ep','0','--genafpair','--maxiterate','1000']
+            stage='mafft'
             execute([tools['mafft'],'--amino','--thread',str(args.threads),'--threadit','0',*method,str((folder/'members.faa').resolve())],'aligned.faa')
+            stage='alignment_qc'
             aligned, _, before = alignment_qc(work/'aligned.faa',raw,1,0.999999)
             if any(aligned[n].replace('-','')!=raw[n] for n in raw):
                 raise ValueError('MAFFT changed residue sequences')
-            execute([tools['trimal'],'-in',str((work/'aligned.faa').resolve()),'-out',str((work/'trimmed.faa').resolve()),'-automated1'])
+            aliases=trim_input(aligned,work)
+            stage='trimal'
+            execute([tools['trimal'],'-in',str((work/'trimal_input.faa').resolve()),'-out',str((work/'trimmed_aliases.faa').resolve()),'-automated1'])
+            restore_trimmed(work/'trimmed_aliases.faa',aliases,work/'trimmed.faa')
+            stage='trimmed_alignment_qc'
             trimmed, qc, after = alignment_qc(work/'trimmed.faa',raw,args.min_sites,args.max_gap)
             order = sorted(raw)
             original_columns = iter(zip(*(aligned[n] for n in order)))
@@ -229,8 +286,9 @@ def run(args):
             dump(work/'alignment_qc.json',dict(before=before,after=after,retained_fraction=after['sites']/before['sites']))
             if after['distinct_aligned_sequences']<4 or after['parsimony_informative_sites']==0:
                 raise ValueError('Fewer than four distinct aligned sequences or no parsimony-informative sites')
+            stage='iqtree'
             execute([tools['iqtree'],'-s',str((work/'trimmed.faa').resolve()),'-st','AA','-m','MFP',
-                     '-B','1000','--alrt','1000','-bnni','-seed',str(args.seed),'-T',str(args.threads),
+                     '-B','1000','--alrt','1000','-bnni','-seed',str(args.seed),'-T',str(iq_threads),
                      '-keep-ident','--prefix',str((work/'gene_tree').resolve())])
             treefile = work/'gene_tree.treefile'
             names = [t.name for t in Phylo.read(treefile,'newick').get_terminals()]
@@ -242,12 +300,23 @@ def run(args):
         except Exception as exc:
             info['status']='failed'
             info['error']=str(exc)
+            info['failure_category']=failure_category(exc,stage)
+            info['failed_stage']=stage
+            if isinstance(exc,subprocess.CalledProcessError):
+                info['exit_code']=exc.returncode
+                log=Path(info['last_stderr_log'])
+                info['stderr_tail']=log.read_text(errors='replace')[-6000:]
+                info['diagnostic_note']='Exit code alone does not establish a resource/thread cause; inspect stderr and tool logs.'
             print(f'FAILED {group["group"]}: {exc}',file=sys.stderr)
         dump(work/'run.json',info)
-        statuses.append(dict(group=group['group'],status=info['status']))
+        statuses.append(dict(group=group['group'],status=info['status'],category=info.get('failure_category',''),
+            stage=info.get('failed_stage','complete'),error=info.get('error',''),stderr_log=info.get('last_stderr_log','')))
         print(f'{group["group"]}: {info["status"]}',flush=True)
-    if any(s['status']=='failed' for s in statuses):
-        raise ValueError('One or more groups failed; inspect per-group run.json and logs')
+    write_tsv(args.project/'run_summary.tsv',['group','status','category','stage','error','stderr_log'],statuses)
+    dump(args.project/'run_summary.json',dict(status='partial_failure' if any(s['status']=='failed' for s in statuses) else 'complete',
+        counts=dict(Counter(s['status'] for s in statuses)),groups=statuses))
+    if any(s['status']=='failed' for s in statuses) and not getattr(args,'allow_partial',False):
+        raise ValueError('One or more groups failed; inspect run_summary.tsv and per-group run.json/logs. Use --retry-failed after reviewing the cause.')
 
 
 def main():
@@ -266,6 +335,9 @@ def main():
     p.add_argument('--hog',action='append')
     p.add_argument('--outgroup',action='append',default=[],help='Explicit justified tip ID; repeat for a multi-tip outgroup; one HOG only')
     p.add_argument('--threads',type=int,default=8)
+    p.add_argument('--iqtree-threads',type=int,default=2,help='Independent IQ-TREE thread count; exit status 2 does not by itself imply resource exhaustion')
+    p.add_argument('--retry-failed',action='store_true',help='Archive failed inference attempts and retry; preserve completed groups')
+    p.add_argument('--allow-partial',action='store_true',help='Return success with an explicit partial_failure summary when some groups fail')
     p.add_argument('--seed',type=int,default=20260920)
     p.add_argument('--aligner',choices=['linsi','einsi'],default='linsi')
     p.add_argument('--min-sites',type=int,default=50)
