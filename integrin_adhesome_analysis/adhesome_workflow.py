@@ -372,7 +372,7 @@ def recover(args):
         if generated!=json.loads((run/'panel/panel.snapshot.json').read_text()):
             raise ValueError('Generated reference panel differs from staged panel')
         state=dict(annotation_sha256=digest(annotation/'workflow_manifest.json'),stages={},settings=dict(
-            annotation=str(annotation),out=str(run),reference_raw=str(ROOT/'input/reference_raw'),
+            annotation=str(annotation),out=str(run),reference_raw=str(ROOT/'inputs/reference_raw'),
             threads=args.threads or 8,analysis_threads=args.analysis_threads or 8,iqtree_threads=args.iqtree_threads or 2,
             compare=None,skip_phylogeny=False,allow_partial_phylogeny=False))
         def adopt(name,files):
@@ -604,7 +604,7 @@ def main(argv=None):
     s.set_defaults(func=downstream)
     for name in ('resume','continue'):
         command=sub.choices[name]
-        command.add_argument('--reference-raw',type=Path,default=ROOT/'input/reference_raw')
+        command.add_argument('--reference-raw',type=Path,default=ROOT/'inputs/reference_raw')
         command.add_argument('--threads',type=int,default=8)
         command.add_argument('--analysis-threads',type=int,default=8)
         command.add_argument('--compare',type=Path,help='Previous orthology output for reference-panel comparison')
