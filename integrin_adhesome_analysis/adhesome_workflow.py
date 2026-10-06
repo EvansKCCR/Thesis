@@ -98,11 +98,17 @@ def seal(folder, kind, **metadata):
     dump(folder/'workflow_manifest.json', dict(workflow_version=VERSION, kind=kind, files=files, **metadata))
 
 
-def verify(folder, kind):
+def verify(folder, kind, required_files=None):
     data = json.loads((folder/'workflow_manifest.json').read_text(encoding='utf-8'))
     if data['kind'] != kind:
         raise ValueError(f'Expected {kind}: {folder}')
-    for name, value in data['files'].items():
+    files={name.replace('\\','/'):sha for name,sha in data['files'].items()}
+    if required_files is not None:
+        absent=set(required_files)-set(files)
+        if absent:
+            raise ValueError(f'Missing recorded audit inputs: {sorted(absent)}')
+        files={name:files[name] for name in required_files}
+    for name, value in files.items():
         if digest(folder/name) != value:
             raise ValueError(f'Changed workflow input: {folder/name}')
     return data
@@ -287,8 +293,6 @@ def downstream(args):
     programs=[]
     if state['stages'].get('orthology',{}).get('status')!='complete' and not (out/'orthology/inference_complete.json').exists():
         programs.append('orthofinder')
-    if not args.skip_phylogeny and state['stages'].get('phylogeny_run',{}).get('status')!='complete':
-        programs+=['mafft','trimal','iqtree2']
     missing=[name for name in programs if not shutil.which(name)]
     if missing:
         raise ValueError('Missing executables for unfinished stages: '+', '.join(missing)+'. Install dependencies, then use recover --run '+str(out))
@@ -318,9 +322,15 @@ def downstream(args):
     stage('panel',out/'panel',lambda:calibrate(argparse.Namespace(handoff=handoff,panel=out/'references/panel.auto.json',out=out/'panel')))
     stage('orthology',out/'orthology',lambda:orthology(argparse.Namespace(panel=out/'panel',out=out/'orthology',results=None,input_manifest=None,
         threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare,recovering=recovering)),preserve=True)
+    stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final')))
+    print(f'Audit complete and available independently of phylogeny: {out}/final/audited_candidates.xlsx',flush=True)
     candidates=out/'orthology/candidates'
     if not args.skip_phylogeny:
         if read(candidates/'candidate_HOGs.tsv'):
+            if state['stages'].get('phylogeny_run',{}).get('status')!='complete':
+                missing=[name for name in ('mafft','trimal','iqtree2') if not shutil.which(name)]
+                if missing:
+                    raise ValueError('Audit completed. Missing phylogeny executables: '+', '.join(missing)+'. Recover after installing them.')
             cmd=[sys.executable,ORTH/'phylogeny.py','prepare','--hogs',candidates/'candidate_HOGs.tsv',
                  '--orthologues',candidates/'direct_orthologues.tsv','--proteomes',out/'panel/proteomes',
                  '--species-list',out/'panel/species.json','--output',out/'phylogeny']
@@ -338,7 +348,6 @@ def downstream(args):
             dump(out/'phylogeny_status.json',dict(status='no_candidate_groups',trees_inferred=0))
     else:
         dump(out/'phylogeny_status.json',dict(status='explicitly_skipped'))
-    stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final')))
     summary=out/'phylogeny/run_summary.json'
     tree_status=json.loads(summary.read_text())['status'] if summary.exists() else 'not_run'
     seal(out,'completed_workflow',annotation=str(annotation),phylogeny_status=tree_status,
@@ -517,7 +526,7 @@ def orthology(args):
 def audit(args):
     annotation, orthology_dir = args.annotation.resolve(), args.orthology.resolve()
     ann = verify(annotation, 'annotation')
-    ort = verify(orthology_dir, 'orthology')
+    ort = verify(orthology_dir, 'orthology', required_files=['candidates/candidate_report.tsv','candidates/provenance.json'])
     panel = Path(ort['panel'])
     pan = verify(panel, 'panel')
     handoff = Path(ann['handoff'])

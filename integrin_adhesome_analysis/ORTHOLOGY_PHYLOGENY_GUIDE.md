@@ -69,8 +69,8 @@ The command executes, in order:
 3. Reuse the handoff's complete target proteomes, verify their hashes, and write
    the panel configuration automatically.
 4. Stage the panel and run whole-proteome OrthoFinder.
-5. Extract candidate orthology, prepare per-HOG projects and run MAFFT → trimAl → IQ-TREE.
-6. Join evidence and write the conservative audited workbook.
+5. Extract candidate orthology, join evidence and write the conservative audited workbook.
+6. Independently prepare per-HOG projects and run MAFFT → trimAl → IQ-TREE.
 
 Supported/provisional and fibronectin-like hypotheses all follow this same route.
 Targets with no exported candidates remain part of the whole-proteome panel.
@@ -222,3 +222,6 @@ orthology manifests if present, and prepared phylogeny input hashes. It then
 creates checkpoints and resumes. It will not adopt a run already sealed complete.
 If an older run failed before a valid reference panel was produced, use `continue`
 from its completed annotation to create a new downstream run instead.
+## Audit is independent of phylogeny
+
+The audit checkpoint now runs immediately after successful orthology, before phylogeny preparation, dependency checks or inference. Missing tree tools and failed trees therefore cannot prevent an available annotation/orthology audit. Tree failures still return nonzero and remain recoverable; the workbook is retained in downstream/final. For an existing run, invoke the standalone audit command to obtain the workbook without retrying any trees.

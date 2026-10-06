@@ -66,6 +66,8 @@ class WorkflowTests(unittest.TestCase):
                 state=json.loads((out/'recovery.json').read_text())
                 self.assertEqual(state['stages']['orthology']['status'],'complete')
                 self.assertEqual(state['stages']['phylogeny_run']['status'],'failed')
+                self.assertEqual(state['stages']['audit']['status'],'complete')
+                self.assertTrue((out/'final/audited_candidates.xlsx').exists())
                 boundary=len(commands)
                 # Simulate an older run without a recovery file; adopt only verified stages.
                 (out/'recovery.json').unlink()
