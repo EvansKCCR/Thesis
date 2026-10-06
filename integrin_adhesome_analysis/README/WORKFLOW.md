@@ -1,12 +1,11 @@
 # Default: continuous execution after resume
 
-Follow [the automated-run guide](ORTHOLOGY_PHYLOGENY_GUIDE.md). Put complete reference FASTAs and matching GFF/TSV files in input/reference_raw. Resume now runs annotation, automatic reference preparation, panel construction, OrthoFinder, phylogeny and final audit. No manual panel JSON is required. The modular commands below remain available for advanced/manual use; add --annotation-only to resume if deliberately following that route.
+Follow [the automated-run guide](ORTHOLOGY_PHYLOGENY_GUIDE.md). Put complete reference FASTAs and matching GFF/TSV files in input/reference_raw. Resuming the pipeline after stage 1 runs annotation, automatic reference preparation, panel construction, OrthoFinder, phylogeny and final audit. The modular commands below remain available for advanced/manual use; add --annotation-only to resume if deliberately following that route.
 
 # Integrated adhesome workflow — version 1.0.0
 
 This is a source distribution of integrated workflow for integrin adhesome mapping from proteomes. It contains scripts, tests,
-curated HMM/reference/motif resources, configuration templates and dependency
-specifications. Historical versions in resource names identify their provenance; the integrated
+curated HMM/reference/motif resources, configuration templates and dependency specifications. Historical versions in resource names identify their provenance; the integrated
 workflow release is 1.0.0.
 
 ## Setup and inputs
@@ -28,7 +27,7 @@ this does not install the external programs. MEME Suite is optional and disabled
 by default. External topology/localization prediction services are not bundled.
 
 Supply one or more complete target proteomes under an input directory. Copy
-`targets.example.json` to `targets.json` and add one entry per target: a unique
+`targets.example.json` to `targets.json` in the root folder and add one entry per target: a unique
 `code`, descriptive `species`, `assembly`, source URL, FASTA `path` and
 `gene_regex` whose first capture group extracts an explicit gene ID. Codes may
 contain letters, digits and single underscores, must start with a letter, and
@@ -49,7 +48,7 @@ coverage or validate cross-species functional transfer.
 ## 1. Detection and external handoff
 
 ```bash
-python adhesome_workflow.py start --targets-config targets.json --input-dir inputs/targets --out runs/handoff --threads 8
+python adhesome_workflow.py start --targets-config targets.json --input-dir inputs/targets --out runs/handoff --threads 4
 ```
 
 To reuse a separately generated detection batch, replace `--input-dir` with
