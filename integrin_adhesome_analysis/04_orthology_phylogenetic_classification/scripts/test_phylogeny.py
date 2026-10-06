@@ -7,11 +7,31 @@ import subprocess
 import types
 from pathlib import Path
 from unittest.mock import patch
-from phylogeny import alignment_qc, fasta, load_sequences, annotate, run, trim_input, restore_trimmed, failure_category
+from phylogeny import alignment_qc, fasta, load_sequences, annotate, run, trim_input, restore_trimmed, failure_category, family_plans
 from pipeline import write_tsv, read_tsv, digest
 
 
 class PhylogenyTests(unittest.TestCase):
+    def test_family_union_preserves_membership_and_ambiguity(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            write_tsv(root/'families.tsv',['protein_id','family'],[
+                dict(protein_id='old1',family='talin'),dict(protein_id='T__b',family='talin'),
+                dict(protein_id='old1',family='other'),dict(protein_id='T__missing',family='talin'),
+                dict(protein_id='old1',family='talin')])
+            write_tsv(root/'report.tsv',['candidate_id','prepared_id'],[dict(candidate_id='old1',prepared_id='T__a')])
+            plans=[('OG1',{}, {'T__a','R__x'}),('OG2',{}, {'T__b','R__x','R__y'})]
+            merged,links,coverage=family_plans(plans,root/'families.tsv','family',['T','R'],root/'report.tsv')
+            byname={g:(r,ids) for g,r,ids in merged}
+            row,ids=byname['family_talin']
+            self.assertEqual(ids,{'T__a','T__b','R__x','R__y'})
+            self.assertEqual(row['_source_by_tip']['R__x'],['OG1','OG2'])
+            self.assertEqual(row['Matched_candidates'],'T__a, T__b')
+            self.assertEqual(byname['family_other'][1],{'T__a','R__x'})
+            self.assertEqual(len(links),3)
+            self.assertTrue(any(r['prepared_id']=='T__missing' and r['status']=='not_in_selected_groups' for r in coverage))
+            with self.assertRaisesRegex(ValueError,'Unknown families'):
+                family_plans(plans,root/'families.tsv','family',['T','R'],selected=['absent'])
     @unittest.skipUnless(importlib.util.find_spec('Bio'), 'Biopython required')
     def test_rooting_and_duplication_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:

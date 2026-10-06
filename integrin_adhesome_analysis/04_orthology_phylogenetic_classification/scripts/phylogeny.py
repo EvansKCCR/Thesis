@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Auditable per-HOG MAFFT -> trimAl -> IQ-TREE workflow (Python >=3.11)."""
 import argparse
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 import json
 from pathlib import Path
@@ -32,6 +32,55 @@ def load_sequences(path):
             raise ValueError(f'Duplicate/empty record in {path}: {name}')
         result[name] = seq
     return result
+
+
+def family_plans(plans, family_map, family_column, active_species, candidate_report=None, selected=None):
+    """Union whole source groups by candidate-family association, retaining provenance."""
+    fields, annotations=read_tsv(family_map)
+    if 'protein_id' not in (fields or []) or family_column not in (fields or []):
+        raise ValueError(f'Family map requires protein_id and {family_column} columns')
+    aliases={}
+    if candidate_report:
+        _, report=read_tsv(candidate_report)
+        for row in report:
+            cid, prepared=row['candidate_id'],row['prepared_id']
+            if cid in aliases and aliases[cid]!=prepared:
+                raise ValueError(f'Conflicting candidate mapping: {cid}')
+            aliases[cid]=prepared
+    families=defaultdict(set)
+    for row in annotations:
+        family=row[family_column].strip()
+        if family in ('','unassigned','unresolved'):
+            continue
+        if not re.fullmatch(r'[A-Za-z0-9_.-]+',family) or family in ('.','..'):
+            raise ValueError(f'Unsafe family name: {family}')
+        families[family].add(aliases.get(row['protein_id'],row['protein_id']))
+    if selected:
+        absent=set(selected)-set(families)
+        if absent:
+            raise ValueError(f'Unknown families: {sorted(absent)}')
+        families={f:ids for f,ids in families.items() if f in selected}
+    merged,links,coverage=[],[],[]
+    for family,wanted in sorted(families.items()):
+        selected_groups=[(g,row,ids) for g,row,ids in plans if ids & wanted]
+        found=set().union(*(ids & wanted for g,row,ids in selected_groups))
+        for cid in sorted(wanted):
+            coverage.append(dict(family=family,prepared_id=cid,status='included' if cid in found else 'not_in_selected_groups'))
+        if not selected_groups:
+            continue
+        ids=set().union(*(ids for g,row,ids in selected_groups))
+        row={sp:', '.join(sorted(n for n in ids if n.startswith(sp+'__'))) for sp in active_species}
+        row.update(Matched_candidates=', '.join(sorted(found)),Source_groups=';'.join(g for g,r,i in selected_groups),Family=family)
+        source_by_tip=defaultdict(list)
+        for group,original,group_ids in selected_groups:
+            links.append(dict(family=family,source_group=group,trigger_candidates=';'.join(sorted(group_ids&wanted)),member_count=len(group_ids)))
+            for ident in group_ids:
+                source_by_tip[ident].append(group)
+        row['_source_by_tip']=source_by_tip
+        merged.append(('family_'+family,row,ids))
+    if not merged:
+        raise ValueError('No source groups linked to the selected family hypotheses')
+    return merged,links,coverage
 
 
 def prepare(args):
@@ -74,10 +123,23 @@ def prepare(args):
             if any(not n.startswith(sp+'__') for n in members(row[sp])):
                 raise ValueError(f'{group}: incorrect species column {sp}')
         plans.append((group,row,ids))
+    family_map=getattr(args,'family_map',None)
+    links,coverage=[],[]
+    if family_map:
+        plans,links,coverage=family_plans(plans,family_map,args.family_column,active_species,
+            getattr(args,'candidate_report',None),getattr(args,'family',None))
+        files+=[family_map]+([args.candidate_report] if getattr(args,'candidate_report',None) else [])
+    elif getattr(args,'family',None):
+        raise ValueError('--family requires --family-map')
     args.output.mkdir(parents=True, exist_ok=False)
     manifest = {'created_utc':datetime.now(timezone.utc).isoformat(),
         'inputs':{str(p.resolve()):digest(p) for p in files}, 'species':active_species,
-        'duplication_evidence_status':'provided' if args.duplications else 'unavailable_not_evidence_of_no_duplication', 'groups':[]}
+        'duplication_evidence_status':'provided' if args.duplications else 'unavailable_not_evidence_of_no_duplication',
+        'grouping':'family' if family_map else 'orthogroup',
+        'family_column':args.family_column if family_map else None, 'groups':[]}
+    if family_map:
+        write_tsv(args.output/'family_orthogroups.tsv',['family','source_group','trigger_candidates','member_count'],links)
+        write_tsv(args.output/'family_candidate_coverage.tsv',['family','prepared_id','status'],coverage)
     summary = []
     for group,row,ids in plans:
         folder = args.output/group
@@ -86,8 +148,9 @@ def prepare(args):
         fasta(folder/'members.faa',chosen)
         matched = members(row.get('Matched_candidates',''))
         tips = [dict(sequence_id=n,species=n.split('__')[0],length=len(sequences[n]),
-                     candidate=int(n in matched)) for n in sorted(ids)]
-        write_tsv(folder/'tips.tsv',['sequence_id','species','length','candidate'],tips)
+                     candidate=int(n in matched),family=row.get('Family',''),
+                     source_groups=';'.join(row.get('_source_by_tip',{}).get(n,[group]))) for n in sorted(ids)]
+        write_tsv(folder/'tips.tsv',['sequence_id','species','length','candidate','family','source_groups'],tips)
         edges = []
         for r in orthologues:
             for other in members(r['orthologues']):
@@ -100,7 +163,7 @@ def prepare(args):
         write_tsv(folder/'duplication_evidence.tsv',dupfields,events)
         dump(folder/'duplication_status.json',dict(status=manifest['duplication_evidence_status']))
         status = 'ready' if len(ids)>=4 else 'too_few_taxa_for_supported_tree'
-        entry = dict(group=group,sequences=len(ids),unique_sequences=len(set(chosen.values())),
+        entry = dict(group=group,family=row.get('Family',''),source_groups=row.get('Source_groups',group),sequences=len(ids),unique_sequences=len(set(chosen.values())),
                      candidates=len(matched & ids),orthology_edges=len(edges),duplication_rows=len(events),status=status)
         summary.append(entry)
         manifest['groups'].append(dict(entry,files={p.name:digest(p) for p in folder.iterdir()}))
@@ -329,6 +392,10 @@ def main():
     p.add_argument('--allow-missing-duplications',action='store_true',help='Keep unavailable duplication evidence explicitly unknown')
     p.add_argument('--hog',action='append',help='Repeat to select groups; default all rows')
     p.add_argument('--species-list',type=Path,help='JSON list of species codes for a custom panel')
+    p.add_argument('--family-map',type=Path,help='TSV linking protein_id to family hypotheses; unions full orthogroups per family')
+    p.add_argument('--family-column',default='family',help='Family-map column to use (default: family)')
+    p.add_argument('--candidate-report',type=Path,help='candidate_report.tsv translating original candidate IDs to prepared IDs')
+    p.add_argument('--family',action='append',help='Prepare only this family; repeat to select several')
     p.set_defaults(func=prepare)
     p = sub.add_parser('run')
     p.add_argument('--project',type=Path,required=True)

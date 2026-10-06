@@ -225,3 +225,7 @@ from its completed annotation to create a new downstream run instead.
 ## Audit is independent of phylogeny
 
 The audit checkpoint now runs immediately after successful orthology, before phylogeny preparation, dependency checks or inference. Missing tree tools and failed trees therefore cannot prevent an available annotation/orthology audit. Tree failures still return nonzero and remain recoverable; the workbook is retained in downstream/final. For an existing run, invoke the standalone audit command to obtain the workbook without retrying any trees.
+
+## Unified family trees
+
+Use --phylogeny-grouping family on new resume/continue runs, or prepare a family project directly from existing orthology. See [FAMILY_PHYLOGENY.md](FAMILY_PHYLOGENY.md) for commands using runs/annotation and preserved source-group provenance.

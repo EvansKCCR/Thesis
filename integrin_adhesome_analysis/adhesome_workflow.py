@@ -261,7 +261,8 @@ def resume(args):
         downstream(argparse.Namespace(annotation=out,out=out/'downstream',
             reference_raw=args.reference_raw,threads=args.threads,analysis_threads=args.analysis_threads,
             compare=args.compare,skip_phylogeny=args.skip_phylogeny,
-            iqtree_threads=args.iqtree_threads,allow_partial_phylogeny=args.allow_partial_phylogeny))
+            iqtree_threads=args.iqtree_threads,allow_partial_phylogeny=args.allow_partial_phylogeny,
+            phylogeny_grouping=args.phylogeny_grouping))
 
 
 def downstream(args):
@@ -334,6 +335,9 @@ def downstream(args):
             cmd=[sys.executable,ORTH/'phylogeny.py','prepare','--hogs',candidates/'candidate_HOGs.tsv',
                  '--orthologues',candidates/'direct_orthologues.tsv','--proteomes',out/'panel/proteomes',
                  '--species-list',out/'panel/species.json','--output',out/'phylogeny']
+            if getattr(args,'phylogeny_grouping','orthogroup')=='family':
+                cmd+=['--family-map',handoff/'hypotheses.tsv','--family-column','motif_family',
+                      '--candidate-report',candidates/'candidate_report.tsv']
             dup=candidates/'candidate_duplications.tsv'
             cmd+=['--duplications',dup] if dup.exists() else ['--allow-missing-duplications']
             stage('phylogeny_prepare',out/'phylogeny',lambda:execute(cmd,out/'logs'))
@@ -396,6 +400,7 @@ def recover(args):
         phylo=run/'phylogeny/manifest.json'
         if phylo.exists() and 'orthology' in state['stages']:
             preparation=json.loads(phylo.read_text())
+            state['settings']['phylogeny_grouping']=preparation.get('grouping','orthogroup')
             prepared_files=[phylo,run/'phylogeny/groups.tsv']
             for path,sha in preparation['inputs'].items():
                 if digest(path)!=sha:
@@ -618,6 +623,7 @@ def main(argv=None):
         command.add_argument('--analysis-threads',type=int,default=8)
         command.add_argument('--compare',type=Path,help='Previous orthology output for reference-panel comparison')
         command.add_argument('--skip-phylogeny',action='store_true')
+        command.add_argument('--phylogeny-grouping',choices=['orthogroup','family'],default='orthogroup',help='One tree per orthogroup or union of groups per candidate family')
         command.add_argument('--iqtree-threads',type=int,default=2)
         command.add_argument('--allow-partial-phylogeny',action='store_true',help='Continue to audit while retaining an explicit partial-failure phylogeny summary')
     s = sub.add_parser('calibrate', help='Prepare a new complete gene-level reference panel')

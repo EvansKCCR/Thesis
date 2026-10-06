@@ -58,7 +58,7 @@ class WorkflowTests(unittest.TestCase):
             out=root/'automatic'
             with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=simulated):
                 with self.assertRaisesRegex(ValueError,'simulated extraction failure'):
-                    w.downstream(argparse.Namespace(annotation=a,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,skip_phylogeny=False))
+                    w.downstream(argparse.Namespace(annotation=a,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,skip_phylogeny=False,phylogeny_grouping='family'))
                 self.assertTrue((out/'orthology/inference_complete.json').exists())
                 with self.assertRaisesRegex(ValueError,'simulated tree tool failure'):
                     w.recover(argparse.Namespace(run=out,threads=2,analysis_threads=None,iqtree_threads=2))
@@ -80,6 +80,8 @@ class WorkflowTests(unittest.TestCase):
             self.assertTrue((out/'final/audited_candidates.xlsx').exists())
             self.assertEqual(w.fasta(out/'references/RefA/prepared/RefA.faa'),{'RefA__GeneID_1':'MAAA'})
             self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['duplication_evidence_status'],'unavailable_not_evidence_of_no_duplication')
+            self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['grouping'],'family')
+            self.assertTrue((out/'phylogeny/family_fibronectin_like_candidate/tips.tsv').exists())
             self.assertTrue(any('phylogeny.py' in c[1] and c[2]=='run' for c in commands))
             self.assertEqual(w.verify(out,'completed_workflow')['kind'],'completed_workflow')
 
