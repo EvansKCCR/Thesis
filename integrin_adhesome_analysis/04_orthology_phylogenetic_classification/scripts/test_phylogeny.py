@@ -1,9 +1,11 @@
 import tempfile
+from collections import Counter
 import unittest
 import argparse
 import importlib.util
 import json
 import subprocess
+import sys
 import types
 from pathlib import Path
 from unittest.mock import patch
@@ -12,6 +14,54 @@ from pipeline import write_tsv, read_tsv, digest
 
 
 class PhylogenyTests(unittest.TestCase):
+    def test_audited_selection_excludes_other_targets_and_keeps_orphans(self):
+        from openpyxl import Workbook
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            book=Workbook()
+            sheet=book.active
+            sheet.title='Collapsed_candidates'
+            sheet.append(['protein_id','assigned_family','grade','family'])
+            for row in [('old1','talin','A','wrong'),('T__b','talin','B','wrong'),
+                        ('T__c','talin','C','wrong'),('T__d','talin','D','wrong'),
+                        ('T__e','fibronectin_like','C','wrong')]:
+                sheet.append(row)
+            path=root/'audit.xlsx'
+            book.save(path)
+            write_tsv(root/'report.tsv',['candidate_id','prepared_id'],[dict(candidate_id='old1',prepared_id='T__a')])
+            plans=[('OG1',{}, {'T__a','T__d','T__unselected','R__x'})]
+            seqs={n:'MAAA' for n in ['T__a','T__b','T__c','T__d','T__e','T__unselected','R__x']}
+            merged,links,coverage=family_plans(plans,None,'family',['T','R'],root/'report.tsv',
+                audit_workbook=path,target_species=['T'],sequences=seqs)
+            byname={g:(r,ids) for g,r,ids in merged}
+            self.assertEqual(byname['family_talin'][1],{'T__a','T__b','T__c','R__x'})
+            self.assertEqual(byname['family_fibronectin_like'][1],{'T__e'})
+            self.assertEqual(byname['family_talin'][0]['_source_by_tip']['T__b'],[])
+            self.assertEqual(Counter(r['grade'] for r in coverage),{'A':1,'B':1,'C':2})
+            self.assertEqual(sum(r['status']=='included_without_source_group' for r in coverage),3)
+            # Exercise CLI preparation when every audited target lacks a source group.
+            write_tsv(root/'hogs.tsv',['HOG','T','R'],[])
+            write_tsv(root/'orthologues.tsv',['candidate_id','orthologues','relationship','source_file'],[])
+            (root/'species.json').write_text(json.dumps(['T','R']))
+            (root/'targets.json').write_text(json.dumps(['T']))
+            for sp in ('T','R'):
+                fasta(root/f'{sp}.faa',{n:s for n,s in seqs.items() if n.startswith(sp+'__')})
+            result=subprocess.run([sys.executable,str(Path(__file__).with_name('phylogeny.py')),'prepare',
+                '--hogs',str(root/'hogs.tsv'),'--orthologues',str(root/'orthologues.tsv'),
+                '--proteomes',str(root),'--species-list',str(root/'species.json'),
+                '--target-species',str(root/'targets.json'),'--audit-workbook',str(path),
+                '--candidate-report',str(root/'report.tsv'),'--allow-missing-duplications',
+                '--output',str(root/'prepared')],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stderr)
+            _,summary=read_tsv(root/'prepared/groups.tsv')
+            self.assertEqual(sum(int(r['candidates']) for r in summary),4)
+            self.assertTrue(all(r['reference_sequences']=='0' for r in summary))
+            self.assertTrue(all(r['status']=='too_few_taxa_for_supported_tree' for r in summary))
+            del seqs['T__e']
+            with self.assertRaisesRegex(ValueError,'missing from target proteomes'):
+                family_plans(plans,None,'family',['T','R'],root/'report.tsv',
+                    audit_workbook=path,target_species=['T'],sequences=seqs)
+
     def test_family_union_preserves_membership_and_ambiguity(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)

@@ -34,9 +34,29 @@ def load_sequences(path):
     return result
 
 
-def family_plans(plans, family_map, family_column, active_species, candidate_report=None, selected=None):
+def family_plans(plans, family_map, family_column, active_species, candidate_report=None, selected=None,
+                 audit_workbook=None, target_species=None, sequences=None):
     """Union whole source groups by candidate-family association, retaining provenance."""
-    fields, annotations=read_tsv(family_map)
+    if audit_workbook:
+        from openpyxl import load_workbook
+        with audit_workbook.open('rb') as stream:
+            book=load_workbook(stream,read_only=True,data_only=True)
+            try:
+                values=iter(book['Collapsed_candidates'].values)
+                fields=next(values)
+                annotations=[dict(zip(fields,row)) for row in values]
+            finally:
+                book.close()
+        family_column='assigned_family'
+        if 'grade' not in fields:
+            raise ValueError('Collapsed_candidates requires an audit grade column')
+        annotations=[r for r in annotations if r['grade'] in ('A','B','C')]
+        if not target_species or not set(target_species)<=set(active_species):
+            raise ValueError('Audit selection requires valid --target-species (panel/targets.json)')
+        if sequences is None:
+            raise ValueError('Audit selection requires prepared proteome sequences')
+    else:
+        fields, annotations=read_tsv(family_map)
     if 'protein_id' not in (fields or []) or family_column not in (fields or []):
         raise ValueError(f'Family map requires protein_id and {family_column} columns')
     aliases={}
@@ -48,13 +68,21 @@ def family_plans(plans, family_map, family_column, active_species, candidate_rep
                 raise ValueError(f'Conflicting candidate mapping: {cid}')
             aliases[cid]=prepared
     families=defaultdict(set)
+    audit_details={}
     for row in annotations:
-        family=row[family_column].strip()
+        family=str(row[family_column] or '').strip()
         if family in ('','unassigned','unresolved'):
             continue
         if not re.fullmatch(r'[A-Za-z0-9_.-]+',family) or family in ('.','..'):
             raise ValueError(f'Unsafe family name: {family}')
-        families[family].add(aliases.get(row['protein_id'],row['protein_id']))
+        ident=aliases.get(row['protein_id'],row['protein_id'])
+        if audit_workbook and (ident not in sequences or ident.split('__')[0] not in target_species):
+            raise ValueError(f'Audited candidate missing from target proteomes: {ident}')
+        families[family].add(ident)
+        if audit_workbook:
+            if ident in audit_details:
+                raise ValueError(f'Duplicate collapsed audited candidate: {ident}')
+            audit_details[ident]=dict(protein_id=row['protein_id'],grade=row['grade'])
     if selected:
         absent=set(selected)-set(families)
         if absent:
@@ -65,17 +93,25 @@ def family_plans(plans, family_map, family_column, active_species, candidate_rep
         selected_groups=[(g,row,ids) for g,row,ids in plans if ids & wanted]
         found=set().union(*(ids & wanted for g,row,ids in selected_groups))
         for cid in sorted(wanted):
-            coverage.append(dict(family=family,prepared_id=cid,status='included' if cid in found else 'not_in_selected_groups'))
-        if not selected_groups:
+            coverage.append(dict(family=family,prepared_id=cid,status='included' if cid in found else
+                                 ('included_without_source_group' if audit_workbook else 'not_in_selected_groups')))
+            if audit_workbook:
+                coverage[-1].update(audit_details[cid])
+        if not selected_groups and not audit_workbook:
             continue
         ids=set().union(*(ids for g,row,ids in selected_groups))
+        if audit_workbook:
+            ids={n for n in ids if n.split('__')[0] not in target_species}|wanted
+            found=wanted
         row={sp:', '.join(sorted(n for n in ids if n.startswith(sp+'__'))) for sp in active_species}
         row.update(Matched_candidates=', '.join(sorted(found)),Source_groups=';'.join(g for g,r,i in selected_groups),Family=family)
         source_by_tip=defaultdict(list)
         for group,original,group_ids in selected_groups:
             links.append(dict(family=family,source_group=group,trigger_candidates=';'.join(sorted(group_ids&wanted)),member_count=len(group_ids)))
-            for ident in group_ids:
+            for ident in group_ids & ids:
                 source_by_tip[ident].append(group)
+        for ident in ids:
+            source_by_tip.setdefault(ident,[])
         row['_source_by_tip']=source_by_tip
         merged.append(('family_'+family,row,ids))
     if not merged:
@@ -101,7 +137,7 @@ def prepare(args):
         if absent:
             raise ValueError(f'Unknown HOGs: {sorted(absent)}')
         rows = [r for r in rows if r[key] in args.hog]
-    if not rows or len({r[key] for r in rows}) != len(rows):
+    if (not rows and not getattr(args,'audit_workbook',None)) or len({r[key] for r in rows}) != len(rows):
         raise ValueError('Empty selection or duplicate group IDs')
     sequences = {}
     for sp in active_species:
@@ -124,22 +160,39 @@ def prepare(args):
                 raise ValueError(f'{group}: incorrect species column {sp}')
         plans.append((group,row,ids))
     family_map=getattr(args,'family_map',None)
+    audit_workbook=getattr(args,'audit_workbook',None)
+    family_mode=bool(family_map or audit_workbook)
+    target_species=None
+    if audit_workbook:
+        if not getattr(args,'target_species',None):
+            raise ValueError('--audit-workbook requires --target-species panel/targets.json')
+        target_species=json.loads(args.target_species.read_text())
+        if not isinstance(target_species,list) or not all(isinstance(s,str) for s in target_species):
+            raise ValueError('--target-species must contain a JSON list of species codes')
+        files += [audit_workbook,args.target_species]
     links,coverage=[],[]
-    if family_map:
+    if family_mode:
         plans,links,coverage=family_plans(plans,family_map,args.family_column,active_species,
-            getattr(args,'candidate_report',None),getattr(args,'family',None))
-        files+=[family_map]+([args.candidate_report] if getattr(args,'candidate_report',None) else [])
+            getattr(args,'candidate_report',None),getattr(args,'family',None),audit_workbook,target_species,sequences)
+        files+=([family_map] if family_map else [])+([args.candidate_report] if getattr(args,'candidate_report',None) else [])
     elif getattr(args,'family',None):
-        raise ValueError('--family requires --family-map')
+        raise ValueError('--family requires --audit-workbook or --family-map')
     args.output.mkdir(parents=True, exist_ok=False)
     manifest = {'created_utc':datetime.now(timezone.utc).isoformat(),
         'inputs':{str(p.resolve()):digest(p) for p in files}, 'species':active_species,
         'duplication_evidence_status':'provided' if args.duplications else 'unavailable_not_evidence_of_no_duplication',
-        'grouping':'family' if family_map else 'orthogroup',
-        'family_column':args.family_column if family_map else None, 'groups':[]}
-    if family_map:
+        'grouping':'family' if family_mode else 'orthogroup',
+        'selection_policy':'audited_ABC_targets_plus_reference_group_members' if audit_workbook else 'full_group_union',
+        'target_species':target_species,
+        'family_column':'assigned_family' if audit_workbook else (args.family_column if family_map else None), 'groups':[]}
+    if family_mode:
         write_tsv(args.output/'family_orthogroups.tsv',['family','source_group','trigger_candidates','member_count'],links)
-        write_tsv(args.output/'family_candidate_coverage.tsv',['family','prepared_id','status'],coverage)
+        write_tsv(args.output/'family_candidate_coverage.tsv',['family','prepared_id','status']+
+                  (['protein_id','grade'] if audit_workbook else []),coverage)
+    if audit_workbook:
+        manifest['selected_candidates']=len(coverage)
+        manifest['selected_grades']=dict(Counter(r['grade'] for r in coverage))
+        print(f"Audit selection: {len(coverage)} candidates; grades {manifest['selected_grades']}")
     summary = []
     for group,row,ids in plans:
         folder = args.output/group
@@ -165,6 +218,8 @@ def prepare(args):
         status = 'ready' if len(ids)>=4 else 'too_few_taxa_for_supported_tree'
         entry = dict(group=group,family=row.get('Family',''),source_groups=row.get('Source_groups',group),sequences=len(ids),unique_sequences=len(set(chosen.values())),
                      candidates=len(matched & ids),orthology_edges=len(edges),duplication_rows=len(events),status=status)
+        if audit_workbook:
+            entry['reference_sequences']=len(ids-matched)
         summary.append(entry)
         manifest['groups'].append(dict(entry,files={p.name:digest(p) for p in folder.iterdir()}))
     write_tsv(args.output/'groups.tsv',list(summary[0]),summary)
@@ -392,7 +447,10 @@ def main():
     p.add_argument('--allow-missing-duplications',action='store_true',help='Keep unavailable duplication evidence explicitly unknown')
     p.add_argument('--hog',action='append',help='Repeat to select groups; default all rows')
     p.add_argument('--species-list',type=Path,help='JSON list of species codes for a custom panel')
-    p.add_argument('--family-map',type=Path,help='TSV linking protein_id to family hypotheses; unions full orthogroups per family')
+    family_input=p.add_mutually_exclusive_group()
+    family_input.add_argument('--family-map',type=Path,help='Legacy broad TSV mode: unions full orthogroups per family')
+    family_input.add_argument('--audit-workbook',type=Path,help='Use only collapsed A/B/C targets by assigned_family, plus linked reference members')
+    p.add_argument('--target-species',type=Path,help='panel/targets.json; required for --audit-workbook')
     p.add_argument('--family-column',default='family',help='Family-map column to use (default: family)')
     p.add_argument('--candidate-report',type=Path,help='candidate_report.tsv translating original candidate IDs to prepared IDs')
     p.add_argument('--family',action='append',help='Prepare only this family; repeat to select several')

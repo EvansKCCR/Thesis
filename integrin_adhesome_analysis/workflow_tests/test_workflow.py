@@ -81,7 +81,8 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(w.fasta(out/'references/RefA/prepared/RefA.faa'),{'RefA__GeneID_1':'MAAA'})
             self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['duplication_evidence_status'],'unavailable_not_evidence_of_no_duplication')
             self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['grouping'],'family')
-            self.assertTrue((out/'phylogeny/family_fibronectin_like_candidate/tips.tsv').exists())
+            self.assertTrue((out/'phylogeny/family_fibronectin_like/tips.tsv').exists())
+            self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['selected_candidates'],1)
             self.assertTrue(any('phylogeny.py' in c[1] and c[2]=='run' for c in commands))
             self.assertEqual(w.verify(out,'completed_workflow')['kind'],'completed_workflow')
 
@@ -90,7 +91,7 @@ class WorkflowTests(unittest.TestCase):
             root=Path(td)
             inputs=root/'inputs'
             inputs.mkdir()
-            config=json.loads((w.ROOT/'targets.example.json').read_text())
+            config=json.loads((w.ROOT/'README/targets.example.json').read_text())
             config['proteomes']=[]
             for code in ('TargetX','TargetY'):
                 filename=f'custom_{code}_shared.faa'

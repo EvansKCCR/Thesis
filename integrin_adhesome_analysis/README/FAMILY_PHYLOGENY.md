@@ -1,85 +1,79 @@
-# Unified family phylogenies
+# Audited family phylogenies
 
-The updated scripts can union all candidate-associated orthogroups for each
-family into one alignment/tree project. The existing per-orthogroup mode remains
-the default. This option does not rerun or merge the OrthoFinder inference itself.
+Family mode selects the final audit's `Collapsed_candidates` worksheet: grades
+A, B and C, grouped by `assigned_family`. Grade D and other target proteins are
+excluded. Selection is data driven, with no hard-coded species or count.
+The inspected test audit contains 198 A + 29 B + 45 C = **272 unique targets**;
+the 45 provisional candidates are already included in that total.
 
-## Test with your existing completed orthology
+Selected targets remain included even without an orthologue or source group.
+Reference proteins from linked orthogroups are retained and deduplicated by ID.
+Total tree tips can therefore exceed the target count. No reference cap is
+imposed. Reference membership is orthogroup evidence, not independent confirmation
+of family assignment. Alignment QC remains mandatory.
 
-Copy the updated `04_orthology_phylogenetic_classification/scripts/phylogeny.py`
-from this package to the corresponding location in `Test_pipeline_v1`.
-For integrated resume/continue support, also copy the updated root
-`adhesome_workflow.py`. No existing data or run directories need to be copied or
-modified. These instructions use your actual run name: `runs/annotation`.
+Fibronectin-like candidates follow the same A/B/C rule. The broad fibronectin
+hypothesis handoff and external-evidence return remain available; rejected audit
+assignments do not enter these trees.
 
-From the `Test_pipeline_v1` root in your activated environment:
+## Update the local test copy
 
-```bash
-python 04_orthology_phylogenetic_classification/scripts/phylogeny.py prepare --hogs runs/annotation/downstream/orthology/candidates/candidate_HOGs.tsv --orthologues runs/annotation/downstream/orthology/candidates/direct_orthologues.tsv --duplications runs/annotation/downstream/orthology/candidates/candidate_duplications.tsv --proteomes runs/annotation/downstream/panel/proteomes --species-list runs/annotation/downstream/panel/species.json --family-map runs/handoff/hypotheses.tsv --family-column motif_family --candidate-report runs/annotation/downstream/orthology/candidates/candidate_report.tsv --output runs/family_phylogeny
-python 04_orthology_phylogenetic_classification/scripts/phylogeny.py run --project runs/family_phylogeny --threads 2 --iqtree-threads 2
-```
+Copy these updated files to the same locations in `Test_pipeline_v1`:
 
-If duplication data are unavailable, replace `--duplications PATH` with
-`--allow-missing-duplications`; missing evidence remains explicitly unknown.
-Use a new `--output` folder. To test one family first, append e.g.
-`--family fibronectin_like_candidate` to the preparation command. Repeat
-`--family` to select several. The run command then runs the prepared selections.
+- `adhesome_workflow.py`
+- `04_orthology_phylogenetic_classification/scripts/phylogeny.py`
 
-## What is grouped
+## Reuse completed orthology without running it again
 
-The family-map TSV needs `protein_id` and the column chosen by `--family-column`.
-The workflow's `motif_family` column normalizes fibronectin screening labels to
-`fibronectin_like_candidate`. To keep original detection family labels separate,
-use `--family-column family` instead. A curated two-column mapping TSV can also
-be supplied when you want to control/review family assignments before inference.
-
-Each candidate ID is translated through `candidate_report.tsv` to its prepared
-gene ID. Every source group containing a candidate associated with the family
-is included, with **all its target and reference members**. Protein IDs are
-unioned: each ID appears only once in a family tree even when it occurs in
-several source groups. Different IDs with identical sequences remain separate
-biological tips. Sequences are aligned, not concatenated.
-
-Candidate families are hypotheses. An ambiguous candidate/group can contribute
-to multiple family projects; no winning family is silently selected. Family
-membership of every included reference is not independently established by the
-merge. Full-length alignment QC remains active: combining highly divergent or
-multidomain groups can still require a reviewed homologous-region strategy.
-The merge itself does not relax QC or prove whole-protein orthology.
-
-## Outputs and provenance
-
-```text
-runs/family_phylogeny/
-  family_orthogroups.tsv          # family -> source groups and triggering candidates
-  family_candidate_coverage.tsv # included candidates and those absent from selected groups
-  groups.tsv
-  manifest.json                 # grouping mode and hashed family/mapping inputs
-  family_<name>/
-    members.faa
-    tips.tsv                    # original ID, candidate flag, family and source groups
-    orthology_edges.tsv
-    duplication_evidence.tsv
-    inference/                  # alignment, QC, tree, support and command logs
-```
-
-Shared orthogroups are visible in `family_orthogroups.tsv`, and per-tip source
-memberships are retained in `tips.tsv`. A matched-candidate flag refers to that
-family's candidates, not every candidate from an included group.
-
-## Automatic workflows and recovery
-
-For a new automatic run, add `--phylogeny-grouping family` to `resume` or
-`continue`. Orthology and the independent audit still run as before; only the
-phylogeny preparation grouping changes. Grouping is saved for checkpoint recovery.
-`continue` performs a new downstream run; use the direct prepare/run commands
-above to reuse existing orthology without repeating it.
-
-To retry failed family trees in an unsealed standalone project:
+In WSL, activate your workflow environment, then run from the test project root:
 
 ```bash
-python 04_orthology_phylogenetic_classification/scripts/phylogeny.py run --project runs/family_phylogeny --threads 2 --iqtree-threads 2 --retry-failed
+cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Test_pipeline_v1
+python 04_orthology_phylogenetic_classification/scripts/phylogeny.py prepare \
+  --hogs runs/annotation/downstream/orthology/candidates/candidate_HOGs.tsv \
+  --orthologues runs/annotation/downstream/orthology/candidates/direct_orthologues.tsv \
+  --duplications runs/annotation/downstream/orthology/candidates/candidate_duplications.tsv \
+  --proteomes runs/annotation/downstream/panel/proteomes \
+  --species-list runs/annotation/downstream/panel/species.json \
+  --target-species runs/annotation/downstream/panel/targets.json \
+  --audit-workbook runs/annotation/downstream/final/audited_candidates.xlsx \
+  --candidate-report runs/annotation/downstream/orthology/candidates/candidate_report.tsv \
+  --output runs/family_phylogeny_audited
 ```
 
-Do not change grouping inside an existing prepared project; create a new output
-folder. No biological analysis has been run for this update; tests used fixtures.
+If duplication evidence is unavailable, replace `--duplications PATH` with
+`--allow-missing-duplications`. Use a new output folder. To prepare one family,
+append `--family talin`; repeat for several families. Use audit `assigned_family`
+names. Existing prepared trees are not rewritten.
+
+Preparation does not launch alignment or tree inference. First inspect
+`runs/family_phylogeny_audited/groups.tsv`: `candidates` and `reference_sequences`
+report counts separately; `sequences` gives total tips per family.
+`family_candidate_coverage.tsv` records original/prepared IDs, grades and targets
+included without a source group. `family_orthogroups.tsv` records contributing
+groups; its `member_count` is the original size before target filtering.
+Per-family `tips.tsv` records actual membership. The manifest records selection
+policy, grade counts and input hashes.
+
+Then run:
+
+```bash
+python 04_orthology_phylogenetic_classification/scripts/phylogeny.py run \
+  --project runs/family_phylogeny_audited --threads 2 --iqtree-threads 2
+```
+
+For failure recovery, repeat this run command with `--retry-failed`. Completed
+families are preserved. Fewer than four tips produces an intentional skip.
+
+## Integrated execution
+
+Add `--phylogeny-grouping family` to a new `resume` or `continue` run. The workflow
+performs the independent audit after orthology, then passes that audit and the
+panel target-species list to phylogeny preparation automatically.
+`continue` starts a new downstream run; the commands above reuse existing results.
+Recovery of an already prepared broad-family project retains its original
+selection. Prepare a new project to apply the revised selection.
+
+The previous `--family-map TSV --family-column COLUMN` mode remains available
+explicitly for broad hypothesis exploration and includes entire source groups.
+Do not use it for the restricted audited selection described here.

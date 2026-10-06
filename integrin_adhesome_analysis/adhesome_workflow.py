@@ -327,7 +327,7 @@ def downstream(args):
     print(f'Audit complete and available independently of phylogeny: {out}/final/audited_candidates.xlsx',flush=True)
     candidates=out/'orthology/candidates'
     if not args.skip_phylogeny:
-        if read(candidates/'candidate_HOGs.tsv'):
+        if read(candidates/'candidate_HOGs.tsv') or getattr(args,'phylogeny_grouping','orthogroup')=='family':
             if state['stages'].get('phylogeny_run',{}).get('status')!='complete':
                 missing=[name for name in ('mafft','trimal','iqtree2') if not shutil.which(name)]
                 if missing:
@@ -336,7 +336,7 @@ def downstream(args):
                  '--orthologues',candidates/'direct_orthologues.tsv','--proteomes',out/'panel/proteomes',
                  '--species-list',out/'panel/species.json','--output',out/'phylogeny']
             if getattr(args,'phylogeny_grouping','orthogroup')=='family':
-                cmd+=['--family-map',handoff/'hypotheses.tsv','--family-column','motif_family',
+                cmd+=['--audit-workbook',out/'final/audited_candidates.xlsx','--target-species',out/'panel/targets.json',
                       '--candidate-report',candidates/'candidate_report.tsv']
             dup=candidates/'candidate_duplications.tsv'
             cmd+=['--duplications',dup] if dup.exists() else ['--allow-missing-duplications']
