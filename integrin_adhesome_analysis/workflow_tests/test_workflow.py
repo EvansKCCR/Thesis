@@ -91,7 +91,7 @@ class WorkflowTests(unittest.TestCase):
             root=Path(td)
             inputs=root/'inputs'
             inputs.mkdir()
-            config=json.loads((w.ROOT/'README/targets.example.json').read_text())
+            config = json.loads((w.ROOT.parent / "README" / "targets.example.json").read_text(encoding="utf-8"))
             config['proteomes']=[]
             for code in ('TargetX','TargetY'):
                 filename=f'custom_{code}_shared.faa'
