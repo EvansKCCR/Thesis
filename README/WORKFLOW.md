@@ -47,7 +47,7 @@ coverage or validate cross-species functional transfer.
 
 ## 1. Detection and external handoff
 
-The active version 1.0 detection library contains all 174 updated Pfam accessions
+The active version 1.0 detection library contains all 176 updated Pfam accessions
 and reads the 230-row component crosswalk. Component possibilities and reference
 similarity are reported separately; crosswalk overlap does not promote family
 assignment. See the [detection guide](../integrin_adhesome_analysis/01_detection/README.md).

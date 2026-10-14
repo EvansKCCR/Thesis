@@ -5,6 +5,7 @@ from pathlib import Path
 import re
 from adhesome_core import sequence_dict, table, write_table, write_fasta, save_json, digest, pf, VERSION, detection_evidence
 from adhesome_components import annotate_components, CANDIDATE_FIELDS
+from reference_identity import identity_evidence, IDENTITY_FIELDS
 from adhesome_motifs import load_library, scan_motifs, noncatalytic_alignment
 
 EVIDENCE_KEYS = ('similarity', 'reciprocal', 'profile', 'motif')
@@ -103,6 +104,8 @@ def classify_comparative(args):
             support = evidence[(identifier,family)]
             states = {key:evidence_state(support,key) for key in EVIDENCE_KEYS}
             positive = lambda key: states[key] == 'supported'
+            resolved_identity,identity_details=identity_evidence(support,rule)
+            screening=bool(rule.get('screening_only') or rule.get('classification_level')=='screen')
             arch = architecture_evidence(hits, rule)
             family_evidence = any(positive(key) for key in ('similarity','profile','reciprocal'))
             if rule.get('requires_family_evidence') and not family_evidence:
@@ -146,23 +149,26 @@ def classify_comparative(args):
             motif_architecture = bool(rule.get('motif_corroborates_partial_architecture') and arch['partial'] and
                                       any(r['state']=='detected' and r['interpretation']=='family_corroboration' for r in observations))
             # Support is about family identity, not experimental adhesome membership.
-            supported = (not rule.get('screening_only',False) and positive('reciprocal') and (positive('similarity') or positive('profile')) and
+            supported = (not screening and (not rule.get('requires_identity_evidence') or resolved_identity) and positive('reciprocal') and (positive('similarity') or positive('profile')) and
                          (arch['complete'] or arch['specific'] or motif_architecture) and not conflicts and not negatives and
                          extended and
                          (not rule.get('support_requires_order') or arch['support_order']) and
                          (not anchor_only or positive('profile')))
-            if rule.get('screening_only',False):
+            if rule.get('requires_identity_evidence') and not resolved_identity:
+                warnings.append('independent_reference_identity_missing')
+            if screening:
                 status, reason = 'unresolved', 'screening_bucket_not_a_family'
                 warnings.append('not_an_orthology_class')
             elif supported:
                 status, reason = 'supported_candidate', 'convergent_family_evidence'
-            elif arch['specific'] or family_evidence:
+            elif arch['specific'] or family_evidence or (rule.get('requires_identity_evidence') and arch['partial']):
                 status, reason = 'provisional', 'family_hypothesis_requires_validation'
             else:
                 status, reason = 'unresolved', 'generic_domains_retained_without_family_assignment'
             tier = ('diagnostic_domain' if arch['diagnostic'] else 'complete_architecture' if arch['complete'] and arch['specific']
                     else 'partial_architecture' if arch['specific'] else 'homology_or_profile' if family_evidence else 'generic_domain')
             results.append(dict(protein_id=identifier,family=family,assigned_family=family if supported else '',
+                **identity_details,
                 module=rule['module'],status=status,reason=reason,screening_tier=tier,length=len(sequence),
                 minimum_length=rule['min_length'],length_check='within_expectation' if len(sequence)>=rule['min_length'] else 'shorter_than_expected',
                 domain_match=arch['complete'],domain_type_fraction=arch['fraction'],domain_copy_fraction=arch['copy_fraction'],
@@ -190,7 +196,7 @@ def classify_comparative(args):
                 row['warnings'] += ';conflicting_family_assignments'
     output = Path(args.out)
     output.mkdir(parents=True,exist_ok=True)
-    fields = ['protein_id','family','assigned_family','module','status','reason','screening_tier','length','minimum_length',
+    fields = ['protein_id','family','assigned_family','module','status','reason','screening_tier','length','minimum_length',*IDENTITY_FIELDS,
               'length_check','domain_match','domain_type_fraction','domain_copy_fraction','matched_domains','missing_domains',
               'order_check','support_order_check','motif_check','motif_details','reciprocal','similarity','profile','warnings','architecture','evidence_sources']
     crosswalk=getattr(args,'crosswalk',None)

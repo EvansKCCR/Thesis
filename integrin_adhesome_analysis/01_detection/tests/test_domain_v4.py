@@ -60,7 +60,8 @@ class DomainV4Tests(unittest.TestCase):
             root=Path(folder)
             (root/'p.fa').write_text('>p\n'+'A'*500+'\n')
             (root/'rules.json').write_text(json.dumps(dict(status='test',families={'ILK':self.rules['ILK']})))
-            evidence=dict(protein_id='p',family='ILK',similarity='true',reciprocal='true',source='reference_panel')
+            evidence=dict(protein_id='p',family='ILK',similarity='true',reciprocal='true',source='reference_panel',
+                reference_subfamily='ILK',subfamily_support_method='curated_reference',reference_accession='FIXTURE')
             write_table(root/'e.csv',[evidence],list(evidence))
             args=argparse.Namespace(proteome=root/'p.fa',rules=root/'rules.json',domains=root/'d.csv',
                 homology=root/'e.csv',evidence=[],manifest=None,out=root/'out')
@@ -81,11 +82,12 @@ class DomainV4Tests(unittest.TestCase):
             (root/'p.fa').write_text('>p\n'+'A'*500+'\n')
             for family,domains,status in cases:
                 config=dict(status='test',families={family:self.rules[family]},
-                            motif_library=str(ROOT/'references/motifs/adhesome_motif.json'))
+                            motif_library=str(ROOT.parent/'03_functional_motif_annotation/Motif_library/adhesion_core.json'))
                 (root/'rules.json').write_text(json.dumps(config))
                 rows=[dict(query_name='p',**r) for r in self.hits(*domains)]
                 write_table(root/'d.csv',rows,list(rows[0]))
-                evidence=dict(protein_id='p',family=family,similarity='true',reciprocal='true',source='panel')
+                evidence=dict(protein_id='p',family=family,similarity='true',reciprocal='true',source='panel',
+                    reference_subfamily=family,subfamily_support_method='curated_reference',reference_accession='FIXTURE')
                 write_table(root/'e.csv',[evidence],list(evidence))
                 classify_comparative(argparse.Namespace(proteome=root/'p.fa',rules=root/'rules.json',domains=root/'d.csv',
                     homology=root/'e.csv',evidence=[],manifest=None,out=root/'out'))

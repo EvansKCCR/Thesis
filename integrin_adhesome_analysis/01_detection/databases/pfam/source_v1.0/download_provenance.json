@@ -1,6 +1,6 @@
 {
   "pipeline_version": "1.0",
-  "retrieved_utc": "2026-10-14T16:25:32.217696+00:00",
+  "retrieved_utc": "2026-10-14T18:33:32.118895+00:00",
   "models": [
     {
       "accession": "PF00011",
@@ -91,6 +91,12 @@
       "model_version": "PF00045.25",
       "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF00045/?annotation=hmm",
       "sha256": "c5a72ec78eb12dc4d65579b348ef82421e54ee6fac166ba92f83dbcf5e388a4a"
+    },
+    {
+      "accession": "PF00046",
+      "model_version": "PF00046.36",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF00046/?annotation=hmm",
+      "sha256": "092340fc224a73d35d5a31fdf77f8459a43e9a1dcdcc0bc84a197dff7690dd08"
     },
     {
       "accession": "PF00047",
@@ -681,6 +687,12 @@
       "sha256": "4daa65b8588a5fb01fbe2c7e99fe1d49c8a3cafd055cb5d213f9dee25691ee64"
     },
     {
+      "accession": "PF03535",
+      "model_version": "PF03535.19",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF03535/?annotation=hmm",
+      "sha256": "f3310a2018e25d3b9933c9801f93f0726ca29083ad00d21b0acda70bd51edbcf"
+    },
+    {
       "accession": "PF03623",
       "model_version": "PF03623.20",
       "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF03623/?annotation=hmm",
@@ -1047,5 +1059,5 @@
       "sha256": "64afe53df86fb9c2b4daeb342fa5323c6c5f3ff5a6103f8776d346c1d4be96dd"
     }
   ],
-  "manifest_sha256": "7d3762a1e8f854ae9526437a737a77764e2b607ca0ac372956ef1738f1fc4cc0"
+  "manifest_sha256": "bc7c962ac280c1cac17fc9007ea24066943cbcebe5b85b190141da60e05f6c5b"
 }

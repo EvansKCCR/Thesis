@@ -15,11 +15,11 @@ def interval_count(regions, accession):
 
 def review(families, regions):
     rows = []
-    for family in ('PINCH_like_candidates', 'actin', 'alpha_actinin', 'parvin_like'):
+    for family in ('PINCH_like_candidates','PINCH_like','actin','actin_conventional','alpha_actinin','parvin_like'):
         for record in families.get(family, []):
             rs = regions[family, record['id']]
             lim, ch, actin, spectrin = [interval_count(rs, p) for p in ('PF00412', 'PF00307', 'PF00022', 'PF00435')]
-            pinch = family == 'PINCH_like_candidates'
+            pinch = family in ('PINCH_like_candidates','PINCH_like')
             priority = (lim == 5) if pinch else (ch >= 2 and not actin and not spectrin)
             rows.append(dict(family=family, sequence_id=record['id'], length=len(record['sequence']),
                 sequence_sha256=hashlib.sha256(record['sequence'].encode()).hexdigest(),

@@ -1,10 +1,12 @@
 # Audited family phylogenies
 
-Family mode selects the final audit's `Collapsed_candidates` worksheet: grades
+Family mode selects the current audit's `Resolved_candidates` worksheet: grades
 A, B and C, grouped by `assigned_family`. Grade D and other target proteins are
 excluded. Selection is data driven, with no hard-coded species or count.
-The inspected test audit contains 198 A + 29 B + 45 C = **272 unique targets**;
-the 45 provisional candidates are already included in that total.
+The current reference-gated rules can change earlier classifications and counts.
+Grade C `broad_only` candidates retain their broad homology group as a provisional
+tree grouping while their family identity remains unassigned. Older saved audits
+using `Collapsed_candidates` remain readable for recovery.
 
 Selected targets remain included even without an orthologue or source group.
 Reference proteins from linked orthogroups are retained and deduplicated by ID.

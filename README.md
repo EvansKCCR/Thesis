@@ -35,7 +35,7 @@ Target inputs are configurable: use targets.example.json for one or more species
 
 For step-by-step reference preparation and orthology/phylogeny commands, start with [ORTHOLOGY_PHYLOGENY_GUIDE.md](ORTHOLOGY_PHYLOGENY_GUIDE.md).
 
-Detection uses the updated 174-model Pfam library and 230-component crosswalk. `start` stops at the hypothesis/external-evidence handoff; topology, localization and phylogeny are part of the resumed workflow. See the [detection guide](integrin_adhesome_analysis/01_detection/README.md).
+Detection uses the current 96-entry family catalogue, 176-model Pfam library and 230-component crosswalk. The reference-gated audit shares the same canonical rules. Resume scans the current 53-rule adhesion motif set, with the 347-rule master set available through `--motif-scope master`. `start` stops at the hypothesis/external-evidence handoff; topology, localization and phylogeny are part of the resumed workflow. See the [resource update guide](README/CURRENT_RESOURCES.md).
 
 Default resume is continuous: import topology/localization -> motif annotation -> automatic reference preparation from input/reference_raw -> generated panel -> orthology -> independent audit -> phylogeny. See [automated-run instructions](README/ORTHOLOGY_PHYLOGENY_GUIDE.md). Use continue with an existing annotation for reference-panel expansion without repeating motif annotation.
 

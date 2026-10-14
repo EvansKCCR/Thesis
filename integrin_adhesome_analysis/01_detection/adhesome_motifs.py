@@ -1,50 +1,32 @@
-"""Context-limited motif annotation; short patterns never recruit or assign families."""
+"""Current motif definitions; functional hits remain sequence candidates."""
 import json
 from pathlib import Path
 import re
 
+
 def load_library(path):
-    data=json.loads(Path(path).read_text(encoding='utf-8'))
-    modules={}
-    for category in data['integrin_adhesome_network']:
-        for entity in category['entities']:
-            for module in entity['modules']:
-                modules[(entity['name'],module['name'])]=module
-    return modules
+    data=json.loads(Path(path).read_text(encoding="utf-8"))
+    if "rules" not in data:raise ValueError("Use the current evidence-based motif snapshot")
+    return {"current_rules":{r["rule_id"]:r for r in data["rules"]}}
+
 
 def scan_motifs(sequence, hits, rule, library):
     rows=[]
-    for spec in rule.get('motif_checks',[]):
-        key=(spec['entity'],spec['name'])
-        if key not in library or library[key]['type']!='Motif':
-            raise ValueError('Motif mapping is absent from the supplied library: '+str(key))
-        # Human residue numbering and post-translational modifications are not regexes.
-        pattern=spec['pattern']
-        regex=re.compile(pattern)
-        if regex.match(''):
-            raise ValueError('Motif patterns must not match empty sequence')
-        context=spec.get('context','whole_sequence')
-        if context=='c_terminal_window':
-            regions=[(max(1,len(sequence)-spec['window']+1),len(sequence))]
-        elif context=='domain':
-            regions=[(int(h['ali_from']),int(h['ali_to'])) for h in hits if h['pfam_accession'] in spec['domains']]
-        elif context=='whole_sequence':
-            regions=[(1,len(sequence))]
-        else:
-            raise ValueError('Unknown motif context: '+context)
-        matches=set()
-        for start,end in regions:
-            for m in regex.finditer(sequence[start-1:end]):
-                matches.add((start+m.start(),start+m.end()-1,m.group()))
-        if matches:
-            for start,end,matched in sorted(matches):
-                rows.append(dict(motif=spec.get('label',spec['name']),pattern=pattern,context=context,state='detected',
-                    start=start,end=end,sequence=matched,interpretation=spec.get('interpretation','supporting_only')))
-        else:
-            rows.append(dict(motif=spec.get('label',spec['name']),pattern=pattern,context=context,
-                state='not_detected' if regions else 'not_tested_missing_domain',start='',end='',sequence='',
-                interpretation=spec.get('interpretation','supporting_only')))
-    return rows
+    if not rule.get('motif_rule_ids'):return rows
+    if 'current_rules' not in library:raise ValueError('Use the current evidence-based motif snapshot')
+    if 'current_rules' in library:
+        for mid in rule.get('motif_rule_ids',[]):
+            if mid not in library['current_rules']:raise ValueError('Unknown current motif rule: '+mid)
+            spec=library['current_rules'][mid];regex=re.compile(spec['regex_python'])
+            if regex.match(''):raise ValueError('Motif patterns must not match empty sequence')
+            for pos in range(len(sequence)):
+                match=regex.match(sequence,pos)
+                if match and match.end()>pos and set(match.group())<=set('ACDEFGHIKLMNPQRSTVWY'):
+                    rows.append(dict(motif=mid,pattern=spec['regex_python'],context='full_sequence_context_unverified',
+                        state='detected',start=pos+1,end=match.end(),sequence=match.group(),interpretation='sequence_candidate_only'))
+        return rows
+
+
 
 def noncatalytic_alignment(support, hits, spec):
     """Conservative span outside a catalytic domain; not an exact gapped alignment count."""

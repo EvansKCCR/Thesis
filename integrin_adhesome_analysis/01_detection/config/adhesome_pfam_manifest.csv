@@ -173,3 +173,5 @@ PF25508,TRPM2,Reference signatures for TRPM7
 PF25530,EF-hand_SWAP70_N,Reference signatures for DEF6
 PF26060,TGFBR3_N,Reference signatures for ENG
 PF28321,Ig_MYOM1,Reference signatures for MYOM1
+PF00046,Homeobox,Negative-class architecture in current family rules
+PF03535,Paxillin,Current paxillin-family architecture gate

@@ -10,7 +10,7 @@ class TargetedTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.rules=json.loads((ROOT/'config/family_rules.json').read_text())['families']
-        cls.library=load_library(ROOT/'references/motifs/adhesome_motif.json')
+        cls.library=load_library(ROOT.parent/'03_functional_motif_annotation/Motif_library/adhesion_core.json')
 
     def hits(self,*accessions):
         return [dict(pfam_accession=p,ali_from=1+i*100,ali_to=90+i*100) for i,p in enumerate(accessions)]
@@ -45,23 +45,24 @@ class TargetedTests(unittest.TestCase):
 
     def test_alpha_tail_context_and_coordinates(self):
         seq='GFFKR'+'A'*200+'GFFKR'
-        obs=scan_motifs(seq,[],self.rules['integrin_alpha'],self.library)
-        self.assertEqual([(r['start'],r['end']) for r in obs],[(206,210)])
+        mid=next(k for k,r in self.library['current_rules'].items() if r['regex_python']=='GFFKR')
+        obs=scan_motifs(seq,[],dict(motif_rule_ids=[mid]),self.library)
+        self.assertEqual([(r['start'],r['end']) for r in obs],[(1,5),(206,210)])
+        self.assertTrue(all(r['interpretation']=='sequence_candidate_only' for r in obs))
 
     def test_alpha_tail_variants_are_reported_exactly(self):
-        obs=scan_motifs('A'*200+'GFFHR',[],self.rules['integrin_alpha'],self.library)
-        self.assertEqual(obs[0]['sequence'],'GFFHR')
-        self.assertIn('variants',obs[0]['motif'])
+        mid=next(k for k,r in self.library['current_rules'].items() if r['regex_python']=='GFFKR')
+        self.assertEqual(scan_motifs('A'*200+'GFFHR',[],dict(motif_rule_ids=[mid]),self.library),[])
 
     def test_midas_requires_domain_context(self):
         seq='DASAS'+'A'*200
         obs=scan_motifs(seq,[],self.rules['integrin_beta'],self.library)
-        self.assertEqual(next(r for r in obs if r['motif']=='MIDAS')['state'],'not_tested_missing_domain')
+        self.assertEqual(obs,[])
 
     def test_hydroxyproline_is_not_encoded_as_letter_o(self):
-        obs=scan_motifs('GFPGER'+'A'*100,self.hits('PF01391'),self.rules['collagen_like'],self.library)
-        self.assertEqual(obs[0]['state'],'detected')
-        self.assertIn('not_established',obs[0]['interpretation'])
+        mid=next(k for k,r in self.library['current_rules'].items() if 'SLIM012' in r['source_row_ids'])
+        obs=scan_motifs('GFOGER',self.hits('PF01391'),dict(motif_rule_ids=[mid]),self.library)
+        self.assertEqual(obs,[])
 
     def test_ptp_catalytic_only_alignment_not_sufficient(self):
         spec=self.rules['PTP_PEST']['noncatalytic_alignment']
@@ -73,7 +74,7 @@ class TargetedTests(unittest.TestCase):
 
     def test_unknown_motif_mapping_fails(self):
         with self.assertRaises(ValueError):
-            scan_motifs('AAAA',[],dict(motif_checks=[dict(entity='x',name='x',pattern='A')]),self.library)
+            scan_motifs('AAAA',[],dict(motif_rule_ids=['missing']),self.library)
 
 if __name__=='__main__':
     unittest.main()

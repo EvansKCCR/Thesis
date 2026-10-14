@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 VERSION = '1.0'
-DEFERRED_EVIDENCE = ('phylogeny', 'topology', 'localization', 'subcellular_localization')
+DEFERRED_EVIDENCE = ('phylogeny', 'phylogeny_concordant', 'topology', 'localization', 'subcellular_localization')
 
 
 def detection_evidence(row):

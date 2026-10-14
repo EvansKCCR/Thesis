@@ -19,7 +19,7 @@ class WorkflowTests(unittest.TestCase):
             h,a,unused=self.fixture(root)
             target=root/'detection/TargetA/prepared/TargetA.faa'
             target.parent.mkdir(parents=True)
-            w.write_fasta(target,{'TargetA__g':'MAAA'})
+            w.write_fasta(target,w.fasta(h/'external_candidates.faa'))
             w.seal(h,'handoff',target_species=['TargetA'],detection=str(root/'detection'),sources={str(target.resolve()):w.digest(target)})
             w.seal(a,'annotation',handoff=str(h),handoff_manifest=w.digest(h/'workflow_manifest.json'))
             raw=root/'reference_raw'
@@ -68,6 +68,10 @@ class WorkflowTests(unittest.TestCase):
                 self.assertEqual(state['stages']['phylogeny_run']['status'],'failed')
                 self.assertEqual(state['stages']['audit']['status'],'complete')
                 self.assertTrue((out/'final/audited_candidates.xlsx').exists())
+                # Adopted recovery must refresh an audit built with superseded rules.
+                audit_meta=out/'final/workflow_manifest.json'
+                saved=json.loads(audit_meta.read_text());saved['rules_sha256']='superseded-rule-hash'
+                w.dump(audit_meta,saved)
                 boundary=len(commands)
                 # Simulate an older run without a recovery file; adopt only verified stages.
                 (out/'recovery.json').unlink()
@@ -78,6 +82,7 @@ class WorkflowTests(unittest.TestCase):
                 self.assertFalse(any('prepare_references.py' in c[1] for c in recovered))
                 self.assertTrue(any('--retry-failed' in c for c in recovered))
             self.assertTrue((out/'final/audited_candidates.xlsx').exists())
+            self.assertEqual(json.loads((out/'final/workflow_manifest.json').read_text())['rules_sha256'],w.digest(w.DETECT/'config/family_rules.json'))
             self.assertEqual(w.fasta(out/'references/RefA/prepared/RefA.faa'),{'RefA__GeneID_1':'MAAA'})
             self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['duplication_evidence_status'],'unavailable_not_evidence_of_no_duplication')
             self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['grouping'],'family')
@@ -186,11 +191,12 @@ class WorkflowTests(unittest.TestCase):
     def fixture(self, root):
         h = root/'handoff'
         h.mkdir()
-        seqs = {sp+'__g':'MAAA' for sp in ('TargetA',)}
+        seqs = {sp+'__g':'M'+'A'*499 for sp in ('TargetA',)}
         w.write_fasta(h/'external_candidates.faa',seqs)
         w.write(h/'hypotheses.tsv', [dict(protein_id=k,Specie=k.split('__')[0],family='fibronectin_like',motif_family='fibronectin_like_candidate',
                assigned_family='fibronectin_like',status='supported_candidate',domain_match='True',domain_type_fraction='1',
-               domain_copy_fraction='1',architecture='PF00001:1-4',length=4) for k in seqs])
+               domain_copy_fraction='1',architecture='PF00039:1-80;PF00040:90-150;PF00041:160-250',length=500,
+               reference_subfamily='fibronectin_like',subfamily_support_method='curated_reference',reference_accession='FIXTURE') for k in seqs])
         w.seal(h,'handoff')
         a = root/'annotation'
         (a/'motifs').mkdir(parents=True)
@@ -200,7 +206,7 @@ class WorkflowTests(unittest.TestCase):
         entries=[]
         for sp in ('TargetA','NewRef'):
             p=root/f'{sp}.faa'
-            w.write_fasta(p,{sp+'__g':'MAAA'})
+            w.write_fasta(p,{sp+'__g':'M'+'A'*499})
             entries.append(dict(species=sp,fasta=p.name,gene_level=True,source='test fixture'))
         config=root/'panel.json'
         w.dump(config,dict(proteomes=entries))
@@ -231,9 +237,9 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(joined[0]['Orthology_direct_reference_count'],'1')
             from openpyxl import load_workbook
             wb=load_workbook(final/'audited_candidates.xlsx',read_only=True)
-            rows=list(wb['Collapsed_candidates'].values)
+            rows=list(wb['Resolved_candidates'].values)
             grade=rows[0].index('grade')
-            self.assertEqual([r[grade] for r in rows[1:]],['A'])
+            self.assertEqual([r[grade] for r in rows[1:]],['B'])
             wb.close()
             # Add a reference, rerun extraction and compare by candidate ID.
             cfg=json.loads((root/'panel.json').read_text())

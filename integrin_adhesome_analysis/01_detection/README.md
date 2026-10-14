@@ -14,10 +14,12 @@ instruction. External predictor results are imported through `resume`; predictor
 services remain external.
 
 The active runner is `scripts/run_detection.py`. The active library is
-`databases/pfam/adhesome_v1.0.hmm`, containing all 174 accessions in the updated
+`databases/pfam/adhesome_v1.0.hmm`, containing all 176 accessions in the updated
 `config/adhesome_pfam_manifest.csv`. The 230-row
 `config/adhesome_component_crosswalk.csv` is validated against that manifest.
-References are in `references/adhesome_v1.0`. The previous runner name remains
+The canonical `config/family_rules.json` contains the current 96 hierarchical
+entries and is shared with the reference-gated audit. References are in
+`references/adhesome_v1.0`. The previous runner name remains
 as a compatibility entry point to version 1.0. Historical seed/model filenames
 identify source provenance rather than a different active pipeline version.
 
@@ -32,7 +34,8 @@ Each target's `candidates/` directory contains:
 `crosswalk_reference_components` records matches to reference accessions supported
 by similarity. Shared domains and human gene symbols do not establish target
 orthology, component identity or experimental adhesome membership. Candidate
-status continues to use curated family rules and homology evidence. New domains
+status uses the current family rules, homology and required independent identity
+evidence. New domains
 without a family rule are retained as unresolved domain candidates for review;
 adding the crosswalk does not invent 230 validated family rules. Components without
 reference Pfams are recorded in the coverage report. Crosswalk matches for exported

@@ -10,6 +10,7 @@ import subprocess
 import sys
 from adhesome_core import fasta, write_fasta, table, write_table, digest, save_json, pf, sequence_dict, VERSION, detection_evidence
 from adhesome_components import annotate_components, load_crosswalk, CANDIDATE_FIELDS
+from reference_identity import identity_evidence, IDENTITY_FIELDS
 from parse_adhesome_domtblout import parse, FIELDS
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -17,7 +18,7 @@ CONFIG = PROJECT_ROOT / 'config'
 REFERENCE_SET = PROJECT_ROOT / 'references' / 'adhesome_v1.0'
 
 MODULES = {'extracellular_matrix', 'integrin_receptors', 'membrane_proximal_adaptors',
-           'actin_linking', 'focal_adhesion_scaffolds', 'downstream_signalling'}
+           'actin_linking', 'focal_adhesion_scaffolds', 'downstream_signalling','other_LIM'}
 
 def prepare(config, output):
     output = Path(output)
@@ -334,6 +335,7 @@ def classify_strict(args):
             architecture_rows.append(dict(protein_id=identifier, length=len(sequence), architecture=architecture))
         for family, rule in rules.items():
             support = evidence[(identifier, family)]
+            resolved_identity,identity_details=identity_evidence(support,rule)
             def supported(key):
                 values = {r.get(key, '').lower() for r in support}
                 return 'true' in values and 'false' not in values
@@ -351,7 +353,8 @@ def classify_strict(args):
             required = length_ok and motifs
             homology_support = [r for r in support if r.get('similarity','').lower() == 'true']
             anchor_only = bool(homology_support) and all(r.get('reference_tier') == 'computational_anchor' for r in homology_support)
-            accepted = not rule.get('screening_only',False) and required and supported('similarity') and supported('reciprocal') and matches and extended and (not anchor_only or supported('profile'))
+            screening=bool(rule.get('screening_only') or rule.get('classification_level')=='screen')
+            accepted = not screening and (not rule.get('requires_identity_evidence') or resolved_identity) and required and supported('similarity') and supported('reciprocal') and matches and extended and (not anchor_only or supported('profile'))
             if not length_ok:
                 status, reason = 'excluded', 'below_family_minimum_length'
             elif accepted:
@@ -361,6 +364,7 @@ def classify_strict(args):
             else:
                 status, reason = 'excluded', 'generic_domain_or_similarity_only'
             results.append(dict(protein_id=identifier, family=family, module=rule['module'], status=status,
+                **identity_details,
                 reason=reason, length=len(sequence), minimum_length=rule['min_length'], domain_match=matches,
                 motif_check=bool(motifs), reciprocal=supported('reciprocal'),
                 motif_details=';'.join(f"{r['motif']}:{r['state']}:{r['start']}-{r['end']}" for r in observations),
@@ -376,7 +380,7 @@ def classify_strict(args):
                 row.update(status='provisional', reason='conflicting_family_assignments')
     output = Path(args.out)
     output.mkdir(parents=True, exist_ok=True)
-    fields=['protein_id','family','module','status','reason','length',
+    fields=['protein_id','family','module','status','reason','length',*IDENTITY_FIELDS,
         'minimum_length','domain_match','motif_check','motif_details','reciprocal','architecture','evidence_sources']
     crosswalk=getattr(args,'crosswalk',None)
     if crosswalk:

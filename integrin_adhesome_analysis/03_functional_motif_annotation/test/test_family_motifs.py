@@ -69,7 +69,7 @@ class MotifTests(unittest.TestCase):
             manifest=json.loads((out/'manifest.json').read_text())
             self.assertTrue(manifest['completed'])
             self.assertIn('executable unavailable',(out/'external_stages.tsv').read_text())
-            self.assertIn('SLIM017',(out/'motif_annotations.tsv').read_text())
+            self.assertIn('MOTIF_',(out/'motif_annotations.tsv').read_text())
             with self.assertRaises(SystemExit):
                 fm.main(['--input-dir',str(inputs),'--out',str(out)])
 

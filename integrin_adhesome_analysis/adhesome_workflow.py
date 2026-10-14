@@ -22,6 +22,9 @@ MOTIF = ROOT/'03_functional_motif_annotation'
 ORTH = ROOT/'04_orthology_phylogenetic_classification/scripts'
 AUDIT = ROOT/'05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py'
 FIBRONECTIN_FAMILIES = {'fibronectin_like', 'fibronectin_III_ligand', 'fibronectin_like_candidate'}
+IDENTITY_FIELDS = ('reference_subfamily','subfamily_support_method','reciprocal_reference_subfamily',
+                  'phylogeny_concordant','subfamily_profile_calibrated','top_profile_subfamily',
+                  'profile_margin_pass','reference_accession','reference_dataset_version','profile_domain_gate_verified')
 
 
 def digest(path):
@@ -194,7 +197,8 @@ def start(args):
         write(out/f'{tier}_hypotheses.tsv', [r for r in hypotheses if r['hypothesis_tier']==tier], list(hypotheses[0]))
     write_fasta(out/'external_candidates.faa', sequences)
     write(out/'external_evidence_template.tsv', [dict(protein_id=k, sequence_sha256=hashlib.sha256(v.encode()).hexdigest(),
-          DeepLoc_2_1='', DeepTMHMM='', SignalP_v6_0='', NCBI_CDD_architecture='', source='') for k,v in sorted(sequences.items())])
+          DeepLoc_2_1='', DeepTMHMM='', SignalP_v6_0='', NCBI_CDD_architecture='', source='',
+          **{field:'' for field in IDENTITY_FIELDS}) for k,v in sorted(sequences.items())])
     domains = sorted(detection.glob('*/domains/domains.csv'))
     source_fastas = sorted(detection.glob('*/prepared/*.faa'))
     execute([sys.executable, MOTIF/'import_domain_regions.py', '--input-dir', out/'families',
@@ -227,7 +231,7 @@ def context_rows(path, sequences):
         seen.add(pid)
         if row['sequence_sha256'] != hashlib.sha256(sequences[pid].encode()).hexdigest():
             raise ValueError(f'External evidence sequence hash mismatch: {pid}')
-        if any(row[k] for k in required-{'protein_id','sequence_sha256','source'}) and not row['source'].strip():
+        if any(v for k,v in row.items() if k not in {'protein_id','sequence_sha256','source'}) and not row['source'].strip():
             raise ValueError(f'External evidence requires a source: {pid}')
     return rows
 
@@ -242,7 +246,9 @@ def resume(args):
     external = context_rows(args.external_evidence, seqs) if args.external_evidence else []
     out.mkdir(parents=True, exist_ok=False)
     cmd = [sys.executable, MOTIF/'family_motifs.py', '--input-dir', handoff/'families',
-           '--regions', handoff/'verified_regions.tsv', '--out', out/'motifs']
+           '--regions', handoff/'verified_regions.tsv', '--out', out/'motifs',
+           '--motif-scope',getattr(args,'motif_scope','adhesion')]
+    if getattr(args,'motif_library',None):cmd+=['--library',args.motif_library.resolve()]
     inputs = {}
     for flag in ('topology_file','context_dir','evidence'):
         value = getattr(args, flag)
@@ -298,6 +304,16 @@ def downstream(args):
         state=json.loads(checkpoint.read_text())
         if state['annotation_sha256']!=digest(annotation/'workflow_manifest.json'):
             raise ValueError('Annotation changed since failed run; create a new run')
+        audit_meta=out/'final/workflow_manifest.json'
+        if state['stages'].get('audit',{}).get('status')=='complete' and audit_meta.exists():
+            saved=json.loads(audit_meta.read_text())
+            if (saved.get('rules_sha256')!=digest(DETECT/'config/family_rules.json') or saved.get('audit_script_sha256')!=digest(AUDIT)
+                    or saved.get('motif_snapshot_sha256')!=digest(MOTIF/'Motif_library/adhesion_core.json')):
+                state['stages'].pop('audit',None)
+                if state['settings'].get('phylogeny_grouping')=='family':
+                    state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
+                dump(checkpoint,state)
+                print('Current audit rules/code changed: refresh audit and dependent family-tree preparation; reuse orthology.',flush=True)
     else:
         state=dict(settings={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items() if k!='func'},
                    annotation_sha256=digest(annotation/'workflow_manifest.json'),stages={})
@@ -557,6 +573,8 @@ def audit(args):
     rows = read(handoff/'hypotheses.tsv')
     reports = {r['candidate_id']:r for r in read(orthology_dir/'candidates/candidate_report.tsv')}
     sites, contexts, cdd = defaultdict(list), {}, defaultdict(list)
+    motif_snapshot=MOTIF/'Motif_library/adhesion_core.json'
+    current_motif_ids={r['rule_id'] for r in json.loads(motif_snapshot.read_text())['rules']}
     for r in read(annotation/'motifs/adhesion_motif_annotations.tsv'):
         sites[r['family'],r['sequence_id']].append(r)
     context_path = annotation/'motifs/sequence_context.tsv'
@@ -581,11 +599,16 @@ def audit(args):
         row['Orthology_HOG_status'] = report['HOG_status']
         row['Orthology_HOG'] = report['HOG']
         row['Orthology_interpretation'] = 'Direct pairwise evidence only; family-specific reference labels not inferred'
-        ss = sites[fam,pid]
+        old_sites=sites[fam,pid]
+        ss=[dict(r,candidate_tier='context_conflict' if r.get('candidate_tier')=='context_conflict' else 'sequence_only_candidate')
+            for r in old_sites if r.get('motif_id') in current_motif_ids]
+        row['MotifPrediction_ignored_superseded_count']=len(old_sites)-len(ss)
         row['MotifPrediction_candidate_tiers'] = ';'.join(sorted({r['candidate_tier'] for r in ss}))
         row['MotifPrediction_context_supported_count'] = sum(r['candidate_tier'] in ('context_supported_candidate','high_confidence_hypothesis') for r in ss)
         row['MotifPrediction_priority_site_count'] = sum(r['candidate_tier']=='sequence_only_candidate' for r in ss)
         ctx, ext = contexts.get((fam,pid), {}), external.get(pid, {})
+        for field in IDENTITY_FIELDS:
+            if ext.get(field):row[field]=ext[field]
         row['DeepLoc_2.1'] = ext.get('DeepLoc_2_1') or ctx.get('deeploc_localizations','')
         row['SignalP.v6.0'] = ext.get('SignalP_v6_0') or ctx.get('signalp_prediction','')
         row['DeepTMHMM'] = ext.get('DeepTMHMM') or ';'.join(sorted(topology[fam,pid]))
@@ -604,8 +627,11 @@ def audit(args):
     for row in rows:
         sh.append([row.get(k) for k in fields])
     wb.save(out/'audit_input.xlsx')
-    execute([sys.executable,AUDIT,out/'audit_input.xlsx',out/'audited_candidates.xlsx','--keep-all-audited'],out/'logs')
+    audit_rules=DETECT/'config/family_rules.json'
+    execute([sys.executable,AUDIT,out/'audit_input.xlsx',out/'audited_candidates.xlsx','--rules',audit_rules,'--keep-all-audited'],out/'logs')
     seal(out, 'audit', annotation=str(annotation), orthology=str(orthology_dir),
+         motif_snapshot_sha256=digest(motif_snapshot),
+         rules_sha256=digest(audit_rules),audit_script_sha256=digest(AUDIT),
          annotation_manifest=digest(annotation/'workflow_manifest.json'), orthology_manifest=digest(orthology_dir/'workflow_manifest.json'))
     print(f'Workflow complete: {out}/audited_candidates.xlsx')
 
@@ -621,6 +647,8 @@ def main(argv=None):
     s.add_argument('--threads', type=int, default=8)
     s.set_defaults(func=start)
     s = sub.add_parser('resume', help='Import external context and run motif annotation')
+    s.add_argument('--motif-scope',choices=['adhesion','master'],default='adhesion')
+    s.add_argument('--motif-library',type=Path,help='Current JSON/XLSX snapshot override')
     s.add_argument('--handoff', type=Path, required=True)
     for flag in ('topology-file','context-dir','external-evidence','evidence'):
         s.add_argument('--'+flag, type=Path)

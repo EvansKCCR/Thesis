@@ -1,0 +1,93 @@
+split	species	reviewed_symbol	expected_superfamily	expected_subfamily	negative_for	uniprot_accession	sequence_sha256	reference_evidence_url	curation_status	notes
+calibration_reference	Homo sapiens	ACTB	actin_superfamily	actin_conventional	ARP1-ARP11				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTG1	actin_superfamily	actin_conventional	ARP1-ARP11				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTA1	actin_superfamily	actin_conventional	ARP1-ARP11				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTA2	actin_superfamily	actin_conventional	ARP1-ARP11				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTC1	actin_superfamily	actin_conventional	ARP1-ARP11				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTG2	actin_superfamily	actin_conventional	ARP1-ARP11				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTR1A	actin_superfamily	ARP1	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTR1B	actin_superfamily	ARP1	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTR2	actin_superfamily	ARP2	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTR3	actin_superfamily	ARP3	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTL6A	actin_superfamily	ARP4	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTL6B	actin_superfamily	ARP4	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTR5	actin_superfamily	ARP5	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTR6	actin_superfamily	ARP6	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTR8	actin_superfamily	ARP8	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ACTR10	actin_superfamily	ARP11	actin_conventional; competing Arps				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	CFL1	ADF_H_superfamily	ADF_cofilin	twinfilin GMF drebrin_Abp1 coactosin				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	CFL2	ADF_H_superfamily	ADF_cofilin	twinfilin GMF drebrin_Abp1 coactosin				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	DSTN	ADF_H_superfamily	ADF_cofilin	twinfilin GMF drebrin_Abp1 coactosin				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	TWF1	ADF_H_superfamily	twinfilin	ADF_cofilin				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	TWF2	ADF_H_superfamily	twinfilin	ADF_cofilin				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	DBN1	ADF_H_superfamily	drebrin_Abp1	ADF_cofilin GMF				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	DBNL	ADF_H_superfamily	drebrin_Abp1	ADF_cofilin GMF				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	GMFA	ADF_H_superfamily	GMF	ADF_cofilin				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	GMFB	ADF_H_superfamily	GMF	ADF_cofilin				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	COTL1	ADF_H_superfamily	coactosin	ADF_cofilin				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	LIMS1	LIM_scaffolds	PINCH_like	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	LIMS2	LIM_scaffolds	PINCH_like	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	PXN	LIM_scaffolds	PXN	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	TGFB1I1	LIM_scaffolds	TGFB1I1	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	LPXN	LIM_scaffolds	LPXN	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ZYX	LIM_scaffolds	ZYX	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	LPP	LIM_scaffolds	LPP	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	TRIP6	LIM_scaffolds	TRIP6	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	AJUBA	LIM_scaffolds	AJUBA	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	LIMD1	LIM_scaffolds	LIMD1	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	WTIP	LIM_scaffolds	WTIP	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	FBLIM1	LIM_scaffolds	FBLIM1	other LIM scaffolds; LIM-only/homeobox; PDLIM				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+hard_negative_reference	Homo sapiens	PDLIM1	LIM_scaffolds	PDLIM_family	paxillin_family zyxin_family PINCH_like				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	PDZ-LIM scaffold outgroup, not a zyxin paralog
+hard_negative_reference	Homo sapiens	PDLIM5	LIM_scaffolds	PDLIM_family	paxillin_family zyxin_family PINCH_like				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	PDZ-LIM scaffold outgroup, not a zyxin paralog
+hard_negative_reference	Homo sapiens	LHX2	LIM_scaffolds	LHX_LIM_homeobox_screen	zyxin_family PINCH_like				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Nuclear LIM homeobox outgroup
+hard_negative_reference	Homo sapiens	LHX3	LIM_scaffolds	LHX_LIM_homeobox_screen	zyxin_family PINCH_like				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Nuclear LIM homeobox outgroup
+hard_negative_reference	Homo sapiens	FHL1	LIM_scaffolds	FHL_screen	PINCH_like				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Four-and-a-half LIM proteins are hard negatives
+hard_negative_reference	Homo sapiens	FHL2	LIM_scaffolds	FHL_screen	PINCH_like				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Four-and-a-half LIM proteins are hard negatives
+hard_negative_reference	Homo sapiens	LMO2	LIM_scaffolds	LIM_only_outgroup	PINCH_like zyxin_family				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Two LIM and no homeodomain; presently only screened, not classified in v5
+calibration_reference	Homo sapiens	SRC	nonreceptor_SH3_SH2_kinases	SRC	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	FYN	nonreceptor_SH3_SH2_kinases	FYN	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	YES1	nonreceptor_SH3_SH2_kinases	YES1	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	LYN	nonreceptor_SH3_SH2_kinases	LYN	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	LCK	nonreceptor_SH3_SH2_kinases	LCK	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	HCK	nonreceptor_SH3_SH2_kinases	HCK	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	BLK	nonreceptor_SH3_SH2_kinases	BLK	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	FGR	nonreceptor_SH3_SH2_kinases	FGR	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	CSK	nonreceptor_SH3_SH2_kinases	CSK	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	MATK	nonreceptor_SH3_SH2_kinases	MATK	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ABL1	nonreceptor_SH3_SH2_kinases	ABL1	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ABL2	nonreceptor_SH3_SH2_kinases	ABL2	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	BTK	nonreceptor_SH3_SH2_kinases	BTK	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	TEC	nonreceptor_SH3_SH2_kinases	TEC	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ITK	nonreceptor_SH3_SH2_kinases	ITK	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	BMX	nonreceptor_SH3_SH2_kinases	BMX	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	TXK	nonreceptor_SH3_SH2_kinases	TXK	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	FRK	nonreceptor_SH3_SH2_kinases	FRK	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	PTK6	nonreceptor_SH3_SH2_kinases	PTK6	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	SRMS	nonreceptor_SH3_SH2_kinases	SRMS	all other SH3-SH2-kinase subfamilies				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	SYK	SYK_ZAP70	SYK	ZAP70, unrelated PTKs				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+calibration_reference	Homo sapiens	ZAP70	SYK_ZAP70	ZAP70	SYK, unrelated PTKs				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	
+hard_negative_reference	Homo sapiens	FES	other_kinases	FES	Src_family Csk_family Abl_family Tec_family				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Alternative non-receptor kinase-domain outgroup; PTK2/PTK2B are FAK-family
+hard_negative_reference	Homo sapiens	FER	other_kinases	FER	Src_family Csk_family Abl_family Tec_family				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Alternative non-receptor kinase-domain outgroup; PTK2/PTK2B are FAK-family
+hard_negative_reference	Homo sapiens	PTK2	other_kinases	PTK2	Src_family Csk_family Abl_family Tec_family				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Alternative non-receptor kinase-domain outgroup; PTK2/PTK2B are FAK-family
+hard_negative_reference	Homo sapiens	PTK2B	other_kinases	PTK2B	Src_family Csk_family Abl_family Tec_family				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Alternative non-receptor kinase-domain outgroup; PTK2/PTK2B are FAK-family
+hard_negative_reference	Homo sapiens	PRKCA	other_kinases	PRKCA	Src_family Csk_family Abl_family Tec_family				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Alternative non-receptor kinase-domain outgroup; PTK2/PTK2B are FAK-family
+coverage_reference	Homo sapiens	NCK1	other_adaptors	Nck					REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Check original rules, which use architecture + family-specific evidence
+coverage_reference	Homo sapiens	NCK2	other_adaptors	Nck					REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Check original rules, which use architecture + family-specific evidence
+coverage_reference	Homo sapiens	GRB2	other_adaptors	Grb2					REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Check original rules, which use architecture + family-specific evidence
+coverage_reference	Homo sapiens	GRAP	other_adaptors	Grb2					REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Check original rules, which use architecture + family-specific evidence
+coverage_reference	Homo sapiens	GRAP2	other_adaptors	Grb2					REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Check original rules, which use architecture + family-specific evidence
+coverage_reference	Homo sapiens	CRK	other_adaptors	Crk					REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Check original rules, which use architecture + family-specific evidence
+coverage_reference	Homo sapiens	CRKL	other_adaptors	Crk					REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Check original rules, which use architecture + family-specific evidence
+coverage_reference	Homo sapiens	SHC1	other_adaptors	Shc					REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Check original rules, which use architecture + family-specific evidence
+coverage_reference	Homo sapiens	SHC2	other_adaptors	Shc					REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Check original rules, which use architecture + family-specific evidence
+phylogenetic_holdout	Saccharomyces cerevisiae	ACT1	actin_superfamily	actin_conventional	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP1	actin_superfamily	ARP1	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP2	actin_superfamily	ARP2	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP3	actin_superfamily	ARP3	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP4	actin_superfamily	ARP4	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP5	actin_superfamily	ARP5	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP6	actin_superfamily	ARP6	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP7	actin_superfamily	ARP7	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP8	actin_superfamily	ARP8	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP9	actin_superfamily	ARP9	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation
+phylogenetic_holdout	Saccharomyces cerevisiae	ARP10	actin_superfamily	ARP10	closest shared-domain paralog				REQUIRES_ACCESSION_AND_MANUAL_REVIEW	Do not include this taxon in profile construction for holdout evaluation

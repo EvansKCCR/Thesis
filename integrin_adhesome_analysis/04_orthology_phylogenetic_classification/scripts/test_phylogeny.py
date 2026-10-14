@@ -14,6 +14,19 @@ from pipeline import write_tsv, read_tsv, digest
 
 
 class PhylogenyTests(unittest.TestCase):
+    def test_current_resolved_broad_provisional_is_kept_as_broad_group(self):
+        from openpyxl import Workbook
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/'audit.xlsx';book=Workbook();sheet=book.active;sheet.title='Resolved_candidates'
+            sheet.append(['protein_id','assigned_family','broad_homology_group','classification_state','grade'])
+            sheet.append(['T__a','unassigned','actin_superfamily','broad_only','C']);book.save(path)
+            plans,_,coverage=family_plans([],None,'family',['T','R'],audit_workbook=path,
+                target_species=['T'],sequences={'T__a':'MAAA'})
+            self.assertEqual(plans[0][0],'family_actin_superfamily')
+            self.assertEqual(plans[0][2],{'T__a'})
+            self.assertEqual(coverage[0]['classification_state'],'broad_only')
+            self.assertEqual(coverage[0]['assigned_family'],'unassigned')
+
     def test_audited_selection_excludes_other_targets_and_keeps_orphans(self):
         from openpyxl import Workbook
         with tempfile.TemporaryDirectory() as td:

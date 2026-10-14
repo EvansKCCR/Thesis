@@ -1,13 +1,13 @@
 {
   "pipeline_version": "1.0",
   "source": "C:\\Users\\eaasa\\Desktop\\Evans_PHD_Thesis\\Integrin_analysis\\Thesis\\integrin_adhesome_analysis\\01_detection\\databases\\pfam\\source_v1.0\\combined_source.hmm",
-  "source_sha256": "113ebde50211feea6a959a8b4e83e174ca070709899103516edc8362f78599ee",
-  "manifest_sha256": "7d3762a1e8f854ae9526437a737a77764e2b607ca0ac372956ef1738f1fc4cc0",
-  "library_sha256": "113ebde50211feea6a959a8b4e83e174ca070709899103516edc8362f78599ee",
+  "source_sha256": "0e952d3e3d5e9dcd109eb14b799c1382e78a0e40559ff5c4911cb5e489e3b173",
+  "manifest_sha256": "bc7c962ac280c1cac17fc9007ea24066943cbcebe5b85b190141da60e05f6c5b",
+  "library_sha256": "0e952d3e3d5e9dcd109eb14b799c1382e78a0e40559ff5c4911cb5e489e3b173",
   "full_pfam": false,
   "crosswalk_sha256": "3894d1eb49c465db590939645e18e22c3f1ffe2d836bf11eb36079b0212fc215",
   "split_sha256": {
-    "ga": "113ebde50211feea6a959a8b4e83e174ca070709899103516edc8362f78599ee",
+    "ga": "0e952d3e3d5e9dcd109eb14b799c1382e78a0e40559ff5c4911cb5e489e3b173",
     "fallback": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "models": {
@@ -144,6 +144,15 @@
       "ga": [
         21.3,
         21.3
+      ]
+    },
+    "PF00046": {
+      "name": "Homeodomain",
+      "accession": "PF00046.36",
+      "length": 57,
+      "ga": [
+        22.9,
+        22.9
       ]
     },
     "PF00047": {
@@ -1026,6 +1035,15 @@
       "ga": [
         24.5,
         24.5
+      ]
+    },
+    "PF03535": {
+      "name": "Paxillin",
+      "accession": "PF03535.19",
+      "length": 269,
+      "ga": [
+        25.0,
+        25.0
       ]
     },
     "PF03623": {

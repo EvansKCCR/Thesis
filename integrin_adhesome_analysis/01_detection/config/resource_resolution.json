@@ -1,0 +1,41 @@
+{
+  "pipeline_version": "1.0",
+  "precedence": "Newest complete entry replaces older entries with the same family key",
+  "source_rules": [
+    {
+      "file": "family_rules_v4.json",
+      "sha256": "7c6adc90a3640f39e94278e63e70b33951234b4fcf25183cfaf58f3a455c23c1",
+      "families": 26
+    },
+    {
+      "file": "family_rules.json",
+      "sha256": "cbaae1c92c9f8f65be4183f57bcee9d1ad2e2b437a574b1a83b7d2040d51206b",
+      "families": 32
+    },
+    {
+      "file": "family_rules_v5.json",
+      "sha256": "28b31943824e7a0f063ddadb297749309b00ad2f34b4d408412722440ea02fd5",
+      "families": 96
+    }
+  ],
+  "canonical_rules": "family_rules.json",
+  "families": 96,
+  "audit_source": {
+    "file": "integrated_adhesome_pipeline_v2.py",
+    "sha256": "c74e458146781127ce665d9db8d6267c5b718549b8e29690a2bfb922f9c920b7",
+    "canonical": "integrated_adhesome_pipeline.py"
+  },
+  "motif_policy": "Current evidence-based snapshot supersedes legacy motif definitions and exclusions; removed inherited legacy motif_checks/motifs/corroboration expressions from six family entries.",
+  "current_resource_counts": {
+    "families": 96,
+    "pfam_models": 176,
+    "adhesion_motifs": 53,
+    "master_motifs": 347
+  },
+  "superseded_hmm_library": {
+    "file": "adhesome_v4.hmm",
+    "models": 96,
+    "metadata_sha256": "ca38d0bf63d8fc65df89e841ded3c4ec1480f7e2f99637920fbfec5bd07228ed",
+    "replacement": "adhesome_v1.0.hmm"
+  }
+}

@@ -42,7 +42,8 @@ def family_plans(plans, family_map, family_column, active_species, candidate_rep
         with audit_workbook.open('rb') as stream:
             book=load_workbook(stream,read_only=True,data_only=True)
             try:
-                values=iter(book['Collapsed_candidates'].values)
+                sheet='Resolved_candidates' if 'Resolved_candidates' in book.sheetnames else 'Collapsed_candidates'
+                values=iter(book[sheet].values)
                 fields=next(values)
                 annotations=[dict(zip(fields,row)) for row in values]
             finally:
@@ -71,6 +72,8 @@ def family_plans(plans, family_map, family_column, active_species, candidate_rep
     audit_details={}
     for row in annotations:
         family=str(row[family_column] or '').strip()
+        if audit_workbook and family in ('','unassigned','unresolved') and row.get('classification_state')=='broad_only':
+            family=str(row.get('broad_homology_group') or '').strip()
         if family in ('','unassigned','unresolved'):
             continue
         if not re.fullmatch(r'[A-Za-z0-9_.-]+',family) or family in ('.','..'):
@@ -82,7 +85,9 @@ def family_plans(plans, family_map, family_column, active_species, candidate_rep
         if audit_workbook:
             if ident in audit_details:
                 raise ValueError(f'Duplicate collapsed audited candidate: {ident}')
-            audit_details[ident]=dict(protein_id=row['protein_id'],grade=row['grade'])
+            audit_details[ident]=dict(protein_id=row['protein_id'],grade=row['grade'],
+                classification_state=row.get('classification_state',''),assigned_family=row.get('assigned_family',''),
+                broad_homology_group=row.get('broad_homology_group',''))
     if selected:
         absent=set(selected)-set(families)
         if absent:
@@ -188,7 +193,7 @@ def prepare(args):
     if family_mode:
         write_tsv(args.output/'family_orthogroups.tsv',['family','source_group','trigger_candidates','member_count'],links)
         write_tsv(args.output/'family_candidate_coverage.tsv',['family','prepared_id','status']+
-                  (['protein_id','grade'] if audit_workbook else []),coverage)
+                  (['protein_id','grade','classification_state','assigned_family','broad_homology_group'] if audit_workbook else []),coverage)
     if audit_workbook:
         manifest['selected_candidates']=len(coverage)
         manifest['selected_grades']=dict(Counter(r['grade'] for r in coverage))

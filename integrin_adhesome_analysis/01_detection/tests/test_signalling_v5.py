@@ -9,7 +9,7 @@ from adhesome_classification import architecture_evidence, classify_comparative
 ROOT = Path(__file__).resolve().parents[1]
 CASES = {
     'Syk': ['PF00017', 'PF00017', 'PF07714'],
-    'Csk': ['PF00018', 'PF00017', 'PF07714'],
+    'Csk_family': ['PF00018', 'PF00017', 'PF07714'],
     'Nck': ['PF00018', 'PF00018', 'PF00017'],
     'Grb2': ['PF00018', 'PF00017', 'PF00018'],
     'Crk': ['PF00017', 'PF00018'],
@@ -45,7 +45,8 @@ class SignallingV5Tests(unittest.TestCase):
                     (p/'p.fa').write_text('>p\n'+'A'*3000+'\n')
                     (p/'rules.json').write_text(json.dumps(dict(status='test',families={family:self.rules[family]})))
                     rows=self.hits(observed); write_table(p/'d.csv', rows, list(rows[0]))
-                    evidence=dict(protein_id='p',family=family,similarity='true',reciprocal=reciprocal,source='test')
+                    evidence=dict(protein_id='p',family=family,similarity='true',reciprocal=reciprocal,source='test',
+                        reference_subfamily=family,subfamily_support_method='curated_reference',reference_accession='FIXTURE')
                     write_table(p/'e.csv',[evidence],list(evidence))
                     classify_comparative(argparse.Namespace(proteome=p/'p.fa',rules=p/'rules.json',domains=p/'d.csv',homology=p/'e.csv',evidence=[],manifest=None,out=p/'out'))
                     self.assertEqual(table(p/'out/candidates.csv')[0]['status'],expected)
@@ -70,7 +71,8 @@ class SignallingV5Tests(unittest.TestCase):
         self.assertEqual(reverse['Hsa_CSK']['family'],'Csk')
         self.assertEqual(reverse['Dme_Shark']['family'],'non_adhesome')
         for family in CASES:
-            self.assertTrue(any(r['family']==family for r in forward.values()))
+            source_family='Csk' if family=='Csk_family' else family
+            self.assertTrue(any(r['family']==source_family for r in forward.values()))
         for name, expected in json.loads((refs/'reference_lock.json').read_text())['files'].items():
             self.assertEqual(digest(refs/name),expected)
 

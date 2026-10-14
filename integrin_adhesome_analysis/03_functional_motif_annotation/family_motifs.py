@@ -312,7 +312,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version',action='version',version='adhesome-motif '+VERSION)
     parser.add_argument('--input-dir', type=Path, default=HERE/'family_specific_candidate_library')
-    parser.add_argument('--library', type=Path, default=HERE/'Motif_library'/'exhaustive_comprehensive_adhesion_motif_library_PINCH_Parvin_updated.xlsx')
+    parser.add_argument('--library', type=Path, help='Current JSON/XLSX motif snapshot; defaults to adhesion_core.json')
+    parser.add_argument('--motif-scope',choices=['adhesion','master'],default='adhesion',help='53 adhesion rules by default, or the complete 347-rule snapshot')
     parser.add_argument('--rules', type=Path, default=HERE/'Motif_library'/'context_rules.json')
     parser.add_argument('--out', type=Path, required=True, help='New output directory')
     parser.add_argument('--regions', type=Path, help='1-based inclusive domain/context TSV')
@@ -339,7 +340,19 @@ def main(argv=None):
         parser.error('Invalid discovery parameters')
     if args.out.exists(): parser.error('Output directory already exists; choose a new --out')
     rules=json.loads(args.rules.read_text(encoding='utf-8'))
-    motifs,sheets,library_audit,generic,master_audit,master_metadata=master_library.load(args.library,rules)
+    domain_source=(args.rules.resolve().parent/rules['domain_rule_source']).resolve()
+    current_rules=json.loads(domain_source.read_text(encoding='utf-8'))
+    rules['families'].update(current_rules['families'])
+    for alias,canonical in current_rules.get('family_aliases',{}).items():
+        if alias not in rules['families'] and canonical in rules['families']:
+            rules['families'][alias]=rules['families'][canonical]
+    for alias,canonical in rules.get('family_aliases',{}).items():
+        rules['families'][alias]=rules['families'][canonical]
+    for spec in rules['families'].values():
+        if spec.get('ordered_domains') and not spec.get('ordered_domain_groups'):
+            spec['ordered_domain_groups']=[[p] for p in spec['ordered_domains']]
+    args.library=args.library or HERE/'Motif_library'/('adhesion_core.json' if args.motif_scope=='adhesion' else 'motif_master.json')
+    snapshot=master_library.load(args.library,args.motif_scope)
     files=sorted(p for p in args.input_dir.iterdir() if p.suffix.lower() in ('.fa','.faa','.fasta'))
     if not files: parser.error('No FASTA files')
     families={}
@@ -357,7 +370,7 @@ def main(argv=None):
         topology_paths.append(args.context_dir/'deeptmhmm_predicted_topologies.3line')
     topology_audit=curated.import_topology(topology_paths,families,regions)
     sequence_context,cdd_hits=import_sequence_context.load(args.context_dir,families,topology_audit,regions) if args.context_dir else ({},[])
-    evidence=curated.load_evidence(args.evidence,families,rules)
+    evidence=master_library.load_evidence(args.evidence,families,snapshot)
     if args.known_meme:
         check_meme(args.known_meme)
         args.known_meme=args.known_meme.resolve()
@@ -370,11 +383,10 @@ def main(argv=None):
     identity_rows=family_identity_review.review(families,regions)
     write_tsv(out/"PINCH_Parvin_identity_review.tsv",identity_rows,"family sequence_id length sequence_sha256 LIM_domains CH_domains actin_domains spectrin_domains hypothesis review_priority identity_status missing_evidence interpretation".split())
     domain_rows=inspect_domains(families,rules,regions)
-    print('Inspecting curated motifs and generating exploratory discovery candidates...',flush=True)
+    print('Scanning current evidence-based motif definitions and generating exploratory candidates...',flush=True)
     words,sites=discover(families,args.min_k,args.max_k,args.min_fraction,args.top)
-    result=curated.run(motifs,sheets,library_audit,rules,families,regions,domain_rows,evidence,sites,out,write_tsv,sequence_context)
-    print('Scanning enabled master catalogue records; disabled legacy models remain unscanned...',flush=True)
-    master_result=master_library.finish(generic,master_audit,master_metadata,sheets,families,regions,out,write_tsv,sequence_context)
+    master_result=master_library.scan(snapshot,families,regions,evidence,out,write_tsv,sequence_context)
+    result=dict(annotation_rows=master_result['sequence_annotation_rows'],context_filters_implemented=False)
     stages,tool_paths,versions=external(families,out,args)
     membership=defaultdict(set)
     for family,records in families.items():
@@ -400,7 +412,7 @@ def main(argv=None):
     for name,rows,fields in tables: write_tsv(out/(name+'.tsv'),rows,fields.split())
     write_tsv(out/'used_regions.tsv',[dict(family=f,sequence_id=i,region=n,start=a,end=b) for (f,i),rs in regions.items() for n,a,b in sorted(set(rs))],
               ['family','sequence_id','region','start','end'])
-    inputs=files+[args.library,args.rules,Path(__file__),HERE/'curated_annotation.py',HERE/'master_library.py',HERE/'family_identity_review.py',HERE/'import_sequence_context.py']+topology_paths
+    inputs=files+[args.library,args.rules,domain_source,Path(__file__),HERE/'curated_annotation.py',HERE/'master_library.py',HERE/'family_identity_review.py',HERE/'import_sequence_context.py']+topology_paths
     if args.context_dir:
         inputs += [args.context_dir/name for name in ('DeepLoc_adhesome_candidate_list.csv','SignalP_adhesome_candidate_list.txt','NCBI_CDD_adhesome_hitdata.txt')]
     inputs += [x for x in (args.regions,args.evidence,args.known_meme) if x]
@@ -418,7 +430,7 @@ def main(argv=None):
         'PINCH_Parvin_identity_review.tsv retains original labels and lists architecture triage and missing identity evidence.',
         f'Sequence context: {sum(r["verification"]=="exact_topology_sequence" for r in sequence_context.values())} family records have exact topology sequences; {len(cdd_hits)} CDD specific domain hits are mapped.',
         'DeepLoc, SignalP and CDD are predictions. Their joins and coordinates are in sequence_context.tsv and CDD_specific_hits.tsv; they do not establish orthology or motif function.',
-        'motif_annotations.tsv is the unified sequence-hit table; adhesion_motif_annotations.tsv preserves detailed adhesion evidence gates. Generic ELM matches remain context-unverified and cannot inherit adhesion confidence.',
+        'motif_annotations.tsv contains current definition matches; adhesion_motif_annotations.tsv is the adhesion subset. All hits remain sequence candidates; context requirements and external evidence are recorded without assigning functional confidence.',
         'Pathway links are class-reference associations, not candidate pathway assignments. Disabled legacy records are retained in legacy_review_catalogue.tsv and never scanned.',
         '', 'See [curated findings](CURATED_FINDINGS.md) for confidence tiers, evidence gaps and output interpretation.',
         '', 'The current XLSX is the sole motif source. No deleted ELM resource or previous motif panel is needed.',
