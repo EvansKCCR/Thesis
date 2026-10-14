@@ -10,11 +10,11 @@ import shutil
 import subprocess
 import sys
 
-from pipeline import SPECIES, table_species, digest, members, read_tsv, records, write_tsv, configure_species
+from pipeline import SPECIES, table_species, digest, members, read_tsv, records, write_tsv, configure_species, VERSION
 
 
 def dump(path, value):
-    path.write_text(json.dumps(value, indent=2)+'\n', encoding='utf-8')
+    path.write_text(json.dumps({'pipeline_version':VERSION,**value}, indent=2)+'\n', encoding='utf-8')
 
 
 def fasta(path, sequences):
@@ -178,7 +178,7 @@ def prepare(args):
     elif getattr(args,'family',None):
         raise ValueError('--family requires --audit-workbook or --family-map')
     args.output.mkdir(parents=True, exist_ok=False)
-    manifest = {'created_utc':datetime.now(timezone.utc).isoformat(),
+    manifest = {'pipeline_version':VERSION,'created_utc':datetime.now(timezone.utc).isoformat(),
         'inputs':{str(p.resolve()):digest(p) for p in files}, 'species':active_species,
         'duplication_evidence_status':'provided' if args.duplications else 'unavailable_not_evidence_of_no_duplication',
         'grouping':'family' if family_mode else 'orthogroup',
@@ -367,7 +367,7 @@ def run(args):
                 attempt+=1
             work.rename(folder/f'inference_attempt_{attempt:03d}')
         work.mkdir(exist_ok=False)
-        info = {'versions':versions,'settings':vars(args).copy(),'commands':[], 'status':'running',
+        info = {'pipeline_version':VERSION,'versions':versions,'settings':vars(args).copy(),'commands':[], 'status':'running',
                 'input_hashes':group['files'],'started_utc':datetime.now(timezone.utc).isoformat()}
         info['settings'] = {k:str(v) if isinstance(v,Path) else v for k,v in info['settings'].items() if k!='func'}
         def execute(command, stdout_name=None):
@@ -439,6 +439,7 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version',action='version',version='adhesome-phylogeny '+VERSION)
     sub = parser.add_subparsers(required=True)
     p = sub.add_parser('prepare')
     for name in ('hogs','orthologues','proteomes','output'):

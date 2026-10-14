@@ -5,6 +5,17 @@ import json
 import re
 from pathlib import Path
 
+VERSION = '1.0'
+DEFERRED_EVIDENCE = ('phylogeny', 'topology', 'localization', 'subcellular_localization')
+
+
+def detection_evidence(row):
+    """Keep external context and phylogeny at the resume boundary."""
+    present = [key for key in DEFERRED_EVIDENCE if str(row.get(key, '') or '').strip()]
+    if present:
+        raise ValueError('Detection cannot consume '+', '.join(present)+
+                         ' evidence; return external context through adhesome_workflow.py resume')
+
 def fasta(path):
     header, parts = None, []
     with open(path, encoding='utf-8-sig') as handle:

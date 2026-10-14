@@ -1,0 +1,1581 @@
+{
+  "pipeline_version": "1.0",
+  "source": "C:\\Users\\eaasa\\Desktop\\Evans_PHD_Thesis\\Integrin_analysis\\Thesis\\integrin_adhesome_analysis\\01_detection\\databases\\pfam\\source_v1.0\\combined_source.hmm",
+  "source_sha256": "113ebde50211feea6a959a8b4e83e174ca070709899103516edc8362f78599ee",
+  "manifest_sha256": "7d3762a1e8f854ae9526437a737a77764e2b607ca0ac372956ef1738f1fc4cc0",
+  "library_sha256": "113ebde50211feea6a959a8b4e83e174ca070709899103516edc8362f78599ee",
+  "full_pfam": false,
+  "crosswalk_sha256": "3894d1eb49c465db590939645e18e22c3f1ffe2d836bf11eb36079b0212fc215",
+  "split_sha256": {
+    "ga": "113ebde50211feea6a959a8b4e83e174ca070709899103516edc8362f78599ee",
+    "fallback": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "models": {
+    "PF00011": {
+      "name": "HSP20",
+      "accession": "PF00011.28",
+      "length": 102,
+      "ga": [
+        20.8,
+        20.8
+      ]
+    },
+    "PF00012": {
+      "name": "HSP70",
+      "accession": "PF00012.27",
+      "length": 599,
+      "ga": [
+        20.6,
+        20.6
+      ]
+    },
+    "PF00017": {
+      "name": "SH2",
+      "accession": "PF00017.31",
+      "length": 77,
+      "ga": [
+        21.0,
+        21.0
+      ]
+    },
+    "PF00018": {
+      "name": "SH3_1",
+      "accession": "PF00018.35",
+      "length": 48,
+      "ga": [
+        22.9,
+        22.9
+      ]
+    },
+    "PF00021": {
+      "name": "UPAR_LY6",
+      "accession": "PF00021.28",
+      "length": 82,
+      "ga": [
+        24.8,
+        10.0
+      ]
+    },
+    "PF00022": {
+      "name": "Actin",
+      "accession": "PF00022.27",
+      "length": 410,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF00023": {
+      "name": "Ank",
+      "accession": "PF00023.37",
+      "length": 33,
+      "ga": [
+        21.1,
+        14.7
+      ]
+    },
+    "PF00025": {
+      "name": "Arf",
+      "accession": "PF00025.28",
+      "length": 174,
+      "ga": [
+        22.3,
+        22.3
+      ]
+    },
+    "PF00027": {
+      "name": "cNMP_binding",
+      "accession": "PF00027.36",
+      "length": 89,
+      "ga": [
+        27.5,
+        27.5
+      ]
+    },
+    "PF00036": {
+      "name": "EF-hand_1",
+      "accession": "PF00036.39",
+      "length": 29,
+      "ga": [
+        25.4,
+        25.4
+      ]
+    },
+    "PF00038": {
+      "name": "Filament",
+      "accession": "PF00038.27",
+      "length": 313,
+      "ga": [
+        40.0,
+        40.0
+      ]
+    },
+    "PF00039": {
+      "name": "fn1",
+      "accession": "PF00039.25",
+      "length": 40,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF00040": {
+      "name": "fn2",
+      "accession": "PF00040.25",
+      "length": 42,
+      "ga": [
+        22.2,
+        22.2
+      ]
+    },
+    "PF00041": {
+      "name": "fn3",
+      "accession": "PF00041.28",
+      "length": 84,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF00045": {
+      "name": "Hemopexin",
+      "accession": "PF00045.25",
+      "length": 45,
+      "ga": [
+        21.3,
+        21.3
+      ]
+    },
+    "PF00047": {
+      "name": "ig",
+      "accession": "PF00047.32",
+      "length": 81,
+      "ga": [
+        21.8,
+        21.8
+      ]
+    },
+    "PF00052": {
+      "name": "Laminin_B",
+      "accession": "PF00052.25",
+      "length": 136,
+      "ga": [
+        22.4,
+        22.4
+      ]
+    },
+    "PF00053": {
+      "name": "EGF_laminin",
+      "accession": "PF00053.31",
+      "length": 49,
+      "ga": [
+        21.0,
+        13.4
+      ]
+    },
+    "PF00054": {
+      "name": "Laminin_G_1",
+      "accession": "PF00054.31",
+      "length": 131,
+      "ga": [
+        24.0,
+        24.0
+      ]
+    },
+    "PF00055": {
+      "name": "Laminin_N",
+      "accession": "PF00055.24",
+      "length": 234,
+      "ga": [
+        25.9,
+        25.9
+      ]
+    },
+    "PF00057": {
+      "name": "Ldl_recept_a",
+      "accession": "PF00057.24",
+      "length": 37,
+      "ga": [
+        24.1,
+        24.1
+      ]
+    },
+    "PF00058": {
+      "name": "Ldl_recept_b",
+      "accession": "PF00058.24",
+      "length": 42,
+      "ga": [
+        21.0,
+        21.0
+      ]
+    },
+    "PF00059": {
+      "name": "Lectin_C",
+      "accession": "PF00059.28",
+      "length": 107,
+      "ga": [
+        22.6,
+        22.6
+      ]
+    },
+    "PF00061": {
+      "name": "Lipocalin",
+      "accession": "PF00061.30",
+      "length": 145,
+      "ga": [
+        23.0,
+        23.0
+      ]
+    },
+    "PF00063": {
+      "name": "Myosin_head",
+      "accession": "PF00063.28",
+      "length": 679,
+      "ga": [
+        33.3,
+        33.3
+      ]
+    },
+    "PF00069": {
+      "name": "Pkinase",
+      "accession": "PF00069.32",
+      "length": 262,
+      "ga": [
+        31.7,
+        31.7
+      ]
+    },
+    "PF00071": {
+      "name": "Ras",
+      "accession": "PF00071.29",
+      "length": 162,
+      "ga": [
+        21.6,
+        21.6
+      ]
+    },
+    "PF00076": {
+      "name": "RRM_1",
+      "accession": "PF00076.29",
+      "length": 70,
+      "ga": [
+        20.7,
+        20.7
+      ]
+    },
+    "PF00091": {
+      "name": "Tubulin",
+      "accession": "PF00091.32",
+      "length": 190,
+      "ga": [
+        33.0,
+        33.0
+      ]
+    },
+    "PF00092": {
+      "name": "VWA",
+      "accession": "PF00092.35",
+      "length": 174,
+      "ga": [
+        23.8,
+        23.8
+      ]
+    },
+    "PF00097": {
+      "name": "zf-C3HC4",
+      "accession": "PF00097.32",
+      "length": 40,
+      "ga": [
+        21.0,
+        20.7
+      ]
+    },
+    "PF00102": {
+      "name": "Y_phosphatase",
+      "accession": "PF00102.33",
+      "length": 234,
+      "ga": [
+        20.9,
+        20.9
+      ]
+    },
+    "PF00128": {
+      "name": "Alpha-amylase",
+      "accession": "PF00128.32",
+      "length": 449,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF00130": {
+      "name": "C1_1",
+      "accession": "PF00130.29",
+      "length": 53,
+      "ga": [
+        26.5,
+        26.5
+      ]
+    },
+    "PF00149": {
+      "name": "Metallophos",
+      "accession": "PF00149.34",
+      "length": 194,
+      "ga": [
+        21.5,
+        21.5
+      ]
+    },
+    "PF00151": {
+      "name": "Lipase",
+      "accession": "PF00151.26",
+      "length": 336,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF00155": {
+      "name": "Aminotran_1_2",
+      "accession": "PF00155.28",
+      "length": 361,
+      "ga": [
+        19.7,
+        19.7
+      ]
+    },
+    "PF00168": {
+      "name": "C2",
+      "accession": "PF00168.37",
+      "length": 104,
+      "ga": [
+        22.0,
+        9.6
+      ]
+    },
+    "PF00169": {
+      "name": "PH",
+      "accession": "PF00169.36",
+      "length": 105,
+      "ga": [
+        25.1,
+        25.1
+      ]
+    },
+    "PF00200": {
+      "name": "Disintegrin",
+      "accession": "PF00200.29",
+      "length": 75,
+      "ga": [
+        35.1,
+        35.1
+      ]
+    },
+    "PF00233": {
+      "name": "PDEase_I",
+      "accession": "PF00233.26",
+      "length": 238,
+      "ga": [
+        24.8,
+        24.8
+      ]
+    },
+    "PF00235": {
+      "name": "Profilin",
+      "accession": "PF00235.26",
+      "length": 127,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF00241": {
+      "name": "Cofilin_ADF",
+      "accession": "PF00241.26",
+      "length": 128,
+      "ga": [
+        22.4,
+        22.4
+      ]
+    },
+    "PF00262": {
+      "name": "Calreticulin",
+      "accession": "PF00262.26",
+      "length": 369,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF00307": {
+      "name": "CH",
+      "accession": "PF00307.37",
+      "length": 109,
+      "ga": [
+        26.0,
+        22.1
+      ]
+    },
+    "PF00335": {
+      "name": "Tetraspanin",
+      "accession": "PF00335.27",
+      "length": 225,
+      "ga": [
+        32.1,
+        32.1
+      ]
+    },
+    "PF00357": {
+      "name": "Integrin_alpha",
+      "accession": "PF00357.26",
+      "length": 15,
+      "ga": [
+        20.2,
+        10.0
+      ]
+    },
+    "PF00362": {
+      "name": "Integrin_beta",
+      "accession": "PF00362.25",
+      "length": 248,
+      "ga": [
+        24.8,
+        24.8
+      ]
+    },
+    "PF00373": {
+      "name": "FERM_M",
+      "accession": "PF00373.24",
+      "length": 117,
+      "ga": [
+        23.8,
+        23.8
+      ]
+    },
+    "PF00377": {
+      "name": "Prion",
+      "accession": "PF00377.24",
+      "length": 116,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF00387": {
+      "name": "PI-PLC-Y",
+      "accession": "PF00387.26",
+      "length": 114,
+      "ga": [
+        28.8,
+        28.8
+      ]
+    },
+    "PF00388": {
+      "name": "PI-PLC-X",
+      "accession": "PF00388.26",
+      "length": 144,
+      "ga": [
+        23.1,
+        23.1
+      ]
+    },
+    "PF00400": {
+      "name": "WD40",
+      "accession": "PF00400.39",
+      "length": 39,
+      "ga": [
+        27.0,
+        12.1
+      ]
+    },
+    "PF00412": {
+      "name": "LIM",
+      "accession": "PF00412.29",
+      "length": 58,
+      "ga": [
+        22.9,
+        22.9
+      ]
+    },
+    "PF00413": {
+      "name": "Peptidase_M10",
+      "accession": "PF00413.31",
+      "length": 159,
+      "ga": [
+        24.0,
+        24.0
+      ]
+    },
+    "PF00431": {
+      "name": "CUB",
+      "accession": "PF00431.27",
+      "length": 110,
+      "ga": [
+        21.4,
+        21.4
+      ]
+    },
+    "PF00435": {
+      "name": "Spectrin",
+      "accession": "PF00435.28",
+      "length": 105,
+      "ga": [
+        29.9,
+        24.2
+      ]
+    },
+    "PF00454": {
+      "name": "PI3_PI4_kinase",
+      "accession": "PF00454.34",
+      "length": 241,
+      "ga": [
+        27.1,
+        27.1
+      ]
+    },
+    "PF00481": {
+      "name": "PP2C",
+      "accession": "PF00481.27",
+      "length": 255,
+      "ga": [
+        20.3,
+        20.3
+      ]
+    },
+    "PF00520": {
+      "name": "Ion_trans",
+      "accession": "PF00520.38",
+      "length": 243,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF00536": {
+      "name": "SAM_1",
+      "accession": "PF00536.38",
+      "length": 64,
+      "ga": [
+        23.0,
+        23.0
+      ]
+    },
+    "PF00568": {
+      "name": "WH1",
+      "accession": "PF00568.30",
+      "length": 111,
+      "ga": [
+        22.4,
+        22.4
+      ]
+    },
+    "PF00595": {
+      "name": "PDZ",
+      "accession": "PF00595.30",
+      "length": 81,
+      "ga": [
+        23.2,
+        23.2
+      ]
+    },
+    "PF00613": {
+      "name": "PI3Ka",
+      "accession": "PF00613.27",
+      "length": 185,
+      "ga": [
+        31.0,
+        31.0
+      ]
+    },
+    "PF00614": {
+      "name": "PLDc",
+      "accession": "PF00614.30",
+      "length": 562,
+      "ga": [
+        26.3,
+        26.3
+      ]
+    },
+    "PF00616": {
+      "name": "RasGAP",
+      "accession": "PF00616.25",
+      "length": 207,
+      "ga": [
+        28.3,
+        28.3
+      ]
+    },
+    "PF00617": {
+      "name": "RasGEF",
+      "accession": "PF00617.25",
+      "length": 181,
+      "ga": [
+        23.1,
+        23.1
+      ]
+    },
+    "PF00618": {
+      "name": "RasGEF_N",
+      "accession": "PF00618.26",
+      "length": 106,
+      "ga": [
+        28.3,
+        28.3
+      ]
+    },
+    "PF00620": {
+      "name": "RhoGAP",
+      "accession": "PF00620.33",
+      "length": 148,
+      "ga": [
+        24.5,
+        24.5
+      ]
+    },
+    "PF00621": {
+      "name": "RhoGEF",
+      "accession": "PF00621.26",
+      "length": 180,
+      "ga": [
+        27.6,
+        27.6
+      ]
+    },
+    "PF00627": {
+      "name": "UBA",
+      "accession": "PF00627.38",
+      "length": 37,
+      "ga": [
+        22.4,
+        22.4
+      ]
+    },
+    "PF00629": {
+      "name": "MAM",
+      "accession": "PF00629.31",
+      "length": 158,
+      "ga": [
+        26.4,
+        26.4
+      ]
+    },
+    "PF00630": {
+      "name": "Filamin",
+      "accession": "PF00630.26",
+      "length": 93,
+      "ga": [
+        26.9,
+        26.9
+      ]
+    },
+    "PF00640": {
+      "name": "PID",
+      "accession": "PF00640.30",
+      "length": 140,
+      "ga": [
+        20.9,
+        20.9
+      ]
+    },
+    "PF00648": {
+      "name": "Peptidase_C2",
+      "accession": "PF00648.28",
+      "length": 298,
+      "ga": [
+        23.8,
+        23.8
+      ]
+    },
+    "PF00651": {
+      "name": "BTB",
+      "accession": "PF00651.38",
+      "length": 110,
+      "ga": [
+        20.5,
+        20.5
+      ]
+    },
+    "PF00656": {
+      "name": "Peptidase_C14",
+      "accession": "PF00656.28",
+      "length": 233,
+      "ga": [
+        21.4,
+        21.4
+      ]
+    },
+    "PF00658": {
+      "name": "MLLE",
+      "accession": "PF00658.25",
+      "length": 66,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF00754": {
+      "name": "F5_F8_type_C",
+      "accession": "PF00754.32",
+      "length": 127,
+      "ga": [
+        28.2,
+        28.2
+      ]
+    },
+    "PF00769": {
+      "name": "ERM_C",
+      "accession": "PF00769.25",
+      "length": 77,
+      "ga": [
+        23.4,
+        23.4
+      ]
+    },
+    "PF00782": {
+      "name": "DSPc",
+      "accession": "PF00782.26",
+      "length": 133,
+      "ga": [
+        33.5,
+        33.5
+      ]
+    },
+    "PF00786": {
+      "name": "PBD",
+      "accession": "PF00786.34",
+      "length": 59,
+      "ga": [
+        21.3,
+        21.3
+      ]
+    },
+    "PF00788": {
+      "name": "RA",
+      "accession": "PF00788.30",
+      "length": 93,
+      "ga": [
+        21.0,
+        21.0
+      ]
+    },
+    "PF00792": {
+      "name": "PI3K_C2",
+      "accession": "PF00792.31",
+      "length": 136,
+      "ga": [
+        26.4,
+        26.4
+      ]
+    },
+    "PF00801": {
+      "name": "PKD",
+      "accession": "PF00801.27",
+      "length": 80,
+      "ga": [
+        23.5,
+        23.5
+      ]
+    },
+    "PF00999": {
+      "name": "Na_H_Exchanger",
+      "accession": "PF00999.27",
+      "length": 375,
+      "ga": [
+        26.2,
+        26.2
+      ]
+    },
+    "PF01033": {
+      "name": "Somatomedin_B",
+      "accession": "PF01033.23",
+      "length": 40,
+      "ga": [
+        23.1,
+        23.1
+      ]
+    },
+    "PF01034": {
+      "name": "Syndecan",
+      "accession": "PF01034.27",
+      "length": 62,
+      "ga": [
+        24.9,
+        24.9
+      ]
+    },
+    "PF01044": {
+      "name": "Vinculin",
+      "accession": "PF01044.26",
+      "length": 852,
+      "ga": [
+        38.1,
+        38.1
+      ]
+    },
+    "PF01067": {
+      "name": "Calpain_III",
+      "accession": "PF01067.29",
+      "length": 137,
+      "ga": [
+        21.0,
+        21.0
+      ]
+    },
+    "PF01146": {
+      "name": "Caveolin",
+      "accession": "PF01146.23",
+      "length": 133,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF01344": {
+      "name": "Kelch_1",
+      "accession": "PF01344.32",
+      "length": 46,
+      "ga": [
+        20.1,
+        20.0
+      ]
+    },
+    "PF01363": {
+      "name": "FYVE",
+      "accession": "PF01363.28",
+      "length": 67,
+      "ga": [
+        27.8,
+        27.8
+      ]
+    },
+    "PF01369": {
+      "name": "Sec7",
+      "accession": "PF01369.26",
+      "length": 183,
+      "ga": [
+        22.0,
+        22.0
+      ]
+    },
+    "PF01391": {
+      "name": "Collagen",
+      "accession": "PF01391.24",
+      "length": 60,
+      "ga": [
+        27.2,
+        27.2
+      ]
+    },
+    "PF01412": {
+      "name": "ArfGap",
+      "accession": "PF01412.24",
+      "length": 117,
+      "ga": [
+        28.7,
+        28.7
+      ]
+    },
+    "PF01421": {
+      "name": "Reprolysin",
+      "accession": "PF01421.26",
+      "length": 200,
+      "ga": [
+        20.8,
+        20.8
+      ]
+    },
+    "PF01477": {
+      "name": "PLAT",
+      "accession": "PF01477.29",
+      "length": 117,
+      "ga": [
+        23.0,
+        23.0
+      ]
+    },
+    "PF01504": {
+      "name": "PIP5K",
+      "accession": "PF01504.25",
+      "length": 288,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF01562": {
+      "name": "Pep_M12B_propep",
+      "accession": "PF01562.25",
+      "length": 93,
+      "ga": [
+        23.7,
+        23.7
+      ]
+    },
+    "PF01576": {
+      "name": "Myosin_tail_1",
+      "accession": "PF01576.25",
+      "length": 1081,
+      "ga": [
+        38.1,
+        38.1
+      ]
+    },
+    "PF01608": {
+      "name": "I_LWEQ",
+      "accession": "PF01608.24",
+      "length": 151,
+      "ga": [
+        27.5,
+        27.5
+      ]
+    },
+    "PF01839": {
+      "name": "FG-GAP",
+      "accession": "PF01839.30",
+      "length": 37,
+      "ga": [
+        22.1,
+        22.1
+      ]
+    },
+    "PF02063": {
+      "name": "MARCKS",
+      "accession": "PF02063.23",
+      "length": 289,
+      "ga": [
+        24.0,
+        24.0
+      ]
+    },
+    "PF02192": {
+      "name": "PI3K_p85B",
+      "accession": "PF02192.23",
+      "length": 76,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF02208": {
+      "name": "Sorb",
+      "accession": "PF02208.21",
+      "length": 42,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF02210": {
+      "name": "Laminin_G_2",
+      "accession": "PF02210.32",
+      "length": 126,
+      "ga": [
+        22.9,
+        22.9
+      ]
+    },
+    "PF02218": {
+      "name": "HS1_rep",
+      "accession": "PF02218.21",
+      "length": 36,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF02259": {
+      "name": "FAT",
+      "accession": "PF02259.30",
+      "length": 343,
+      "ga": [
+        24.2,
+        24.2
+      ]
+    },
+    "PF02736": {
+      "name": "Myosin_N",
+      "accession": "PF02736.27",
+      "length": 58,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF02816": {
+      "name": "Alpha_kinase",
+      "accession": "PF02816.25",
+      "length": 185,
+      "ga": [
+        21.3,
+        21.3
+      ]
+    },
+    "PF03114": {
+      "name": "BAR",
+      "accession": "PF03114.24",
+      "length": 234,
+      "ga": [
+        28.5,
+        28.5
+      ]
+    },
+    "PF03372": {
+      "name": "Exo_endo_phos",
+      "accession": "PF03372.30",
+      "length": 224,
+      "ga": [
+        24.5,
+        24.5
+      ]
+    },
+    "PF03623": {
+      "name": "Focal_AT",
+      "accession": "PF03623.20",
+      "length": 141,
+      "ga": [
+        23.3,
+        23.3
+      ]
+    },
+    "PF03953": {
+      "name": "Tubulin_C",
+      "accession": "PF03953.23",
+      "length": 126,
+      "ga": [
+        26.6,
+        26.6
+      ]
+    },
+    "PF03991": {
+      "name": "Prion_octapep",
+      "accession": "PF03991.18",
+      "length": 46,
+      "ga": [
+        32.0,
+        32.0
+      ]
+    },
+    "PF04045": {
+      "name": "P34-Arc",
+      "accession": "PF04045.20",
+      "length": 243,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF04062": {
+      "name": "P21-Arc",
+      "accession": "PF04062.20",
+      "length": 173,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF04549": {
+      "name": "CD47",
+      "accession": "PF04549.20",
+      "length": 147,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF04727": {
+      "name": "ELMO_CED12",
+      "accession": "PF04727.19",
+      "length": 176,
+      "ga": [
+        23.3,
+        23.3
+      ]
+    },
+    "PF04732": {
+      "name": "Filament_head",
+      "accession": "PF04732.20",
+      "length": 84,
+      "ga": [
+        23.0,
+        23.0
+      ]
+    },
+    "PF04880": {
+      "name": "NUDE_C",
+      "accession": "PF04880.19",
+      "length": 177,
+      "ga": [
+        30.9,
+        30.9
+      ]
+    },
+    "PF05104": {
+      "name": "Rib_recp_KP_reg",
+      "accession": "PF05104.18",
+      "length": 141,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF06729": {
+      "name": "CENP-R",
+      "accession": "PF06729.18",
+      "length": 138,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF06920": {
+      "name": "DHR-2_Lobe_A",
+      "accession": "PF06920.20",
+      "length": 154,
+      "ga": [
+        26.0,
+        26.0
+      ]
+    },
+    "PF07645": {
+      "name": "EGF_CA",
+      "accession": "PF07645.22",
+      "length": 43,
+      "ga": [
+        27.0,
+        16.3
+      ]
+    },
+    "PF07654": {
+      "name": "C1-set",
+      "accession": "PF07654.22",
+      "length": 86,
+      "ga": [
+        21.0,
+        21.0
+      ]
+    },
+    "PF07679": {
+      "name": "I-set",
+      "accession": "PF07679.23",
+      "length": 90,
+      "ga": [
+        23.7,
+        23.7
+      ]
+    },
+    "PF07686": {
+      "name": "V-set",
+      "accession": "PF07686.24",
+      "length": 109,
+      "ga": [
+        26.0,
+        26.0
+      ]
+    },
+    "PF07690": {
+      "name": "MFS_1",
+      "accession": "PF07690.22",
+      "length": 347,
+      "ga": [
+        33.4,
+        33.4
+      ]
+    },
+    "PF07707": {
+      "name": "BACK",
+      "accession": "PF07707.22",
+      "length": 103,
+      "ga": [
+        20.9,
+        20.9
+      ]
+    },
+    "PF07714": {
+      "name": "PK_Tyr_Ser-Thr",
+      "accession": "PF07714.24",
+      "length": 258,
+      "ga": [
+        23.1,
+        23.1
+      ]
+    },
+    "PF08016": {
+      "name": "PKD_channel",
+      "accession": "PF08016.19",
+      "length": 225,
+      "ga": [
+        22.4,
+        22.4
+      ]
+    },
+    "PF08204": {
+      "name": "V-set_CD47",
+      "accession": "PF08204.18",
+      "length": 111,
+      "ga": [
+        21.0,
+        21.0
+      ]
+    },
+    "PF08205": {
+      "name": "C2-set_2",
+      "accession": "PF08205.19",
+      "length": 89,
+      "ga": [
+        21.0,
+        21.0
+      ]
+    },
+    "PF08441": {
+      "name": "Integrin_A_Ig_1",
+      "accession": "PF08441.19",
+      "length": 157,
+      "ga": [
+        26.0,
+        26.0
+      ]
+    },
+    "PF08516": {
+      "name": "ADAM_CR",
+      "accession": "PF08516.18",
+      "length": 116,
+      "ga": [
+        29.4,
+        29.4
+      ]
+    },
+    "PF08725": {
+      "name": "Integrin_b_cyt",
+      "accession": "PF08725.17",
+      "length": 44,
+      "ga": [
+        23.4,
+        23.4
+      ]
+    },
+    "PF08726": {
+      "name": "EFhand_Ca_insen",
+      "accession": "PF08726.17",
+      "length": 69,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF08947": {
+      "name": "BPS",
+      "accession": "PF08947.16",
+      "length": 48,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF09744": {
+      "name": "RH1",
+      "accession": "PF09744.15",
+      "length": 65,
+      "ga": [
+        24.0,
+        24.0
+      ]
+    },
+    "PF10409": {
+      "name": "PTEN_C2",
+      "accession": "PF10409.16",
+      "length": 133,
+      "ga": [
+        27.1,
+        27.1
+      ]
+    },
+    "PF11587": {
+      "name": "Prion_bPrPp",
+      "accession": "PF11587.14",
+      "length": 28,
+      "ga": [
+        24.0,
+        24.0
+      ]
+    },
+    "PF11980": {
+      "name": "DUF3481",
+      "accession": "PF11980.14",
+      "length": 82,
+      "ga": [
+        28.5,
+        28.5
+      ]
+    },
+    "PF12026": {
+      "name": "CAS_C",
+      "accession": "PF12026.15",
+      "length": 203,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF12662": {
+      "name": "cEGF",
+      "accession": "PF12662.14",
+      "length": 24,
+      "ga": [
+        26.6,
+        26.6
+      ]
+    },
+    "PF12796": {
+      "name": "Ank_2",
+      "accession": "PF12796.14",
+      "length": 90,
+      "ga": [
+        27.3,
+        27.3
+      ]
+    },
+    "PF13426": {
+      "name": "PAS_9",
+      "accession": "PF13426.14",
+      "length": 103,
+      "ga": [
+        27.0,
+        11.4
+      ]
+    },
+    "PF13855": {
+      "name": "LRR_8",
+      "accession": "PF13855.13",
+      "length": 61,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF13895": {
+      "name": "Ig_2",
+      "accession": "PF13895.13",
+      "length": 79,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF13927": {
+      "name": "Ig_3",
+      "accession": "PF13927.13",
+      "length": 78,
+      "ga": [
+        30.0,
+        30.0
+      ]
+    },
+    "PF14670": {
+      "name": "FXa_inhibition",
+      "accession": "PF14670.13",
+      "length": 36,
+      "ga": [
+        33.4,
+        33.4
+      ]
+    },
+    "PF15355": {
+      "name": "Chisel",
+      "accession": "PF15355.12",
+      "length": 86,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF16028": {
+      "name": "SLC3A2_N",
+      "accession": "PF16028.11",
+      "length": 77,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF16471": {
+      "name": "JIP_LZII",
+      "accession": "PF16471.11",
+      "length": 71,
+      "ga": [
+        30.0,
+        30.0
+      ]
+    },
+    "PF16519": {
+      "name": "TRPM_tetra",
+      "accession": "PF16519.11",
+      "length": 56,
+      "ga": [
+        26.6,
+        26.6
+      ]
+    },
+    "PF16644": {
+      "name": "NEXCaM_BD",
+      "accession": "PF16644.11",
+      "length": 109,
+      "ga": [
+        26.7,
+        26.7
+      ]
+    },
+    "PF16696": {
+      "name": "ZFYVE21_C",
+      "accession": "PF16696.12",
+      "length": 128,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF16764": {
+      "name": "Sharpin_PH",
+      "accession": "PF16764.12",
+      "length": 121,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF18038": {
+      "name": "FERM_N_2",
+      "accession": "PF18038.8",
+      "length": 99,
+      "ga": [
+        23.8,
+        23.8
+      ]
+    },
+    "PF18100": {
+      "name": "PDE4_UCR",
+      "accession": "PF18100.7",
+      "length": 119,
+      "ga": [
+        26.9,
+        26.9
+      ]
+    },
+    "PF18124": {
+      "name": "Kindlin_2_N",
+      "accession": "PF18124.8",
+      "length": 89,
+      "ga": [
+        23.0,
+        23.0
+      ]
+    },
+    "PF18139": {
+      "name": "LSDAT_euk",
+      "accession": "PF18139.8",
+      "length": 266,
+      "ga": [
+        25.7,
+        25.7
+      ]
+    },
+    "PF19056": {
+      "name": "WD40_2",
+      "accession": "PF19056.7",
+      "length": 488,
+      "ga": [
+        22.5,
+        22.5
+      ]
+    },
+    "PF20805": {
+      "name": "Integrin_A_Ig_2",
+      "accession": "PF20805.4",
+      "length": 145,
+      "ga": [
+        24.0,
+        24.0
+      ]
+    },
+    "PF20806": {
+      "name": "Integrin_A_Ig_3",
+      "accession": "PF20806.4",
+      "length": 222,
+      "ga": [
+        23.6,
+        23.6
+      ]
+    },
+    "PF21477": {
+      "name": "FERM_C_FAK1",
+      "accession": "PF21477.4",
+      "length": 99,
+      "ga": [
+        27.7,
+        27.7
+      ]
+    },
+    "PF22327": {
+      "name": "Nudt16-like",
+      "accession": "PF22327.3",
+      "length": 161,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF23317": {
+      "name": "YVC1_C",
+      "accession": "PF23317.2",
+      "length": 297,
+      "ga": [
+        30.0,
+        30.0
+      ]
+    },
+    "PF25393": {
+      "name": "LTM",
+      "accession": "PF25393.2",
+      "length": 42,
+      "ga": [
+        27.5,
+        27.5
+      ]
+    },
+    "PF25508": {
+      "name": "TRPM2",
+      "accession": "PF25508.2",
+      "length": 257,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF25530": {
+      "name": "EF-hand_SWAP70_N",
+      "accession": "PF25530.2",
+      "length": 95,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF26060": {
+      "name": "TGFBR3_N",
+      "accession": "PF26060.1",
+      "length": 157,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF28321": {
+      "name": "Ig_MYOM1",
+      "accession": "PF28321.1",
+      "length": 100,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    }
+  }
+}

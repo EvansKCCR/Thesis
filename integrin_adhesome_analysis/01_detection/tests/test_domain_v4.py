@@ -14,7 +14,7 @@ class DomainV4Tests(unittest.TestCase):
         return [dict(pfam_accession=p,ali_from=10+i*100,ali_to=80+i*100) for i,p in enumerate(domains)]
 
     def test_all_requested_models_are_in_active_library(self):
-        models=json.loads((ROOT/'databases/pfam/adhesome_v4.hmm.metadata.json').read_text())['models']
+        models=json.loads((ROOT/'databases/pfam/adhesome_v1.0.hmm.metadata.json').read_text())['models']
         requested={'PF00039','PF00040','PF01033','PF00045','PF01839','PF08441','PF20805','PF20806',
                    'PF21477','PF00373','PF18038','PF03623','PF07714','PF12796'}
         self.assertTrue(requested<=models.keys())

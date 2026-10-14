@@ -25,7 +25,7 @@ class SignallingV5Tests(unittest.TestCase):
         return [dict(query_name='p', pfam_accession=p, ali_from=10+i*90, ali_to=75+i*90) for i,p in enumerate(domains)]
 
     def test_models_available_and_order_distinguishes_adaptors(self):
-        models=json.loads((ROOT/'databases/pfam/adhesome_v4.hmm.metadata.json').read_text())['models']
+        models=json.loads((ROOT/'databases/pfam/adhesome_v1.0.hmm.metadata.json').read_text())['models']
         for family, domains in CASES.items():
             with self.subTest(family=family):
                 self.assertTrue(set(domains)<=models.keys())
@@ -59,7 +59,7 @@ class SignallingV5Tests(unittest.TestCase):
             self.assertFalse(any(r['assigned_family'] in CASES for r in table(p/'out/candidates.csv')))
 
     def test_paired_references_and_csk_labels(self):
-        refs=ROOT/'references/schistosome_v5'
+        refs=ROOT/'references/adhesome_v1.0'
         forward={r['reference_id']:r for r in table(refs/'search_catalogue.csv')}
         reverse={r['reference_id']:r for r in table(refs/'metazoan_catalogue.csv')}
         self.assertEqual(len(forward),71); self.assertEqual(len(reverse),142)

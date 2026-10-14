@@ -8,12 +8,13 @@ import re
 import shutil
 import subprocess
 import sys
-from adhesome_core import fasta, write_fasta, table, write_table, digest, save_json, pf, sequence_dict
+from adhesome_core import fasta, write_fasta, table, write_table, digest, save_json, pf, sequence_dict, VERSION, detection_evidence
+from adhesome_components import annotate_components, load_crosswalk, CANDIDATE_FIELDS
 from parse_adhesome_domtblout import parse, FIELDS
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 CONFIG = PROJECT_ROOT / 'config'
-REFERENCE_SET = PROJECT_ROOT / 'references' / 'schistosome_v5'
+REFERENCE_SET = PROJECT_ROOT / 'references' / 'adhesome_v1.0'
 
 MODULES = {'extracellular_matrix', 'integrin_receptors', 'membrane_proximal_adaptors',
            'actin_linking', 'focal_adhesion_scaffolds', 'downstream_signalling'}
@@ -81,7 +82,7 @@ def prepare(config, output):
             input=str(source), input_sha256=digest(source), input_proteins=len(records), genes=len(groups),
             retained=len(retained), excluded=len(records)-len(retained),
             decisions=dict(Counter(r['decision'] for r in records)), output_sha256=digest(str(prefix) + '.faa'))
-    save_json(output / 'preparation.json', dict(config=settings, config_sha256=digest(config), species=summaries))
+    save_json(output / 'preparation.json', dict(pipeline_version=VERSION,config=settings, config_sha256=digest(config), species=summaries))
     print(json.dumps(summaries, indent=2))
 
 def run(command, log):
@@ -132,7 +133,7 @@ def scan(args):
     rows = parse(combined, mapping, models, args.max_i, args.max_c, args.min_coverage)
     write_table(output / 'domains.csv', [r for r in rows if r['decision'] == 'retained'], FIELDS)
     write_table(output / 'domains.audit.csv', rows, FIELDS)
-    save_json(output / 'scan.json', dict(commands=commands, proteome_sha256=digest(args.proteome),
+    save_json(output / 'scan.json', dict(pipeline_version=VERSION,commands=commands, proteome_sha256=digest(args.proteome),
         metadata_sha256=digest(args.library + '.metadata.json'), thresholds=dict(i=args.max_i,c=args.max_c,
         profile_coverage=args.min_coverage), search_space=len(models), python=sys.version))
 
@@ -256,7 +257,7 @@ def homology(args):
     matched_ids = sorted({r['reference_id'] for r in rows})
     write_fasta(output/'matched_reference_sequences.faa',[(rid,reference_sequences[rid]) for rid in matched_ids])
     write_table(output/'matched_reference_catalogue.csv',[refs[rid] for rid in matched_ids],list(next(iter(refs.values()))))
-    save_json(output / 'homology.json', dict(commands=commands, evalue=args.evalue, coverage=args.coverage,
+    save_json(output / 'homology.json', dict(pipeline_version=VERSION,commands=commands, evalue=args.evalue, coverage=args.coverage,
         tie_fraction=args.tie_fraction, reference_snapshot=str(snapshot),snapshot_source_mapping={name:str(p) for name,p in paths.items()},
         snapshot_checksums={p.name:digest(p) for p in snapshot.iterdir() if p.is_file()},
         checksums={str(p): digest(p) for p in [args.proteome,args.references,
@@ -298,7 +299,7 @@ def profiles(args):
                 rows.append(dict(protein_id=x[0], family=mapping[x[3]], profile='true',
                             source=f'hmmsearch:{x[3]}:{digest(args.profiles)}'))
     write_table(output / 'profile_evidence.csv', rows, ['protein_id','family','profile','source'])
-    save_json(output / 'profiles.json', dict(command=command, i=args.max_i,c=args.max_c,
+    save_json(output / 'profiles.json', dict(pipeline_version=VERSION,command=command, i=args.max_i,c=args.max_c,
         coverage=args.min_coverage, checksums={str(p):digest(p) for p in [args.proteome,args.profiles,args.profile_map]}))
 
 def classify_strict(args):
@@ -319,6 +320,7 @@ def classify_strict(args):
     for path in (args.homology, *(args.evidence or [])):
         if path:
             for row in table(path):
+                detection_evidence(row)
                 if row['protein_id'] not in sequences or row['family'] not in rules:
                     raise ValueError('Unknown evidence protein/family')
                 if not row.get('source'):
@@ -336,7 +338,7 @@ def classify_strict(args):
                 values = {r.get(key, '').lower() for r in support}
                 return 'true' in values and 'false' not in values
             matches = architecture_matches(hits, rule)
-            if rule.get('requires_family_evidence') and not any(supported(k) for k in ('similarity','profile','reciprocal','phylogeny')):
+            if rule.get('requires_family_evidence') and not any(supported(k) for k in ('similarity','profile','reciprocal')):
                 continue
             if not matches and not supported('similarity') and not supported('profile'):
                 continue
@@ -345,13 +347,11 @@ def classify_strict(args):
             motifs = all(re.search(pattern, motif_sequence) for pattern in rule.get('motifs', []))
             observations=scan_motifs(sequence,hits,rule,motif_library)
             extended=noncatalytic_alignment(support,hits,rule['noncatalytic_alignment']) if rule.get('noncatalytic_alignment') else True
-            topology = not rule.get('requires_topology', False) or supported('topology')
-            extra = any(supported(key) for key in ('reciprocal','phylogeny','topology','motif'))
-            required = length_ok and motifs and topology
+            extra = any(supported(key) for key in ('reciprocal','motif'))
+            required = length_ok and motifs
             homology_support = [r for r in support if r.get('similarity','').lower() == 'true']
             anchor_only = bool(homology_support) and all(r.get('reference_tier') == 'computational_anchor' for r in homology_support)
-            # Missing diagnostic domains can be rescued only by independently supplied phylogenetic support.
-            accepted = not rule.get('screening_only',False) and required and supported('similarity') and supported('reciprocal') and (matches or supported('phylogeny')) and (extended or supported('phylogeny')) and (not anchor_only or supported('phylogeny') or supported('profile'))
+            accepted = not rule.get('screening_only',False) and required and supported('similarity') and supported('reciprocal') and matches and extended and (not anchor_only or supported('profile'))
             if not length_ok:
                 status, reason = 'excluded', 'below_family_minimum_length'
             elif accepted:
@@ -362,7 +362,7 @@ def classify_strict(args):
                 status, reason = 'excluded', 'generic_domain_or_similarity_only'
             results.append(dict(protein_id=identifier, family=family, module=rule['module'], status=status,
                 reason=reason, length=len(sequence), minimum_length=rule['min_length'], domain_match=matches,
-                motif_check=bool(motifs), topology_check=topology, reciprocal=supported('reciprocal'),
+                motif_check=bool(motifs), reciprocal=supported('reciprocal'),
                 motif_details=';'.join(f"{r['motif']}:{r['state']}:{r['start']}-{r['end']}" for r in observations),
                 architecture=architecture, evidence_sources=';'.join(sorted({r['source'] for r in support}))))
     # Conflicting supported family assignments remain provisional, never silently pick one.
@@ -376,14 +376,19 @@ def classify_strict(args):
                 row.update(status='provisional', reason='conflicting_family_assignments')
     output = Path(args.out)
     output.mkdir(parents=True, exist_ok=True)
-    write_table(output / 'candidates.csv', results, ['protein_id','family','module','status','reason','length',
-        'minimum_length','domain_match','motif_check','motif_details','topology_check','reciprocal','architecture','evidence_sources'])
+    fields=['protein_id','family','module','status','reason','length',
+        'minimum_length','domain_match','motif_check','motif_details','reciprocal','architecture','evidence_sources']
+    crosswalk=getattr(args,'crosswalk',None)
+    if crosswalk:
+        annotate_components(crosswalk,getattr(args,'manifest',None),[r for hits in domains.values() for r in hits],evidence,results,output)
+        fields+=CANDIDATE_FIELDS
+    write_table(output / 'candidates.csv', results, fields)
     write_table(output / 'architectures.csv', architecture_rows, ['protein_id','length','architecture'])
     selected = {r['protein_id'] for r in results if r['status'] != 'excluded'}
     write_fasta(output / 'candidates.faa', [(key, sequences[key]) for key in sorted(selected)])
-    save_json(output / 'classification.json', dict(rule_status=config['status'],
+    save_json(output / 'classification.json', dict(pipeline_version=VERSION,stage='detection',deferred_stages=['topology','localization','phylogeny'],rule_status=config['status'],
         counts=dict(Counter(r['status'] for r in results)), checksums={str(p):digest(p) for p in
-        [args.proteome,args.domains,args.rules,args.homology,*(args.evidence or []),motif_path] if p}))
+        [args.proteome,args.domains,args.rules,args.homology,*(args.evidence or []),motif_path,crosswalk] if p}))
 
 def classify(args):
     if getattr(args, 'classification_mode', 'comparative') == 'strict':
@@ -431,6 +436,9 @@ def batch(args):
     settings = json.loads(Path(args.config).read_text(encoding='utf-8'))
     output = Path(args.out).resolve()
     inputs, ignored = discover_proteomes(args.input_dir, settings, output)
+    crosswalk=getattr(args,'crosswalk',None)
+    if crosswalk:
+        load_crosswalk(crosswalk,args.manifest)
     if not args.prepare_only:
         if not args.library:
             raise ValueError('Batch scanning requires --library; use --prepare-only for preprocessing alone')
@@ -440,7 +448,7 @@ def batch(args):
         if not Path(args.library + '.metadata.json').is_file():
             raise ValueError('Build the HMM library and metadata before batch scanning')
     output.mkdir(parents=True, exist_ok=True)
-    summary = dict(input_root=str(Path(args.input_dir).resolve()), ignored_fastas=ignored,
+    summary = dict(pipeline_version=VERSION,stage='detection',deferred_stages=['topology','localization','phylogeny'],input_root=str(Path(args.input_dir).resolve()), ignored_fastas=ignored,
                    mode='prepare_only' if args.prepare_only else 'prepare_scan_classify', species={})
     for species in settings['proteomes']:
         code = species['code']
@@ -473,7 +481,7 @@ def batch(args):
                     homology_path = str(folder/'homology/homology.csv')
                 classify(argparse.Namespace(proteome=scan_args.proteome,
                     domains=str(folder / 'domains/domains.csv'), rules=args.rules,
-                    homology=homology_path, evidence=None, manifest=args.manifest,
+                    homology=homology_path, evidence=None, manifest=args.manifest,crosswalk=crosswalk,
                     classification_mode=args.classification_mode, out=str(folder / 'candidates')))
             status['status'] = ('prepared' if args.prepare_only else
                                 'completed_with_homology' if args.reference_set else 'completed_domain_screen')
@@ -486,8 +494,9 @@ def batch(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version',action='version',version='adhesome-detection '+VERSION)
     sub = parser.add_subparsers(dest='stage', required=True)
-    p = sub.add_parser('batch', help='Recursively discover and process all three species into separate folders')
+    p = sub.add_parser('batch', help='Detect candidates in configured target species; external context belongs to resume')
     p.add_argument('--input-dir', default='proteome_fasta_files')
     p.add_argument('--config', default=str(CONFIG / 'proteomes.json'))
     p.add_argument('--out', default='results/species')
@@ -496,6 +505,7 @@ def main():
     p.add_argument('--reference-set', help='Paired reference directory; also run BLASTP and integrate its evidence')
     p.add_argument('--classification-mode', choices=['comparative','strict'], default='comparative')
     p.add_argument('--manifest', default=str(CONFIG / 'adhesome_pfam_manifest.csv'))
+    p.add_argument('--crosswalk', default=str(CONFIG / 'adhesome_component_crosswalk.csv'))
     p.add_argument('--rules', default=str(CONFIG / 'family_rules.json'))
     p.add_argument('--cpu', type=int, default=4)
     p.add_argument('--max-i', type=float, default=1e-3)
@@ -533,11 +543,12 @@ def main():
     p = sub.add_parser('classify')
     p.add_argument('--classification-mode', choices=['comparative','strict'], default='comparative')
     p.add_argument('--manifest', default=str(CONFIG / 'adhesome_pfam_manifest.csv'))
+    p.add_argument('--crosswalk', default=str(CONFIG / 'adhesome_component_crosswalk.csv'))
     p.add_argument('--proteome', required=True)
     p.add_argument('--domains', required=True)
     p.add_argument('--rules', default=str(CONFIG / 'family_rules.json'))
     p.add_argument('--homology')
-    p.add_argument('--evidence', action='append', help='Repeat for profile/topology/phylogeny evidence files')
+    p.add_argument('--evidence', action='append', help='Repeat for detection profile or motif evidence; return external context through resume')
     p.add_argument('--out', required=True)
     args = parser.parse_args()
     for key in ('coverage','min_coverage','tie_fraction'):

@@ -3,10 +3,11 @@ from collections import Counter, defaultdict
 import json
 from pathlib import Path
 import re
-from adhesome_core import sequence_dict, table, write_table, write_fasta, save_json, digest, pf
+from adhesome_core import sequence_dict, table, write_table, write_fasta, save_json, digest, pf, VERSION, detection_evidence
+from adhesome_components import annotate_components, CANDIDATE_FIELDS
 from adhesome_motifs import load_library, scan_motifs, noncatalytic_alignment
 
-EVIDENCE_KEYS = ('similarity', 'reciprocal', 'profile', 'phylogeny', 'topology', 'motif')
+EVIDENCE_KEYS = ('similarity', 'reciprocal', 'profile', 'motif')
 
 def evidence_state(rows, key):
     values = {r.get(key, '').strip().lower() for r in rows} - {''}
@@ -81,6 +82,7 @@ def classify_comparative(args):
     evidence_paths = [p for p in [getattr(args,'homology',None), *(getattr(args,'evidence',None) or [])] if p]
     for path in evidence_paths:
         for row in table(path):
+            detection_evidence(row)
             if row['protein_id'] not in sequences or row['family'] not in rules or not row.get('source'):
                 raise ValueError('Evidence requires known protein/family and a source')
             for key in EVIDENCE_KEYS:
@@ -102,7 +104,7 @@ def classify_comparative(args):
             states = {key:evidence_state(support,key) for key in EVIDENCE_KEYS}
             positive = lambda key: states[key] == 'supported'
             arch = architecture_evidence(hits, rule)
-            family_evidence = any(positive(key) for key in ('similarity','profile','reciprocal','phylogeny'))
+            family_evidence = any(positive(key) for key in ('similarity','profile','reciprocal'))
             if rule.get('requires_family_evidence') and not family_evidence:
                 continue
             if not arch['complete'] and not arch['partial'] and not family_evidence:
@@ -129,8 +131,6 @@ def classify_comparative(args):
                 warnings.extend('motif_not_detected:'+name for name,states in by_motif.items() if 'not_detected' in states)
             if motif == 'not_detected':
                 warnings.append('expected_motif_not_detected')
-            if rule.get('requires_topology') and not positive('topology'):
-                warnings.append('topology_' + states['topology'])
             conflicts = [key for key,state in states.items() if state == 'conflict']
             negatives = [key for key,state in states.items() if state == 'not_supported']
             warnings.extend('conflicting_' + key for key in conflicts)
@@ -147,10 +147,10 @@ def classify_comparative(args):
                                       any(r['state']=='detected' and r['interpretation']=='family_corroboration' for r in observations))
             # Support is about family identity, not experimental adhesome membership.
             supported = (not rule.get('screening_only',False) and positive('reciprocal') and (positive('similarity') or positive('profile')) and
-                         (arch['complete'] or arch['specific'] or motif_architecture or positive('phylogeny')) and not conflicts and not negatives and
-                         (extended or positive('phylogeny')) and
-                         (not rule.get('support_requires_order') or arch['support_order'] or positive('phylogeny')) and
-                         (not anchor_only or positive('phylogeny') or positive('profile')))
+                         (arch['complete'] or arch['specific'] or motif_architecture) and not conflicts and not negatives and
+                         extended and
+                         (not rule.get('support_requires_order') or arch['support_order']) and
+                         (not anchor_only or positive('profile')))
             if rule.get('screening_only',False):
                 status, reason = 'unresolved', 'screening_bucket_not_a_family'
                 warnings.append('not_an_orthology_class')
@@ -168,9 +168,9 @@ def classify_comparative(args):
                 domain_match=arch['complete'],domain_type_fraction=arch['fraction'],domain_copy_fraction=arch['copy_fraction'],
                 matched_domains=arch['observed'],missing_domains=arch['missing'],order_check=arch['order'],
                 support_order_check='consistent' if arch['support_order'] else 'not_satisfied' if rule.get('support_requires_order') else 'not_required',
-                motif_check=motif,topology_check=states['topology'],reciprocal=states['reciprocal'],
+                motif_check=motif,reciprocal=states['reciprocal'],
                 motif_details=';'.join(f"{r['motif']}:{r['state']}:{r['start']}-{r['end']}" for r in observations),
-                similarity=states['similarity'],profile=states['profile'],phylogeny=states['phylogeny'],
+                similarity=states['similarity'],profile=states['profile'],
                 warnings=';'.join(warnings),architecture=architecture,
                 evidence_sources=';'.join(sorted({r['source'] for r in support}))))
         unassigned = {r['pfam_accession'] for r in hits} & curated - covered
@@ -192,7 +192,11 @@ def classify_comparative(args):
     output.mkdir(parents=True,exist_ok=True)
     fields = ['protein_id','family','assigned_family','module','status','reason','screening_tier','length','minimum_length',
               'length_check','domain_match','domain_type_fraction','domain_copy_fraction','matched_domains','missing_domains',
-              'order_check','support_order_check','motif_check','motif_details','topology_check','reciprocal','similarity','profile','phylogeny','warnings','architecture','evidence_sources']
+              'order_check','support_order_check','motif_check','motif_details','reciprocal','similarity','profile','warnings','architecture','evidence_sources']
+    crosswalk=getattr(args,'crosswalk',None)
+    if crosswalk:
+        annotate_components(crosswalk,manifest,[r for hits in domains.values() for r in hits],evidence,results,output)
+        fields+=CANDIDATE_FIELDS
     write_table(output/'candidates.csv',results,fields)
     write_table(output/'motif_observations.csv',motif_rows,['protein_id','family','motif','pattern','context','state','start','end','sequence','interpretation','source'])
     write_table(output/'architectures.csv',architecture_rows,['protein_id','length','architecture'])
@@ -208,7 +212,7 @@ def classify_comparative(args):
     write_fasta(output/'candidates.faa',[(p,sequences[p]) for p in sorted(grouped)])
     prioritized = {r['protein_id'] for r in protein_rows if r['status']!='unresolved'}
     write_fasta(output/'prioritized_candidates.faa',[(p,sequences[p]) for p in sorted(prioritized)])
-    save_json(output/'classification.json',dict(mode='comparative',rule_status=config['status'],
+    save_json(output/'classification.json',dict(pipeline_version=VERSION,stage='detection',deferred_stages=['topology','localization','phylogeny'],mode='comparative',rule_status=config['status'],
         counts=dict(Counter(r['status'] for r in results)),protein_counts=dict(Counter(r['status'] for r in protein_rows)),
         input_proteins=len(sequences),retained_proteins=len(grouped),prioritized_proteins=len(prioritized),
-        checksums={str(p):digest(p) for p in [args.proteome,args.domains,args.rules,*evidence_paths,*([manifest] if manifest else []),*([motif_path] if motif_path else [])]}))
+        checksums={str(p):digest(p) for p in [args.proteome,args.domains,args.rules,*evidence_paths,*([manifest] if manifest else []),*([crosswalk] if crosswalk else []),*([motif_path] if motif_path else [])]}))

@@ -1,5 +1,5 @@
 {
-  "status": "Comparative v5: separate Syk/Csk and Nck/Grb2/Crk/Shc families; v4 architectures retained. Evidence tiers are not probabilities.",
+  "status": "Detection version 1.0: domain architecture, similarity, reciprocal and profile evidence; topology, localization and phylogeny are deferred to resume. Evidence tiers are not probabilities.",
   "families": {
     "integrin_alpha": {
       "module": "integrin_receptors",
@@ -30,7 +30,6 @@
           "PF20805": 1
         }
       ],
-      "requires_topology": true,
       "min_partial_fraction": 0.5,
       "screening_domains": [
         "PF01839",
@@ -80,7 +79,6 @@
           "PF00362": 1
         }
       ],
-      "requires_topology": true,
       "motifs": [
         "NP.[YF]"
       ],
@@ -124,7 +122,6 @@
           "PF01391": 1
         }
       ],
-      "requires_topology": true,
       "motifs": [
         "(?:G..){5}"
       ],
@@ -159,7 +156,6 @@
           "PF02210": 1
         }
       ],
-      "requires_topology": true,
       "min_partial_fraction": 0.5,
       "screening_domains": [
         "PF00055",
@@ -179,7 +175,6 @@
           "PF00041": 1
         }
       ],
-      "requires_topology": true,
       "min_partial_fraction": 0.5,
       "motif_checks": [
         {
@@ -546,7 +541,6 @@
       ],
       "min_partial_fraction": 0.5,
       "requires_family_evidence": true,
-      "requires_topology": true,
       "classification_note": "LAR/type-IIa receptor PTP group (PTPRF/PTPRD/PTPRS); truncated relatives may be recovered by homology"
     },
     "RPTP_alpha_epsilon": {
@@ -642,7 +636,6 @@
         ]
       ],
       "support_requires_order": true,
-      "requires_topology": true,
       "classification_note": "FN1/FN2/FN3 combination; counts need not match vertebrate FN1. Isolated repeat types are nonspecific. Partial architectures remain hypotheses unless independently resolved; no integrin-binding claim.",
       "motif_checks": [
         {
@@ -682,7 +675,6 @@
         ]
       ],
       "support_requires_order": true,
-      "requires_topology": true,
       "classification_note": "Somatomedin-B followed by hemopexin-like region plus reciprocal family evidence. SMB occurs in ENPPs and hemopexin in proteases/HPX; neither alone assigns vitronectin.",
       "motif_checks": [
         {
@@ -897,5 +889,6 @@
     "adhesion_kinase": "generic_kinase_screen",
     "adhesion_phosphatase": "generic_PTP_screen"
   },
-  "motif_library": "../references/motifs/adhesome_motif.json"
+  "motif_library": "../references/motifs/adhesome_motif.json",
+  "pipeline_version": "1.0"
 }

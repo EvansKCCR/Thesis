@@ -98,20 +98,20 @@ class PipelineTests(unittest.TestCase):
         path = self.put('b.tsv','r p 50 500 1 10 1 10 1e-30 100 100 100\nr q 50 50 1 50 1 50 1e-30 100 100 100\n')
         self.assertEqual([h['subject'] for h in blast_hits(path,1e-5,.3)], ['q'])
 
-    def test_topology_and_length_gate_homology_recovery(self):
+    def test_detection_length_gate_and_external_evidence_rejection(self):
         proteome = self.put('p.fa', '>long\n'+'A'*300+'\n>short\n'+'A'*30+'\n')
         domains = self.root / 'domains.csv'
         write_table(domains,[],FIELDS)
         rules = self.put('r.json', json.dumps(dict(status='test',families=dict(receptor=dict(
             module='integrin_receptors',min_length=200,domain_alternatives=[{'PF00001':1}],requires_topology=True)))))
-        evidence = self.put('e.csv','protein_id,family,similarity,reciprocal,phylogeny,topology,source\nlong,receptor,true,true,true,,test\nshort,receptor,true,true,true,true,test\n')
+        evidence = self.put('e.csv','protein_id,family,similarity,reciprocal,source\nlong,receptor,true,true,test\nshort,receptor,true,true,test\n')
         args = argparse.Namespace(proteome=proteome,domains=domains,rules=rules,homology=evidence,evidence=None,out=self.root/'out')
         classify(args)
         self.assertEqual([r['status'] for r in table(self.root/'out/candidates.csv')], ['provisional','excluded'])
         extra = self.put('t.csv','protein_id,family,topology,source\nlong,receptor,true,prediction\n')
         args.evidence = [extra]
-        classify(args)
-        self.assertEqual(table(self.root/'out/candidates.csv')[0]['status'], 'supported_candidate')
+        with self.assertRaisesRegex(ValueError,'resume'):
+            classify(args)
 
     def test_nonfinite_scores_fail(self):
         with self.assertRaisesRegex(ValueError, 'non-finite'):

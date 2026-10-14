@@ -16,7 +16,7 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-VERSION = '1.0.0'
+VERSION = '1.0'
 DETECT = ROOT/'01_detection'
 MOTIF = ROOT/'03_functional_motif_annotation'
 ORTH = ROOT/'04_orthology_phylogenetic_classification/scripts'
@@ -137,7 +137,7 @@ def start(args):
     out.mkdir(parents=True, exist_ok=False)
     detection = args.detection.resolve() if args.detection else out/'detection'
     if not args.detection:
-        cmd = [sys.executable, DETECT/'scripts/run_domain_v5.py', '--out', detection, '--cpu', args.threads]
+        cmd = [sys.executable, DETECT/'scripts/run_detection.py', '--out', detection, '--cpu', args.threads]
         if args.input_dir:
             cmd += ['--input-dir', args.input_dir.resolve()]
         cmd += ['--config', config_path.resolve()]
@@ -177,6 +177,16 @@ def start(args):
     for family, seqs in families.items():
         write_fasta(out/'families'/f'{family}.faa', seqs)
     write(out/'hypotheses.tsv', hypotheses)
+    component_rows=[]
+    component_fields=[]
+    for table in sorted(detection.glob('*/candidates/component_hypotheses.csv')):
+        rows=read(table,',')
+        if rows:
+            component_fields=list(rows[0])
+            component_rows.extend(r for r in rows if r['protein_id'] in sequences)
+        sources[str(table)]=digest(table)
+    if component_fields:
+        write(out/'component_hypotheses.tsv',component_rows,component_fields)
     fibronectin_rows = [r for r in hypotheses if r['family'] in FIBRONECTIN_FAMILIES]
     write(out/'fibronectin_like_hypotheses.tsv', fibronectin_rows, list(hypotheses[0]))
     write_fasta(out/'fibronectin_like_candidates.faa', {r['protein_id']:sequences[r['protein_id']] for r in fibronectin_rows})
@@ -193,9 +203,13 @@ def start(args):
     if provenance['unverified_records']:
         raise ValueError('Unverified domain source sequences; inspect provenance')
     sources.update(provenance['inputs'])
+    for name in ('adhesome_pfam_manifest.csv','adhesome_component_crosswalk.csv','family_rules.json'):
+        resource=DETECT/'config'/name
+        sources[str(resource)]=digest(resource)
     if config_path:
         sources[str(config_path.resolve())] = digest(config_path)
     seal(out, 'handoff', detection=str(detection), sources=sources,
+         completed_stages=['detection'],deferred_stages=['topology','localization','phylogeny'],
          target_species=sorted(species), state='awaiting_external_context', hypotheses=len(hypotheses), proteins=len(sequences))
     print(f'Handoff ready: {out}/external_candidates.faa ({len(sequences)} proteins; {len(hypotheses)} hypotheses)')
 
@@ -385,7 +399,7 @@ def recover(args):
         if generated!=json.loads((run/'panel/panel.snapshot.json').read_text()):
             raise ValueError('Generated reference panel differs from staged panel')
         state=dict(annotation_sha256=digest(annotation/'workflow_manifest.json'),stages={},settings=dict(
-            annotation=str(annotation),out=str(run),reference_raw=str(ROOT/'inputs/reference_raw'),
+            annotation=str(annotation),out=str(run),reference_raw=str(ROOT/'input/reference_raw'),
             threads=args.threads or 8,analysis_threads=args.analysis_threads or 8,iqtree_threads=args.iqtree_threads or 2,
             compare=None,skip_phylogeny=False,allow_partial_phylogeny=False))
         def adopt(name,files):
@@ -618,7 +632,7 @@ def main(argv=None):
     s.set_defaults(func=downstream)
     for name in ('resume','continue'):
         command=sub.choices[name]
-        command.add_argument('--reference-raw',type=Path,default=ROOT/'inputs/reference_raw')
+        command.add_argument('--reference-raw',type=Path,default=ROOT/'input/reference_raw')
         command.add_argument('--threads',type=int,default=8)
         command.add_argument('--analysis-threads',type=int,default=8)
         command.add_argument('--compare',type=Path,help='Previous orthology output for reference-panel comparison')

@@ -2,15 +2,15 @@
 
 Follow [the automated-run guide](ORTHOLOGY_PHYLOGENY_GUIDE.md). Put complete reference FASTAs and matching GFF/TSV files in input/reference_raw. Resuming the pipeline after stage 1 runs annotation, automatic reference preparation, panel construction, OrthoFinder, phylogeny and final audit. The modular commands below remain available for advanced/manual use; add --annotation-only to resume if deliberately following that route.
 
-# Integrated adhesome workflow — version 1.0.0
+# Integrated adhesome workflow — version 1.0
 
 This is a source distribution of integrated workflow for integrin adhesome mapping from proteomes. It contains scripts, tests,
 curated HMM/reference/motif resources, configuration templates and dependency specifications. Historical versions in resource names identify their provenance; the integrated
-workflow release is 1.0.0.
+workflow release is 1.0.
 
 ## Setup and inputs
 
-Run from this directory with Python 3.11 or newer. Full execution requires Linux,
+Run from `Thesis/integrin_adhesome_analysis` with Python 3.11 or newer. Full execution requires Linux,
 WSL or an HPC environment with the external programs available on PATH:
 
 ```bash
@@ -27,7 +27,7 @@ this does not install the external programs. MEME Suite is optional and disabled
 by default. External topology/localization prediction services are not bundled.
 
 Supply one or more complete target proteomes under an input directory. Copy
-`targets.example.json` to `targets.json` in the root folder and add one entry per target: a unique
+`../README/targets.example.json` to `targets.json` in the workflow folder and add one entry per target: a unique
 `code`, descriptive `species`, `assembly`, source URL, FASTA `path` and
 `gene_regex` whose first capture group extracts an explicit gene ID. Codes may
 contain letters, digits and single underscores, must start with a letter, and
@@ -47,6 +47,13 @@ coverage or validate cross-species functional transfer.
 
 ## 1. Detection and external handoff
 
+The active version 1.0 detection library contains all 174 updated Pfam accessions
+and reads the 230-row component crosswalk. Component possibilities and reference
+similarity are reported separately; crosswalk overlap does not promote family
+assignment. See the [detection guide](../integrin_adhesome_analysis/01_detection/README.md).
+`start` executes detection and exports its handoff. Topology, localization and
+phylogeny are processed after returning evidence through `resume`.
+
 ```bash
 python adhesome_workflow.py start --targets-config targets.json --input-dir inputs/targets --out runs/handoff --threads 4
 ```
@@ -57,6 +64,7 @@ To reuse a separately generated detection batch, replace `--input-dir` with
 - `supported_hypotheses.tsv` and `provisional_hypotheses.tsv`: every qualifying
   family hypothesis, including alternatives for the same protein.
 - `hypotheses.tsv`: combined evidence table retaining upstream detection fields.
+- `component_hypotheses.tsv`: crosswalk matches for exported candidates, when available.
 - `external_candidates.faa`: one full sequence per candidate protein.
 - `external_evidence_template.tsv`: sequence-hash-bound return template.
 - `families/`, `verified_regions.tsv`: sequence-checked stage-03 inputs.

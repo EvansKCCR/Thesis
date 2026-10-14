@@ -58,9 +58,10 @@ class ComparativeTests(unittest.TestCase):
         row = self.classify([],evidence=evidence)[0]
         self.assertEqual(row['status'],'provisional')
         self.assertEqual(row['profile'],'supported')
-        self.assertEqual(row['topology_check'],'not_tested')
+        self.assertNotIn('topology_check',row)
+        self.assertNotIn('phylogeny',row)
 
-    def test_missing_topology_not_equal_negative(self):
+    def test_topology_is_deferred_to_resume(self):
         self.rule['requires_topology']=True
         self.rule['motifs']=['NP.Y']
         evidence=[dict(protein_id='p',family='test',similarity='true',reciprocal='true',source='reference_search')]
@@ -69,9 +70,8 @@ class ComparativeTests(unittest.TestCase):
         self.assertEqual(row['assigned_family'],'test')
         self.assertEqual(row['motif_check'],'not_detected')
         evidence.append(dict(protein_id='p',family='test',topology='false',source='topology_prediction'))
-        row = self.classify(['PF00001','PF00002','PF00002'],evidence=evidence)[0]
-        self.assertEqual(row['status'],'provisional')
-        self.assertEqual(row['topology_check'],'not_supported')
+        with self.assertRaisesRegex(ValueError,'resume'):
+            self.classify(['PF00001','PF00002','PF00002'],evidence=evidence)
 
     def test_conflicting_family_assignments_are_not_resolved_arbitrarily(self):
         evidence=[dict(protein_id='p',family=family,similarity='true',reciprocal='true',source='search') for family in ['test','other']]
@@ -135,8 +135,8 @@ class ComparativeTests(unittest.TestCase):
         self.assertEqual(row['status'],'provisional')
         self.assertIn('computational_anchor_only',row['warnings'])
         evidence.append(dict(protein_id='p',family='test',phylogeny='true',source='independent_tree'))
-        row=self.classify(['PF00001','PF00002','PF00002'],evidence=evidence)[0]
-        self.assertEqual(row['status'],'supported_candidate')
+        with self.assertRaisesRegex(ValueError,'resume'):
+            self.classify(['PF00001','PF00002','PF00002'],evidence=evidence)
 
     def test_targeted_domain_order_gate_keeps_reordered_hit_provisional(self):
         self.rule['ordered_domain_groups']=[['PF00001'],['PF00002']]

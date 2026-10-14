@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+VERSION = '1.0'
 LEGACY_SPECIES = dict(Hsap='Homo_sapiens.faa', Cele='Caenorhabditis_elegans.fa',
                Shae='Schistosoma_haematobium.fa', Sjap='Schistosoma_japonicum.fa',
                Sman='Schistosoma_mansoni.fa')
@@ -132,7 +133,7 @@ def prepare(args):
                 raise ValueError(f'Invalid or conflicting human mapping: {p}')
             mapping[p] = g
     summary, idmap, missing = [], [], []
-    manifest = {'ready': False, 'created_utc': datetime.now(timezone.utc).isoformat(),
+    manifest = {'pipeline_version':VERSION,'ready': False, 'created_utc': datetime.now(timezone.utc).isoformat(),
                 'selection': 'longest sequence; ties by original protein ID', 'inputs': {}, 'outputs': {},
                 'profile': args.profile, 'species': list(species), 'annotations': {}}
     if args.human_map:
@@ -389,7 +390,7 @@ def extract(args):
         df, rows = read_tsv(dupfile)
         gene_cols = [c for c in df if c.startswith('Genes')]
         write_tsv(out/'candidate_duplications.tsv', df, [r for r in rows if any(members(r[c]) & wanted for c in gene_cols)])
-    (out/'provenance.json').write_text(json.dumps({'results':str(result),'hog_table':str(hogfile),
+    (out/'provenance.json').write_text(json.dumps({'pipeline_version':VERSION,'results':str(result),'hog_table':str(hogfile),
         'hog_sha256':digest(hogfile),'candidate_set':args.candidate_set,
         'species': active_species, 'target_species': targets, 'profile': profile, 'candidate_audit_sha256':digest(audit_file),
         'pairwise_files':{str(p.relative_to(result)):digest(p) for p in pairfiles}},indent=2)+'\n')
@@ -399,6 +400,7 @@ def extract(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version',action='version',version='adhesome-orthology '+VERSION)
     commands = parser.add_subparsers(dest='command', required=True)
     p = commands.add_parser('prepare')
     p.add_argument('--profile',choices=['expanded8','legacy5'],default='expanded8')

@@ -1,8 +1,8 @@
-# Integrin–adhesome integrated workflow v1.0.0
+# Integrin–adhesome integrated workflow v1.0
 
 A modular source distribution integrating detection, external topology/
 localization, motif annotation, whole-proteome orthology and conservative family
-assignment. Start with [WORKFLOW.md](WORKFLOW.md) for setup and all commands.
+assignment. Start with [WORKFLOW.md](README/WORKFLOW.md) for setup and all commands.
 
 ```text
 start -> supported/provisional hypotheses + external candidate FASTA
@@ -19,7 +19,7 @@ species without overwriting earlier analyses. Missing evidence remains unknown.
 
 | Location | Purpose |
 |---|---|
-| adhesome_workflow.py | Single versioned command-line entry point |
+| integrin_adhesome_analysis/adhesome_workflow.py | Single version 1.0 command-line entry point |
 | 01_detection | Detection code, family rules, HMM and curated reference resources |
 | 02_topology_subcellular localization | External handoff documentation |
 | 03_functional_motif_annotation | One active motif implementation and curated workbook/rules |
@@ -35,6 +35,8 @@ Target inputs are configurable: use targets.example.json for one or more species
 
 For step-by-step reference preparation and orthology/phylogeny commands, start with [ORTHOLOGY_PHYLOGENY_GUIDE.md](ORTHOLOGY_PHYLOGENY_GUIDE.md).
 
-Default resume is continuous: annotation -> automatic reference preparation from input/reference_raw -> generated panel -> orthology -> phylogeny -> final audit. See [automated-run instructions](ORTHOLOGY_PHYLOGENY_GUIDE.md). Use continue with an existing annotation for reference-panel expansion without repeating motif annotation.
+Detection uses the updated 174-model Pfam library and 230-component crosswalk. `start` stops at the hypothesis/external-evidence handoff; topology, localization and phylogeny are part of the resumed workflow. See the [detection guide](integrin_adhesome_analysis/01_detection/README.md).
+
+Default resume is continuous: import topology/localization -> motif annotation -> automatic reference preparation from input/reference_raw -> generated panel -> orthology -> independent audit -> phylogeny. See [automated-run instructions](README/ORTHOLOGY_PHYLOGENY_GUIDE.md). Use continue with an existing annotation for reference-panel expansion without repeating motif annotation.
 
 To replicate the analysis from the integrin adhesome reconstruction [paper] (link to be inserted later), download the download the associated files [here](https://drive.google.com/drive/folders/1Y4YH8uxdom6Khsgdj0iUSA_Hts5eDgNU?usp=drive_link).

@@ -3,7 +3,7 @@ import argparse
 import json
 import re
 from pathlib import Path
-from pipeline import records, digest, write_tsv
+from pipeline import records, digest, write_tsv, VERSION
 from refseq_gene_map import parse_gff
 from prepare_reference import prepare
 
@@ -69,6 +69,7 @@ def build(raw, handoff, out):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--version',action='version',version='adhesome-reference-preparation '+VERSION)
     p.add_argument('--raw',type=Path,required=True)
     p.add_argument('--handoff',type=Path,required=True)
     p.add_argument('--out',type=Path,required=True)

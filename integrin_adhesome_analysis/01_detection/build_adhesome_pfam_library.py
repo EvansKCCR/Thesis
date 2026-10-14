@@ -2,13 +2,20 @@
 """Extract versioned models and separate GA models from fallback models."""
 import argparse
 import re
+import gzip
+from datetime import datetime, timezone
+from concurrent.futures import ThreadPoolExecutor
+from urllib.request import urlopen, Request
 from pathlib import Path
-from adhesome_core import table, hmm_records, pf, digest, save_json
+from adhesome_core import table, hmm_records, pf, digest, save_json, VERSION
+from adhesome_components import load_crosswalk
 
-def build(sheet, source, output, full_pfam=False):
+def build(sheet, source, output, full_pfam=False, crosswalk=None):
     wanted = {a for row in table(sheet) for a in re.findall(r'PF\d{5}', row['Pfam accession'])}
     if not wanted:
         raise ValueError('Empty Pfam manifest')
+    if crosswalk:
+        load_crosswalk(crosswalk,sheet)
     found, blocks, ga, fallback = {}, [], [], []
     for meta, block in hmm_records(source):
         accession = pf(meta['ACC'][0])
@@ -31,19 +38,58 @@ def build(sheet, source, output, full_pfam=False):
     output.write_text(''.join(blocks), encoding='utf-8')
     Path(str(output) + '.ga.hmm').write_text(''.join(ga), encoding='utf-8')
     Path(str(output) + '.fallback.hmm').write_text(''.join(fallback), encoding='utf-8')
-    save_json(str(output) + '.metadata.json', dict(source=str(source), source_sha256=digest(source),
+    save_json(str(output) + '.metadata.json', dict(pipeline_version=VERSION,source=str(source), source_sha256=digest(source),
               manifest_sha256=digest(sheet), library_sha256=digest(output), full_pfam=full_pfam,
+              crosswalk_sha256=digest(crosswalk) if crosswalk else None,
               split_sha256={kind:digest(str(output)+'.'+kind+'.hmm') for kind in ('ga','fallback')}, models=found))
     return found
 
+
+def download_models(sheet, folder):
+    """Fetch all requested models together; retain version/hash/URL provenance."""
+    wanted=sorted({a for row in table(sheet) for a in re.findall(r'PF\d{5}',row['Pfam accession'])})
+    folder=Path(folder)
+    folder.mkdir(parents=True,exist_ok=True)
+    def fetch(accession):
+        url=f'https://www.ebi.ac.uk/interpro/api/entry/pfam/{accession}/?annotation=hmm'
+        path=folder/(accession+'.hmm')
+        if not path.exists():
+            with urlopen(Request(url,headers={'User-Agent':'adhesome-workflow/1.0'}),timeout=60) as response:
+                data=response.read()
+            if data[:2]==b'\x1f\x8b':
+                data=gzip.decompress(data)
+            text=data.decode('utf-8')
+            if not text.startswith('HMMER3/') or not text.rstrip().endswith('//'):
+                raise ValueError('Invalid downloaded HMM: '+accession)
+            path.write_text(text,encoding='utf-8')
+        records=list(hmm_records(path))
+        if len(records)!=1 or pf(records[0][0]['ACC'][0])!=accession:
+            raise ValueError('Downloaded accession mismatch: '+accession)
+        return dict(accession=accession,model_version=records[0][0]['ACC'][0],url=url,sha256=digest(path))
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        audit=list(pool.map(fetch,wanted))
+    source=folder/'combined_source.hmm'
+    source.write_text(''.join((folder/(a+'.hmm')).read_text(encoding='utf-8') for a in wanted),encoding='utf-8')
+    save_json(folder/'download_provenance.json',dict(pipeline_version=VERSION,
+        retrieved_utc=datetime.now(timezone.utc).isoformat(),models=audit,manifest_sha256=digest(sheet)))
+    return source
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version',action='version',version='adhesome-library '+VERSION)
     parser.add_argument('--sheet', default=str(Path(__file__).resolve().parent / 'config/adhesome_pfam_manifest.csv'))
-    parser.add_argument('--pfam-hmm', required=True)
-    parser.add_argument('--out', default='databases/pfam/adhesome_v4.hmm')
+    source=parser.add_mutually_exclusive_group(required=True)
+    source.add_argument('--pfam-hmm')
+    source.add_argument('--download',action='store_true',help='Fetch requested models from EMBL-EBI InterPro')
+    parser.add_argument('--download-dir',type=Path,default=Path(__file__).resolve().parent/'databases/pfam/source_v1.0')
+    parser.add_argument('--crosswalk',default=str(Path(__file__).resolve().parent/'config/adhesome_component_crosswalk.csv'))
+    parser.add_argument('--out', default=str(Path(__file__).resolve().parent/'databases/pfam/adhesome_v1.0.hmm'))
     parser.add_argument('--full-pfam', action='store_true', help='Preserve all Pfam models for complete observed architectures')
     args = parser.parse_args()
-    models = build(args.sheet, args.pfam_hmm, args.out, args.full_pfam)
+    if args.download and args.full_pfam:
+        parser.error('--full-pfam requires a complete local --pfam-hmm source')
+    models = build(args.sheet, download_models(args.sheet,args.download_dir) if args.download else args.pfam_hmm,
+                   args.out,args.full_pfam,args.crosswalk)
     print(f'Extracted {len(models)} models; scan stage will run hmmpress.')
 
 if __name__ == '__main__':

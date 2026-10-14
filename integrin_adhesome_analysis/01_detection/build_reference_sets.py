@@ -10,10 +10,10 @@ import re
 import time
 import urllib.parse
 import urllib.request
-from adhesome_core import table, write_table, write_fasta, save_json, digest, sequence_dict
+from adhesome_core import table, write_table, write_fasta, save_json, digest, sequence_dict, VERSION
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_SEEDS = ROOT / 'references' / 'seeds' / 'schistosome_v5'
+DEFAULT_SEEDS = ROOT / 'references' / 'seeds' / 'adhesome_v1.0'
 
 class UniProtClient:
     def __init__(self, cache, offline=False):
@@ -219,7 +219,7 @@ def build(args):
                 coverage_gap='' if sum(counts.values()) else 'no_selected_spiralian_anchor'))
         write_table(out/'anchor_coverage.csv',coverage,list(coverage[0]))
         data_files.append('anchor_coverage.csv')
-    save_json(out/'reference_lock.json',dict(schema_version=1,created_at=datetime.now(timezone.utc).isoformat(),
+    save_json(out/'reference_lock.json',dict(pipeline_version=VERSION,schema_version=1,created_at=datetime.now(timezone.utc).isoformat(),
         interpretation='Targeted metazoan competitor panel; seed assertions are not automatically verified adhesome experiments.',
         ambiguity_policy=args.ambiguity_policy,repair_identity=args.repair_identity,
         builder_sha256=digest(__file__),rules_sha256=digest(args.rules),
@@ -231,12 +231,13 @@ def build(args):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--version',action='version',version='adhesome-reference-builder '+VERSION)
     p.add_argument('--curated-seed',default=str(DEFAULT_SEEDS/'curated_reference_seed.csv'))
     p.add_argument('--metazoan-seed',default=str(DEFAULT_SEEDS/'metazoan_reference_seed.csv'))
     p.add_argument('--anchor-seed',default=str(DEFAULT_SEEDS/'phylogenetic_anchor_seed.csv'))
     p.add_argument('--supplemental-seed',default=str(DEFAULT_SEEDS/'supplemental_reference_seed.csv'))
     p.add_argument('--rules',default=str(ROOT/'config/family_rules.json'))
-    p.add_argument('--out',default=str(ROOT/'references/schistosome_v5'))
+    p.add_argument('--out',default=str(ROOT/'references/adhesome_v1.0'))
     p.add_argument('--cache',default=str(ROOT/'references/cache/uniprot'))
     p.add_argument('--offline',action='store_true')
     p.add_argument('--repair-identity',action='store_true',help='Resolve incorrect supplied accessions by unique gene/taxon match, retaining provenance')

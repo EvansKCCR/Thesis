@@ -16,6 +16,7 @@ from pathlib import Path
 
 AA = set('ACDEFGHIKLMNPQRSTVWY')
 HERE = Path(__file__).resolve().parent
+VERSION = '1.0'
 
 
 def read_fasta(path):
@@ -309,6 +310,7 @@ def main(argv=None):
     import family_identity_review
     import import_sequence_context
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version',action='version',version='adhesome-motif '+VERSION)
     parser.add_argument('--input-dir', type=Path, default=HERE/'family_specific_candidate_library')
     parser.add_argument('--library', type=Path, default=HERE/'Motif_library'/'exhaustive_comprehensive_adhesion_motif_library_PINCH_Parvin_updated.xlsx')
     parser.add_argument('--rules', type=Path, default=HERE/'Motif_library'/'context_rules.json')
@@ -403,7 +405,7 @@ def main(argv=None):
         inputs += [args.context_dir/name for name in ('DeepLoc_adhesome_candidate_list.csv','SignalP_adhesome_candidate_list.txt','NCBI_CDD_adhesome_hitdata.txt')]
     inputs += [x for x in (args.regions,args.evidence,args.known_meme) if x]
     failed=any(s['status']=='failed' for s in stages)
-    manifest=dict(created_utc=datetime.now(timezone.utc).isoformat(),python=platform.python_version(),
+    manifest=dict(pipeline_version=VERSION,created_utc=datetime.now(timezone.utc).isoformat(),python=platform.python_version(),
         parameters={k:str(v) if isinstance(v,Path) else [str(x) for x in v] if isinstance(v,list) else v for k,v in vars(args).items()},
         inputs={str(p.resolve()):digest(p) for p in inputs},tool_paths=tool_paths,tool_versions=versions,
         inspection_completed=True,external_execution_complete=all(s['status']=='completed' for s in stages),completed=not failed,curated=result,master=master_result)

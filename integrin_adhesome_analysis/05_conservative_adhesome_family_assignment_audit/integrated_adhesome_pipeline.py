@@ -15,7 +15,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 
-VERSION='1.0.0'
+VERSION='1.0'
 TARGET={'PINCH_like','parvin_like','Csk','Syk','Nck','Grb2','Crk','Shc'}
 GRADE_RANK={'A':4,'B':3,'C':2,'D':1}
 DECISION_RANK={'Retain family assignment':4,'Retain provisionally':3,'Family-level provisional only':2,'Ambiguous; manual review':1,'Do not assign at family level':0}
@@ -118,7 +118,7 @@ def rank(r):
  return (assigned,decision,grade,d,specificity,o,m,l,tot,STATUS_RANK.get(t(r,'status'),0))
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('input',type=Path);ap.add_argument('output',type=Path);ap.add_argument('--sheet',default='candidates');ap.add_argument('--keep-all-audited',action='store_true');a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--version',action='version',version='adhesome-audit '+VERSION);ap.add_argument('input',type=Path);ap.add_argument('output',type=Path);ap.add_argument('--sheet',default='candidates');ap.add_argument('--keep-all-audited',action='store_true');a=ap.parse_args()
  wb=load_workbook(a.input);src=wb[a.sheet];headers=[c.value for c in src[1] if c.value not in (None,'')]
  raw=[]
  for vals in src.iter_rows(min_row=2,max_col=len(headers),values_only=True):

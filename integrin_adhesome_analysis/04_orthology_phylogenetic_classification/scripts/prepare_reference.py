@@ -44,7 +44,7 @@ def prepare(species, source, mapping, out):
                 audit.append(dict(protein_id=pid,gene_id=gene,prepared_id=prepared,
                                   representative_id=chosen[0],selected=int(pid==chosen[0]),length=len(seq)))
     write_tsv(out/'identifier_map.tsv', list(audit[0]), audit)
-    (out/'preparation.json').write_text(json.dumps(dict(species=species, proteins=len(seen),genes=len(groups),
+    (out/'preparation.json').write_text(json.dumps(dict(pipeline_version='1.0',species=species, proteins=len(seen),genes=len(groups),
         policy='longest isoform per explicit gene; ties by protein ID; one terminal stop removed',
         input_fasta=str(source.resolve()),input_sha256=digest(source),
         mapping=str(mapping.resolve()),mapping_sha256=digest(mapping),
@@ -54,6 +54,7 @@ def prepare(species, source, mapping, out):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--version',action='version',version='adhesome-gene-preparation 1.0')
     p.add_argument('--species',required=True)
     p.add_argument('--fasta',type=Path,required=True)
     p.add_argument('--map',dest='mapping',type=Path,required=True)

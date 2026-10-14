@@ -95,3 +95,81 @@ PF00039,Fibronectin type I domain,ECM architecture context; not diagnostic alone
 PF00040,Fibronectin type II domain,ECM architecture context; not diagnostic alone
 PF01033,Somatomedin B domain,ECM architecture context; not diagnostic alone
 PF12796,Ankyrin repeats (3 copies),Alternative ILK ankyrin model
+PF00011,HSP20,Reference signatures for HSPB1
+PF00012,HSP70,Reference signatures for HSPA2
+PF00021,UPAR_LY6,Reference signatures for PLAUR
+PF00027,cNMP_binding,Reference signatures for KCNH2
+PF00038,Filament,"Reference signatures for SYNM, VIM"
+PF00047,ig,"Reference signatures for CEACAM1, THY1"
+PF00057,Ldl_recept_a,Reference signatures for LRP1
+PF00058,Ldl_recept_b,Reference signatures for LRP1
+PF00059,Lectin_C,"Reference signatures for LAYN, PKD1"
+PF00061,Lipocalin,Reference signatures for FABP3
+PF00063,Myosin_head,Reference signatures for MYH9
+PF00076,RRM_1,"Reference signatures for PABPC1, RAVER1"
+PF00091,Tubulin,Reference signatures for TUBA1B
+PF00128,Alpha-amylase,Reference signatures for SLC3A2
+PF00155,Aminotran_1_2,Reference signatures for SPTLC1
+PF00200,Disintegrin,Reference signatures for ADAM12
+PF00233,PDEase_I,Reference signatures for PDE4D
+PF00262,Calreticulin,Reference signatures for CALR
+PF00335,Tetraspanin,"Reference signatures for CD151, TSPAN1"
+PF00377,Prion,Reference signatures for PRNP
+PF00431,CUB,"Reference signatures for NRP1, NRP2"
+PF00520,Ion_trans,Reference signatures for KCNH2
+PF00629,MAM,"Reference signatures for NRP1, NRP2"
+PF00658,MLLE,Reference signatures for PABPC1
+PF00754,F5_F8_type_C,"Reference signatures for NRP1, NRP2"
+PF00801,PKD,Reference signatures for PKD1
+PF00999,Na_H_Exchanger,Reference signatures for SLC9A1
+PF01034,Syndecan,Reference signatures for SDC4
+PF01363,FYVE,Reference signatures for ZFYVE21
+PF01421,Reprolysin,Reference signatures for ADAM12
+PF01562,Pep_M12B_propep,Reference signatures for ADAM12
+PF01576,Myosin_tail_1,Reference signatures for MYH9
+PF02063,MARCKS,Reference signatures for MARCKS
+PF02736,Myosin_N,Reference signatures for MYH9
+PF02816,Alpha_kinase,Reference signatures for TRPM7
+PF03953,Tubulin_C,Reference signatures for TUBA1B
+PF03991,Prion_octapep,Reference signatures for PRNP
+PF04045,P34-Arc,Reference signatures for ARPC2
+PF04549,CD47,Reference signatures for CD47
+PF04732,Filament_head,Reference signatures for VIM
+PF04880,NUDE_C,Reference signatures for NDEL1
+PF05104,Rib_recp_KP_reg,Reference signatures for KTN1
+PF06729,CENP-R,Reference signatures for ITGB3BP
+PF07645,EGF_CA,Reference signatures for LRP1
+PF07654,C1-set,Reference signatures for SIRPA
+PF07679,I-set,"Reference signatures for MYOM1, NEXN, PALLD"
+PF07686,V-set,"Reference signatures for CEACAM1, PVR, SIRPA"
+PF07690,MFS_1,Reference signatures for SLC16A3
+PF08016,PKD_channel,Reference signatures for PKD1
+PF08204,V-set_CD47,Reference signatures for CD47
+PF08205,C2-set_2,Reference signatures for PVR
+PF08516,ADAM_CR,Reference signatures for ADAM12
+PF09744,RH1,Reference signatures for MAPK8IP3
+PF11587,Prion_bPrPp,Reference signatures for PRNP
+PF11980,DUF3481,"Reference signatures for NRP1, NRP2"
+PF12662,cEGF,Reference signatures for LRP1
+PF13426,PAS_9,Reference signatures for KCNH2
+PF13855,LRR_8,Reference signatures for PKD1
+PF13895,Ig_2,Reference signatures for CEACAM1
+PF13927,Ig_3,Reference signatures for CEACAM1
+PF14670,FXa_inhibition,Reference signatures for LRP1
+PF15355,Chisel,Reference signatures for SMPX
+PF16028,SLC3A2_N,Reference signatures for SLC3A2
+PF16471,JIP_LZII,Reference signatures for MAPK8IP3
+PF16519,TRPM_tetra,Reference signatures for TRPM7
+PF16644,NEXCaM_BD,Reference signatures for SLC9A1
+PF16696,ZFYVE21_C,Reference signatures for ZFYVE21
+PF16764,Sharpin_PH,Reference signatures for SHARPIN
+PF18100,PDE4_UCR,Reference signatures for PDE4D
+PF18139,LSDAT_euk,Reference signatures for TRPM7
+PF19056,WD40_2,Reference signatures for MAPK8IP3
+PF22327,Nudt16-like,Reference signatures for NUDT16L1
+PF23317,YVC1_C,Reference signatures for TRPM7
+PF25393,LTM,Reference signatures for SHARPIN
+PF25508,TRPM2,Reference signatures for TRPM7
+PF25530,EF-hand_SWAP70_N,Reference signatures for DEF6
+PF26060,TGFBR3_N,Reference signatures for ENG
+PF28321,Ig_MYOM1,Reference signatures for MYOM1
