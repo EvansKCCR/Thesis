@@ -1,0 +1,41 @@
+{
+  "qc": {
+    "min_length": 30,
+    "max_ambiguous_fraction": 0.05,
+    "max_ambiguous_run": 20
+  },
+  "proteomes": [
+    {
+      "code": "Sman",
+      "species": "Schistosoma mansoni",
+      "assembly": "SM_V10",
+      "source_url": "http://www.ebi.ac.uk/ena/data/view/PRJEA36577",
+      "path": "Sman.faa",
+      "gene_regex": "(?:^|\\s)gene=([^\\s]+)"
+    },
+    {
+      "code": "Shae",
+      "species": "Schistosoma haematobium",
+      "assembly": "tdSchHaem2.1",
+      "source_url": "http://www.ebi.ac.uk/ena/data/view/PRJEB44434",
+      "path": "Shae.faa",
+      "gene_regex": "(?:^|\\s)gene=([^\\s]+)"
+    },
+    {
+      "code": "Sjap",
+      "species": "Schistosoma japonicum",
+      "assembly": "ASM636876v1",
+      "source_url": "http://www.ebi.ac.uk/ena/data/view/PRJNA520774",
+      "path": "Sjap.faa",
+      "gene_regex": "(?:^|\\s)gene=([^\\s]+)"
+    },
+    {
+      "code": "validation",
+      "species": "Pipeline validation",
+      "assembly": "Version 1",
+      "source_url": "https://rest.uniprot.org/uniprotkb",
+      "path": "validation.faa",
+      "gene_regex": "^[^|]+\\|([^|]+)\\|"
+    }
+  ]
+}

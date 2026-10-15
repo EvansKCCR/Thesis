@@ -55,8 +55,18 @@ assignment. See the [detection guide](../integrin_adhesome_analysis/01_detection
 phylogeny are processed after returning evidence through `resume`.
 
 ```bash
-python adhesome_workflow.py start --targets-config targets.json --input-dir inputs/targets --out runs/handoff --threads 4
+python adhesome_workflow.py start --targets-config targets.json --input-dir input/targets --out runs/handoff --threads 4
 ```
+
+Use the actual input folder name. A project may use `inputs/targets`; pass that
+path explicitly when it exists. Before starting, append `--check-inputs` to the
+command to check every target's FASTA headers and gene-ID mapping without creating
+the output directory or running analysis. Detection performs this check before
+creating a new run. Each target may use its own `gene_regex`; gene-tagged proteomes
+and pipe-delimited validation FASTAs need different mappings.
+
+If an earlier attempt failed before processing and left only a log directory,
+choose a new `--out` name for the corrected start command. Keep the failed logs.
 
 To reuse a separately generated detection batch, replace `--input-dir` with
 `--detection /path/to/detection_batch`. The first completed module exports:

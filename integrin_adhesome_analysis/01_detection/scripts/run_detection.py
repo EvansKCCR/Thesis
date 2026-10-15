@@ -13,6 +13,7 @@ def main():
     parser.add_argument('--config',type=Path,required=True,help='Target species and explicit gene-ID extraction rules')
     parser.add_argument('--input-dir',type=Path,default=root/'proteome_fasta_files')
     parser.add_argument('--out',type=Path,default=root/'results/detection_v1.0')
+    parser.add_argument('--check-inputs',action='store_true',help='Validate target inputs without running detection')
     for name,path in [('library','databases/pfam/adhesome_v1.0.hmm'),
                       ('manifest','config/adhesome_pfam_manifest.csv'),
                       ('crosswalk','config/adhesome_component_crosswalk.csv'),
@@ -26,6 +27,7 @@ def main():
              '--out',str(args.out.resolve()),'--cpu',str(args.cpu)]
     for flag in ('library','manifest','crosswalk','reference_set','rules'):
         command+=['--'+flag.replace('_','-'),str(getattr(args,flag).resolve())]
+    if args.check_inputs:command+=['--check-inputs']
     subprocess.run(command,check=True,cwd=root)
 
 

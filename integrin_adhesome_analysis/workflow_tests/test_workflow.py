@@ -13,6 +13,27 @@ import adhesome_workflow as w
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_start_preflight_checks_all_targets_before_creating_output(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);raw=root/'input/targets';raw.mkdir(parents=True)
+            (raw/'TargetA.faa').write_text('>a gene=gene1\nMAAA\n')
+            (raw/'validation.faa').write_text('>candidate|P001|GENE1\nMAAA\n>hard_negative|P002|GENE2\nMAAA\n')
+            entries=[dict(code=code,species=code,assembly='fixture',path=code+'.faa',gene_regex=r'gene=(\S+)') for code in ('TargetA','validation')]
+            cfg=root/'targets.json';w.dump(cfg,dict(qc=dict(min_length=1,max_ambiguous_fraction=.1,max_ambiguous_run=5),proteomes=entries))
+            args=argparse.Namespace(detection=None,input_dir=raw,targets_config=cfg,out=root/'handoff',threads=1,check_inputs=True)
+            with patch.object(w,'execute') as execute:
+                with self.assertRaisesRegex(ValueError,'validation: gene_regex'):
+                    w.start(args)
+                self.assertFalse(args.out.exists());execute.assert_not_called()
+                entries[1]['gene_regex']=r'^[^|]+\|([^|]+)\|'
+                w.dump(cfg,dict(proteomes=entries))
+                w.start(args)
+                self.assertFalse(args.out.exists());execute.assert_not_called()
+                args.input_dir=root/'inputs/targets'
+                with self.assertRaisesRegex(ValueError,'use --input-dir'):
+                    w.start(args)
+                self.assertFalse(args.out.exists());execute.assert_not_called()
+
     def test_automatic_references_and_continuous_downstream(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)

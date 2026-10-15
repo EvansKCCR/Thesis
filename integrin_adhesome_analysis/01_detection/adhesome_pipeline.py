@@ -406,7 +406,9 @@ def discover_proteomes(root, settings, excluded=None):
     root = Path(root).resolve()
     excluded = Path(excluded).resolve() if excluded else None
     if not root.is_dir():
-        raise ValueError(f'Input directory does not exist: {root}')
+        alternate=root.parent.parent/'input'/root.name if root.parent.name=='inputs' else None
+        hint=f'; use --input-dir {alternate}' if alternate and alternate.is_dir() else ''
+        raise ValueError(f'Input directory does not exist: {root}'+hint)
     matches = defaultdict(list)
     ignored = []
     for path in sorted(root.rglob('*')):
@@ -436,10 +438,39 @@ def discover_proteomes(root, settings, excluded=None):
     return {code: paths[0] for code, paths in matches.items()}, ignored
 
 
+def check_inputs(root,settings,excluded=None):
+    """Check all input mappings before output creation or external analysis."""
+    paths,ignored=discover_proteomes(root,settings,excluded)
+    summary={}
+    for entry in settings['proteomes']:
+        code=entry['code'];path=paths[code];pattern=re.compile(entry['gene_regex'])
+        if pattern.groups<1:raise ValueError(f'{code}: gene_regex must capture a gene identifier')
+        identifiers=set();genes=set();count=0
+        with path.open(encoding='utf-8-sig') as handle:
+            for line in handle:
+                line=line.strip()
+                if not line.startswith('>'):continue
+                header=line[1:].strip();count+=1
+                if not header:raise ValueError(f'{code}: empty FASTA header in {path}')
+                identifier=header.split()[0]
+                if identifier in identifiers:raise ValueError(f'{code}: duplicate protein ID in {path}: {identifier}')
+                identifiers.add(identifier)
+                match=pattern.search(header)
+                if not match or not match.group(1) or not re.fullmatch(r'[A-Za-z0-9_.-]+',match.group(1)):
+                    raise ValueError(f'{code}: gene_regex cannot extract a safe gene identifier from {identifier} in {path}; update this target entry in targets.json before detection')
+                genes.add(match.group(1))
+        if not count:raise ValueError(f'{code}: no FASTA records in {path}')
+        summary[code]=dict(fasta=str(path),proteins=count,genes=len(genes))
+    return paths,ignored,summary
+
+
 def batch(args):
     settings = json.loads(Path(args.config).read_text(encoding='utf-8'))
     output = Path(args.out).resolve()
-    inputs, ignored = discover_proteomes(args.input_dir, settings, output)
+    inputs, ignored, input_summary = check_inputs(args.input_dir,settings,output)
+    if getattr(args,'check_inputs',False):
+        print(json.dumps(dict(input_root=str(Path(args.input_dir).resolve()),species=input_summary,ignored_fastas=ignored),indent=2))
+        return
     crosswalk=getattr(args,'crosswalk',None)
     if crosswalk:
         load_crosswalk(crosswalk,args.manifest)
@@ -506,6 +537,7 @@ def main():
     p.add_argument('--out', default='results/species')
     p.add_argument('--library')
     p.add_argument('--prepare-only', action='store_true')
+    p.add_argument('--check-inputs',action='store_true',help='Validate all configured FASTA headers and gene mappings, then exit without creating outputs')
     p.add_argument('--reference-set', help='Paired reference directory; also run BLASTP and integrate its evidence')
     p.add_argument('--classification-mode', choices=['comparative','strict'], default='comparative')
     p.add_argument('--manifest', default=str(CONFIG / 'adhesome_pfam_manifest.csv'))

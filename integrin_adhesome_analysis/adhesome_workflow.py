@@ -137,6 +137,18 @@ def start(args):
     if not args.detection and not config_path:
         raise ValueError('New detection requires --targets-config with the target species and gene-ID rules')
     out = args.out.resolve()
+    if not args.detection:
+        sys.path.insert(0,str(DETECT))
+        try:
+            from adhesome_pipeline import check_inputs
+            _,ignored,summary=check_inputs(args.input_dir,config,out/'detection')
+        finally:
+            sys.path.pop(0)
+        if getattr(args,'check_inputs',False):
+            print(json.dumps(dict(input_root=str(args.input_dir.resolve()),species=summary,ignored_fastas=ignored),indent=2))
+            return
+    elif getattr(args,'check_inputs',False):
+        raise ValueError('--check-inputs requires raw --input-dir and --targets-config')
     out.mkdir(parents=True, exist_ok=False)
     detection = args.detection.resolve() if args.detection else out/'detection'
     if not args.detection:
@@ -644,6 +656,7 @@ def main(argv=None):
     s.add_argument('--detection', type=Path, help='Existing batch detection output root')
     s.add_argument('--input-dir', type=Path)
     s.add_argument('--targets-config', type=Path, help='JSON target proteome configuration; required for new detection')
+    s.add_argument('--check-inputs',action='store_true',help='Validate all target file/header/gene mappings and exit without creating a run')
     s.add_argument('--threads', type=int, default=8)
     s.set_defaults(func=start)
     s = sub.add_parser('resume', help='Import external context and run motif annotation')

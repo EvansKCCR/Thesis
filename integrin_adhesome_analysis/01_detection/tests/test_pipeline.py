@@ -7,11 +7,25 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from adhesome_core import fasta, table, write_table
-from adhesome_pipeline import prepare, classify_strict as classify, architecture_matches, blast_hits, scan, homology, discover_proteomes
+from adhesome_pipeline import prepare, classify_strict as classify, architecture_matches, blast_hits, scan, homology, discover_proteomes, batch
 from build_adhesome_pfam_library import build
 from parse_adhesome_domtblout import parse, FIELDS
 
 class PipelineTests(unittest.TestCase):
+    def test_input_check_only_does_not_require_tools_or_write_results(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            (root/'TargetA.faa').write_text('>a gene=one\nMAAA\n  >b gene=one\nMAAA\n')
+            cfg=root/'targets.json'
+            cfg.write_text(json.dumps(dict(proteomes=[dict(code='TargetA',species='TargetA',path='TargetA.faa',gene_regex=r'gene=(\S+)')])) )
+            args=argparse.Namespace(config=cfg,input_dir=root,out=root/'out',check_inputs=True)
+            with patch('adhesome_pipeline.shutil.which',return_value=None),contextlib.redirect_stdout(io.StringIO()) as output:
+                batch(args)
+            report=json.loads(output.getvalue())
+            self.assertEqual(report['species']['TargetA']['proteins'],2)
+            self.assertEqual(report['species']['TargetA']['genes'],1)
+            self.assertFalse((root/'out').exists())
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
