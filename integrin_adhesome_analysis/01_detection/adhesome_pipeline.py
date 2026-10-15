@@ -149,9 +149,10 @@ def catalogue(path, sequence_path, rules=None):
         if any(not row.get(k, '').strip() for k in required):
             raise ValueError('Reference catalogue has missing required metadata')
         key = row['reference_id']
-        if key not in seqs or key in found or row['module'] not in MODULES:
+        component_only = row['family']=='component_reference' and row.get('role')=='crosswalk_component' and bool(row.get('component_symbol'))
+        if key not in seqs or key in found or (row['module'] not in MODULES and not component_only):
             raise ValueError(f'Invalid/duplicate reference or module: {key}')
-        if rules is not None and row['family'] not in rules:
+        if rules is not None and row['family'] not in rules and not component_only:
             raise ValueError(f'Family has no classification rule: {row["family"]}')
         if row.get('sequence_sha256'):
             import hashlib
@@ -178,11 +179,29 @@ def blast_hits(path, evalue, coverage):
                                  subject_start=int(x[6]),subject_end=int(x[7])))
     return hits
 
+
+def reciprocal_agreement(reference, top_rows):
+    """Compete by accession, allowing several hierarchical labels on one sequence.
+
+    Component-only matches remain competitors for family queries unless that
+    accession has an explicitly configured family label in this same panel.
+    """
+    by_accession = defaultdict(list)
+    for row in top_rows:
+        by_accession[row.get('accession') or row['reference_id']].append(row)
+    if reference['family'] == 'component_reference':
+        symbol = reference.get('component_symbol')
+        return bool(by_accession) and all(symbol and any(row.get('component_symbol')==symbol for row in rows)
+                                         for rows in by_accession.values())
+    return bool(by_accession) and all(any(row['family']==reference['family'] for row in rows)
+                                     for rows in by_accession.values())
+
 def homology(args):
     refs = catalogue(args.catalogue, args.references)
     reference_sequences = sequence_dict(args.references)
     broad_rows = table(args.metazoan_catalogue)
     broad = {r['reference_id']: r['family'] for r in broad_rows}
+    broad_metadata = {r['reference_id']: r for r in broad_rows}
     broad_sequences = sequence_dict(args.metazoan)
     broad_ids = set(broad_sequences)
     if len(broad) != len(broad_rows) or set(broad) != broad_ids:
@@ -212,7 +231,8 @@ def homology(args):
             raise ValueError('Reference snapshot differs; choose a new output directory for this reference release')
         if Path(source).resolve() != destination.resolve():
             shutil.copy2(source,destination)
-    for name in ('reference_lock.json','experimental_annotations.csv','resolution_audit.json'):
+    for name in ('reference_lock.json','experimental_annotations.csv','resolution_audit.json',
+                 'component_catalogue.csv','component_family_catalogue.csv','component_coverage.csv','component_expansion.json'):
         source = Path(args.references).resolve().parent / name
         if source.exists():
             shutil.copy2(source,snapshot/name)
@@ -236,7 +256,7 @@ def homology(args):
         top_score = max((h['score'] for h in reverse_hits), default=0)
         top = [h for h in reverse_hits if h['score'] >= top_score * (1-args.tie_fraction)]
         families = {broad[h['subject']] for h in top}
-        supported = families == {family}
+        supported = reciprocal_agreement(refs[hit['query']], [broad_metadata[h['subject']] for h in top])
         rows.append(dict(protein_id=hit['subject'], family=family, reference_id=hit['query'],
                          similarity='true', reciprocal='true' if supported else 'false',
                          evalue=hit['evalue'], bitscore=hit['score'], query_coverage=hit['qcov'],
@@ -250,15 +270,17 @@ def homology(args):
                          reference_phylogenetic_group=refs[hit['query']].get('phylogenetic_group',''),
                          reverse_reference_tiers=';'.join(sorted({r.get('reference_tier','legacy_unverified') for r in broad_rows if r['reference_id'] in {h['subject'] for h in top}})),
                          reference_sequence_sha256=hashlib.sha256(reference_sequences[hit['query']].encode()).hexdigest(),
+                         component_symbol=refs[hit['query']].get('component_symbol',''),
                          source=str(snapshot/'search_catalogue.csv')))
     write_table(output / 'homology.csv', rows, ['protein_id','family','reference_id','similarity','reciprocal',
                 'evalue','bitscore','query_coverage','subject_coverage','subject_start','subject_end','reverse_families','reverse_reference_ids',
                 'reference_accession','reference_species','reference_evidence_source','reference_evidence_status','reference_tier',
-                'reference_phylogenetic_group','reverse_reference_tiers','reference_sequence_sha256','source'])
+                'reference_phylogenetic_group','reverse_reference_tiers','reference_sequence_sha256','component_symbol','source'])
     matched_ids = sorted({r['reference_id'] for r in rows})
     write_fasta(output/'matched_reference_sequences.faa',[(rid,reference_sequences[rid]) for rid in matched_ids])
     write_table(output/'matched_reference_catalogue.csv',[refs[rid] for rid in matched_ids],list(next(iter(refs.values()))))
     save_json(output / 'homology.json', dict(pipeline_version=VERSION,commands=commands, evalue=args.evalue, coverage=args.coverage,
+        artifact_checksums={name:digest(output/name) for name in ('forward.tsv','reverse.tsv','homology.csv')},
         tie_fraction=args.tie_fraction, reference_snapshot=str(snapshot),snapshot_source_mapping={name:str(p) for name,p in paths.items()},
         snapshot_checksums={p.name:digest(p) for p in snapshot.iterdir() if p.is_file()},
         checksums={str(p): digest(p) for p in [args.proteome,args.references,
@@ -322,7 +344,8 @@ def classify_strict(args):
         if path:
             for row in table(path):
                 detection_evidence(row)
-                if row['protein_id'] not in sequences or row['family'] not in rules:
+                component_only = row['family']=='component_reference' and bool(row.get('component_symbol'))
+                if row['protein_id'] not in sequences or (row['family'] not in rules and not component_only):
                     raise ValueError('Unknown evidence protein/family')
                 if not row.get('source'):
                     raise ValueError('Evidence must include a source')
@@ -468,6 +491,9 @@ def batch(args):
     settings = json.loads(Path(args.config).read_text(encoding='utf-8'))
     output = Path(args.out).resolve()
     inputs, ignored, input_summary = check_inputs(args.input_dir,settings,output)
+    requested=set(getattr(args,'species',None) or [])
+    configured={entry['code'] for entry in settings['proteomes']}
+    if requested-configured:raise ValueError('Unknown configured targets: '+', '.join(sorted(requested-configured)))
     if getattr(args,'check_inputs',False):
         print(json.dumps(dict(input_root=str(Path(args.input_dir).resolve()),species=input_summary,ignored_fastas=ignored),indent=2))
         return
@@ -482,12 +508,57 @@ def batch(args):
                 raise RuntimeError(f'{program} is not installed/on PATH; no batch scans started')
         if not Path(args.library + '.metadata.json').is_file():
             raise ValueError('Build the HMM library and metadata before batch scanning')
-    output.mkdir(parents=True, exist_ok=True)
     summary = dict(pipeline_version=VERSION,stage='detection',deferred_stages=['topology','localization','phylogeny'],input_root=str(Path(args.input_dir).resolve()), ignored_fastas=ignored,
                    mode='prepare_only' if args.prepare_only else 'prepare_scan_classify', species={})
+    if requested and (output/'batch.json').exists():
+        previous=json.loads((output/'batch.json').read_text(encoding='utf-8'))
+        if previous.get('input_root')!=summary['input_root'] or previous.get('mode')!=summary['mode']:
+            raise ValueError('Selected-target recovery requires the same input directory and analysis mode')
+        if set(previous.get('species',{}))-configured:
+            raise ValueError('Current target config omits earlier targets; keep the full config for selected-target recovery')
+        for entry in settings['proteomes']:
+            code=entry['code']
+            if code in requested or code not in previous.get('species',{}):continue
+            stored=output/code/'proteome.json'
+            if not stored.is_file():raise ValueError(f'{code}: prior configuration is missing; use a new run')
+            old=json.loads(stored.read_text(encoding='utf-8'))
+            expected=dict(entry,path=str(inputs[code]))
+            if old.get('qc')!=settings['qc'] or old.get('proteomes')!=[expected]:
+                raise ValueError(f'{code}: unselected target settings changed; include it in --species or use a new run')
+            provenance=output/code/'prepared/preparation.json'
+            record=json.loads(provenance.read_text(encoding='utf-8'))['species'][code]
+            if record['input_sha256']!=digest(inputs[code]) or record['output_sha256']!=digest(output/code/'prepared'/f'{code}.faa'):
+                raise ValueError(f'{code}: preserved input/prepared FASTA changed; include it in --species or use a new run')
+            if not args.prepare_only:
+                scan_meta=json.loads((output/code/'domains/scan.json').read_text(encoding='utf-8'))
+                thresholds=dict(i=args.max_i,c=args.max_c,profile_coverage=args.min_coverage)
+                if scan_meta['thresholds']!=thresholds or scan_meta['metadata_sha256']!=digest(args.library+'.metadata.json'):
+                    raise ValueError(f'{code}: scan settings/library changed; use a new run')
+                classification=json.loads((output/code/'candidates/classification.json').read_text(encoding='utf-8'))
+                if classification.get('mode','comparative')!=args.classification_mode:
+                    raise ValueError(f'{code}: classification mode changed; use a new run')
+                for name,sha in classification['checksums'].items():
+                    if digest(name)!=sha:raise ValueError(f'{code}: preserved classification input changed: {name}')
+                for resource in (args.rules,args.manifest,crosswalk):
+                    if resource and classification['checksums'].get(str(Path(resource).resolve()))!=digest(resource):
+                        raise ValueError(f'{code}: classification resources changed; use a new run')
+        summary['species']=previous['species']
+        summary['selected_target_attempts']=previous.get('selected_target_attempts',[])+[dict(targets=sorted(requested),previous_status={code:previous['species'].get(code,{}).get('status') for code in requested})]
+    output.mkdir(parents=True, exist_ok=True)
     for species in settings['proteomes']:
         code = species['code']
+        if requested and code not in requested:continue
         folder = output / code
+        if requested and summary['species'].get(code,{}).get('status')=='failed' and folder.exists():
+            archives=output/'archived_attempts'
+            if folder.resolve().parent!=output or archives.resolve().parent!=output:
+                raise ValueError('Failed-attempt archive must remain inside the detection run')
+            archives.mkdir(exist_ok=True)
+            number=1
+            while (archives/f'{code}_{number:03}').exists():number+=1
+            archive=archives/f'{code}_{number:03}'
+            if archive.resolve().parent!=archives.resolve():raise ValueError('Unsafe failed-attempt archive path')
+            shutil.move(str(folder),str(archive))
         folder.mkdir(parents=True, exist_ok=True)
         entry = dict(species)
         entry['path'] = str(inputs[code])
@@ -538,6 +609,7 @@ def main():
     p.add_argument('--library')
     p.add_argument('--prepare-only', action='store_true')
     p.add_argument('--check-inputs',action='store_true',help='Validate all configured FASTA headers and gene mappings, then exit without creating outputs')
+    p.add_argument('--species',action='append',help='Run only selected target codes while retaining unselected species and batch status')
     p.add_argument('--reference-set', help='Paired reference directory; also run BLASTP and integrate its evidence')
     p.add_argument('--classification-mode', choices=['comparative','strict'], default='comparative')
     p.add_argument('--manifest', default=str(CONFIG / 'adhesome_pfam_manifest.csv'))

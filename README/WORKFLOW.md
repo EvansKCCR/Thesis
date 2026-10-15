@@ -4,6 +4,10 @@ Follow [the automated-run guide](ORTHOLOGY_PHYLOGENY_GUIDE.md). Put complete ref
 
 # Integrated adhesome workflow — version 1.0
 
+The bundled search panel now covers all 230 crosswalk components. See
+[component reference expansion](COMPONENT_REFERENCE_PANEL.md) for panel contents,
+BLAST-only refresh of cached detection runs, and optional orthology calibration.
+
 This is a source distribution of integrated workflow for integrin adhesome mapping from proteomes. It contains scripts, tests,
 curated HMM/reference/motif resources, configuration templates and dependency specifications. Historical versions in resource names identify their provenance; the integrated
 workflow release is 1.0.

@@ -14,6 +14,7 @@ def main():
     parser.add_argument('--input-dir',type=Path,default=root/'proteome_fasta_files')
     parser.add_argument('--out',type=Path,default=root/'results/detection_v1.0')
     parser.add_argument('--check-inputs',action='store_true',help='Validate target inputs without running detection')
+    parser.add_argument('--species',action='append',help='Process only this configured target; repeat to select several and preserve other target results')
     for name,path in [('library','databases/pfam/adhesome_v1.0.hmm'),
                       ('manifest','config/adhesome_pfam_manifest.csv'),
                       ('crosswalk','config/adhesome_component_crosswalk.csv'),
@@ -28,6 +29,7 @@ def main():
     for flag in ('library','manifest','crosswalk','reference_set','rules'):
         command+=['--'+flag.replace('_','-'),str(getattr(args,flag).resolve())]
     if args.check_inputs:command+=['--check-inputs']
+    for code in args.species or []:command+=['--species',code]
     subprocess.run(command,check=True,cwd=root)
 
 

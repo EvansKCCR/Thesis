@@ -1,19 +1,35 @@
-# Active v5 references
+# Reference resources — workflow 1.0
 
-The active panel has 71 forward and 142 reciprocal sequences, adding Syk/Csk and Nck/Grb2/Crk/Shc families. Seeds and paired files are under `seeds/schistosome_v5/` and `schistosome_v5/`. The builder defaults to v5. See [v5 methods](../docs/SIGNALLING_EXPANSION_V5.md).
+`adhesome_v1.0/` is the active paired reference panel. It includes all 230
+components from `config/adhesome_component_crosswalk.csv`, existing family/ECM
+references (including fibronectin-like proteins), spiralian anchors and
+non-adhesome competitors. There are 354 forward and 425 reciprocal reference
+records. Multiple explicit hierarchical labels can share one sequence; reciprocal
+comparison groups tied records by accession.
 
-The following v4 provenance describes the preserved reference set used for the latest completed species results.
+`component_catalogue.csv` contains one reviewed, gene/taxon-verified human record
+per component. `component_coverage.csv` records every original pin, selected
+accession, rejected alternatives and explicit family labels. `component_expansion.json`
+records provenance, and `reference_lock.json` hashes the published files.
+All component references are available for component hypotheses; 48 current
+family labels have direct reference coverage. The 96 family rules are independent
+of the component inventory, so remaining subfamilies may still need calibration.
 
-# Final reference resources
-
-`schistosome_v4/` contains 55 forward-search sequences (26 curated seeds, 20 computational spiralian anchors and nine supplemental family references) and a targeted 126-sequence reciprocal panel. Active accession-pinned seeds are in `seeds/schistosome_v4/`. The original motif library is retained in `motifs/`.
-
-Find a protein by `reference_id` in `schistosome_v4/search_catalogue.csv` or `metazoan_catalogue.csv`, then retrieve that identifier from its paired FASTA. Catalogues record accession, taxon, sequence version, sequence hash and evidence status. Individual FASTAs, experimental annotations and `reference_lock.json` retain exact provenance. Required raw UniProt responses remain in `cache/uniprot/` for offline replay.
+The expansion builder can read this panel, replace its component entries and
+publish a new output without accumulating duplicates:
 
 ```bash
-python build_reference_sets.py --offline --strict-reviewed-curated --out results/reference_rebuild_check
+python 01_detection/expand_component_references.py --base 01_detection/references/adhesome_v1.0 --crosswalk 01_detection/config/adhesome_component_crosswalk.csv --out reference_panel_updated --repair-identity
 ```
 
-Reviewed status and experimental annotations do not automatically verify adhesome membership or identify the exact isoform used in every experiment. Computational anchors are not experimentally demonstrated adhesome proteins. The reciprocal panel is targeted and human-weighted; `non_adhesome` denotes a competing family, not proof that a protein never participates in adhesion. The unresolved historical unc-60 seed is excluded from the final pinned inputs.
+Run that command from the workflow root. It retrieves public UniProt records and
+requires unique reviewed human gene/taxon matches. It never infers family labels
+from shared domains. `build_reference_sets.py` is the legacy/base-seed builder;
+it cannot overwrite an already expanded component panel.
 
-Each homology result retains its own reference snapshot, matched sequences, catalogues and checksums. Original paths in locks/logs are provenance from the time of execution; the project now resides under `01_detection`. See the [final methods](../docs/DOMAIN_RECALIBRATION_V4.md) and [cleanup manifest](../docs/cleanup_manifest.json).
+`HsaAdhesomeReferencePanel.faa` and its generated `.reference.json` sidecar form
+an optional targeted 242-accession human orthology panel. They are not a complete
+proteome. See [the crosswalk panel guide](../../../README/COMPONENT_REFERENCE_PANEL.md)
+for BLAST-only refresh, output interpretation and calibration instructions.
+
+Historical seed/panel names retain provenance; the active pipeline version is 1.0.

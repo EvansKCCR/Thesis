@@ -19,7 +19,10 @@ The active runner is `scripts/run_detection.py`. The active library is
 `config/adhesome_component_crosswalk.csv` is validated against that manifest.
 The canonical `config/family_rules.json` contains the current 96 hierarchical
 entries and is shared with the reference-gated audit. References are in
-`references/adhesome_v1.0`. The previous runner name remains
+`references/adhesome_v1.0`, now covering all 230 crosswalk components with 354
+forward and 425 reciprocal reference records. See
+[the expanded panel guide](../../README/COMPONENT_REFERENCE_PANEL.md) to refresh
+BLAST evidence while reusing existing domain scans. The previous runner name remains
 as a compatibility entry point to version 1.0. Historical seed/model filenames
 identify source provenance rather than a different active pipeline version.
 
@@ -40,6 +43,12 @@ without a family rule are retained as unresolved domain candidates for review;
 adding the crosswalk does not invent 230 validated family rules. Components without
 reference Pfams are recorded in the coverage report. Crosswalk matches for exported
 candidate proteins are carried into `runs/handoff/component_hypotheses.tsv`.
+
+Positive component-reference hits with no retained family hypothesis are exported
+as provisional `component_reference_candidate` records. Their family identity stays
+unassigned, and resume accepts their external evidence. These heterogeneous records
+are excluded from pooled family motif discovery. `crosswalk_reciprocal_components`
+and `reference_reciprocal` retain panel-relative component reciprocity separately.
 
 The bundled library is ready for detection. To reproduce its extraction:
 

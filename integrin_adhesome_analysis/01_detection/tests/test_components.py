@@ -55,6 +55,17 @@ class ComponentTests(unittest.TestCase):
             classify(args)
             self.assertEqual(table(root/'out/candidates.csv')[0]['crosswalk_reference_components'],'COMP1;COMP2')
             self.assertTrue(all(r['reference_similarity']=='True' for r in table(root/'out/component_hypotheses.csv')))
+            # A hit to a component without a family rule must still reach handoff.
+            write_table(root/'domains.csv',[],['query_name','pfam_accession','ali_from','ali_to','decision'])
+            write_table(root/'evidence.csv',[dict(protein_id='p',family='component_reference',component_symbol='COMP1',
+                similarity='true',reciprocal='false',reference_accession='P001',source='fixture')],
+                ['protein_id','family','component_symbol','similarity','reciprocal','reference_accession','source'])
+            classify(args)
+            fallback=table(root/'out/candidates.csv')[0]
+            self.assertEqual(fallback['family'],'component_reference_candidate')
+            self.assertEqual(fallback['status'],'provisional')
+            self.assertEqual(fallback['assigned_family'],'')
+            self.assertIn('COMP1',fallback['crosswalk_reference_components'])
             rows[0]['reference_pfams']='PF00002'
             write_table(root/'crosswalk.csv',rows,fields)
             with self.assertRaisesRegex(ValueError,'absent from manifest'):

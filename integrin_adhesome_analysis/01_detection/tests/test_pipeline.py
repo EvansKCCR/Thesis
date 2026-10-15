@@ -12,6 +12,49 @@ from build_adhesome_pfam_library import build
 from parse_adhesome_domtblout import parse, FIELDS
 
 class PipelineTests(unittest.TestCase):
+    def test_selected_target_retry_preserves_completed_outputs_and_batch_status(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);out=root/'results'
+            qc=dict(min_length=1,max_ambiguous_fraction=.1,max_ambiguous_run=5)
+            entries=[dict(code=c,species=c,assembly='fixture',path=c+'.faa',gene_regex=r'gene=(\S+)') for c in ('TargetA','validation')]
+            (root/'TargetA.faa').write_text('>one gene=one\nMAAA\n')
+            (root/'validation.faa').write_text('>candidate|P2|Two gene=two\nMAAA\n')
+            config=root/'targets.json';config.write_text(json.dumps(dict(qc=qc,proteomes=entries)))
+            rules=root/'rules.json';rules.write_text('{}')
+            manifest=root/'manifest.csv';manifest.write_text('Pfam accession\nPF00001\n')
+            library=str(root/'library.hmm');Path(library+'.metadata.json').write_text('{}')
+            args=argparse.Namespace(config=config,input_dir=root,out=out,prepare_only=False,library=library,
+                rules=str(rules),manifest=str(manifest),crosswalk=None,reference_set=None,classification_mode='comparative',
+                cpu=1,max_i=.001,max_c=.001,min_coverage=.35)
+            from adhesome_core import digest
+            attempts=[]
+            def fake_scan(a):
+                folder=Path(a.out);folder.mkdir()
+                write_table(folder/'domains.csv',[],FIELDS)
+                (folder/'scan.json').write_text(json.dumps(dict(metadata_sha256=digest(library+'.metadata.json'),
+                    thresholds=dict(i=.001,c=.001,profile_coverage=.35))))
+            def fake_classify(a):
+                code=Path(a.proteome).stem;attempts.append(code)
+                if code=='validation' and attempts.count(code)==1:raise ValueError('simulated classifier failure')
+                folder=Path(a.out);folder.mkdir()
+                (folder/'candidates.csv').write_text('protein_id,family,status\n'+code+'__one,test,provisional\n')
+                (folder/'classification.json').write_text(json.dumps(dict(mode='comparative',checksums={str(Path(p).resolve()):digest(p) for p in (a.proteome,a.domains,a.rules,a.manifest)})))
+            with patch('adhesome_pipeline.shutil.which',return_value='fixture/tool'),patch('adhesome_pipeline.scan',side_effect=fake_scan),patch('adhesome_pipeline.classify',side_effect=fake_classify),contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaisesRegex(ValueError,'simulated classifier failure'):batch(args)
+                retained={str(p.relative_to(out/'TargetA')):digest(p) for p in (out/'TargetA').rglob('*') if p.is_file()}
+                entries[1]['gene_regex']=r'^[^|]+\|([^|]+)\|'
+                config.write_text(json.dumps(dict(qc=qc,proteomes=entries)));args.species=['validation']
+                batch(args)
+                self.assertEqual(attempts,['TargetA','validation','validation'])
+                self.assertEqual(retained,{str(p.relative_to(out/'TargetA')):digest(p) for p in (out/'TargetA').rglob('*') if p.is_file()})
+                summary=json.loads((out/'batch.json').read_text())
+                self.assertEqual(set(summary['species']),{'TargetA','validation'})
+                self.assertTrue(all(r['status']=='completed_domain_screen' for r in summary['species'].values()))
+                self.assertTrue((out/'archived_attempts/validation_001/proteome.json').exists())
+                self.assertEqual(list(fasta(out/'validation/prepared/validation.faa')),[('validation__P2','MAAA')])
+                (root/'TargetA.faa').write_text('>one gene=one\nMCCC\n')
+                with self.assertRaisesRegex(ValueError,'preserved input'):batch(args)
+
     def test_input_check_only_does_not_require_tools_or_write_results(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)

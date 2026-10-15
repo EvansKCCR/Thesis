@@ -1,0 +1,11 @@
+{
+  "pipeline_version": "1.0",
+  "taxon_id": 9606,
+  "species": "Homo sapiens",
+  "complete_proteome": false,
+  "panel_scope": "targeted_adhesome_crosswalk_and_retained_human_references",
+  "sequences": 242,
+  "fasta_sha256": "933e604340a6718bdba2de13fd81df9a3bf71c7888040e8c7d2b76942c8c6727",
+  "crosswalk_sha256": "3894d1eb49c465db590939645e18e22c3f1ffe2d836bf11eb36079b0212fc215",
+  "absence_interpretation": "Unrepresented proteins are not evidence of biological absence"
+}

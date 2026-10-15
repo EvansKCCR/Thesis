@@ -33,7 +33,7 @@ class UniProtClient:
         else:
             for attempt in range(3):
                 try:
-                    request = urllib.request.Request(url, headers={'User-Agent':'adhesome-reference-builder/2.0','Accept':'application/json'})
+                    request = urllib.request.Request(url, headers={'User-Agent':'adhesome-reference-builder/1.0','Accept':'application/json'})
                     with urllib.request.urlopen(request, timeout=40) as response:
                         record = dict(url=url, retrieved_at=datetime.now(timezone.utc).isoformat(),
                             uniprot_release=response.headers.get('X-UniProt-Release'),
@@ -116,6 +116,8 @@ def experimental_annotations(entry):
 
 def build(args):
     out = Path(args.out)
+    if (out/'component_expansion.json').exists():
+        raise ValueError('This is an expanded crosswalk panel; use expand_component_references.py with a new --out to retain component coverage')
     out.mkdir(parents=True,exist_ok=True)
     client = UniProtClient(args.cache,args.offline)
     rules = json.loads(Path(args.rules).read_text(encoding='utf-8'))['families']

@@ -63,7 +63,11 @@ class SignallingV5Tests(unittest.TestCase):
         refs=ROOT/'references/adhesome_v1.0'
         forward={r['reference_id']:r for r in table(refs/'search_catalogue.csv')}
         reverse={r['reference_id']:r for r in table(refs/'metazoan_catalogue.csv')}
-        self.assertEqual(len(forward),71); self.assertEqual(len(reverse),142)
+        self.assertEqual(len(forward),354); self.assertEqual(len(reverse),425)
+        components=table(refs/'component_catalogue.csv')
+        crosswalk=table(ROOT/'config/adhesome_component_crosswalk.csv')
+        self.assertEqual(len(components),len(crosswalk))
+        self.assertEqual({r['component_symbol'] for r in components},{r['Official Symbol'] for r in crosswalk})
         for prefix, rows in [('search',forward),('metazoan',reverse)]:
             self.assertEqual(set(sequence_dict(refs/(prefix+'_references.faa'))),set(rows))
         for rid,row in forward.items():

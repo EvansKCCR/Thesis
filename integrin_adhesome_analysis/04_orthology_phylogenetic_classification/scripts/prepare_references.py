@@ -37,6 +37,13 @@ def build(raw, handoff, out):
             raise ValueError(f'Ambiguous mapping/GFF sidecars for {code}')
         rows=list(records(source))
         provenance=dict(fasta=str(source.resolve()),fasta_sha256=digest(source))
+        panel_metadata=raw/f'{code}.reference.json'
+        if panel_metadata.exists():
+            scope=json.loads(panel_metadata.read_text(encoding='utf-8'))
+            if scope.get('fasta_sha256')!=provenance['fasta_sha256']:
+                raise ValueError(f'{code}: reference-scope metadata does not match the FASTA')
+            provenance.update(reference_scope=scope,reference_scope_file=str(panel_metadata.resolve()),
+                              reference_scope_sha256=digest(panel_metadata))
         if maps:
             mapping=maps[0]
             provenance.update(mapping=str(mapping.resolve()),mapping_sha256=digest(mapping),method='explicit_tsv')

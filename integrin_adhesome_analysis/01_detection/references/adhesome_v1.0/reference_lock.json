@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "created_at": "2026-09-29T06:33:32.821213+00:00",
-  "interpretation": "Targeted metazoan competitor panel; seed assertions are not automatically verified adhesome experiments.",
+  "created_at": "2026-10-15T06:02:46.458491+00:00",
+  "interpretation": "Family and component reference panel with retained competitors; component references do not establish family identity or experimentally verified adhesome membership.",
   "ambiguity_policy": "error",
   "repair_identity": false,
   "builder_sha256": "664acb1bf5ce4a67a8cf01140cd172e1ce79110dde2bfc5e279f45487cc4282d",
@@ -15,16 +15,24 @@
   "files": {
     "adhesome_references.faa": "964482e0475f63d505a80dd8bf274d71131f1e6a90931729937316efb43081aa",
     "reference_catalogue.csv": "23b5fe3d6bfd30cda573b8fcd6d931d3c756d5ce6d0c2b1eb4520db6ef4c4db9",
-    "metazoan_references.faa": "5b9e014f8ae4d43f703d9f9545fcef38c42c1ade27a87f2bc3b3252ea271f847",
-    "metazoan_catalogue.csv": "5134f2841927aa1d9e4569c9d3e40d1e12d4b4c913b1c687f68e4204a5dfa6b2",
+    "metazoan_references.faa": "3566b84b27e855e2148a23e65dbc29fc88820e41f8c8ec15b5b6882d176ece30",
+    "metazoan_catalogue.csv": "e7c4f004e9548a012e4626e9942c5a9afc55bf16c154c30a7d3137077f3d945d",
     "experimental_annotations.csv": "670637754ab9bfe8f45bd09013388811b549afcc13874f003da969834233d812",
     "supplemental_references.faa": "526440fea35ec4fd1bedf637c331500a35ec7e0a8f0176455bc834df7585a6f7",
     "supplemental_catalogue.csv": "8f5a51591e7dbefaf76bd57908c13a70c5c8be097cfab0df4ab67b7b47fd38e6",
     "phylogenetic_anchors.faa": "0f4cadd5f28e2737a47ead11e3594602237080f8e14dee2f6c2846f23768d868",
     "anchor_catalogue.csv": "678615d7646599a9426b600937373e2e139737f095ee2e300feb63f7c3afe82c",
-    "search_references.faa": "39d1d64b39b4461e2693b2f01b2f2bb346d1ddc51e5f21618212970f46d8cf36",
-    "search_catalogue.csv": "57b1bbf30a59153d69bf235b127ad463788f4f4e9ff992574acadb273ac0e480",
-    "anchor_coverage.csv": "717d9d5b597bd17d0e6294d89ec9b43ed18a6f97ece636f24116749f5992d600"
+    "search_references.faa": "29077d661b6359f6dafb7aab7220883c95c361a885c3a9ce1fc05ee4142feb22",
+    "search_catalogue.csv": "81fadbee137b23e4a6dd3ade763e6e6a263d3da857fc47eacd0a5114e1b3bbf9",
+    "anchor_coverage.csv": "717d9d5b597bd17d0e6294d89ec9b43ed18a6f97ece636f24116749f5992d600",
+    "component_catalogue.csv": "ec42d80c78ad022f7b7287f81db9de266f1edf1abd6fe6cee2cbf1c7feccb4b4",
+    "component_references.faa": "b01c17055fccb8d791a47021355eda5c7c5850f1001a8133c468811b1faf5ee0",
+    "component_family_catalogue.csv": "49e8642007b76d387036d0911c9d51a9857765f49b8e05371ba487b91e0fc8f3",
+    "component_family_references.faa": "a3433cfe43403c4bc63f11c7a3502ad63962ea188bcadc10d91c6f1f38e2317a",
+    "component_coverage.csv": "6e16b1d29db28919f37b4344a81345cdd9d4eb050155ee38e78a385fbbe66f96",
+    "component_expansion.json": "5a7e9b16b78ac2e1a2905b287e8a048bfb63a20119f312e141658df88f3e288b",
+    "HsaAdhesomeReferencePanel.faa": "933e604340a6718bdba2de13fd81df9a3bf71c7888040e8c7d2b76942c8c6727",
+    "HsaAdhesomeReferencePanel.reference.json": "8f345554797ccd55076d4f75d765ec6ac1e044ac44f626b99fc48a86e8a5ed84"
   },
   "species_counts": {
     "adhesome": {
@@ -7726,5 +7734,8 @@
       "cache_file": "C:\\Users\\eaasa\\Desktop\\Evans_PHD_Thesis\\Integrin_analysis\\01_detection\\references\\cache\\uniprot\\41c4c572e4d5d24c787b3fd438425df79734ebefc03d3c4d62e16b3842441185.json",
       "sha256": "991fe5e0449f4d740db0c28e9cf5d83d33076bebdc6a3662a3c5938efa930b15"
     }
-  ]
+  ],
+  "pipeline_version": "1.0",
+  "crosswalk_sha256": "3894d1eb49c465db590939645e18e22c3f1ffe2d836bf11eb36079b0212fc215",
+  "component_expansion": "component_expansion.json"
 }

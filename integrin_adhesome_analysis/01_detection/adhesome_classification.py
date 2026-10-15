@@ -7,6 +7,7 @@ from adhesome_core import sequence_dict, table, write_table, write_fasta, save_j
 from adhesome_components import annotate_components, CANDIDATE_FIELDS
 from reference_identity import identity_evidence, IDENTITY_FIELDS
 from adhesome_motifs import load_library, scan_motifs, noncatalytic_alignment
+from evidence_coverage import search_coverage, related_families, coverage_details, REPORT_FIELDS
 
 EVIDENCE_KEYS = ('similarity', 'reciprocal', 'profile', 'motif')
 
@@ -44,6 +45,10 @@ def architecture_evidence(hits, rule):
     if rule.get('ordered_domain_groups'):
         groups=rule['ordered_domain_groups']
         order='consistent' if ordered_groups_present(hits,groups) else 'incomplete_or_reordered'
+    if order == 'not_configured' and all(len(group) == 1 for group in alternatives):
+        order = 'not_applicable'
+    order_reason = ('single_domain_type_or_repeat_counts_only' if order == 'not_applicable' else
+                    'no_domain_order_rule' if order == 'not_configured' else 'configured_domain_order')
     support_order=any(ordered_groups_present(hits,g) for g in rule['support_order_alternatives']) if rule.get('support_order_alternatives') else order=='consistent'
     anchors = set(rule.get('screening_domains', []))
     fraction = len(observed) / len(best)
@@ -54,7 +59,7 @@ def architecture_evidence(hits, rule):
     partial = partial or diagnostic
     specific = diagnostic or (complete and len(best) >= 2) or (rule.get('screening_specific', True) and bool(anchors & counts.keys()))
     return dict(complete=complete, partial=partial, diagnostic=diagnostic, specific=specific,support_order=support_order,
-                fraction=fraction, copy_fraction=rank(best)[0], missing=missing, order=order,
+                fraction=fraction, copy_fraction=rank(best)[0], missing=missing, order=order, order_reason=order_reason,
                 observed=';'.join(sorted(observed | (anchors & counts.keys()) | (set(rule.get('diagnostic_domains', [])) & counts.keys()))))
 
 def classify_comparative(args):
@@ -81,10 +86,15 @@ def classify_comparative(args):
             raise ValueError(f'Invalid domain coordinates for {identifier}')
         domains[identifier].append(row)
     evidence_paths = [p for p in [getattr(args,'homology',None), *(getattr(args,'evidence',None) or [])] if p]
+    component_rows = table(args.crosswalk) if getattr(args,'crosswalk',None) else []
+    component_symbols = {row['Official Symbol'] for row in component_rows}
+    reference_counts, coverage_paths = search_coverage(getattr(args, 'homology', None), args.proteome)
+    related = {family: related_families(family, rules, config.get('family_aliases', {})) for family in rules}
     for path in evidence_paths:
         for row in table(path):
             detection_evidence(row)
-            if row['protein_id'] not in sequences or row['family'] not in rules or not row.get('source'):
+            component_only = row['family']=='component_reference' and row.get('component_symbol') in component_symbols
+            if row['protein_id'] not in sequences or (row['family'] not in rules and not component_only) or not row.get('source'):
                 raise ValueError('Evidence requires known protein/family and a source')
             for key in EVIDENCE_KEYS:
                 evidence_state([row], key)
@@ -95,6 +105,7 @@ def classify_comparative(args):
         curated.update(pf(r['Pfam accession']) for r in table(manifest))
     results, architecture_rows, motif_rows = [], [], []
     for identifier, sequence in sequences.items():
+        first_result = len(results)
         hits = sorted(domains[identifier],key=lambda r:(int(r['ali_from']),int(r['ali_to'])))
         architecture = ';'.join(f'{r["pfam_accession"]}:{r["ali_from"]}-{r["ali_to"]}' for r in hits)
         if hits:
@@ -103,6 +114,10 @@ def classify_comparative(args):
         for family, rule in rules.items():
             support = evidence[(identifier,family)]
             states = {key:evidence_state(support,key) for key in EVIDENCE_KEYS}
+            context_support = [row for name in related[family] for row in evidence[(identifier, name)]]
+            coverage = coverage_details(family, states, support, related[family], context_support, reference_counts, evidence_state)
+            if coverage['similarity_reason'] == 'completed_search_no_qualifying_hit':
+                states['similarity'] = 'no_qualifying_hit'
             positive = lambda key: states[key] == 'supported'
             resolved_identity,identity_details=identity_evidence(support,rule)
             screening=bool(rule.get('screening_only') or rule.get('classification_level')=='screen')
@@ -172,11 +187,11 @@ def classify_comparative(args):
                 module=rule['module'],status=status,reason=reason,screening_tier=tier,length=len(sequence),
                 minimum_length=rule['min_length'],length_check='within_expectation' if len(sequence)>=rule['min_length'] else 'shorter_than_expected',
                 domain_match=arch['complete'],domain_type_fraction=arch['fraction'],domain_copy_fraction=arch['copy_fraction'],
-                matched_domains=arch['observed'],missing_domains=arch['missing'],order_check=arch['order'],
+                matched_domains=arch['observed'],missing_domains=arch['missing'],order_check=arch['order'],order_check_reason=arch['order_reason'],
                 support_order_check='consistent' if arch['support_order'] else 'not_satisfied' if rule.get('support_requires_order') else 'not_required',
                 motif_check=motif,reciprocal=states['reciprocal'],
                 motif_details=';'.join(f"{r['motif']}:{r['state']}:{r['start']}-{r['end']}" for r in observations),
-                similarity=states['similarity'],profile=states['profile'],
+                similarity=states['similarity'],profile=states['profile'],**coverage,
                 warnings=';'.join(warnings),architecture=architecture,
                 evidence_sources=';'.join(sorted({r['source'] for r in support}))))
         unassigned = {r['pfam_accession'] for r in hits} & curated - covered
@@ -185,6 +200,18 @@ def classify_comparative(args):
                 status='unresolved',reason='curated_domains_without_matching_family_rule',screening_tier='generic_domain',
                 length=len(sequence),matched_domains=';'.join(sorted(unassigned)),architecture=architecture,
                 warnings='family_assignment_not_established'))
+        component_support = evidence[(identifier,'component_reference')]
+        if any(row.get('similarity','').lower()=='true' for row in component_support) and not any(
+                row['status'] in ('supported_candidate','provisional') for row in results[first_result:]):
+            results.append(dict(protein_id=identifier,family='component_reference_candidate',assigned_family='',
+                module='crosswalk_components',status='provisional',reason='component_reference_hypothesis_requires_validation',
+                screening_tier='component_reference_similarity',length=len(sequence),architecture=architecture,
+                similarity=evidence_state(component_support,'similarity'),reciprocal=evidence_state(component_support,'reciprocal'),
+                similarity_reason='component_evidence_only_not_family_assignment',reciprocal_reason='component_panel_relative_agreement',
+                homology_check='completed' if reference_counts is not None else 'not_documented',
+                order_check='not_applicable',order_check_reason='no_family_architecture_assigned',
+                warnings='component_similarity_not_family_assignment',
+                evidence_sources=';'.join(sorted({row['source'] for row in component_support}))))
     grouped = defaultdict(list)
     for row in results:
         grouped[row['protein_id']].append(row)
@@ -198,12 +225,25 @@ def classify_comparative(args):
     output.mkdir(parents=True,exist_ok=True)
     fields = ['protein_id','family','assigned_family','module','status','reason','screening_tier','length','minimum_length',*IDENTITY_FIELDS,
               'length_check','domain_match','domain_type_fraction','domain_copy_fraction','matched_domains','missing_domains',
-              'order_check','support_order_check','motif_check','motif_details','reciprocal','similarity','profile','warnings','architecture','evidence_sources']
+              'order_check','order_check_reason','support_order_check','motif_check','motif_details','reciprocal','similarity','profile',*REPORT_FIELDS,'warnings','architecture','evidence_sources']
     crosswalk=getattr(args,'crosswalk',None)
     if crosswalk:
         annotate_components(crosswalk,manifest,[r for hits in domains.values() for r in hits],evidence,results,output)
         fields+=CANDIDATE_FIELDS
     write_table(output/'candidates.csv',results,fields)
+    coverage_rows = []
+    for family in rules:
+        family_rows = [row for row in results if row['family'] == family]
+        coverage_rows.append(dict(family=family,
+            search_completed=reference_counts is not None,
+            reference_count=reference_counts.get(family, 0) if reference_counts is not None else '',
+            related_reference_families=';'.join(sorted(name for name in related[family] if reference_counts is not None and reference_counts.get(name))),
+            hypothesis_rows=len(family_rows),
+            similarity_supported=sum(row['similarity']=='supported' for row in family_rows),
+            no_qualifying_hit=sum(row['similarity']=='no_qualifying_hit' for row in family_rows),
+            similarity_not_tested=sum(row['similarity']=='not_tested' for row in family_rows),
+            calibration_action='add_family_specific_references' if reference_counts is not None and not reference_counts.get(family) else ''))
+    write_table(output/'reference_coverage.csv',coverage_rows,list(coverage_rows[0]))
     write_table(output/'motif_observations.csv',motif_rows,['protein_id','family','motif','pattern','context','state','start','end','sequence','interpretation','source'])
     write_table(output/'architectures.csv',architecture_rows,['protein_id','length','architecture'])
     priorities = {'supported_candidate':0,'provisional':1,'unresolved':2}
@@ -221,4 +261,7 @@ def classify_comparative(args):
     save_json(output/'classification.json',dict(pipeline_version=VERSION,stage='detection',deferred_stages=['topology','localization','phylogeny'],mode='comparative',rule_status=config['status'],
         counts=dict(Counter(r['status'] for r in results)),protein_counts=dict(Counter(r['status'] for r in protein_rows)),
         input_proteins=len(sequences),retained_proteins=len(grouped),prioritized_proteins=len(prioritized),
-        checksums={str(p):digest(p) for p in [args.proteome,args.domains,args.rules,*evidence_paths,*([manifest] if manifest else []),*([crosswalk] if crosswalk else []),*([motif_path] if motif_path else [])]}))
+        evidence_reporting=dict(similarity=dict(Counter(r.get('similarity','') for r in results)),
+            similarity_reason=dict(Counter(r.get('similarity_reason','') for r in results)),
+            order_check=dict(Counter(r.get('order_check','') for r in results))),
+        checksums={str(p):digest(p) for p in [args.proteome,args.domains,args.rules,*evidence_paths,*coverage_paths,*([manifest] if manifest else []),*([crosswalk] if crosswalk else []),*([motif_path] if motif_path else [])]}))

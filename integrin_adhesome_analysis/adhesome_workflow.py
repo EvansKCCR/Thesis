@@ -157,6 +157,11 @@ def start(args):
             cmd += ['--input-dir', args.input_dir.resolve()]
         cmd += ['--config', config_path.resolve()]
         execute(cmd, out/'logs')
+    batch_path=detection/'batch.json'
+    if batch_path.exists():
+        statuses=json.loads(batch_path.read_text(encoding='utf-8')).get('species',{})
+        unfinished=[sp for sp in (expected or set(statuses)) if statuses.get(sp,{}).get('status') not in ('completed_with_homology','completed_domain_screen')]
+        if unfinished:raise ValueError('Detection is incomplete for '+', '.join(sorted(unfinished))+'. Finish those targets before exporting the handoff.')
     hypotheses, sequences, families, sources, species = [], {}, defaultdict(dict), {}, set()
     for table in sorted(detection.glob('*/candidates/candidates.csv')):
         sp = table.parents[1].name
@@ -192,6 +197,12 @@ def start(args):
     for family, seqs in families.items():
         write_fasta(out/'families'/f'{family}.faa', seqs)
     write(out/'hypotheses.tsv', hypotheses)
+    coverage_rows=[]
+    for table in sorted(detection.glob('*/candidates/reference_coverage.csv')):
+        coverage_rows.extend(dict(row, Specie=table.parents[1].name) for row in read(table, ','))
+        sources[str(table)]=digest(table)
+    if coverage_rows:
+        write(out/'reference_coverage.tsv', coverage_rows)
     component_rows=[]
     component_fields=[]
     for table in sorted(detection.glob('*/candidates/component_hypotheses.csv')):

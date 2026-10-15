@@ -49,6 +49,7 @@ class WorkflowTests(unittest.TestCase):
             (raw/'RefA.gff3').write_text('chr\tx\tCDS\t1\t9\t.\t+\t0\tprotein_id=p1;Dbxref=GeneID:1\nchr\tx\tCDS\t1\t9\t.\t+\t0\tprotein_id=p2;Dbxref=GeneID:1\n')
             (raw/'RefB.faa').write_text('>b gene=geneB\nMAAA\n')
             (raw/'RefC.faa').write_text('>c\nMAAA\n')
+            w.dump(raw/'RefC.reference.json',dict(fasta_sha256=w.digest(raw/'RefC.faa'),complete_proteome=False,panel_scope='fixture_targeted_panel'))
             (raw/'RefC.protein_gene.tsv').write_text('protein_id\tgene_id\nc\tgeneC\n')
             actual_execute=w.execute
             commands=[]
@@ -105,6 +106,7 @@ class WorkflowTests(unittest.TestCase):
             self.assertTrue((out/'final/audited_candidates.xlsx').exists())
             self.assertEqual(json.loads((out/'final/workflow_manifest.json').read_text())['rules_sha256'],w.digest(w.DETECT/'config/family_rules.json'))
             self.assertEqual(w.fasta(out/'references/RefA/prepared/RefA.faa'),{'RefA__GeneID_1':'MAAA'})
+            self.assertFalse(json.loads((out/'references/RefC/source.json').read_text())['reference_scope']['complete_proteome'])
             self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['duplication_evidence_status'],'unavailable_not_evidence_of_no_duplication')
             self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['grouping'],'family')
             self.assertTrue((out/'phylogeny/family_fibronectin_like/tips.tsv').exists())
@@ -141,6 +143,13 @@ class WorkflowTests(unittest.TestCase):
                 w.write_fasta(base/'prepared'/f'{sp}.faa',{sp+'__g':'MAAA'})
                 rows=[dict(protein_id=sp+'__g',family=f,status='unresolved',domain_match='True')
                       for f in ('fibronectin_like','fibronectin_III_ligand')]
+                for row in rows:
+                    row.update(similarity='no_qualifying_hit',similarity_reason='completed_search_no_qualifying_hit',
+                               reciprocal='not_tested',reciprocal_reason='no_qualifying_forward_hit_for_reciprocal_assessment')
+                rows.append(dict(rows[0],family='component_reference_candidate',status='provisional',similarity='supported',
+                    similarity_reason='component_evidence_only_not_family_assignment',crosswalk_reference_components='FIXTURE'))
+                for row in rows:
+                    row.setdefault('crosswalk_reference_components','')
                 with (base/'candidates/candidates.csv').open('w',newline='') as handle:
                     writer=csv.DictWriter(handle,fieldnames=list(rows[0]))
                     writer.writeheader(); writer.writerows(rows)
@@ -152,6 +161,10 @@ class WorkflowTests(unittest.TestCase):
                     writer=csv.DictWriter(handle,fieldnames=['protein_id','component_symbol','interpretation'])
                     writer.writeheader()
                     writer.writerow(dict(protein_id=sp+'__g',component_symbol='FIXTURE',interpretation='fixture overlap'))
+                with (base/'candidates/reference_coverage.csv').open('w',newline='') as handle:
+                    writer=csv.DictWriter(handle,fieldnames=['family','reference_count','calibration_action'])
+                    writer.writeheader()
+                    writer.writerow(dict(family='fibronectin_like',reference_count=1,calibration_action=''))
             handoff=root/'handoff'
             w.start(argparse.Namespace(detection=detection,input_dir=None,out=handoff,threads=1))
             manifest=json.loads((handoff/'workflow_manifest.json').read_text())
@@ -162,8 +175,10 @@ class WorkflowTests(unittest.TestCase):
             self.assertFalse((handoff/'motifs').exists())
             self.assertEqual(w.read(handoff/'component_hypotheses.tsv')[0]['component_symbol'],'FIXTURE')
             rows=w.read(handoff/'provisional_hypotheses.tsv')
-            self.assertEqual(len(rows),2)
-            self.assertEqual({r['status'] for r in rows},{'unresolved'})
+            self.assertEqual(len(rows),3)
+            self.assertEqual({r['similarity'] for r in rows},{'no_qualifying_hit','supported'})
+            self.assertEqual(w.read(handoff/'reference_coverage.tsv')[0]['Specie'],'TargetA')
+            self.assertEqual({r['status'] for r in rows},{'unresolved','provisional'})
             self.assertEqual(len(w.fasta(handoff/'external_candidates.faa')),1)
             self.assertEqual(len(w.fasta(handoff/'families/fibronectin_like_candidate.faa')),1)
             self.assertEqual(len(w.read(handoff/'fibronectin_like_hypotheses.tsv')),2)
@@ -177,7 +192,7 @@ class WorkflowTests(unittest.TestCase):
                 context_dir=None,external_evidence=root/'returned.tsv',evidence=None,allow_missing_context=False,annotation_only=True))
             audit=w.read(annotation/'motifs/topology_audit.tsv')
             self.assertEqual({r['status'] for r in audit},{'exact_sequence_verified'})
-            self.assertEqual({r['family'] for r in audit},{'fibronectin_like_candidate'})
+            self.assertEqual({r['family'] for r in audit},{'fibronectin_like_candidate','component_reference_candidate'})
 
     def test_fasta_rejects_duplicate_and_invalid(self):
         with tempfile.TemporaryDirectory() as td:
