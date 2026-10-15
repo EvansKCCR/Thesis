@@ -28,6 +28,29 @@ class AuditTests(unittest.TestCase):
                 self.assertEqual(result['assigned_family'],family)
                 self.assertEqual(result['grade'],'A')
 
+    def test_benchmark_weights_context_without_resolving_identity(self):
+        for weight in (0.0,0.4,1.0):
+            result=audit_record(self.row(Orthology_direct_reference_count=5,
+                Orthology_benchmark_status='validated',Orthology_benchmark_weight=weight),self.rules)
+            self.assertEqual(result['orthology_score_0_3'],weight)
+            self.assertEqual(result['orthology_raw_score_0_3'],1)
+            self.assertEqual(result['classification_state'],'broad_only')
+            self.assertEqual(result['assigned_family'],'unassigned')
+
+    def test_orthogroup_benchmark_does_not_discount_independent_identity(self):
+        result=audit_record(self.row(reference_subfamily='ACTB',subfamily_support_method='curated_reference',
+            reference_accession='FIXTURE',Orthology_benchmark_status='validated',Orthology_benchmark_weight=0.1),self.rules)
+        self.assertEqual(result['grade'],'A')
+        self.assertEqual(result['orthology_score_0_3'],3)
+        self.assertEqual(result['orthology_benchmark_weight_status'],'independent_identity_preserved')
+
+    def test_invalid_or_unavailable_weight_does_not_fabricate_validation(self):
+        for status,weight in [('unavailable',0),('validated','nan'),('validated',2)]:
+            result=audit_record(self.row(Orthology_direct_reference_count=2,
+                Orthology_benchmark_status=status,Orthology_benchmark_weight=weight),self.rules)
+            self.assertEqual(result['orthology_score_0_3'],1)
+            self.assertNotEqual(result['orthology_benchmark_weight_status'],'validated_reference_cohort_weight')
+
     def test_reference_string_and_unconcordant_phylogeny_do_not_resolve(self):
         for extra in [dict(reference_subfamily='ACTB'),dict(reference_subfamily='ACTB',subfamily_support_method='phylogeny',phylogeny_concordant='no')]:
             self.assertEqual(audit_record(self.row(**extra),self.rules)['classification_state'],'broad_only')

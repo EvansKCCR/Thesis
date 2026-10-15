@@ -1,5 +1,10 @@
 # Reference inputs
 
+The current default is `inputs/reference_raw` (plural `inputs`). This legacy
+directory is still usable with explicit `--reference-raw input/reference_raw`.
+See ../../../README/EVOLUTIONARY_BENCHMARKING.md for the automatic benchmark
+Input/RefOGs layout and default-disabled phylogeny.
+
 Place complete reference protein FASTAs here: `Code.fa`, `Code.faa` or
 `Code.fasta` (optionally gzip-compressed). Supply matching `Code.gff`/`Code.gff3`
 with NCBI CDS protein_id/GeneID annotations, or `Code.protein_gene.tsv` containing

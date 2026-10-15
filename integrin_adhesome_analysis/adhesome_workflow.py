@@ -303,7 +303,9 @@ def resume(args):
     if not getattr(args, 'annotation_only', False):
         downstream(argparse.Namespace(annotation=out,out=out/'downstream',
             reference_raw=args.reference_raw,threads=args.threads,analysis_threads=args.analysis_threads,
-            compare=args.compare,skip_phylogeny=args.skip_phylogeny,
+            compare=args.compare,phylogeny=getattr(args,'phylogeny',False),
+            benchmark_refogs=getattr(args,'benchmark_refogs',None),benchmark_input_dir=getattr(args,'benchmark_input_dir',None),
+            benchmark_protocol=getattr(args,'benchmark_protocol','open_orthobench'),
             iqtree_threads=args.iqtree_threads,allow_partial_phylogeny=args.allow_partial_phylogeny,
             phylogeny_grouping=args.phylogeny_grouping))
 
@@ -319,14 +321,25 @@ def downstream(args):
     recovering=getattr(args,'recovering',False)
     if recovering and (out/'workflow_manifest.json').exists():
         verify(out,'completed_workflow')
-        print(f'Run already completed: {out}')
-        return
+        prior=json.loads((out/'recovery.json').read_text())
+        retry_trees=bool(getattr(args,'phylogeny',False) and prior['stages'].get('phylogeny_run',{}).get('status')!='complete')
+        retry_benchmark=bool(getattr(args,'retry_benchmark',False) or prior['stages'].get('benchmark',{}).get('status')=='failed')
+        if retry_trees or retry_benchmark:
+            archive_attempt(out/'workflow_manifest.json')
+        else:
+            print(f'Run already completed: {out}')
+            return
     out.mkdir(parents=True,exist_ok=recovering)
     checkpoint=out/'recovery.json'
     if recovering:
         state=json.loads(checkpoint.read_text())
         if state['annotation_sha256']!=digest(annotation/'workflow_manifest.json'):
             raise ValueError('Annotation changed since failed run; create a new run')
+        for key in ('threads','analysis_threads','iqtree_threads','phylogeny','phylogeny_grouping','benchmark_refogs','benchmark_input_dir','benchmark_protocol'):
+            if hasattr(args,key):
+                value=getattr(args,key)
+                state['settings'][key]=str(value) if isinstance(value,Path) else value
+        if getattr(args,'retry_benchmark',False):state['stages'].pop('benchmark',None)
         audit_meta=out/'final/workflow_manifest.json'
         if state['stages'].get('audit',{}).get('status')=='complete' and audit_meta.exists():
             saved=json.loads(audit_meta.read_text())
@@ -340,7 +353,7 @@ def downstream(args):
     else:
         state=dict(settings={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items() if k!='func'},
                    annotation_sha256=digest(annotation/'workflow_manifest.json'),stages={})
-        for key in ('annotation','out','reference_raw','compare'):
+        for key in ('annotation','out','reference_raw','compare','benchmark_refogs','benchmark_input_dir'):
             if state['settings'].get(key) is not None:
                 state['settings'][key]=str(Path(state['settings'][key]).resolve())
         dump(checkpoint,state)
@@ -352,6 +365,20 @@ def downstream(args):
         raise ValueError('Missing executables for unfinished stages: '+', '.join(missing)+'. Install dependencies, then use recover --run '+str(out))
     def stage(name,folder,action,preserve=False):
         previous=state['stages'].get(name,{})
+        if name=='benchmark' and previous.get('status')=='complete' and (folder/'summary.json').exists():
+            data=json.loads((folder/'summary.json').read_text())
+            configuration=dict(reference_raw=str(args.reference_raw.resolve()),
+                refogs=str(args.benchmark_refogs.resolve()) if getattr(args,'benchmark_refogs',None) else None,
+                input_dir=str(args.benchmark_input_dir.resolve()) if getattr(args,'benchmark_input_dir',None) else None)
+            changed=data.get('configuration')!=configuration
+            if data.get('protocol')!=getattr(args,'benchmark_protocol','open_orthobench'):changed=True
+            if data.get('status')=='unavailable' and args.reference_raw.exists() and any(args.reference_raw.glob('**/RefOGs')):changed=True
+            if data.get('status')=='invalid_benchmark_inputs' and not data.get('inputs'):changed=True
+            for filename,sha in data.get('inputs',{}).items():
+                if not Path(filename).is_file() or digest(Path(filename))!=sha:changed=True;break
+            if changed:
+                previous={}
+                state['stages'].pop(name,None)
         if previous.get('status')=='complete':
             for filename,sha in previous['files'].items():
                 if digest(out/filename)!=sha:
@@ -371,15 +398,41 @@ def downstream(args):
             state['stages'][name]=dict(status='failed',error=str(exc))
             dump(checkpoint,state)
             raise
-    stage('references',out/'references',lambda:execute([sys.executable,ORTH/'prepare_references.py','--raw',args.reference_raw.resolve(),
-             '--handoff',handoff,'--out',out/'references'],out/'logs'))
+    reference_command=[sys.executable,ORTH/'prepare_references.py','--raw',args.reference_raw.resolve(),
+                       '--handoff',handoff,'--out',out/'references']
+    for flag in ('benchmark_refogs','benchmark_input_dir'):
+        if getattr(args,flag,None):reference_command+=['--'+flag.replace('_','-'),getattr(args,flag)]
+    stage('references',out/'references',lambda:execute(reference_command,out/'logs'))
     stage('panel',out/'panel',lambda:calibrate(argparse.Namespace(handoff=handoff,panel=out/'references/panel.auto.json',out=out/'panel')))
     stage('orthology',out/'orthology',lambda:orthology(argparse.Namespace(panel=out/'panel',out=out/'orthology',results=None,input_manifest=None,
-        threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare,recovering=recovering)),preserve=True)
-    stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final')))
+        threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare,recovering=recovering,inside_workflow=True)),preserve=True)
+    optional_errors=[]
+    benchmark_refreshed=state['stages'].get('benchmark',{}).get('status')!='complete'
+    try:
+        stage('benchmark',out/'benchmark',lambda:benchmark(argparse.Namespace(orthology=out/'orthology',out=out/'benchmark',
+            reference_raw=args.reference_raw,refogs=getattr(args,'benchmark_refogs',None),input_dir=getattr(args,'benchmark_input_dir',None),
+            protocol=getattr(args,'benchmark_protocol','open_orthobench'))))
+    except Exception as exc:
+        optional_errors.append('benchmark: '+str(exc))
+        dump(out/'benchmark_failure.json',dict(status='failed',validated_weight=None,error=str(exc)))
+    summary_path=out/'benchmark/summary.json'
+    if state['stages'].get('audit',{}).get('status')=='complete':
+        saved=json.loads((out/'final/workflow_manifest.json').read_text())
+        if benchmark_refreshed or saved.get('benchmark_summary_sha256')!=(digest(summary_path) if summary_path.exists() else None):
+            state['stages'].pop('audit',None)
+            if getattr(args,'phylogeny_grouping','orthogroup')=='family':
+                state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
+            dump(checkpoint,state)
+    audit_refreshed=state['stages'].get('audit',{}).get('status')!='complete'
+    stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final',benchmark=out/'benchmark')))
+    if audit_refreshed and getattr(args,'phylogeny_grouping','orthogroup')=='family':
+        state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
+        dump(checkpoint,state)
     print(f'Audit complete and available independently of phylogeny: {out}/final/audited_candidates.xlsx',flush=True)
     candidates=out/'orthology/candidates'
-    if not args.skip_phylogeny:
+    if getattr(args,'phylogeny',False):
+      try:
+        dump(out/'phylogeny_status.json',dict(status='requested'))
         if read(candidates/'candidate_HOGs.tsv') or getattr(args,'phylogeny_grouping','orthogroup')=='family':
             if state['stages'].get('phylogeny_run',{}).get('status')!='complete':
                 missing=[name for name in ('mafft','trimal','iqtree2') if not shutil.which(name)]
@@ -401,14 +454,23 @@ def downstream(args):
             if recovering:
                 tree_cmd+=['--retry-failed']
             stage('phylogeny_run',out/'phylogeny',lambda:execute(tree_cmd,out/'logs'),preserve=True)
+            tree_summary=out/'phylogeny/run_summary.json'
+            dump(out/'phylogeny_status.json',dict(status=json.loads(tree_summary.read_text()).get('status','complete') if tree_summary.exists() else 'complete'))
         else:
             dump(out/'phylogeny_status.json',dict(status='no_candidate_groups',trees_inferred=0))
+      except Exception as exc:
+        optional_errors.append('phylogeny: '+str(exc))
+        dump(out/'phylogeny_status.json',dict(status='failed',error=str(exc),audit_completed=True))
+        print('Optional phylogeny failed; completed audit is retained: '+str(exc),flush=True)
     else:
-        dump(out/'phylogeny_status.json',dict(status='explicitly_skipped'))
+        dump(out/'phylogeny_status.json',dict(status='not_requested'))
     summary=out/'phylogeny/run_summary.json'
-    tree_status=json.loads(summary.read_text())['status'] if summary.exists() else 'not_run'
+    status_file=out/'phylogeny_status.json'
+    tree_status=json.loads(summary.read_text())['status'] if summary.exists() else json.loads(status_file.read_text()).get('status','not_run') if status_file.exists() else 'not_run'
+    if any(error.startswith('phylogeny:') for error in optional_errors):tree_status='failed'
     seal(out,'completed_workflow',annotation=str(annotation),phylogeny_status=tree_status,
-         completion_status='completed_with_phylogeny_failures' if tree_status=='partial_failure' else 'complete')
+         optional_errors=optional_errors,benchmark_status='failed' if any(error.startswith('benchmark:') for error in optional_errors) else json.loads(summary_path.read_text()).get('status') if summary_path.exists() else 'failed',
+         completion_status='completed_with_optional_failures' if optional_errors or tree_status=='partial_failure' else 'complete')
     print(f'Workflow audit ready (phylogeny: {tree_status}): {out}/final/audited_candidates.xlsx')
 
 
@@ -438,9 +500,9 @@ def recover(args):
         if generated!=json.loads((run/'panel/panel.snapshot.json').read_text()):
             raise ValueError('Generated reference panel differs from staged panel')
         state=dict(annotation_sha256=digest(annotation/'workflow_manifest.json'),stages={},settings=dict(
-            annotation=str(annotation),out=str(run),reference_raw=str(ROOT/'input/reference_raw'),
+            annotation=str(annotation),out=str(run),reference_raw=str(ROOT/'inputs/reference_raw'),
             threads=args.threads or 8,analysis_threads=args.analysis_threads or 8,iqtree_threads=args.iqtree_threads or 2,
-            compare=None,skip_phylogeny=False,allow_partial_phylogeny=False))
+            compare=None,phylogeny=False,allow_partial_phylogeny=False))
         def adopt(name,files):
             state['stages'][name]=dict(status='complete',files={str(p.relative_to(run)):digest(p) for p in files if p.is_file()})
         adopt('references',(run/'references').rglob('*'))
@@ -451,7 +513,7 @@ def recover(args):
                 raise ValueError('Existing orthology used a different panel')
             adopt('orthology',(run/'orthology').rglob('*'))
         phylo=run/'phylogeny/manifest.json'
-        if phylo.exists() and 'orthology' in state['stages']:
+        if phylo.exists() and 'orthology' in state['stages'] and getattr(args,'phylogeny',False):
             preparation=json.loads(phylo.read_text())
             state['settings']['phylogeny_grouping']=preparation.get('grouping','orthogroup')
             prepared_files=[phylo,run/'phylogeny/groups.tsv']
@@ -470,10 +532,14 @@ def recover(args):
         raise ValueError('No recovery checkpoint found. For a run created before checkpoints were added, use --adopt-existing and --annotation with its completed annotation directory.')
     state=json.loads((run/'recovery.json').read_text())
     settings=state['settings']
-    for key in ('annotation','out','reference_raw','compare'):
+    for key in ('annotation','out','reference_raw','compare','benchmark_refogs','benchmark_input_dir'):
         if settings.get(key) is not None:
             settings[key]=Path(settings[key])
     settings['out']=run
+    settings['phylogeny']=settings.get('phylogeny',False)
+    settings['retry_benchmark']=getattr(args,'retry_benchmark',False)
+    if getattr(args,'phylogeny',None) is not None:settings['phylogeny']=args.phylogeny
+    if getattr(args,'phylogeny_grouping',None) is not None:settings['phylogeny_grouping']=args.phylogeny_grouping
     for key in ('threads','analysis_threads','iqtree_threads'):
         if getattr(args,key) is not None:
             settings[key]=getattr(args,key)
@@ -497,7 +563,8 @@ def calibrate(args):
     for entry in entries:
         sp = entry['species']
         source = (args.panel.resolve().parent/entry['fasta']).resolve()
-        if not entry.get('source') or entry.get('gene_level') is not True:
+        benchmark_unit=entry.get('unit_level')=='benchmark_protein' and sp not in targets
+        if not entry.get('source') or (entry.get('gene_level') is not True and not benchmark_unit):
             raise ValueError(f'{sp}: declare gene_level=true and document the proteome source/release')
         seqs = fasta(source)
         if any(not re.fullmatch(re.escape(sp)+r'__[A-Za-z0-9_.-]+', k) for k in seqs):
@@ -505,7 +572,8 @@ def calibrate(args):
         allseqs.update(seqs)
         write_fasta(out/'proteomes'/f'{sp}.faa', seqs)
         sources[str(source)] = digest(source)
-        counts.append(dict(species=sp, genes=len(seqs), source=entry['source']))
+        counts.append(dict(species=sp, genes=len(seqs) if not benchmark_unit else '',units=len(seqs),
+                           unit_level='benchmark_protein' if benchmark_unit else 'gene',source=entry['source']))
     candidates = fasta(handoff/'external_candidates.faa')
     mapping = []
     for pid, seq in candidates.items():
@@ -577,8 +645,81 @@ def orthology(args):
         write(out/'calibration_comparison.tsv', [dict(candidate_id=r['candidate_id'],
               previous_references=old[r['candidate_id']]['references'], current_references=r['references'],
               previous_review=old[r['candidate_id']]['calibration_review'], current_review=r['calibration_review']) for r in review])
+    if not getattr(args,'inside_workflow',False):
+        benchmark_command(results,panel,getattr(args,'reference_raw',ROOT/'inputs/reference_raw'),out/'benchmark',out/'logs',
+                          getattr(args,'benchmark_refogs',None),getattr(args,'benchmark_input_dir',None),getattr(args,'benchmark_protocol','open_orthobench'))
     seal(out, 'orthology', panel=str(panel), panel_manifest=digest(panel/'workflow_manifest.json'), results=str(results))
     print(f'Orthology complete: {out}; inspect calibration_review.tsv before final audit.')
+
+
+def benchmark_command(results,panel,raw,out,logs,refogs=None,input_dir=None,protocol='open_orthobench'):
+    command=[sys.executable,ORTH/'benchmark.py','--workflow','--results',results,'--panel',panel,
+             '--reference-raw',raw,'--out',out,'--protocol',protocol]
+    if refogs:command+=['--refogs',refogs]
+    if input_dir:command+=['--input-dir',input_dir]
+    execute(command,logs)
+
+
+def benchmark(args):
+    orthology_dir=args.orthology.resolve()
+    meta=verify(orthology_dir,'orthology',required_files=['candidates/candidate_report.tsv','candidates/provenance.json'])
+    panel=Path(meta['panel'])
+    verify(panel,'panel')
+    if digest(panel/'workflow_manifest.json')!=meta['panel_manifest']:
+        raise ValueError('Benchmark orthology panel changed')
+    out=args.out.resolve()
+    benchmark_command(Path(meta['results']),panel,args.reference_raw.resolve(),out,out.parent/'logs',
+                      getattr(args,'refogs',None),getattr(args,'input_dir',None),getattr(args,'protocol','open_orthobench'))
+    seal(out,'evolutionary_benchmark',orthology=str(orthology_dir),orthology_manifest=digest(orthology_dir/'workflow_manifest.json'),
+         panel_manifest=digest(panel/'workflow_manifest.json'),benchmark_script_sha256=digest(ORTH/'benchmark.py'),
+         benchmark_adapter_sha256=digest(ORTH/'benchmark_workflow.py'))
+
+
+def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
+    """Only apply a score bound to unchanged ground truth, predictions and panel."""
+    result=dict(Orthology_benchmark_status='unavailable',Orthology_benchmark_weight='',
+                Orthology_benchmark_source='',Orthology_benchmark_reason='No evolutionary benchmark report',
+                Orthology_benchmark_scope='reference_cohort_orthogroup_inference',Orthology_benchmark_f1='',
+                Orthology_benchmark_precision='',Orthology_benchmark_recall='',Orthology_benchmark_refogs='')
+    if not folder or not (folder/'summary.json').exists():
+        failure=folder.parent/'benchmark_failure.json' if folder else None
+        if failure and failure.exists():
+            detail=json.loads(failure.read_text())
+            result.update(Orthology_benchmark_status='failed',Orthology_benchmark_reason=detail.get('error','Benchmark execution failed'))
+        return result,None
+    path=folder/'summary.json'
+    sha=digest(path)
+    try:
+        if (folder/'workflow_manifest.json').exists():
+            meta=verify(folder,'evolutionary_benchmark')
+            if meta['orthology_manifest']!=digest(orthology_dir/'workflow_manifest.json'):
+                raise ValueError('Benchmark belongs to another orthology analysis')
+        elif folder==orthology_dir/'benchmark':
+            verify(orthology_dir,'orthology',required_files=['benchmark/summary.json'])
+        else:
+            raise ValueError('Benchmark report lacks workflow provenance')
+        data=json.loads(path.read_text())
+        result.update(Orthology_benchmark_status=data['status'],Orthology_benchmark_source=str(path),
+                      Orthology_benchmark_reason='; '.join(data.get('diagnostics',[])))
+        if data['status']=='validated':
+            import math
+            weight=float(data['validated_weight'])
+            if not math.isfinite(weight) or not 0<=weight<=1:raise ValueError('Benchmark weight must be finite and between zero and one')
+            if not math.isfinite(float(data['metrics']['f1'])) or abs(float(data['metrics']['f1'])-weight)>1e-12:
+                raise ValueError('Benchmark weight differs from the measured reference-cohort F1')
+            if data.get('panel_manifest_sha256')!=digest(panel/'workflow_manifest.json'):
+                raise ValueError('Benchmark panel differs from audit panel')
+            prediction=Path(data['prediction_file'])
+            if Path(orthology_meta['results']).resolve() not in prediction.resolve().parents:
+                raise ValueError('Benchmark used predictions outside the audited orthology results')
+            for name,expected in data['inputs'].items():
+                if digest(Path(name))!=expected:raise ValueError('Benchmark input changed: '+name)
+            result['Orthology_benchmark_weight']=weight
+            result.update(Orthology_benchmark_f1=data['metrics']['f1'],Orthology_benchmark_precision=data['metrics']['precision'],
+                          Orthology_benchmark_recall=data['metrics']['recall'],Orthology_benchmark_refogs=data['metrics']['evaluated_refogs'])
+    except (ValueError,OSError,KeyError,TypeError) as exc:
+        result.update(Orthology_benchmark_status='invalid_provenance',Orthology_benchmark_weight='',Orthology_benchmark_reason=str(exc))
+    return result,sha
 
 
 def audit(args):
@@ -613,7 +754,10 @@ def audit(args):
         if r['region'] in ('transmembrane', 'signal_peptide'):
             topology[r['family'],r['sequence_id']].add('TM' if r['region']=='transmembrane' else 'SP')
     names = {'Hsap':'H. sapiens','Cele':'C. elegans','Dmel':'D. melanogaster','Mmus':'M. musculus','Xlae':'X. laevis'}
+    benchmark_folder=getattr(args,'benchmark',None) or orthology_dir/'benchmark'
+    benchmark_fields,benchmark_sha=benchmark_evidence(benchmark_folder,orthology_dir,ort,panel)
     for row in rows:
+        row.update(benchmark_fields)
         pid, fam = row['protein_id'], row.get('motif_family') or row['family']
         report = reports[pid]
         refs = [k.removesuffix('_orthologues') for k,v in report.items() if k.endswith('_orthologues') and v]
@@ -653,6 +797,7 @@ def audit(args):
     audit_rules=DETECT/'config/family_rules.json'
     execute([sys.executable,AUDIT,out/'audit_input.xlsx',out/'audited_candidates.xlsx','--rules',audit_rules,'--keep-all-audited'],out/'logs')
     seal(out, 'audit', annotation=str(annotation), orthology=str(orthology_dir),
+         benchmark_summary_sha256=benchmark_sha,
          motif_snapshot_sha256=digest(motif_snapshot),
          rules_sha256=digest(audit_rules),audit_script_sha256=digest(AUDIT),
          annotation_manifest=digest(annotation/'workflow_manifest.json'), orthology_manifest=digest(orthology_dir/'workflow_manifest.json'))
@@ -679,19 +824,25 @@ def main(argv=None):
     s.add_argument('--allow-missing-context', action='store_true')
     s.add_argument('--annotation-only',action='store_true',help='Stop after motif annotation instead of continuing automatically')
     s.set_defaults(func=resume)
-    s = sub.add_parser('continue',help='Run automatic reference preparation, orthology, phylogeny and audit from an existing annotation')
+    s = sub.add_parser('continue',help='Run reference preparation, orthology, evolutionary benchmarking and audit; phylogeny is opt-in')
     s.add_argument('--annotation',type=Path,required=True)
     s.set_defaults(func=downstream)
     for name in ('resume','continue'):
         command=sub.choices[name]
-        command.add_argument('--reference-raw',type=Path,default=ROOT/'input/reference_raw')
+        command.add_argument('--reference-raw',type=Path,default=ROOT/'inputs/reference_raw')
+        command.add_argument('--benchmark-refogs',type=Path,help='Override automatic RefOGs discovery under reference_raw')
+        command.add_argument('--benchmark-input-dir',type=Path,help='Override automatic matching benchmark Input discovery')
+        command.add_argument('--benchmark-protocol',choices=['open_orthobench','custom'],default='open_orthobench')
         command.add_argument('--threads',type=int,default=8)
         command.add_argument('--analysis-threads',type=int,default=8)
         command.add_argument('--compare',type=Path,help='Previous orthology output for reference-panel comparison')
-        command.add_argument('--skip-phylogeny',action='store_true')
+        phylo=command.add_mutually_exclusive_group()
+        phylo.add_argument('--phylogeny',action='store_true',help='Opt in to optional trees after the audit; tree failures do not invalidate the completed audit')
+        phylo.add_argument('--skip-phylogeny',dest='phylogeny',action='store_false',help='Compatibility alias for the default: do not run phylogeny')
+        command.set_defaults(phylogeny=False)
         command.add_argument('--phylogeny-grouping',choices=['orthogroup','family'],default='orthogroup',help='One tree per orthogroup or union of groups per candidate family')
         command.add_argument('--iqtree-threads',type=int,default=2)
-        command.add_argument('--allow-partial-phylogeny',action='store_true',help='Continue to audit while retaining an explicit partial-failure phylogeny summary')
+        command.add_argument('--allow-partial-phylogeny',action='store_true',help='Retain the tree tool partial-failure summary; audit completion is always independent')
     s = sub.add_parser('calibrate', help='Prepare a new complete gene-level reference panel')
     s.add_argument('--handoff', type=Path, required=True)
     s.add_argument('--panel', type=Path, required=True)
@@ -703,10 +854,22 @@ def main(argv=None):
     s.add_argument('--compare', type=Path)
     s.add_argument('--threads', type=int, default=16)
     s.add_argument('--analysis-threads', type=int, default=8)
+    s.add_argument('--reference-raw',type=Path,default=ROOT/'inputs/reference_raw')
+    s.add_argument('--benchmark-refogs',type=Path)
+    s.add_argument('--benchmark-input-dir',type=Path)
+    s.add_argument('--benchmark-protocol',choices=['open_orthobench','custom'],default='open_orthobench')
     s.set_defaults(func=orthology)
+    s=sub.add_parser('benchmark',help='Evaluate completed orthology against supplied reference-proteome RefOGs')
+    s.add_argument('--orthology',type=Path,required=True)
+    s.add_argument('--reference-raw',type=Path,default=ROOT/'inputs/reference_raw')
+    s.add_argument('--refogs',type=Path)
+    s.add_argument('--input-dir',type=Path)
+    s.add_argument('--protocol',choices=['open_orthobench','custom'],default='open_orthobench')
+    s.set_defaults(func=benchmark)
     s = sub.add_parser('audit', help='Join all evidence and run conservative family audit')
     s.add_argument('--annotation', type=Path, required=True)
     s.add_argument('--orthology', type=Path, required=True)
+    s.add_argument('--benchmark',type=Path,help='Sealed benchmark output; standalone orthology uses its own benchmark subdirectory by default')
     s.set_defaults(func=audit)
     for s in sub.choices.values():
         s.add_argument('--out', type=Path, required=True, help='New output directory')
@@ -714,8 +877,13 @@ def main(argv=None):
     s.add_argument('--run',type=Path,required=True,help='Failed downstream directory or its parent annotation directory')
     s.add_argument('--adopt-existing',action='store_true',help='Validate and checkpoint an older failed run that predates recovery support')
     s.add_argument('--annotation',type=Path,help='Completed annotation directory for adoption of an older failed run')
+    s.add_argument('--retry-benchmark',action='store_true',help='Explicitly recompute a benchmark and refresh dependent audit while reusing completed orthology')
     for name in ('threads','analysis-threads','iqtree-threads'):
         s.add_argument('--'+name,type=int,default=None)
+    phylo=s.add_mutually_exclusive_group()
+    phylo.add_argument('--phylogeny',action='store_true',default=None,help='Opt in to or retry optional phylogeny without rerunning completed orthology/audit')
+    phylo.add_argument('--skip-phylogeny',dest='phylogeny',action='store_false',default=None)
+    s.add_argument('--phylogeny-grouping',choices=['orthogroup','family'],default=None)
     s.set_defaults(func=recover)
     args = p.parse_args(argv)
     try:

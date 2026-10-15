@@ -13,6 +13,79 @@ import adhesome_workflow as w
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_phylogeny_cli_is_opt_in(self):
+        for flags,expected in [([],False),(['--skip-phylogeny'],False),(['--phylogeny'],True),(['--phylogeny-grouping','family'],False)]:
+            with patch.object(w,'downstream') as action:
+                self.assertEqual(w.main(['continue','--annotation','fixture','--out','new_output',*flags]),0)
+                self.assertEqual(action.call_args.args[0].phylogeny,expected)
+
+    def test_reference_benchmark_runs_automatically_before_audit_without_phylogeny(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            handoff,annotation,unused=self.fixture(root)
+            target=root/'detection/TargetA/prepared/TargetA.faa'
+            target.parent.mkdir(parents=True)
+            w.write_fasta(target,w.fasta(handoff/'external_candidates.faa'))
+            w.seal(handoff,'handoff',target_species=['TargetA'],detection=str(root/'detection'),sources={str(target.resolve()):w.digest(target)})
+            w.seal(annotation,'annotation',handoff=str(handoff),handoff_manifest=w.digest(handoff/'workflow_manifest.json'))
+            raw=root/'inputs/reference_raw'
+            inputs=raw/'BENCHMARKS/Input';truth=raw/'BENCHMARKS/RefOGs'
+            inputs.mkdir(parents=True);truth.mkdir()
+            (truth/'RefOG001.txt').write_text('a1\nb1\n')
+            (truth/'RefOG002.txt').write_text('a2\nb2\n')
+            for species,prefix in [('A','a'),('B','b')]:
+                (inputs/(species+'.fa')).write_text(''.join('>'+prefix+str(i)+'\nMAAA\n' for i in range(3)))
+            actual=w.execute;commands=[]
+            def simulated(command,logs):
+                commands.append([str(x) for x in command])
+                if str(command[0])=='orthofinder':
+                    result=Path(command[command.index('-o')+1])/'Results_fixture'
+                    (result/'Phylogenetic_Hierarchical_Orthogroups').mkdir(parents=True)
+                    (result/'Orthologues').mkdir()
+                    w.write(result/'Phylogenetic_Hierarchical_Orthogroups/N0.tsv',[
+                        dict(HOG='HOG'+str(i),TargetA='TargetA__g' if i==1 else '',Bench_A='Bench_A__a'+str(i),Bench_B='Bench_B__b'+str(i)) for i in range(3)])
+                    for species,gene in [('Bench_A','a1'),('Bench_B','b1')]:
+                        w.write(result/f'Orthologues/{species}.tsv',[dict(Orthogroup='OG1',TargetA='TargetA__g',**{species:species+'__'+gene})])
+                else:
+                    actual(command,logs)
+            out=root/'automatic'
+            with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=simulated):
+                w.downstream(argparse.Namespace(annotation=annotation,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,benchmark_protocol='custom'))
+            summary=json.loads((out/'benchmark/summary.json').read_text())
+            self.assertEqual(summary['status'],'validated',summary.get('diagnostics'))
+            self.assertEqual(summary['validated_weight'],1.0)
+            self.assertEqual(summary['mapped_reference_proteins'],6)
+            joined=w.read(out/'final/joined_evidence.tsv')[0]
+            self.assertEqual(joined['Orthology_benchmark_status'],'validated')
+            self.assertEqual(float(joined['Orthology_benchmark_weight']),1.0)
+            self.assertFalse(any('phylogeny.py' in ' '.join(command) for command in commands))
+            self.assertEqual(w.verify(out,'completed_workflow')['phylogeny_status'],'not_requested')
+            panel=json.loads((out/'references/panel.auto.json').read_text())
+            self.assertTrue(all(row.get('unit_level')=='benchmark_protein' and row['gene_level'] is False for row in panel['proteomes'] if row['species'].startswith('Bench_')))
+            benchmark_index=next(i for i,c in enumerate(commands) if 'benchmark.py' in c[1])
+            audit_index=next(i for i,c in enumerate(commands) if 'integrated_adhesome_pipeline.py' in c[1])
+            self.assertLess(benchmark_index,audit_index)
+            def failed_benchmark(command,logs):
+                if 'benchmark.py' in str(command[1]):raise ValueError('simulated benchmark execution failure')
+                return simulated(command,logs)
+            failed=root/'benchmark_failure_run'
+            with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=failed_benchmark):
+                w.downstream(argparse.Namespace(annotation=annotation,out=failed,reference_raw=raw,threads=1,analysis_threads=1,compare=None,benchmark_protocol='custom'))
+            self.assertTrue((failed/'final/audited_candidates.xlsx').exists())
+            self.assertEqual(w.read(failed/'final/joined_evidence.tsv')[0]['Orthology_benchmark_status'],'failed')
+            self.assertEqual(w.verify(failed,'completed_workflow')['completion_status'],'completed_with_optional_failures')
+            boundary=len(commands)
+            with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=simulated):
+                w.recover(argparse.Namespace(run=failed,threads=1,analysis_threads=None,iqtree_threads=None))
+            self.assertFalse(any(command[0]=='orthofinder' for command in commands[boundary:]))
+            self.assertEqual(w.read(failed/'final/joined_evidence.tsv')[0]['Orthology_benchmark_status'],'validated')
+            self.assertEqual(w.verify(failed,'completed_workflow')['completion_status'],'complete')
+            # A changed ground-truth file cannot keep supplying a validated weight.
+            (truth/'RefOG001.txt').write_text('a1\nb2\n')
+            fields,sha=w.benchmark_evidence(out/'benchmark',out/'orthology',json.loads((out/'orthology/workflow_manifest.json').read_text()),out/'panel')
+            self.assertEqual(fields['Orthology_benchmark_status'],'invalid_provenance')
+            self.assertEqual(fields['Orthology_benchmark_weight'],'')
+
     def test_start_preflight_checks_all_targets_before_creating_output(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);raw=root/'input/targets';raw.mkdir(parents=True)
@@ -80,17 +153,22 @@ class WorkflowTests(unittest.TestCase):
             out=root/'automatic'
             with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=simulated):
                 with self.assertRaisesRegex(ValueError,'simulated extraction failure'):
-                    w.downstream(argparse.Namespace(annotation=a,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,skip_phylogeny=False,phylogeny_grouping='family'))
+                    w.downstream(argparse.Namespace(annotation=a,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,phylogeny=True,phylogeny_grouping='family'))
                 self.assertTrue((out/'orthology/inference_complete.json').exists())
-                with self.assertRaisesRegex(ValueError,'simulated tree tool failure'):
-                    w.recover(argparse.Namespace(run=out,threads=2,analysis_threads=None,iqtree_threads=2))
+                w.recover(argparse.Namespace(run=out,threads=2,analysis_threads=None,iqtree_threads=2))
                 self.assertEqual(sum(c[0]=='orthofinder' for c in commands),1)
                 state=json.loads((out/'recovery.json').read_text())
                 self.assertEqual(state['stages']['orthology']['status'],'complete')
                 self.assertEqual(state['stages']['phylogeny_run']['status'],'failed')
                 self.assertEqual(state['stages']['audit']['status'],'complete')
                 self.assertTrue((out/'final/audited_candidates.xlsx').exists())
+                self.assertEqual(w.verify(out,'completed_workflow')['completion_status'],'completed_with_optional_failures')
+                self.assertEqual(json.loads((out/'benchmark/summary.json').read_text())['status'],'unavailable')
+                audit_hash=w.digest(out/'final/audited_candidates.xlsx')
+                w.recover(argparse.Namespace(run=out,threads=2,analysis_threads=None,iqtree_threads=2,phylogeny=True))
+                self.assertEqual(audit_hash,w.digest(out/'final/audited_candidates.xlsx'))
                 # Adopted recovery must refresh an audit built with superseded rules.
+                w.archive_attempt(out/'workflow_manifest.json')
                 audit_meta=out/'final/workflow_manifest.json'
                 saved=json.loads(audit_meta.read_text());saved['rules_sha256']='superseded-rule-hash'
                 w.dump(audit_meta,saved)
@@ -98,7 +176,7 @@ class WorkflowTests(unittest.TestCase):
                 # Simulate an older run without a recovery file; adopt only verified stages.
                 (out/'recovery.json').unlink()
                 w.recover(argparse.Namespace(run=out,threads=2,analysis_threads=None,iqtree_threads=2,
-                    adopt_existing=True,annotation=a))
+                    adopt_existing=True,annotation=a,phylogeny=True))
                 recovered=commands[boundary:]
                 self.assertFalse(any(c[0]=='orthofinder' for c in recovered))
                 self.assertFalse(any('prepare_references.py' in c[1] for c in recovered))

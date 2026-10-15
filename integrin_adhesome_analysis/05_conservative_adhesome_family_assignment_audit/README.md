@@ -16,6 +16,18 @@ then invokes this audit. It does not invent reference/subfamily labels from HOG
 membership. Independently computed identity evidence may be supplied in the
 handoff's external-evidence template and returned through `resume`.
 
+Automatic evolutionary benchmarking uses the supplied original Open_Orthobench
+Input/RefOGs cohort after orthology. A provenance-verified reference-cohort F1
+weights only orthogroup-context evidence. Output preserves benchmark status,
+metrics, source, the raw orthology score and the weight used. This aggregate score
+does not resolve candidate identity, calibrate family HMMs or override architecture
+gates; independent identity routes remain separate. Missing or invalid benchmarks
+are explicit and do not fabricate a validated score. See
+[setup and weighting](../../README/EVOLUTIONARY_BENCHMARKING.md).
+
+Phylogeny is disabled by default. When requested, it runs after audit and cannot
+prevent a completed audit if tools, alignments or trees fail.
+
 Outputs preserve source worksheets and add `Resolved_candidates`,
 `All_hypotheses_audited`, `Manual_review_queue` and `Pipeline_summary`.
 `classification_state` distinguishes `reference_supported`, `provisional_fragment`,

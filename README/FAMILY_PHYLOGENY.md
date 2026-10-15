@@ -1,5 +1,10 @@
 # Audited family phylogenies
 
+Integrated phylogeny is opt-in: supply both `--phylogeny --phylogeny-grouping family`
+on resume/continue. The audit completes first and is retained even if trees fail.
+Without `--phylogeny`, grouping alone does not run any trees. The standalone
+preparation/run commands below remain explicit optional operations.
+
 Family mode selects the current audit's `Resolved_candidates` worksheet: grades
 A, B and C, grouped by `assigned_family`. Grade D and other target proteins are
 excluded. Selection is data driven, with no hard-coded species or count.

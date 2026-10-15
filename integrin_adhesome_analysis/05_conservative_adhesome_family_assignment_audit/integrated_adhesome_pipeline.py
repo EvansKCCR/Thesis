@@ -173,6 +173,20 @@ def orthology_score(row,identity_strength):
     return 0
 
 
+def benchmark_weight(row):
+    """A measured reference-cohort F1 is a context weight, never identity proof."""
+    if value(row,'Orthology_benchmark_status')!='validated':
+        return 1.0,'unavailable_neutral_weight'
+    import math
+    try:
+        weight=float(value(row,'Orthology_benchmark_weight'))
+    except (TypeError,ValueError):
+        return 1.0,'invalid_weight_ignored'
+    if not math.isfinite(weight) or not 0<=weight<=1:
+        return 1.0,'invalid_weight_ignored'
+    return weight,'validated_reference_cohort_weight'
+
+
 def motif_score(row):
     s=value(row,'motif_candidate_tiers','MotifPrediction_candidate_tiers','motif_context_summary').lower()
     if any(w in s for w in ('context_conflict','context_conflicted','contradict','unverified')):return 0
@@ -253,7 +267,12 @@ def audit_record(row,rules):
         state='ambiguous';assigned='unassigned';label='';note='Conflicting independent reference identities across superfamilies'
     ao=winner['score_architecture'] if winner else max((x['score_architecture'] for x in evaluations),default=0)
     oi=winner['score_identity'] if winner else 0
-    ortho=orthology_score(row,oi)
+    raw_ortho=orthology_score(row,oi)
+    weight,weight_status=benchmark_weight(row)
+    # Curated identity, RBH identity, profiles and candidate-specific phylogeny
+    # are not calibrated by a benchmark of orthogroup partitions.
+    independent_identity=oi>=3
+    ortho=raw_ortho if independent_identity else round(raw_ortho*weight,6)
     mo=motif_score(row)
     top=winner['topology_score'] if winner else 0
     total=ao+ortho+mo+max(top,0)
@@ -267,6 +286,8 @@ def audit_record(row,rules):
     out.update({'preaudit_family':value(row,'family'),'assigned_family':assigned,'broad_homology_group':broad,
       'assigned_subfamily':label,'classification_state':state,'grade':grade,'family_decision':state.replace('_',' '),
       'architecture_evidence':note,'domain_score_0_4':ao,'orthology_score_0_3':ortho,'motif_score_0_2':mo,
+      'orthology_raw_score_0_3':raw_ortho,'orthology_benchmark_weight_used':1.0 if independent_identity else weight,
+      'orthology_benchmark_weight_status':'independent_identity_preserved' if independent_identity else weight_status,
       'localization_score_0_1':max(top,0),'total_score_0_10':total,'protein_identity_score_0_3':oi,
       'adhesome_membership':'not_inferred','confidence_statement':'Heuristic evidence tier; not a calibrated probability',
       'conflict_hypotheses':'; '.join(e['name'] for e in leaf[1:]) if len(leaf)>1 else '',

@@ -1,6 +1,6 @@
 # Default: continuous execution after resume
 
-Follow [the automated-run guide](ORTHOLOGY_PHYLOGENY_GUIDE.md). Put complete reference FASTAs and matching GFF/TSV files in input/reference_raw. Resuming the pipeline after stage 1 runs annotation, automatic reference preparation, panel construction, OrthoFinder, phylogeny and final audit. The modular commands below remain available for advanced/manual use; add --annotation-only to resume if deliberately following that route.
+Follow [the automated-run guide](ORTHOLOGY_PHYLOGENY_GUIDE.md). Put reference FASTAs and matching GFF/TSV files in inputs/reference_raw, with the original Open_Orthobench Input/RefOGs bundle for evolutionary benchmarking. Resume runs annotation, reference preparation, panel construction, OrthoFinder, benchmarking and final audit. Phylogeny is opt-in with --phylogeny and cannot block the audit. The modular commands remain available; --annotation-only deliberately stops after annotation.
 
 # Integrated adhesome workflow — version 1.0
 
@@ -122,18 +122,21 @@ context. Optional `--evidence` accepts the motif module's site-specific TSV:
 Use tabs, one-based inclusive intervals and supported/contradicted statuses.
 Predictions and source assertions remain distinct from experimental validation.
 
-## 3. Automatic orthology, phylogeny and reference calibration
+## 3. Automatic orthology, evolutionary benchmark and reference calibration
 
 After motif annotation, the default `resume` command automatically reads
-`input/reference_raw`, prepares gene-level references, constructs a panel from
-all handoff targets plus those references, runs OrthoFinder, prepares/runs
-phylogenies, and writes the final audit. You do not prepare references or write
+`inputs/reference_raw`, prepares references (preserving original benchmark protein units), constructs a panel from
+all handoff targets plus those references, runs OrthoFinder, benchmarks reference
+orthogroups, and writes the final audit. Optional trees require `--phylogeny` and run after audit. You do not prepare references or write
 panel JSON manually. See [the automatic guide](ORTHOLOGY_PHYLOGENY_GUIDE.md) for
 accepted annotations, outputs, and commands to expand the panel using `continue`.
 
 Use `--annotation-only` only if you deliberately want to stop after motifs. The
 optional low-level `calibrate`, `orthology` and `audit` commands remain documented
 in [the manual route](MANUAL_ORTHOLOGY_PHYLOGENY.md).
+
+See [evolutionary benchmarking](EVOLUTIONARY_BENCHMARKING.md) for the original
+Input/RefOGs layout, integrity checks and the measured audit-context weight.
 
 ## 4. Final conservative audit
 
