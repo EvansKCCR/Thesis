@@ -3,6 +3,9 @@ from collections import Counter, defaultdict
 import json
 from pathlib import Path
 import re
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+from classification_contract import general_family,general_rules,stage_one_workbook
 from adhesome_core import sequence_dict, table, write_table, write_fasta, save_json, digest, pf, VERSION, detection_evidence
 from adhesome_components import annotate_components, CANDIDATE_FIELDS
 from reference_identity import identity_evidence, IDENTITY_FIELDS
@@ -64,9 +67,14 @@ def architecture_evidence(hits, rule):
 
 def classify_comparative(args):
     config = json.loads(Path(args.rules).read_text(encoding='utf-8'))
-    rules = config['families']
+    two_stage=config.get('stage1_general_hypotheses',False)
+    rules = general_rules(config) if two_stage else config['families']
     motif_path = (Path(args.rules).resolve().parent / config['motif_library']).resolve() if config.get('motif_library') else None
     motif_library = load_library(motif_path) if motif_path else {}
+    if two_stage:
+        for family,rule in rules.items():
+            rule['motif_rule_ids']=config.get('stage1_motif_rule_ids',{}).get(family,[])
+            if family not in config.get('stage1_motif_rule_ids',{}):rule.pop('motifs',None)
     sequences = sequence_dict(args.proteome)
     domains, evidence = defaultdict(list), defaultdict(list)
     for family, rule in rules.items():
@@ -89,10 +97,15 @@ def classify_comparative(args):
     component_rows = table(args.crosswalk) if getattr(args,'crosswalk',None) else []
     component_symbols = {row['Official Symbol'] for row in component_rows}
     reference_counts, coverage_paths = search_coverage(getattr(args, 'homology', None), args.proteome)
+    if two_stage and reference_counts is not None:
+        folded=Counter()
+        for family,count in reference_counts.items():folded[general_family(family,config['families'])]+=count
+        reference_counts=folded
     related = {family: related_families(family, rules, config.get('family_aliases', {})) for family in rules}
     for path in evidence_paths:
         for row in table(path):
             detection_evidence(row)
+            if two_stage:row=dict(row,family=general_family(row['family'],config['families']))
             component_only = row['family']=='component_reference' and row.get('component_symbol') in component_symbols
             if row['protein_id'] not in sequences or (row['family'] not in rules and not component_only) or not row.get('source'):
                 raise ValueError('Evidence requires known protein/family and a source')
@@ -164,16 +177,18 @@ def classify_comparative(args):
             motif_architecture = bool(rule.get('motif_corroborates_partial_architecture') and arch['partial'] and
                                       any(r['state']=='detected' and r['interpretation']=='family_corroboration' for r in observations))
             # Support is about family identity, not experimental adhesome membership.
-            supported = (not screening and (not rule.get('requires_identity_evidence') or resolved_identity) and positive('reciprocal') and (positive('similarity') or positive('profile')) and
-                         (arch['complete'] or arch['specific'] or motif_architecture) and not conflicts and not negatives and
+            supported = (not screening and (two_stage or not rule.get('requires_identity_evidence') or resolved_identity) and positive('reciprocal') and (positive('similarity') or positive('profile')) and
+                         (arch['complete'] if two_stage else arch['complete'] or arch['specific'] or motif_architecture) and not conflicts and not negatives and
                          extended and
                          (not rule.get('support_requires_order') or arch['support_order']) and
-                         (not anchor_only or positive('profile')))
-            if rule.get('requires_identity_evidence') and not resolved_identity:
+                         (two_stage or not anchor_only or positive('profile')))
+            if not two_stage and rule.get('requires_identity_evidence') and not resolved_identity:
                 warnings.append('independent_reference_identity_missing')
             if screening:
                 status, reason = 'unresolved', 'screening_bucket_not_a_family'
                 warnings.append('not_an_orthology_class')
+            elif two_stage and (conflicts or negatives) and (arch['specific'] or family_evidence):
+                status,reason='conflicting','conflicting_or_negative_family_evidence'
             elif supported:
                 status, reason = 'supported_candidate', 'convergent_family_evidence'
             elif arch['specific'] or family_evidence or (rule.get('requires_identity_evidence') and arch['partial']):
@@ -189,7 +204,7 @@ def classify_comparative(args):
                 domain_match=arch['complete'],domain_type_fraction=arch['fraction'],domain_copy_fraction=arch['copy_fraction'],
                 matched_domains=arch['observed'],missing_domains=arch['missing'],order_check=arch['order'],order_check_reason=arch['order_reason'],
                 support_order_check='consistent' if arch['support_order'] else 'not_satisfied' if rule.get('support_requires_order') else 'not_required',
-                motif_check=motif,reciprocal=states['reciprocal'],
+                motif_check=motif,reciprocal=states['reciprocal'],topology_check='deferred_to_stage_2',phylogeny='deferred_to_stage_2',
                 motif_details=';'.join(f"{r['motif']}:{r['state']}:{r['start']}-{r['end']}" for r in observations),
                 similarity=states['similarity'],profile=states['profile'],**coverage,
                 warnings=';'.join(warnings),architecture=architecture,
@@ -219,18 +234,19 @@ def classify_comparative(args):
         supported = [r for r in rows if r['status']=='supported_candidate']
         if len(supported)>1:
             for row in supported:
-                row.update(status='provisional',assigned_family='',reason='conflicting_family_assignments')
-                row['warnings'] += ';conflicting_family_assignments'
+                row.update(status='provisional',assigned_family='',reason='multiple_supported_family_hypotheses' if two_stage else 'conflicting_family_assignments')
+                row['warnings'] += ';multiple_supported_family_hypotheses' if two_stage else ';conflicting_family_assignments'
     output = Path(args.out)
     output.mkdir(parents=True,exist_ok=True)
     fields = ['protein_id','family','assigned_family','module','status','reason','screening_tier','length','minimum_length',*IDENTITY_FIELDS,
               'length_check','domain_match','domain_type_fraction','domain_copy_fraction','matched_domains','missing_domains',
-              'order_check','order_check_reason','support_order_check','motif_check','motif_details','reciprocal','similarity','profile',*REPORT_FIELDS,'warnings','architecture','evidence_sources']
+              'order_check','order_check_reason','support_order_check','motif_check','motif_details','topology_check','reciprocal','similarity','profile','phylogeny',*REPORT_FIELDS,'warnings','architecture','evidence_sources']
     crosswalk=getattr(args,'crosswalk',None)
     if crosswalk:
         annotate_components(crosswalk,manifest,[r for hits in domains.values() for r in hits],evidence,results,output)
         fields+=CANDIDATE_FIELDS
     write_table(output/'candidates.csv',results,fields)
+    stage_one_workbook(results,output/'Stage_1_output.xlsx')
     coverage_rows = []
     for family in rules:
         family_rows = [row for row in results if row['family'] == family]
@@ -246,7 +262,7 @@ def classify_comparative(args):
     write_table(output/'reference_coverage.csv',coverage_rows,list(coverage_rows[0]))
     write_table(output/'motif_observations.csv',motif_rows,['protein_id','family','motif','pattern','context','state','start','end','sequence','interpretation','source'])
     write_table(output/'architectures.csv',architecture_rows,['protein_id','length','architecture'])
-    priorities = {'supported_candidate':0,'provisional':1,'unresolved':2}
+    priorities = {'supported_candidate':0,'provisional':1,'conflicting':2,'unresolved':3}
     protein_rows = []
     for identifier, rows in sorted(grouped.items()):
         status = min((r['status'] for r in rows),key=priorities.get)

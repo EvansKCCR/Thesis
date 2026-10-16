@@ -13,11 +13,12 @@ targeted model sources were removed; all their accessions are covered by the cur
 library and its versioned source/provenance files.
 
 The current audit is `05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py`.
-It preserves input worksheets and produces `Resolved_candidates`,
-`All_hypotheses_audited`, `Manual_review_queue` and `Pipeline_summary`. Reference
-identity is an explicit gate; the wrapper does not manufacture resolving labels
-from a HOG, gene symbol, shared domain or motif. Broad-only and ambiguous states
-remain visible. Current classifications and counts can differ from earlier audits.
+It follows the supplied nine-sheet Stage_2_output.xlsx template and refines the
+same input species/protein pool under the architecture-gated 4/3/2/1 scheme, with
+hard/background-negative matches excluded from final assignments. Original
+hypotheses, competing families, collapse counts and complete PINCH/parvin
+recoveries are retained. No catalogue-wide replacement or exact-reference
+component-call route is used. See [the two-stage protocol](COMPUTATIONAL_AUDIT.md).
 
 Stage 03 uses the supplied evidence-based motif snapshot. Its default is the
 53-rule `Motif_library/adhesion_core.json`. `--motif-scope master` selects all 347
@@ -68,14 +69,20 @@ python adhesome_workflow.py audit --annotation runs/annotation_current --ortholo
 Both runs must refer to the same unchanged handoff and panel. Old motif IDs absent
 from the current definitions are ignored in audit scoring and counted in
 `MotifPrediction_ignored_superseded_count`. To apply the current classifications
-to family phylogeny, prepare a new project using `--audit-workbook runs/final_current/audited_candidates.xlsx`;
-see [FAMILY_PHYLOGENY.md](FAMILY_PHYLOGENY.md). Grade C broad-only candidates are
-grouped by their explicit broad homology group, with family identity unassigned.
+to family phylogeny, prepare a new project using `--audit-workbook runs/final_current/Stage_2_output.xlsx`;
+see [FAMILY_PHYLOGENY.md](FAMILY_PHYLOGENY.md). Grade C candidates retain their provisional family assignment for grouping.
 
 For an unfinished automatic run, recovery refreshes changed audits and dependent
 family-tree preparation while preserving completed orthology. Completed runs are
 kept as prior analyses; use new output directories to apply new resources.
 
-Validation used fixtures and simulated external inference: 112 tests passed,
-two Biopython-dependent tests skipped. The supplied rule proposals remain
-uncalibrated; these tests do not establish empirical classification accuracy.
+Validation uses fixtures and simulated external inference; two Biopython-dependent
+tests require Biopython in the test environment. The supplied rule proposals remain
+architecture constraints; fixture tests do not establish biological accuracy.
+The identity probability model is fitted only on labelled positive adhesome
+controls and reports its reference-overlap limitations. Negative controls provide
+exclusion gates, never identity training classes. The validator checks both the
+model provenance and exclusion resources.
+
+Current final outputs include compact `putative_audited_family`, `protein_name`
+and evidence confidence, plus a matching TSV. See [naming and output policy](COMPUTATIONAL_AUDIT.md).

@@ -74,7 +74,7 @@ runs/resumed/downstream/
   benchmark/summary.json          # status, reference-cohort metrics and weight
   benchmark/identifier_mapping.tsv
   benchmark/refog_scores.tsv
-  final/audited_candidates.xlsx    # final result, independent of optional trees
+  final/Stage_2_output.xlsx    # final result, independent of optional trees
   final/joined_evidence.tsv
   recovery.json
   workflow_manifest.json

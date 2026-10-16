@@ -42,13 +42,13 @@ def family_plans(plans, family_map, family_column, active_species, candidate_rep
         with audit_workbook.open('rb') as stream:
             book=load_workbook(stream,read_only=True,data_only=True)
             try:
-                sheet='Resolved_candidates' if 'Resolved_candidates' in book.sheetnames else 'Collapsed_candidates'
+                sheet='Audited_family_assignment' if 'Audited_family_assignment' in book.sheetnames else 'Resolved_candidates' if 'Resolved_candidates' in book.sheetnames else 'Collapsed_candidates'
                 values=iter(book[sheet].values)
                 fields=next(values)
                 annotations=[dict(zip(fields,row)) for row in values]
             finally:
                 book.close()
-        family_column='assigned_family'
+        family_column='putative_audited_family' if 'putative_audited_family' in fields else 'assigned_family'
         if 'grade' not in fields:
             raise ValueError('Collapsed_candidates requires an audit grade column')
         annotations=[r for r in annotations if r['grade'] in ('A','B','C')]
@@ -86,7 +86,7 @@ def family_plans(plans, family_map, family_column, active_species, candidate_rep
             if ident in audit_details:
                 raise ValueError(f'Duplicate collapsed audited candidate: {ident}')
             audit_details[ident]=dict(protein_id=row['protein_id'],grade=row['grade'],
-                classification_state=row.get('classification_state',''),assigned_family=row.get('assigned_family',''),
+                classification_state=row.get('classification_state',''),assigned_family=row.get(family_column,''),
                 broad_homology_group=row.get('broad_homology_group',''))
     if selected:
         absent=set(selected)-set(families)

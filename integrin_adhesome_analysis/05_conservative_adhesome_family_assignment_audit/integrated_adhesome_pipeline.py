@@ -1,385 +1,386 @@
 #!/usr/bin/env python3
-"""Reference-gated protein-family adjudication for comparative adhesome candidates.
-
-USAGE
- python integrated_adhesome_pipeline.py INPUT.xlsx OUTPUT.xlsx [--sheet candidates] [--rules ../01_detection/config/family_rules.json]
-
-Expected additional columns for protein/subfamily calls (optional; without them output stays broad):
- reference_subfamily, subfamily_support_method, reciprocal_reference_subfamily,
- phylogeny_concordant, subfamily_profile_calibrated, top_profile_subfamily,
- profile_margin_pass, reference_accession, reference_dataset_version.
-
-Accepted methods: curated_reference, phylogeny, reciprocal_best_hit, calibrated_hmm.
-WARNING: Reference-supported is not experimentally demonstrated adhesome localization.
-The gene symbol is not used as a classifier unless separately supplied as curated reference evidence.
-"""
-from __future__ import annotations
-import argparse, hashlib, json, re
-from collections import Counter, defaultdict
+"""Version 1.0: architecture-gated refinement of stage 1 family hypotheses."""
+import argparse
+import csv
+from collections import Counter,defaultdict
+import hashlib
+import json
+import math
 from pathlib import Path
+import re
+import sys
+
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+from classification_contract import general_family,general_rules,write_sheet,schema
+from family_identity import combined_domains,scoped_refinement,cdd_text,annotate_name,LIBRARY as IDENTITY_LIBRARY
 
 VERSION='1.0'
 DOM_RE=re.compile(r'(?<!\w)(PF\d{5})(?:\s*:\s*(\d+)\s*-\s*(\d+))?',re.I)
-TRUTH={'1','TRUE','YES','Y','PASS','SUPPORTED'}
-BAD={'CONFLICT','CONTRADICT','UNSUPPORTED','FAILED','UNVERIFIED'}
-ORDER_KIN={'PF00069','PF07714'}
+TRUTH={'1','TRUE','YES','Y','PASS','SUPPORTED','CONSISTENT'}
 
 
-def value(r,*names):
-    for name in names:
-        if name in r and r[name] is not None and str(r[name]).strip():return str(r[name]).strip()
+def value(row,*keys):
+    for key in keys:
+        if row.get(key) is not None and str(row[key]).strip():return str(row[key]).strip()
     return ''
 
-def num(v,default=0.0):
-    try:return float(str(v).replace(',',''))
-    except (ValueError,TypeError):return default
 
-def boolean(v):return str(v or '').strip().upper() in TRUTH
+def num(value,default=0.0):
+    try:
+        result=float(str(value).replace(',',''))
+        return result if math.isfinite(result) else default
+    except (TypeError,ValueError):return default
 
-def norm(v):return re.sub(r'[^A-Z0-9]','',str(v or '').upper())
 
+def boolean(value):return str(value).strip().upper() in TRUTH
+def norm(value):return re.sub('[^A-Z0-9]','',str(value).upper())
 def checksum(path):
-    h=hashlib.sha256()
-    with open(path,'rb') as handle:
-        for part in iter(lambda:handle.read(1<<20),b''):h.update(part)
-    return h.hexdigest()
-
-
-def domains(row):
-    """Parse semicolon-delimited Pfam calls, de-duplicating same-model overlapping hits.
-
-    Unknown positions are retained as separate unpositioned calls, and order is unknown.
-    """
-    raw=value(row,'architecture','Pfam_architecture','pfam_architecture')
-    hits=[]
-    for match in DOM_RE.finditer(raw):
-        pf=match.group(1).upper()
-        if match.group(2):
-            st,en=int(match.group(2)),int(match.group(3))
-            if en<st:continue
-            overlap=any(pf==old[0] and old[1] is not None and min(en,old[2])-max(st,old[1])+1>=0.5*min(en-st+1,old[2]-old[1]+1) for old in hits)
-            if not overlap:hits.append((pf,st,en))
-        else:hits.append((pf,None,None))
-    return hits
-
-
-def counts(hits):return Counter(x[0] for x in hits)
-
-
-def position_order(hits, ordered_groups):
-    """Each requirement group must occupy a different strictly succeeding interval.
-    Distinct domain positions are mandatory; absence of positions is unknown, not false.
-    """
-    if not ordered_groups:return True
-    last=-1;used=set()
-    for group in ordered_groups:
-        opts=[group] if isinstance(group,str) else group
-        choices=sorted((start,end,i) for i,(pf,start,end) in enumerate(hits) if pf in opts and start is not None and i not in used and start>last)
-        if not choices:return False
-        st,en,i=choices[0];last=st;used.add(i)
-    return True
-
-
-def compatible_order(hits,rule):
-    if not rule.get('support_requires_order') and not rule.get('ordered_domains'):return True
-    choices=rule.get('support_order_alternatives') or [rule.get('ordered_domain_groups') or rule.get('ordered_domains',[])]
-    return any(position_order(hits,groups) for groups in choices if groups)
-
-
-def architecture(row,rule):
-    hits=domains(row);available=counts(hits)
-    alternatives=rule.get('domain_alternatives',[])
-    if not alternatives:return 0,'no architecture configured',0.0
-    ratios=[]
-    for required in alternatives:
-        need=sum(int(n) for n in required.values())
-        found=sum(min(int(n),available.get(pf,0)) for pf,n in required.items())
-        ratios.append(found/max(need,1))
-    frac=max(ratios,default=0.0)
-    if frac==0:return 0,'no required Pfam anchors',frac
-    full=frac>=1-1e-9
-    ordered_ok=compatible_order(hits,rule) if full else False
-    min_len=num(rule.get('min_length'));length=num(value(row,'length','Length'))
-    length_partial=bool(min_len and length and length<min_len)
-    if full and ordered_ok and not length_partial:score=4
-    elif full:score=3
-    elif frac>=0.5:score=2
-    else:score=1
-    notes=[f'domain-match fraction={frac:.2f}']
-    if full and not ordered_ok:notes.append('order absent/contradicted')
-    if length_partial:notes.append(f'below reference-like length ({int(min_len)} aa); may be fragment')
-    if not any(h[1] is not None for h in hits):notes.append('positionless architecture; order cannot be verified')
-    return score,'; '.join(notes),frac
-
-
-def family_labels(rule):
-    return set(norm(x) for x in rule.get('reference_labels',[]) if x) | {norm(rule.get('label',''))}
+    with Path(path).open('rb') as handle:return hashlib.file_digest(handle,'sha256').hexdigest()
 
 
 def identity(row,rule):
-    """Explicit, non-circular species-aware evidence only; HOG membership never qualifies.
-
-    Row family/gene-symbol/NCBI CDD descriptions are not used to establish paralog identity.
-    """
-    target=norm(value(row,'reference_subfamily','Reference_subfamily','orthology_resolved_family'))
-    labels=family_labels(rule)
-    if not target or target not in labels:return 0,'no matched independently supported reference label'
-    method=norm(value(row,'subfamily_support_method','reference_evidence_method'))
-    if method=='CURATEDREFERENCE':
-        if value(row,'reference_accession','curated_reference_accession'):
-            return 3,'curated reference accession + explicit subfamily identity'
-        return 1,'curated_reference method missing reference_accession'
-    if method=='PHYLOGENY':
-        return (3,'explicit concordant phylogenetic clade') if boolean(value(row,'phylogeny_concordant')) else (1,'phylogeny label without concordance')
-    if method=='RECIPROCALBESTHIT':
-        reciprocal=norm(value(row,'reciprocal_reference_subfamily'))
-        return (3,'reciprocal reference identity concordant') if reciprocal==target else (1,'reciprocal hit not independently concordant')
-    if method=='CALIBRATEDHMM':
-        top=norm(value(row,'top_profile_subfamily'))
-        calibrated=boolean(value(row,'subfamily_profile_calibrated'))
-        margin=boolean(value(row,'profile_margin_pass'))
-        return (3,'benchmark-calibrated competing-profile winner') if calibrated and margin and top==target else (1,'profile lacking benchmark calibration/margin')
-    return 1,'reference_subfamily string alone is not orthology proof'
+    """Compatibility API for optional detection evidence; never bypasses stage 2 gates."""
+    target=norm(value(row,'reference_subfamily','orthology_resolved_family'))
+    labels={norm(x) for x in rule.get('reference_labels',[])}|{norm(rule.get('label',''))}
+    if not target or target not in labels:return 0,'no independent identity label'
+    method=norm(value(row,'subfamily_support_method'))
+    passed=(method=='CURATEDREFERENCE' and bool(value(row,'reference_accession')) or
+        method=='RECIPROCALBESTHIT' and norm(value(row,'reciprocal_reference_subfamily'))==target or
+        method=='PHYLOGENY' and boolean(value(row,'phylogeny_concordant')) or
+        method=='CALIBRATEDHMM' and boolean(value(row,'subfamily_profile_calibrated')) and boolean(value(row,'profile_margin_pass')) and norm(value(row,'top_profile_subfamily'))==target)
+    return (3,'independent identity annotation') if passed else (1,'unresolved identity annotation')
 
 
-def context(row,rule):
-    """Topology has no power to discriminate paralogs; annotate contradictions only."""
-    tm=value(row,'DeepTMHMM').upper();sp=value(row,'SignalP.v6.0').upper()
-    dl=value(row,'DeepLoc_2.1').upper()
-    sp_pred=bool(re.search(r'\bSP\b',sp)) and not 'NO SP' in sp or bool(re.search(r'\bSP\b',tm)) and not 'NO SP' in tm
-    trans=bool(re.search(r'\bTM\s+\d+[-–]\d+',tm)) or bool(re.search(r'^\s*TM\b',tm)) or 'SP+TM' in tm
-    if 'NO TM' in tm:trans=False
-    group=rule.get('module','')
-    if group in ('actin_linking','focal_adhesion_scaffolds','membrane_proximal_adaptors','downstream_signalling') and (sp_pred or trans):
-        return -1,'secretory/transmembrane prediction inconsistent with typical cytosolic candidate (review exceptions)'
-    if rule.get('requires_topology') and not any([tm,sp,dl]):return 0,'topology missing; not demonstrated'
-    if group=='integrin_receptors':
-        if trans and sp_pred:return 1,'SP and TM compatible with type-I integrin'
-        if tm or sp:return -1,'integrin SP/TM architecture not confirmed'
-    if group=='extracellular_matrix' and rule.get('requires_topology'):
-        if sp_pred:return 1,'signal peptide supports secretory compartment'
-        if tm or sp:return -1,'expected extracellular routing not supported (manual review)'
-    return 0,'no discriminatory topology evidence'
+def policy_for(rules):
+    return rules.get('_audit_policy') or json.loads(Path(__file__).with_name('audit_policy.json').read_text())
 
 
-def orthology_score(row,identity_strength):
-    hog=value(row,'Orthology_HOG_status','HOG_status')
-    shared='SHARED HOG' in hog.upper()
-    # Count orthology links as context, not subfamily identity.
-    linked=sum(bool(v) for k,v in row.items() if k.endswith('_orthologues'))
-    linked=max(linked,int(num(value(row,'Orthology_direct_reference_count'))))
-    if identity_strength>=3:return 3
-    if shared or linked:return 1
-    return 0
+def domains(row):
+    hits=[]
+    for match in DOM_RE.finditer(value(row,'architecture','Pfam_architecture','pfam_architecture')):
+        pf=match[1].upper();start=int(match[2]) if match[2] else None;end=int(match[3]) if match[3] else None
+        if start is not None:
+            if start<1 or end<start:continue
+            if any(pf==old[0] and old[1] is not None and min(end,old[2])-max(start,old[1])+1>=.5*min(end-start+1,old[2]-old[1]+1) for old in hits):continue
+        hits.append((pf,start,end))
+    return hits
+
+
+def position_order(hits,groups):
+    last=0;used=set()
+    for group in groups:
+        choices=[group] if isinstance(group,str) else group
+        found=sorted((start,end,i) for i,(pf,start,end) in enumerate(hits) if pf in choices and start is not None and start>last and i not in used)
+        if not found:return False
+        start,end,i=found[0];last=end;used.add(i)
+    return True
+
+
+def cdd_support(row,family,policy):
+    text=re.sub(r'[_:/;(),-]+',' ',cdd_text(row).upper())
+    pattern=policy['specific_cdd_patterns'].get(family)
+    if not pattern:return False
+    return bool(re.search(r'(?<![A-Z0-9])(?:'+pattern+r')(?![A-Z0-9])',text,re.I))
+
+
+def architecture(row,family,rules):
+    """Only the supplied hypothesis is tested; no catalogue-wide replacement search."""
+    policy=policy_for(rules);catalogue=rules['families'];general=general_family(family,catalogue)
+    aliases={'Csk_family':'Csk','Src_family':'Src','paxillin_family':'paxillin_like','zyxin_family':'zyxin_like'}
+    general=aliases.get(general,general)
+    rule=dict(general_rules(rules).get(general,catalogue.get(general,catalogue.get(family,{}))))
+    combined=combined_domains(row,domains(row))
+    hits=[(hit['model'],hit['start'],hit['end']) for hit in combined]
+    refinement=scoped_refinement(row,general,combined)
+    if refinement['rule']:
+        named=refinement['rule'];core={model for group in named['required_groups'] for model in group['models']}
+        length=num(value(row,'length','Length'))
+        valid=all(h['start'] is not None and (not length or h['end']<=length) for h in combined if h['model'] in core)
+        if valid:
+            return dict(score=4,fraction=1,family=named['family'],note='Observed Pfam/CDD core and diagnostic CDD support scoped '+named['id']+' refinement',
+                cdd=True,complete=True,identity_rule=named,combined_hits=combined,cdd_concordant=True,identity_competitors=[])
+    if rule.get('screening_only') or rule.get('classification_level') in ('screen','screening','component_hypothesis'):
+        return dict(score=0,fraction=0,family=general,note='Generic screening bucket cannot establish a family assignment',cdd=False,complete=False)
+    counts=Counter(pf for pf,start,end in hits)
+    length=num(value(row,'length','Length'))
+    specific=general in policy['specific_cdd_patterns']
+    if general=='PINCH_like':
+        rule.update(domain_alternatives=[{'PF00412':5}],ordered_domain_groups=[['PF00412']]*5,min_length=250)
+    elif general=='parvin_like':
+        rule.update(domain_alternatives=[{'PF00307':2}],ordered_domain_groups=[['PF00307']]*2,min_length=0)
+    elif general=='Syk':
+        rule.update(domain_alternatives=[{'PF00017':2,'PF07714':1},{'PF00017':2,'PF00069':1}],ordered_domain_groups=[['PF00017'],['PF00017'],['PF07714','PF00069']])
+    elif general in ('Csk','Src'):
+        rule.update(domain_alternatives=[{'PF00018':1,'PF00017':1,'PF07714':1},{'PF00018':1,'PF00017':1,'PF00069':1}],ordered_domain_groups=[['PF00018'],['PF00017'],['PF07714','PF00069']])
+    requirements=rule.get('domain_alternatives',[])
+    if not requirements:return dict(score=0,fraction=0,family=general,note='No family-specific architecture configured for this stage 1 hypothesis',cdd=False,complete=False)
+    fractions=[sum(min(counts[p],n) for p,n in group.items())/sum(group.values()) for group in requirements]
+    fraction=max(fractions)
+    if fraction==0:return dict(score=0,fraction=0,family=general,note='Required family domain anchors absent',cdd=False,complete=False)
+    complete=fraction>=1
+    groups=rule.get('ordered_domain_groups') or rule.get('ordered_domains')
+    alternatives=rule.get('support_order_alternatives') or ([groups] if groups else [])
+    ordered=any(position_order(hits,order) for order in alternatives) if alternatives else True
+    valid_coordinates=all(start is not None and (not length or end<=length) for pf,start,end in hits if any(pf in group for group in requirements))
+    length_ok=not rule.get('min_length') or length>=rule['min_length']
+    if general=='PINCH_like':length_ok=policy['pinch_length_range_inclusive'][0]<=length<=policy['pinch_length_range_inclusive'][1]
+    if general=='PINCH_like' and counts['PF00412']!=5:complete=False
+    cdd=cdd_support(row,general,policy)
+    score=4 if complete and ordered and valid_coordinates and length_ok and (not specific or cdd) else 3 if complete else 2 if fraction>=.5 else 1
+    notes=[f'family domain recovery={fraction:.2f}']
+    if not ordered:notes.append('required domain order unconfirmed')
+    if not valid_coordinates:notes.append('required domain coordinates unavailable or invalid')
+    if not length_ok:notes.append('outside configured family length range')
+    if specific:notes.append('family-specific CDD present' if cdd else 'required family-specific CDD absent')
+    if refinement['competing_families']:
+        score=min(score,3);notes.append('Competing diagnostic CDD identities: '+', '.join(refinement['competing_families']))
+    call=general
+    if general=='Src':
+        if cdd_support(row,'Csk',policy):call='Csk';cdd=True;notes.append('Csk/Chk-specific CDD refines the SH3-SH2-kinase hypothesis')
+        else:call='Src_Csk_like';notes.append('compatible Src/Csk core; no Csk-specific call')
+    elif general=='Csk' and not cdd:call='Src_Csk_like'
+    # Baseline support is retained as evidence, not as an exemption from the gate.
+    if value(row,'status') in ('supported','supported_candidate'):
+        notes.append('stage 1 supported baseline rechecked against domain types/copies')
+    core_models={model for group in requirements for model in group}
+    concordant=any(h['model'] in core_models and 'CDD' in h['sources'] for h in combined)
+    return dict(score=score,fraction=fraction,family=call,note='; '.join(notes),cdd=cdd,complete=score==4,
+        combined_hits=combined,cdd_concordant=cdd or concordant,identity_competitors=refinement['competing_families'])
 
 
 def benchmark_weight(row):
-    """A measured reference-cohort F1 is a context weight, never identity proof."""
-    if value(row,'Orthology_benchmark_status')!='validated':
-        return 1.0,'unavailable_neutral_weight'
-    import math
-    try:
-        weight=float(value(row,'Orthology_benchmark_weight'))
-    except (TypeError,ValueError):
-        return 1.0,'invalid_weight_ignored'
-    if not math.isfinite(weight) or not 0<=weight<=1:
-        return 1.0,'invalid_weight_ignored'
-    return weight,'validated_reference_cohort_weight'
+    if value(row,'Orthology_benchmark_status')!='validated':return 1.0,'unavailable_neutral_weight'
+    weight=num(value(row,'Orthology_benchmark_weight'),-1)
+    return (weight,'validated_reference_cohort_weight') if 0<=weight<=1 else (1.0,'invalid_weight_ignored')
+
+
+def orthology_score(row,policy):
+    references=set()
+    for key,item in row.items():
+        if key.startswith('Orthology_') and key.endswith('_HOG_copy_count') and num(item)>0:references.add(key[len('Orthology_'):-len('_HOG_copy_count')])
+    targets=set(value(row,'Orthology_target_species').split(';'))-{''}
+    references-=targets
+    count=max(len(references),int(num(value(row,'Orthology_HOG_reference_species_count','Orthology_direct_reference_count'))))
+    if count==0 and value(row,'Orthology_reference_support'):
+        count=len({x.strip() for x in re.split('[;,]',value(row,'Orthology_reference_support')) if x.strip()})
+    score=next((score for minimum,score in policy['orthology_reference_species_bands'] if count>=minimum),0)
+    weight,status=benchmark_weight(row)
+    return score,round(score*weight,6),count,weight,status
 
 
 def motif_score(row):
-    s=value(row,'motif_candidate_tiers','MotifPrediction_candidate_tiers','motif_context_summary').lower()
-    if any(w in s for w in ('context_conflict','context_conflicted','contradict','unverified')):return 0
-    if 'context_supported' in s or num(value(row,'MotifPrediction_context_supported_count'))>0:return 2
-    if 'sequence_only' in s or num(value(row,'MotifPrediction_priority_site_count'))>0:return 1
+    if num(value(row,'MotifPrediction_context_supported_count'))>0:return 2
+    tiers=value(row,'MotifPrediction_candidate_tiers','motif_candidate_tiers').lower()
+    if 'context_supported' in tiers and 'context_conflict' not in tiers:return 2
+    if num(value(row,'MotifPrediction_sequence_only_count'))>0:return 1
+    if 'sequence_only' in tiers:return 1
+    if 'context_conflict' not in tiers and num(value(row,'MotifPrediction_priority_site_count'))>0:return 1
     return 0
 
 
-def ancestors(name,families):
-    seen=set()
-    while name in families and name not in seen:
-        seen.add(name);name=families[name].get('parent_family')
-        if name:yield name
-        else:break
+def localization(row,family,rules):
+    rule=rules['families'].get(family,{})
+    tm=value(row,'DeepTMHMM').upper();sp=value(row,'SignalP.v6.0').upper();loc=value(row,'DeepLoc_2.1').upper()
+    secreted=bool(re.search(r'\bSP\b',sp+' '+tm)) and 'NO SP' not in sp+' '+tm
+    trans=bool(re.search(r'\bTM\b|TRANSMEMBRANE',tm)) and 'NO TM' not in tm
+    if rule.get('module')=='integrin_receptors':return (1,'compatible SP and transmembrane topology') if secreted and trans else (0,'integrin topology unconfirmed')
+    if rule.get('module')=='extracellular_matrix':return (1,'compatible extracellular routing') if secreted or 'EXTRACELLULAR' in loc else (0,'extracellular routing unconfirmed')
+    if trans or secreted:return 0,'predicted secretory/TM context conflicts with typical intracellular family context'
+    if any(x in loc for x in ('CYTOPLASM','CYTOSOL','CELL MEMBRANE','NUCLEUS')) or tm in ('GLOB','GLOBULAR','SOLUBLE','NO TM'):
+        return 1,'compatible intracellular context'
+    return 0,'localization not informative'
 
 
 def row_species(row):
-    explicit=value(row,'Specie','species','Species','taxon','taxon_id','Taxon')
+    explicit=value(row,'Specie','species','Species')
     if explicit:return explicit
+    identifier=value(row,'protein_id','candidate_id')
+    return identifier.split('__',1)[0] if '__' in identifier else 'species_unknown'
+
+
+def unique_key(row,index=0):
     pid=value(row,'protein_id','candidate_id','Protein_ID')
-    if '__' in pid:return pid.split('__',1)[0]
-    return 'species_unknown'
-
-
-def assess(row,families):
-    result=[]
-    for name,rule in families.items():
-        d,architecture_note,frac=architecture(row,rule)
-        ident,identity_note=identity(row,rule)
-        if d==0 and ident==3 and rule.get('allow_profile_rescue') and boolean(value(row,'profile_domain_gate_verified')):
-            d=2
-            architecture_note='explicit independently validated profile/fold rescue; Pfam anchor undetected; manual review'
-        if d==0:continue
-        loc,top_note=context(row,rule)
-        screening=bool(rule.get('screening_only') or rule.get('classification_level')=='screen')
-        identity_needed=bool(rule.get('requires_identity_evidence'))
-        valid_arch=d==4 or (d>=2 and ident==3)
-        eligible=not screening and valid_arch and (ident==3 or not identity_needed) and loc>=0
-        entry={'name':name,'family_group':rule.get('family_group',name),'classification_level':rule.get('classification_level','family'),
-               'score_architecture':d,'architecture_fraction':round(frac,3),'architecture_note':architecture_note,'score_identity':ident,'identity_note':identity_note,
-               'topology_score':loc,'topology_note':top_note,'eligible':eligible,'screen':screening,
-               'partial':d<4,'parent':rule.get('parent_family') or ''}
-        result.append(entry)
-    return result
+    if not pid:raise ValueError('Stage 1 hypothesis is missing protein_id')
+    return row_species(row),pid
 
 
 def audit_record(row,rules):
-    """Audit independent of XLSX I/O; deterministic and unit-testable."""
-    fam=rules['families']
-    evaluations=assess(row,fam)
-    viable=[v for v in evaluations if v['eligible']]
-    leaf=[x for x in viable if not any(x['name'] in set(ancestors(y['name'],fam)) for y in viable if y['name']!=x['name'])]
-    leaf.sort(key=lambda z:(-z['score_identity'],-z['score_architecture'],z['name']))
-    state='unresolved';assigned='unassigned';broad='unassigned';label='';note='';winner=None
-    if len(leaf)==1:
-        winner=leaf[0]
-        assigned=winner['name'];broad=winner['family_group']
-        label=assigned if winner['classification_level']=='subfamily' else ''
-        state='reference_supported' if winner['score_architecture']==4 else 'provisional_fragment'
-        note=f'{winner["architecture_note"]}; {winner["identity_note"]}'
-    elif len(leaf)>1:
-        state='ambiguous';note='Competing eligible non-ancestor hypotheses: '+', '.join(z['name'] for z in leaf)
-    else:
-        strong_arch=[x for x in evaluations if x['score_architecture']>=3]
-        scored_groups=defaultdict(int)
-        for item in strong_arch:scored_groups[item['family_group']]=max(scored_groups[item['family_group']],item['score_architecture'])
-        # In no-label cases report broad fold only, not a fabricated protein identity.
-        supported=[x for x in scored_groups if x in {'actin_superfamily','ADF_H_superfamily','LIM_scaffolds','nonreceptor_SH3_SH2_kinases'}]
-        if len(supported)==1:
-            broad=supported[0];state='broad_only';note=f'Broad {broad} conserved domain architecture; no validated resolving evidence'
-        elif len(supported)>1:
-            state='ambiguous';note='Multiple unrelated broad architecture hypotheses: '+', '.join(sorted(supported))
-        else:
-            note='No unique family hypothesis passes reference/topology/architecture gates'
-    # Flag contradictory strong evidence if a matched reference belongs to a different family group.
-    strong_other=[e for e in evaluations if e['score_identity']==3 and e['score_architecture']>=2 and (not winner or e['family_group']!=winner['family_group'])]
-    if winner and strong_other:
-        state='ambiguous';assigned='unassigned';label='';note='Conflicting independent reference identities across superfamilies'
-    ao=winner['score_architecture'] if winner else max((x['score_architecture'] for x in evaluations),default=0)
-    oi=winner['score_identity'] if winner else 0
-    raw_ortho=orthology_score(row,oi)
-    weight,weight_status=benchmark_weight(row)
-    # Curated identity, RBH identity, profiles and candidate-specific phylogeny
-    # are not calibrated by a benchmark of orthogroup partitions.
-    independent_identity=oi>=3
-    ortho=raw_ortho if independent_identity else round(raw_ortho*weight,6)
-    mo=motif_score(row)
-    top=winner['topology_score'] if winner else 0
-    total=ao+ortho+mo+max(top,0)
-    if state=='reference_supported':grade='A' if winner and winner['classification_level']=='subfamily' else 'B'
-    elif state=='provisional_fragment':grade='C'
-    elif state=='broad_only':grade='C'
-    else:grade='D'
-    rank= {'reference_supported':3,'provisional_fragment':2,'broad_only':1,'ambiguous':0,'unresolved':0}[state]
-    # Original family assertion never treated as independent identity evidence.
+    policy=policy_for(rules);baseline=value(row,'family')
+    result=architecture(row,baseline,rules)
+    raw,orth,ref_count,weight,weight_status=orthology_score(row,policy)
+    motif=motif_score(row);loc,loc_note=localization(row,result['family'],rules)
+    domain=result['score'];supported_orthology=orth>0
+    grade='A' if domain==4 and supported_orthology else 'B' if domain==4 else 'C' if domain>0 and supported_orthology else 'D'
+    tested=boolean(value(row,'Orthology_analysis_completed')) or value(row,'Orthology_HOG_status').lower() in ('shared hog','target-only in sampled hog')
+    if grade=='A':decision='family_supported';assignment='assigned'
+    elif grade=='B':decision='target_panel_restricted' if tested and ref_count==0 else 'orthology_unavailable' if not tested else 'orthology_support_insufficient';assignment='assigned'
+    elif grade=='C':decision='provisional_family';assignment='provisional'
+    else:decision='architecture_gate_failed' if domain==0 else 'partial_architecture_without_orthology';assignment='unassigned'
+    assigned=result['family'] if grade in ('A','B','C') else 'unassigned'
     out=dict(row)
-    out.update({'preaudit_family':value(row,'family'),'assigned_family':assigned,'broad_homology_group':broad,
-      'assigned_subfamily':label,'classification_state':state,'grade':grade,'family_decision':state.replace('_',' '),
-      'architecture_evidence':note,'domain_score_0_4':ao,'orthology_score_0_3':ortho,'motif_score_0_2':mo,
-      'orthology_raw_score_0_3':raw_ortho,'orthology_benchmark_weight_used':1.0 if independent_identity else weight,
-      'orthology_benchmark_weight_status':'independent_identity_preserved' if independent_identity else weight_status,
-      'localization_score_0_1':max(top,0),'total_score_0_10':total,'protein_identity_score_0_3':oi,
-      'adhesome_membership':'not_inferred','confidence_statement':'Heuristic evidence tier; not a calibrated probability',
-      'conflict_hypotheses':'; '.join(e['name'] for e in leaf[1:]) if len(leaf)>1 else '',
-      'candidate_hypotheses':'; '.join(f'{e["name"]}:{e["score_architecture"]}/{e["score_identity"]}' for e in sorted(evaluations,key=lambda a:(-a['score_architecture'],-a['score_identity'],a['name']))[:20]),
-      'family_rule_version':rules.get('schema_version','unknown'),'pipeline_version':VERSION,
-      'resolution_rank':rank,'rationale':note})
-    return out
+    out.update(preaudit_family=baseline,audit_family=result['family'],assigned_family=assigned,
+        stage1_assigned_family=value(row,'assigned_family'),Specie=row_species(row),architecture_evidence=result['note'],
+        domain_score_0_4=domain,orthology_raw_score_0_3=raw,orthology_score_0_3=orth,motif_score_0_2=motif,
+        localization_score_0_1=loc,total_score_0_10=round(domain+orth+motif+loc,6),grade=grade,family_decision=decision,
+        assignment_status=assignment,classification_state='family_supported' if grade in ('A','B') else 'provisional_family' if grade=='C' else 'unresolved',
+        domain_gate_passed=domain==4,family_specific_CDD_support=result['cdd'],localization_evidence=loc_note,
+        orthology_reference_species_count=ref_count,orthology_benchmark_weight_used=weight,orthology_benchmark_weight_status=weight_status,
+        restriction_scope='sampled target/reference panel' if decision=='target_panel_restricted' else '',
+        discovery_rule=value(row,'discovery_rule') or 'stage1_hypothesis',pipeline_version=VERSION,
+        rationale=result['note']+f'; reference species={ref_count}; orthology={orth:g}; motif={motif}; localization={loc}; '+decision)
+    if 'combined_hits' not in result:result['combined_hits']=combined_domains(row,domains(row))
+    return annotate_name(out,result)
 
 
-def unique_key(row,n):
-    pid=value(row,'protein_id','candidate_id','Protein_ID')
-    if row_species(row)=='species_unknown':return ('unknown_taxon_do_not_collapse',str(n))
-    return (row_species(row),pid) if pid else ('missing_protein_id',str(n))
+def rank(row):
+    return ({'assigned':3,'provisional':2,'unassigned':0}.get(row['assignment_status'],0),
+        ({'family_supported':3,'target_panel_restricted':2,'orthology_support_insufficient':2,'orthology_unavailable':1,'provisional_family':1}.get(row['family_decision'],0),int(row.get('family_specific_CDD_support',False))),
+        {'A':4,'B':3,'C':2,'D':1}[row['grade']],row['domain_score_0_4'],
+        int(row.get('row_origin')=='stage2_recovery'),row['orthology_score_0_3'],row['motif_score_0_2'],
+        row['localization_score_0_1'],row['total_score_0_10'],{'supported_candidate':3,'supported':3,'provisional':2,'conflicting':1}.get(value(row,'status'),0))
 
 
 def collapse_rows(rows):
     grouped=defaultdict(list)
-    for i,r in enumerate(rows):grouped[unique_key(r,i)].append(r)
-    result=[]
-    order={'reference_supported':4,'provisional_fragment':3,'broad_only':2,'ambiguous':1,'unresolved':0}
+    for row in rows:grouped[unique_key(row)].append(row)
+    resolved=[]
     for key,group in grouped.items():
-        confident={x['assigned_family'] for x in group if x['classification_state']=='reference_supported'}
-        broad_confident={x['broad_homology_group'] for x in group if x['classification_state']=='reference_supported'}
-        group.sort(key=lambda x:(-order.get(x['classification_state'],0),-x['protein_identity_score_0_3'],-x['domain_score_0_4'],x['assigned_family']))
-        out=dict(group[0])
-        if len(confident)>1 or len(broad_confident)>1:
-            out['classification_state']='ambiguous';out['assigned_family']='unassigned';out['assigned_subfamily']='';out['grade']='D'
-            out['family_decision']='ambiguous';out['resolution_rank']=0
-            out['rationale']='Conflicting row-level verified labels; manual review of isoforms/hypotheses required'
-            out['conflict_hypotheses']='; '.join(sorted(confident))
-        out['original_row_count']=len(group)
-        out['alternative_family_hypotheses']='; '.join(sorted(set(value(g,'preaudit_family') for g in group)-{out['assigned_family']}))
-        result.append(out)
-    return sorted(result,key=lambda r:(row_species(r),value(r,'protein_id','candidate_id')))
+        ordered=sorted(group,key=rank,reverse=True);chosen=dict(ordered[0])
+        initial=[r for r in group if r.get('row_origin','original_stage1')!='stage2_recovery']
+        chosen.update(alternative_family_hypotheses='; '.join(sorted({value(r,'family') for r in initial}-{chosen['preaudit_family']})),
+            collapsed_row_count=len(group),original_row_count=len(initial),recovered_hypothesis_count=len(group)-len(initial),
+            equally_ranked_hypotheses='; '.join(sorted({r['audit_family'] for r in ordered if rank(r)==rank(ordered[0])})))
+        tied={r['assigned_family'] for r in ordered if rank(r)==rank(ordered[0])}-{'unassigned'}
+        if len(tied)>1:
+            chosen.update(family_confidence='ambiguous',protein_identity_confidence='ambiguous',protein_name_scope='ambiguous_family',
+                protein_name='Putative unresolved '+' / '.join(sorted(tied))+' family protein',
+                naming_evidence=chosen['naming_evidence']+'; equally ranked competing families remain unresolved')
+        resolved.append(chosen)
+    return sorted(resolved,key=unique_key)
 
 
-def run_xlsx(source:Path,dest:Path,sheet_name:str,rules):
-    """Keeps Excel workbook structure; import lazily to let tests run without spreadsheet dependency."""
-    from openpyxl import load_workbook
-    from openpyxl.styles import Font, PatternFill, Alignment
-    from openpyxl.utils import get_column_letter
-    if source.resolve()==dest.resolve():raise ValueError('Input and output must be different files')
-    wb=load_workbook(source)
-    names={s.lower():s for s in wb.sheetnames}
-    key=names.get(sheet_name.lower())
-    if key is None:raise ValueError(f'Sheet {sheet_name!r} not found; available: {wb.sheetnames}')
-    ws=wb[key]
-    headings=[str(c.value).strip() if c.value is not None else '' for c in ws[1]]
-    if not headings or any(not x for x in headings[:2]):raise ValueError('Empty or invalid header row')
-    if len(set(headings))!=len(headings):raise ValueError('Duplicate input column names')
-    raw=[dict(zip(headings,v)) for v in ws.iter_rows(min_row=2,max_col=len(headings),values_only=True) if any(x is not None and str(x).strip() for x in v)]
-    audited=[audit_record(row,rules) for row in raw]
+def classify_rows(rows,rules):
+    grouped=defaultdict(list);original=[]
+    for index,raw in enumerate(rows,1):
+        row=dict(raw,original_hypothesis_row=index,row_origin='original_stage1')
+        grouped[unique_key(row)].append(row);original.append(row)
+    recovered=[]
+    for key,group in grouped.items():
+        hashes={value(row,'sequence_sha256') for row in group}-{''}
+        if len(hashes)>1:raise ValueError('Conflicting sequences within stage 1 species/protein group: '+str(key))
+        cdd=';'.join(sorted({value(row,'NCBI_CDD_architecture') for row in group}-{''}))
+        structured={}
+        for row in group:
+            raw=row.get('NCBI_CDD_hits') or '[]'
+            try:records=json.loads(raw) if isinstance(raw,str) else raw
+            except json.JSONDecodeError as exc:
+                raise ValueError('CDD hit JSON is incomplete (Excel cells are limited to 32767 characters); supply the full --supporting-data sidecar') from exc
+            for hit in records:
+                structured[(hit.get('accession'),hit.get('short_name'),str(hit.get('start')),str(hit.get('end')))]=hit
+        for row in group:
+            row['NCBI_CDD_architecture']=cdd
+            if structured:row['NCBI_CDD_hits']=json.dumps(list(structured.values()),sort_keys=True)
+        existing={general_family(value(row,'family'),rules['families']) for row in group}
+        for family in policy_for(rules)['recoveries']:
+            if family in existing:continue
+            probe=dict(group[0],family=family,assigned_family='',row_origin='stage2_recovery',
+                discovery_rule='recovered_'+family+'_complete_architecture',recovered_from_families='; '.join(sorted({value(r,'family') for r in group})))
+            if architecture(probe,family,rules)['score']==4:recovered.append(probe)
+    audited=[audit_record(row,rules) for row in original+recovered]
     resolved=collapse_rows(audited)
-    extra=['preaudit_family','assigned_family','broad_homology_group','assigned_subfamily','classification_state','grade','family_decision','architecture_evidence','protein_identity_score_0_3','domain_score_0_4','orthology_score_0_3','motif_score_0_2','localization_score_0_1','total_score_0_10','adhesome_membership','confidence_statement','candidate_hypotheses','conflict_hypotheses','rationale','original_row_count','alternative_family_hypotheses','family_rule_version','pipeline_version']
-    fields=headings+[h for h in extra if h not in headings]
-    def add(name,data):
-        if name in wb.sheetnames:del wb[name]
-        sh=wb.create_sheet(name,0);sh.append(fields)
-        for item in data:sh.append([item.get(h) for h in fields])
-        for cell in sh[1]:
-            cell.fill=PatternFill('solid',fgColor='1F4E78');cell.font=Font(color='FFFFFF',bold=True)
-            cell.alignment=Alignment(wrap_text=True)
-        sh.freeze_panes='A2';sh.auto_filter.ref=sh.dimensions;sh.sheet_view.showGridLines=False
-        for col,h in enumerate(fields,1):sh.column_dimensions[get_column_letter(col)].width=35 if any(s in h.lower() for s in ['evidence','hypotheses','rationale','confidence']) else 21
-    add('All_hypotheses_audited',audited)
-    add('Resolved_candidates',resolved)
-    issues=[r for r in resolved if r['classification_state'] in {'ambiguous','unresolved','broad_only','provisional_fragment'}]
-    add('Manual_review_queue',issues)
-    if 'Pipeline_summary' in wb.sheetnames:del wb['Pipeline_summary']
-    sh=wb.create_sheet('Pipeline_summary',0)
-    sh.append(['Metric','Value'])
-    metrics=[('Pipeline version',VERSION),('Rule schema',rules.get('schema_version')),('Raw hypotheses',len(raw)),('Distinct species/protein',len(resolved)),('Collapsed hypotheses',len(raw)-len(resolved)),('Rule file SHA-256',rules.get('_sha256','')),('Input SHA-256',checksum(source)),('Reference-supported',sum(x['classification_state']=='reference_supported' for x in resolved)),('Broad-only',sum(x['classification_state']=='broad_only' for x in resolved)),('Ambiguous',sum(x['classification_state']=='ambiguous' for x in resolved)),('Unresolved',sum(x['classification_state']=='unresolved' for x in resolved)),('Provisional fragments',sum(x['classification_state']=='provisional_fragment' for x in resolved)),('Subfamily annotations',sum(bool(x['assigned_subfamily']) for x in resolved))]
-    for row in metrics:sh.append(row)
-    sh.column_dimensions['A'].width=32;sh.column_dimensions['B'].width=85
-    for cell in sh[1]:cell.fill=PatternFill('solid',fgColor='1F4E78');cell.font=Font(color='FFFFFF',bold=True)
-    sh.freeze_panes='A2'
-    wb.save(dest)
-    manifest={'pipeline_version':VERSION,'rule_schema':rules.get('schema_version'),'input':source.name,'input_sha256':checksum(source),'rule_sha256':rules.get('_sha256'),'output':dest.name,'output_sha256':checksum(dest),'counts':dict(Counter(x['classification_state'] for x in resolved)),'unique_proteins':len(resolved),'input_hypotheses':len(raw)}
+    if {unique_key(r) for r in resolved}!=set(grouped):raise ValueError('Stage 2 changed the stage 1 protein pool')
+    from control_exclusion import apply as exclude_controls
+    resolved,excluded=exclude_controls(resolved)
+    exclusions={unique_key(row):row for row in excluded}
+    for row in audited:
+        match=exclusions.get(unique_key(row))
+        if match:
+            for key in ('stage2_excluded','exclusion_gate','control_class','control_accession','exclusion_reason','excluded_putative_family','excluded_protein_name'):
+                row[key]=match[key]
+    if {unique_key(row) for row in resolved}|set(exclusions)!=set(grouped):raise ValueError('Retained and excluded protein accounting is incomplete')
+    from identity_probability import annotate as calibrate_probabilities
+    calibrate_probabilities(resolved)
+    return audited,resolved
+
+
+def run_xlsx(source,dest,sheet_name,rules,supporting=None):
+    from openpyxl import load_workbook,Workbook
+    if source.resolve()==dest.resolve():raise ValueError('Choose a new output workbook')
+    input_book=load_workbook(source,read_only=True,data_only=True)
+    names={s.lower():s for s in input_book.sheetnames}
+    selected=names.get(sheet_name.lower())
+    if not selected:raise ValueError('Input hypothesis sheet not found: '+sheet_name)
+    values=input_book[selected].values;headings=next(values)
+    if len(set(headings))!=len(headings):raise ValueError('Duplicate input column names')
+    rows=[dict(zip(headings,row)) for row in values if any(item is not None for item in row)]
+    input_book.close()
+    supporting=supporting or {}
+    cdd_by_id=defaultdict(dict)
+    for hit in supporting.get('tables',{}).get('NCBI_CDD_selected_hits',[]):
+        cdd_by_id[hit['sequence_id']][(hit.get('accession'),hit.get('short_name'),str(hit['start']),str(hit['end']))]=hit
+    for row in rows:
+        if row['protein_id'] in cdd_by_id:row['NCBI_CDD_hits']=list(cdd_by_id[row['protein_id']].values())
+    audited,resolved=classify_rows(rows,rules)
+    screening=[]
+    for row in audited:
+        item=dict(row);item['assigned_family']=row['stage1_assigned_family'];screening.append(item)
+    tables=dict(supporting.get('tables',{}))
+    tables.update(Screening_hypothesis=screening,Audited_family_assignment=resolved)
+    counts=Counter(row['grade'] for row in resolved)
+    exclusions=list({unique_key(row):row for row in audited if row.get('stage2_excluded')}.values())
+    exclusion_fields=['Specie','protein_id','control_class','control_accession','exclusion_gate','exclusion_reason','excluded_putative_family','excluded_protein_name']
+    with (dest.parent/'negative_control_exclusions.tsv').open('w',encoding='utf-8',newline='') as handle:
+        writer=csv.DictWriter(handle,fieldnames=exclusion_fields,delimiter='\t',extrasaction='ignore')
+        writer.writeheader();writer.writerows(exclusions)
+    from identity_probability import annotate as probability_context
+    calibration=probability_context(resolved)
+    metrics=[('Pipeline version',VERSION),('Original stage 1 hypotheses',len(rows)),('Stage 2 recovery hypotheses',sum(r['row_origin']=='stage2_recovery' for r in audited)),
+        ('Stage 1 species/protein pairs',len({unique_key(r) for r in rows})),('Final species/protein pairs',len(resolved)),
+        ('Negative controls excluded',len(exclusions)),('All input proteins accounted for',len(resolved)+len(exclusions)==len({unique_key(r) for r in rows})),
+        ('Collapsed hypothesis records',len(audited)-len(resolved)-len(exclusions)),
+        *[(f'Grade {grade}',counts[grade]) for grade in 'ABCD'],('Domain score maximum',4),('Orthology score maximum',3),('Motif score maximum',2),('Localization score maximum',1),
+        ('Family/protein probability status',calibration['status'])]
+    metrics.extend(('Benchmark '+key,value) for key,value in supporting.get('benchmark',{}).items() if not isinstance(value,(dict,list)))
+    metrics.extend(('Identity calibration '+key,json.dumps(item,sort_keys=True) if isinstance(item,(dict,list)) else item) for key,item in calibration.items())
+    tables['Pipeline_summary']=[dict(Metric=key,Value=item) for key,item in metrics]
+    from audit_report import prepare_sheet
+    cleanup={};book=Workbook();book.remove(book.active)
+    for spec in schema(2):
+        records,fields,removed=prepare_sheet(spec['name'],tables.get(spec['name'],[]))
+        cleanup[spec['name']]=removed
+        write_sheet(book,2,spec['name'],records,fields=fields)
+        if spec['name']=='Audited_family_assignment':
+            with (dest.parent/'audited_family_assignments.tsv').open('w',encoding='utf-8',newline='') as handle:
+                writer=csv.DictWriter(handle,fieldnames=fields,delimiter='\t',extrasaction='ignore')
+                writer.writeheader();writer.writerows(records)
+    book.save(dest)
+    calibration_fields=['protein_id','Specie','sequence_sha256','assigned_family','protein_name','grade','family_confidence',
+        'protein_name_scope','total_score_0_10','orthology_panel_sha256']
+    with (dest.parent/'identity_calibration_features.tsv').open('w',encoding='utf-8',newline='') as handle:
+        writer=csv.DictWriter(handle,fieldnames=calibration_fields,delimiter='\t',extrasaction='ignore')
+        writer.writeheader();writer.writerows(resolved)
+    manifest=dict(pipeline_version=VERSION,input_sha256=checksum(source),rule_sha256=rules.get('_sha256'),
+        policy_sha256=rules.get('_policy_sha256'),output_sha256=checksum(dest),counts=dict(counts),
+        identity_library_sha256=checksum(IDENTITY_LIBRARY),identity_probability_calibration=calibration,column_cleanup=cleanup,
+        input_hypotheses=len(rows),audited_hypotheses=len(audited),unique_proteins=len(resolved),
+        input_unique_proteins=len({unique_key(r) for r in rows}),excluded_negative_controls=len(exclusions),
+        protein_pool_preserved=not exclusions,protein_accounting_complete=True)
     dest.with_suffix('.manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     return manifest
 
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('input',type=Path);parser.add_argument('output',type=Path)
-    parser.add_argument('--sheet',default='candidates')
-    parser.add_argument('--keep-all-audited',action='store_true',help='Compatibility flag: all audited hypotheses are always preserved')
-    parser.add_argument('--rules',type=Path,default=Path(__file__).resolve().parents[1]/'01_detection/config/family_rules.json')
+    parser.add_argument('input',type=Path);parser.add_argument('output',type=Path);parser.add_argument('--sheet',default='candidates')
+    parser.add_argument('--rules',type=Path,default=ROOT/'01_detection/config/family_rules.json')
+    parser.add_argument('--policy',type=Path,default=Path(__file__).with_name('audit_policy.json'))
+    parser.add_argument('--supporting-data',type=Path);parser.add_argument('--keep-all-audited',action='store_true')
     parser.add_argument('--version',action='version',version='adhesome-audit '+VERSION)
-    args=parser.parse_args()
-    rules=json.loads(args.rules.read_text());rules['_sha256']=checksum(args.rules)
-    meta=run_xlsx(args.input,args.output,args.sheet,rules)
-    print(json.dumps(meta,indent=2))
+    args=parser.parse_args();rules=json.loads(args.rules.read_text());rules['_sha256']=checksum(args.rules)
+    rules['_audit_policy']=json.loads(args.policy.read_text());rules['_policy_sha256']=checksum(args.policy)
+    support=json.loads(args.supporting_data.read_text()) if args.supporting_data else None
+    print(json.dumps(run_xlsx(args.input,args.output,args.sheet,rules,support),indent=2))
+
 
 if __name__=='__main__':main()

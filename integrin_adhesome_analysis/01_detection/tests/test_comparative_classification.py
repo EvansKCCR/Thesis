@@ -58,8 +58,8 @@ class ComparativeTests(unittest.TestCase):
         row = self.classify([],evidence=evidence)[0]
         self.assertEqual(row['status'],'provisional')
         self.assertEqual(row['profile'],'supported')
-        self.assertNotIn('topology_check',row)
-        self.assertNotIn('phylogeny',row)
+        self.assertEqual(row['topology_check'],'deferred_to_stage_2')
+        self.assertEqual(row['phylogeny'],'deferred_to_stage_2')
 
     def test_topology_is_deferred_to_resume(self):
         self.rule['requires_topology']=True

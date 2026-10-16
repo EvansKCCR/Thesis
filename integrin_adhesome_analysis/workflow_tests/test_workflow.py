@@ -34,10 +34,15 @@ class WorkflowTests(unittest.TestCase):
             (truth/'RefOG001.txt').write_text('a1\nb1\n')
             (truth/'RefOG002.txt').write_text('a2\nb2\n')
             for species,prefix in [('A','a'),('B','b')]:
-                (inputs/(species+'.fa')).write_text(''.join('>'+prefix+str(i)+'\nMAAA\n' for i in range(3)))
-            actual=w.execute;commands=[]
+                (inputs/(species+'.fa')).write_text(''.join('>'+prefix+str(i)+'\n'+('M*AA*' if i==0 else 'MAAA')+'\n' for i in range(3)))
+            actual=w.execute;commands=[];fail_reference=[True]
             def simulated(command,logs):
                 commands.append([str(x) for x in command])
+                if 'prepare_references.py' in str(command[1]) and fail_reference[0]:
+                    fail_reference[0]=False
+                    folder=Path(command[command.index('--out')+1]);folder.mkdir()
+                    (folder/'partial.txt').write_text('failed reference attempt')
+                    raise ValueError('simulated reference preparation failure')
                 if str(command[0])=='orthofinder':
                     result=Path(command[command.index('-o')+1])/'Results_fixture'
                     (result/'Phylogenetic_Hierarchical_Orthogroups').mkdir(parents=True)
@@ -50,11 +55,17 @@ class WorkflowTests(unittest.TestCase):
                     actual(command,logs)
             out=root/'automatic'
             with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=simulated):
-                w.downstream(argparse.Namespace(annotation=annotation,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,benchmark_protocol='custom'))
+                with self.assertRaisesRegex(ValueError,'reference preparation failure'):
+                    w.downstream(argparse.Namespace(annotation=annotation,out=out,reference_raw=raw,threads=1,analysis_threads=1,compare=None,benchmark_protocol='custom'))
+                annotation_hash=w.digest(annotation/'workflow_manifest.json')
+                w.recover(argparse.Namespace(run=out,threads=1,analysis_threads=None,iqtree_threads=None))
+            self.assertEqual(annotation_hash,w.digest(annotation/'workflow_manifest.json'))
+            self.assertTrue((out/'references_attempt_001/partial.txt').exists())
             summary=json.loads((out/'benchmark/summary.json').read_text())
             self.assertEqual(summary['status'],'validated',summary.get('diagnostics'))
             self.assertEqual(summary['validated_weight'],1.0)
             self.assertEqual(summary['mapped_reference_proteins'],6)
+            self.assertEqual(summary['sequence_qc']['internal_stop_proteins'],2)
             joined=w.read(out/'final/joined_evidence.tsv')[0]
             self.assertEqual(joined['Orthology_benchmark_status'],'validated')
             self.assertEqual(float(joined['Orthology_benchmark_weight']),1.0)
@@ -71,7 +82,7 @@ class WorkflowTests(unittest.TestCase):
             failed=root/'benchmark_failure_run'
             with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=failed_benchmark):
                 w.downstream(argparse.Namespace(annotation=annotation,out=failed,reference_raw=raw,threads=1,analysis_threads=1,compare=None,benchmark_protocol='custom'))
-            self.assertTrue((failed/'final/audited_candidates.xlsx').exists())
+            self.assertTrue((failed/'final/Stage_2_output.xlsx').exists())
             self.assertEqual(w.read(failed/'final/joined_evidence.tsv')[0]['Orthology_benchmark_status'],'failed')
             self.assertEqual(w.verify(failed,'completed_workflow')['completion_status'],'completed_with_optional_failures')
             boundary=len(commands)
@@ -161,12 +172,12 @@ class WorkflowTests(unittest.TestCase):
                 self.assertEqual(state['stages']['orthology']['status'],'complete')
                 self.assertEqual(state['stages']['phylogeny_run']['status'],'failed')
                 self.assertEqual(state['stages']['audit']['status'],'complete')
-                self.assertTrue((out/'final/audited_candidates.xlsx').exists())
+                self.assertTrue((out/'final/Stage_2_output.xlsx').exists())
                 self.assertEqual(w.verify(out,'completed_workflow')['completion_status'],'completed_with_optional_failures')
                 self.assertEqual(json.loads((out/'benchmark/summary.json').read_text())['status'],'unavailable')
-                audit_hash=w.digest(out/'final/audited_candidates.xlsx')
+                audit_hash=w.digest(out/'final/Stage_2_output.xlsx')
                 w.recover(argparse.Namespace(run=out,threads=2,analysis_threads=None,iqtree_threads=2,phylogeny=True))
-                self.assertEqual(audit_hash,w.digest(out/'final/audited_candidates.xlsx'))
+                self.assertEqual(audit_hash,w.digest(out/'final/Stage_2_output.xlsx'))
                 # Adopted recovery must refresh an audit built with superseded rules.
                 w.archive_attempt(out/'workflow_manifest.json')
                 audit_meta=out/'final/workflow_manifest.json'
@@ -181,7 +192,7 @@ class WorkflowTests(unittest.TestCase):
                 self.assertFalse(any(c[0]=='orthofinder' for c in recovered))
                 self.assertFalse(any('prepare_references.py' in c[1] for c in recovered))
                 self.assertTrue(any('--retry-failed' in c for c in recovered))
-            self.assertTrue((out/'final/audited_candidates.xlsx').exists())
+            self.assertTrue((out/'final/Stage_2_output.xlsx').exists())
             self.assertEqual(json.loads((out/'final/workflow_manifest.json').read_text())['rules_sha256'],w.digest(w.DETECT/'config/family_rules.json'))
             self.assertEqual(w.fasta(out/'references/RefA/prepared/RefA.faa'),{'RefA__GeneID_1':'MAAA'})
             self.assertFalse(json.loads((out/'references/RefC/source.json').read_text())['reference_scope']['complete_proteome'])
@@ -350,10 +361,15 @@ class WorkflowTests(unittest.TestCase):
             joined=w.read(final/'joined_evidence.tsv')
             self.assertEqual(joined[0]['Orthology_direct_reference_count'],'1')
             from openpyxl import load_workbook
-            wb=load_workbook(final/'audited_candidates.xlsx',read_only=True)
-            rows=list(wb['Resolved_candidates'].values)
+            wb=load_workbook(final/'Stage_2_output.xlsx',read_only=True)
+            rows=list(wb['Audited_family_assignment'].values)
             grade=rows[0].index('grade')
-            self.assertEqual([r[grade] for r in rows[1:]],['B'])
+            # Complete family architecture plus orthology gives A. Missing
+            # localization loses its bonus but does not override the family gate.
+            self.assertEqual([r[grade] for r in rows[1:]],['A'])
+            self.assertIn('domain_score_0_4',rows[0])
+            self.assertIn('putative_audited_family',rows[0])
+            self.assertIn('protein_name',rows[0])
             wb.close()
             # Add a reference, rerun extraction and compare by candidate ID.
             cfg=json.loads((root/'panel.json').read_text())

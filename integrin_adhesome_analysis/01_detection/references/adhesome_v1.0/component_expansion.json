@@ -2,7 +2,7 @@
   "pipeline_version": "1.0",
   "created_at": "2026-10-15T06:02:46.382370+00:00",
   "crosswalk_sha256": "3894d1eb49c465db590939645e18e22c3f1ffe2d836bf11eb36079b0212fc215",
-  "rules_sha256": "c6cbd85d14874852abf85ef0a50bdb6c0ef5cbb0ebab466e6a477afee1ab73e4",
+  "rules_sha256": "33b7022986a28262da684ea31bb60e7d77807f7a497f5e79fb152cc1070485c6",
   "base_lock_sha256": "d091a2b98dc521a5fa48f450f5e6c6fe0683c46858011e15146f8d277f2d2bdd",
   "builder_sha256": "da22fda54b06f360ef4248ba716f13e5c7b1105ae0e6378f22f48d6f5b01b663",
   "components": 230,
@@ -3120,5 +3120,10 @@
       "cache_file": ".reference_work\\uniprot\\c3f3011e212c31afbcc237909de01d3582c17e1589eec4311def7820b7858ebb.json",
       "sha256": "d5d036205a3799abf6940353cf9224f70d26839cf3399d36f2ab6b362f61228f"
     }
-  ]
+  ],
+  "rule_revision": {
+    "previous_rules_sha256": "4003416bff8ace9364214f4aeac21a0f24159dd0a3dd037b568ea518ed0499b3",
+    "current_rules_sha256": "33b7022986a28262da684ea31bb60e7d77807f7a497f5e79fb152cc1070485c6",
+    "change": "Two-stage general-hypothesis selection and stage-1 motif scope; family reference labels and sequences unchanged"
+  }
 }

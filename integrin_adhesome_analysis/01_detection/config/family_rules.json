@@ -1805,18 +1805,18 @@
       "classification_level": "family",
       "domain_alternatives": [
         {
-          "PF00307": 1,
+          "PF00595": 1,
           "PF00412": 1
         }
       ],
       "min_length": 150,
       "requires_identity_evidence": false,
-      "classification_note": "PDZ-LIM-containing proteins, important negative competitor for zyxin/PINCH.",
+      "classification_note": "PDZ (PF00595), followed by LIM (PF00412); PF00307 is calponin homology and is not a PDZ anchor. Important competitor for zyxin/PINCH.",
       "benchmark_status": "reference_required_not_calibrated",
       "negative_class_competition": true,
       "ordered_domain_groups": [
         [
-          "PF00307"
+          "PF00595"
         ],
         [
           "PF00412"
@@ -3072,5 +3072,28 @@
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3156290/"
     }
   ],
-  "pipeline_version": "1.0"
+  "pipeline_version": "1.0",
+  "stage1_general_hypotheses": true,
+  "stage1_motif_rule_ids": {
+    "collagen_like": [
+      "MOTIF_E0028F6150AE"
+    ],
+    "fibronectin_like": [
+      "MOTIF_BE539E21B9BA",
+      "MOTIF_82A954768410",
+      "MOTIF_3C56710552E5"
+    ],
+    "fibronectin_III_ligand": [
+      "MOTIF_BE539E21B9BA"
+    ],
+    "vitronectin_like": [
+      "MOTIF_BE539E21B9BA"
+    ],
+    "integrin_alpha": [
+      "MOTIF_E48A4D05278A"
+    ],
+    "integrin_beta": [
+      "MOTIF_77D93F85C286"
+    ]
+  }
 }

@@ -54,6 +54,23 @@ original-to-prepared IDs, sequence hashes and RefOG provenance. Ordinary referen
 proteomes still use explicit gene IDs, GFF or mapping sidecars as before. Exact
 duplicate FASTA files are not inserted twice.
 
+The supplied benchmark FASTAs include internal `*` stop markers. For benchmark
+proteins only, preparation removes one terminal `*` and masks remaining `*`
+positions as `X`, retaining each protein ID and all internal sequence positions.
+This is an inference-input encoding policy, not evidence that a protein is intact
+or that translation reads through a stop. Raw FASTAs and RefOGs are unchanged.
+Each prepared reference has `sequence_qc.tsv` with changed IDs, 1-based masked
+positions, lengths and before/after sequence hashes, plus counts in
+`preparation.json`. Ordinary reference proteomes still reject internal stops and
+unsupported characters; benchmark masking does not allow gaps or arbitrary symbols.
+
+Benchmark matching applies exactly this declared normalization to raw input
+sequences and still rejects any other sequence change. The benchmark summary
+reports the policy, affected protein/site counts and affected RefOG IDs; scores
+describe the processed cohort, not performance on unmodified sequences. Sequence
+QC reports and the normalization implementation are included in benchmark input
+hashes. No benchmark protein is removed to obtain complete cohort coverage.
+
 ## Run automatically after orthology
 
 After returning external topology/localization evidence:
@@ -99,7 +116,7 @@ downstream/benchmark/
   workflow_manifest.json       # linkage to the exact orthology/panel
 downstream/final/
   joined_evidence.tsv
-  audited_candidates.xlsx
+  Stage_2_output.xlsx
 ```
 
 The optional detail files exist only when their processing step was reached.
@@ -158,6 +175,20 @@ The second command explicitly opts in to or retries optional trees. Verified
 orthology, benchmark and audit stages are reused. A previous completion manifest
 is archived before an explicit optional-tree retry; completed results are not
 deleted. Older recovery files do not automatically opt in to phylogeny.
+
+If `resume --out runs/annotation` completed annotation but stopped during reference
+preparation with `Invalid sequence: ENSDARP00000141840`, install the updated
+`prepare_reference.py`, `prepare_references.py` and `benchmark_workflow.py` together,
+then run from the same workflow root:
+
+```bash
+python adhesome_workflow.py recover --run runs/annotation/downstream --threads 4
+```
+
+Recovery preserves the completed annotation and archives the partial reference
+directory before retrying it. Do not rerun `resume` into the existing annotation
+directory. The saved `--phylogeny` request is retained; add `--skip-phylogeny` to
+this recovery command if you want to complete orthology, benchmark and audit only.
 
 A failed benchmark execution is retried by recovery without repeating completed
 orthology. `--retry-benchmark` explicitly requests recomputation even for a sealed

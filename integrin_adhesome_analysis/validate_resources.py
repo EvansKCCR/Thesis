@@ -60,9 +60,36 @@ def validate():
     core_rules={r['rule_id']:r['regex_python'] for r in core['rules']}
     full_rules={r['rule_id']:r['regex_python'] for r in full['rules']}
     if any(full_rules.get(k)!=v for k,v in core_rules.items()):raise ValueError('Adhesion/master rule mismatch')
+    identity_dir=ROOT/'05_conservative_adhesome_family_assignment_audit'
+    identities=json.loads((identity_dir/'family_identity_rules.json').read_text())
+    if identities['pipeline_version']!='1.0':raise ValueError('Identity library version differs')
+    if digest(identity_dir/identities['source_document'])!=identities['source_example_sha256']:
+        raise ValueError('Family architecture example checksum mismatch')
+    identifiers=[rule['id'] for rule in identities['rules']]
+    if len(set(identifiers))!=len(identifiers):raise ValueError('Duplicate family identity rule IDs')
+    allowed=set(models['models'])|set(identities['additional_cdd_domains'])
+    for rule in identities['rules']:
+        if set(rule['parents'])-set(rules['families']):raise ValueError('Unknown parent scope: '+rule['id'])
+        if not re.fullmatch(r'[A-Za-z0-9_.-]+',rule['family']):raise ValueError('Unsafe identity family name')
+        re.compile(rule['specific_cdd_pattern'],re.I)
+        for group in rule['required_groups']:
+            if group['count']<1 or set(group['models'])-allowed:raise ValueError('Invalid observed identity core: '+rule['id'])
+    for pattern in list(identities['pfam_cdd_aliases'].values())+list(identities['additional_cdd_domains'].values()):re.compile(pattern,re.I)
+    from control_exclusion import controls
+    from identity_probability import DEFAULT_MODEL,fingerprint
+    bank=controls();calibration_status='not_fitted';training_controls=0
+    if DEFAULT_MODEL.exists():
+        calibration=json.loads(DEFAULT_MODEL.read_text(encoding='utf-8'))
+        if not calibration['context'].get('positive_control_only'):raise ValueError('Refit identity probabilities using positive controls only')
+        if calibration['code_fingerprint']!=fingerprint():raise ValueError('Refit identity probabilities after scoring code/policy changes')
+        for name,expected in calibration['input_hashes'].items():
+            if digest(ROOT/name)!=expected:raise ValueError('Identity calibration input changed: '+name)
+        calibration_status='positive_control_only';training_controls=len(calibration['samples'])
     return dict(pipeline_version='1.0',family_rules=len(rules['families']),pfam_models=len(models['models']),
                 components=len(crosswalk),component_references=len(component_refs),forward_references=len(forward),
-                reciprocal_references=len(reverse),adhesion_motifs=len(core_rules),master_motifs=len(full_rules))
+                reciprocal_references=len(reverse),adhesion_motifs=len(core_rules),master_motifs=len(full_rules),
+                scoped_identity_rules=len(identifiers),negative_exclusion_sequences=len(bank['negative_by_hash']),
+                identity_calibration_status=calibration_status,positive_identity_training_controls=training_controls)
 
 
 def main():

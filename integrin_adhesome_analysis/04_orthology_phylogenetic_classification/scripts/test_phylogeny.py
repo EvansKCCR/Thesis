@@ -14,6 +14,21 @@ from pipeline import write_tsv, read_tsv, digest
 
 
 class PhylogenyTests(unittest.TestCase):
+    def test_stage_two_family_table_takes_precedence_over_legacy_sheets(self):
+        from openpyxl import Workbook
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/'audit.xlsx';book=Workbook()
+            old=book.active;old.title='Resolved_candidates'
+            old.append(['protein_id','assigned_family','grade']);old.append(['T__old','wrong','A'])
+            sheet=book.create_sheet('Audited_family_assignment')
+            sheet.append(['protein_id','putative_audited_family','grade']);sheet.append(['T__new','profilin','C'])
+            book.save(path)
+            plans,_,coverage=family_plans([],None,'family',['T','R'],audit_workbook=path,
+                target_species=['T'],sequences={'T__new':'MAAA','T__old':'MAAA'})
+            self.assertEqual(plans[0][0],'family_profilin')
+            self.assertEqual(plans[0][2],{'T__new'})
+            self.assertEqual(len(coverage),1)
+
     def test_current_resolved_broad_provisional_is_kept_as_broad_group(self):
         from openpyxl import Workbook
         with tempfile.TemporaryDirectory() as td:

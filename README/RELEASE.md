@@ -16,3 +16,73 @@ The expanded panel and seventeen script/config/test files were installed in the 
 Evolutionary benchmark and optional phylogeny (2026-10-15): adapted the supplied Open_Orthobench scorer with a workflow mode and standard-library adapter. The default inputs/reference_raw location accepts the original BENCHMARKS/Input and RefOGs bundle, with automatic discovery and preparation of original protein units; no invented gene collapse or hand-written JSON is required. Original-cohort integrity checks require the supplied scorer's 12 proteomes, 70 RefOGs, 1,945 memberships and 251,378 input proteins; custom curated cohorts require an explicit protocol flag. Scoring restores exact original IDs with sequence checks, uses full root orthogroups, projects to the benchmark cohort and retains uncertain-assignment handling. The measured reference-cohort F1 weights orthogroup context in the audit, with raw/weighted scores and provenance retained; it cannot create resolving identity or override architecture gates. Missing/invalid benchmarking remains explicit and nonfatal. Phylogeny is now disabled by default, enabled only by --phylogeny, and runs after audit; tree failures preserve audit/workflow completion and can be explicitly retried through recovery without rerunning completed orthology/audit. Version remains 1.0. Twenty-four stage-04 fixtures (two skipped without Biopython), twelve workflow fixtures and eight audit fixtures passed: 42 passed, two skipped. No empirical Open_Orthobench run or target inference was executed because the original dataset is not staged in this source package. See EVOLUTIONARY_BENCHMARKING.md.
 
 Benchmark execution failures can also be recovered after an audit completed on the neutral baseline; completed orthology is reused and the dependent audit is refreshed. --retry-benchmark provides an explicit recomputation option for sealed reports, preserving prior completion/report outputs. The focused end-to-end fixture verifies both failure and successful recovery without another OrthoFinder invocation.
+
+Benchmark reference import fix (2026-10-16): the validation run stopped before OrthoFinder because original benchmark peptide ENSDARP00000141840 contains internal stop markers. Benchmark-only preparation now removes one terminal stop and encodes remaining stops as X without deleting proteins or internal positions. Per-protein sequence_qc.tsv records positions, lengths and sequence hashes; preparation/source metadata retain the policy and counts. Matching uses the same explicit normalization, rejects any other sequence difference and hashes the normalization implementation and QC reports. Benchmark reports identify affected RefOG members and state that metrics describe the processed cohort, not unmodified-sequence performance. Ordinary references remain strict. All 14 staged reference proteomes imported successfully in temporary outputs (284,844 input proteins, 280,599 prepared units); all 251,378 benchmark proteins matched exactly under the declared policy. The 864 internal markers in 173 proteins were recorded, including two RefOG members; all 95 checked raw FASTA/RefOG file hashes remained unchanged. Stage-04 regression tests: 25 passed, two skipped without Biopython. All 12 workflow tests passed, including recovery from partial reference preparation with completed annotation preserved. No real OrthoFinder, benchmark accuracy inference or phylogeny was launched. Version remains 1.0; recover the failed validation run with recover --run runs/annotation/downstream --threads 4. See EVOLUTIONARY_BENCHMARKING.md.
+
+Computational audit revision (2026-10-16): connected the recorded detection similarity/reciprocal searches to final classification. The wrapper verifies target sequences, hit-table receipts, catalog labels and reference sequence hashes; no manual identity fields, experimental annotation or new inference is required. Version 1.0 policy explicitly distinguishes resolving full-sequence reciprocal support, weaker domain-limited family support, unique exact reference sequence identity and distinctive architecture with corroboration. Grade A is available at family level; unsupported paralog specificity remains unresolved or is retained at a supported common parent. Duplicate library labels do not multiply evidence. Same-accession non_adhesome membership annotations do not negate protein identity; genuinely competing accessions remain constraints. Components lacking a family rule receive a separate component identity rather than an invented family. Added explicit protein_call, assignment_level, decision_confidence, decision_basis, evidence_channels and review fields. Corrected PDLIM from calponin homology PF00307 to PDZ PF00595 before LIM PF00412, using already bundled models; reference labels/sequences remain unchanged and metadata records the rule revision. Benchmark weighting remains scoped to orthogroup context; the standalone audit also discovers and verifies a sibling report. All 25 audit, 12 workflow and 80 detection tests passed (117 total); resource validation passed. A separate replay of 314 recorded validation proteins produced A/B/C/D counts 230/10/35/39, with 174 component, 39 family and 17 subfamily high-confidence calls. Of the A calls, 222 are exact reference sequence identities; the replay is not an independent accuracy estimate. Original annotation, search, orthology, benchmark and audit outputs were preserved. No new BLAST, OrthoFinder or phylogeny was run. See COMPUTATIONAL_AUDIT.md for the scheme and audit-only rerun command.
+
+
+Two-stage template correction (2026-10-16): supersedes the preceding computational
+audit revision and its illustrative grade counts. Stage 1 now emits general
+family hypotheses and the supplied candidates-sheet layout; motif checks are
+restricted to the specified ECM/receptor scope. Stage 2 evaluates only preserved
+initial hypotheses plus complete PINCH/parvin recoveries within the same protein
+pool. Restored mandatory diagnostic architecture/CDD gates and the 4/3/2/1 score;
+A/B/C/D follow the supplied family-level protocol. Removed catalogue-wide label
+replacement, exact-reference exemptions and separate component-call routes.
+Stage_2_output.xlsx follows all nine template tabs and adds current motif,
+benchmark, panel-species and provenance fields. Missing orthology is distinguished
+from observed panel restriction. Context-supported motif evidence is retained.
+Optional phylogeny consumes the final family table and remains independent of
+audit completion. Recovery checks shared schema and contract hashes. Original
+templates and existing run outputs are preserved. Version remains 1.0.
+
+Validation for this correction: 159 regression checks passed across detection,
+motifs, orthology/phylogeny, audit and workflow integration; two additional tests
+were skipped because Biopython is unavailable. Resource validation passed.
+A separate read-only replay retained all 314 recorded species/protein pairs,
+evaluated 2,198 original hypotheses and added two complete recovery hypotheses
+within that pool. Grades A/B/C/D were 96/0/112/106. These are classifications of
+the existing validation handoff, not an independent accuracy estimate. Current
+stage 1 classification was also refreshed successfully from cached detection
+evidence into a separate review directory; no new BLAST, OrthoFinder or tree
+inference was launched.
+
+Generic screening buckets cannot pass stage 2 as assigned families, even with HOG
+support. A dedicated regression check enforces this boundary. Named general
+family rules remain eligible; legacy screening hypotheses remain in the audit trail.
+
+
+Putative identity and report cleanup (2026-10-16, version 1.0): removed MULocDeep,
+entirely blank and unused report columns; consolidated semantic aliases and moved
+repeated per-species detail out of the final view. The final table uses
+putative_audited_family, protein_name and assignment_confidence, with a matching
+TSV. Added 45 scoped, architecture/CDD-based identity refinements from the supplied
+examples, keeping inferred regions and lineage assertions separate from observed
+evidence. Observed CDD footprints may complement Pfam domains; overlapping copies
+are merged and CDD architecture is displayed N to C. Large CDD lists are supplied
+through the JSON sidecar rather than Excel cells. Naming/report code and library
+hashes invalidate stale audit checkpoints without repeating orthology. Numerical
+identity probabilities in that initial replay awaited labelled calibration data; orthogroup F1
+continues to weight orthology only. Optional family trees accept the compact family
+column and legacy workbooks. A cached replay retained 314 proteins, with 43 populated
+final columns and A/B/C/D counts 100/0/108/106. Those counts are not an accuracy
+estimate. Tests and original run data remain separate from the source package.
+
+Positive-control calibration and negative exclusion (2026-10-16, version 1.0):
+the supplied 583-label/581-sequence calibration library now provides positive-only
+identity correctness calibration. Hard/background negatives are exclusion gates,
+never identity training classes. Exact negative matches, or a complete related
+architecture with an observed negative-specific curated CDD model, are dropped
+from final assignments and preserved in a separate exclusion TSV and screening
+trail. Shared domains alone cannot exclude a protein. This supersedes earlier
+release entries describing full final-pool retention or negative-control protein
+identity calls. Retained plus excluded proteins must equal the unchanged input pool.
+The current cached replay retains 236 proteins and excludes 78 from 314 inputs.
+The fitted isotonic model uses 130 named positive controls, removes a query's exact
+sequence group before estimation, and exports probability, approximate Wilson
+95% bounds, control count, method and scope. No probability is emitted for
+unassigned calls, unsupported positive-family scope, absent sequence hashes,
+out-of-range scores, stale models or changed reference panels. Reference-overlapping
+controls do not establish independent novel-lineage accuracy. Recalibration is
+automatic from scored evidence with calibrate_identity.py; no manual JSON is needed.

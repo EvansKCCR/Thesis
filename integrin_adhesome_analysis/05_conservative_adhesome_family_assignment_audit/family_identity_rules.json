@@ -1,0 +1,1214 @@
+{
+  "pipeline_version": "1.0",
+  "source_example_sha256": "4255cb9679005167fc7d6c9e7ec1d365c82cbf0f4db3950e41dd787b37a396ab",
+  "source_interpretation": "Examples guide scoped putative naming; inferred domains, subclades and restricted lineages are not observations or gold labels",
+  "source_document": "family_architecture_examples.tsv",
+  "specific_hit_source": "https://www.ncbi.nlm.nih.gov/Structure/cdd/docs/cdd_how_to_protein_function.html",
+  "pfam_cdd_aliases": {
+    "PF00373": "^(?:B41|FERM_M|FERM_B.lobe)$",
+    "PF01608": "^(?:I.?LWEQ|ILWEQ)(?:_|$)",
+    "PF18124": "^FERM_F0_kindlin(?:_|$)",
+    "PF00307": "^(?:CH|Calponin)(?:_|$)",
+    "PF00435": "^(?:SPEC|Spectrin)(?:_|$)",
+    "PF00241": "^(?:ADF|ADF_H|ADF.homology|Cofilin|cofilin_ADF|GMF)(?:_|$)",
+    "PF00022": "^(?:ACTIN|Actin|ASKHA_NBD.*actin|actin_Arp\\w*)(?:_|$)",
+    "PF00412": "^LIM(?:\\d+)?(?:_|$)",
+    "PF00595": "^PDZ(?:_|$)",
+    "PF00017": "^SH2(?:_|$)",
+    "PF00018": "^SH3(?:_|$)",
+    "PF07714": "^(?:PTKc|TyrKc)(?:_|$)",
+    "PF00069": "^(?:STKc|S_TKc|STYKc|Pkinase|PK_Tyr_Ser.Thr)(?:_|$)",
+    "PF00102": "^(?:PTPc|PTP|Y_phosphatase)(?:_|$)",
+    "PF00630": "^(?:Filamin|IG_FLMN)(?:_|$)",
+    "PF00169": "^PH(?:_|$)",
+    "PF00023": "^(?:ANK|ANKYR|Ankyrin)(?:_|$)",
+    "PF00041": "^(?:FN3|fn3)(?:_|$)",
+    "PF00053": "^(?:Laminin_EGF|LE_domain)(?:_|$)",
+    "PF00055": "^(?:LamN|Laminin_N)(?:_|$)",
+    "PF01391": "^Collagen(?:_|$)",
+    "PF01044": "^(?:Vinculin|Vinculin_head|Vinculin_tail)(?:_|$)",
+    "PF00640": "^(?:PTB|PID)(?:_|$)",
+    "PF03623": "^(?:FAT|Focal_AT)(?:_|$)"
+  },
+  "additional_cdd_domains": {
+    "ENTH": "ENTH|EPSIN_N",
+    "PET": "^PET(?:_|$)",
+    "CRIB": "^CRIB(?:_|$)",
+    "GS_region": "GS_(?:REGION|DOMAIN)|TGFBR_GS",
+    "IG": "^(?:IG|IG_like|I_set|IGC|IGSF)(?:_|$)",
+    "Collagen_NC1": "COLLAGEN_(?:IV|NC1)|^C4$|COL4_NC1",
+    "COLFI": "^COLFI(?:_|$)"
+  },
+  "rules": [
+    {
+      "id": "talin",
+      "parents": [
+        "talin",
+        "kindlin"
+      ],
+      "family": "talin",
+      "protein_name": "Talin",
+      "required_groups": [
+        {
+          "models": [
+            "PF00373"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF01608"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "TALIN",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "kindlin",
+      "parents": [
+        "kindlin",
+        "talin"
+      ],
+      "family": "kindlin",
+      "protein_name": "Kindlin-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF18124"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00373",
+            "PF00169"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "KINDLIN|FERMT",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "hip1",
+      "parents": [
+        "talin"
+      ],
+      "family": "HIP1_HIP1R_like",
+      "protein_name": "HIP1/HIP1R-related protein",
+      "required_groups": [
+        {
+          "models": [
+            "ENTH"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF01608"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "HIP1R?|HIP1_HIP1R",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "actin_conventional",
+      "parents": [
+        "actin"
+      ],
+      "family": "actin_conventional",
+      "protein_name": "Conventional actin",
+      "required_groups": [
+        {
+          "models": [
+            "PF00022"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^(?:ACTIN|ASKHA_NBD_actin|Actin_conventional|Actin_cytoplasmic)(?:_|$)",
+      "ordered_groups": []
+    },
+    {
+      "id": "arp1",
+      "parents": [
+        "actin"
+      ],
+      "family": "arp1_like",
+      "protein_name": "Arp1-like actin-related protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00022"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "Arp1(?![0-9])",
+      "ordered_groups": []
+    },
+    {
+      "id": "arp2",
+      "parents": [
+        "actin"
+      ],
+      "family": "arp2_like",
+      "protein_name": "Arp2-like actin-related protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00022"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "Arp2(?![0-9])",
+      "ordered_groups": []
+    },
+    {
+      "id": "arp3",
+      "parents": [
+        "actin"
+      ],
+      "family": "arp3_like",
+      "protein_name": "Arp3-like actin-related protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00022"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "Arp3(?![0-9])",
+      "ordered_groups": []
+    },
+    {
+      "id": "arp4",
+      "parents": [
+        "actin"
+      ],
+      "family": "arp4_like",
+      "protein_name": "Arp4-like actin-related protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00022"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "Arp4(?![0-9])",
+      "ordered_groups": []
+    },
+    {
+      "id": "arp5",
+      "parents": [
+        "actin"
+      ],
+      "family": "arp5_like",
+      "protein_name": "Arp5-like actin-related protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00022"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "Arp5(?![0-9])",
+      "ordered_groups": []
+    },
+    {
+      "id": "arp6",
+      "parents": [
+        "actin"
+      ],
+      "family": "arp6_like",
+      "protein_name": "Arp6-like actin-related protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00022"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "Arp6(?![0-9])",
+      "ordered_groups": []
+    },
+    {
+      "id": "arp8",
+      "parents": [
+        "actin"
+      ],
+      "family": "arp8_like",
+      "protein_name": "Arp8-like actin-related protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00022"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "Arp8(?![0-9])",
+      "ordered_groups": []
+    },
+    {
+      "id": "arp10",
+      "parents": [
+        "actin"
+      ],
+      "family": "arp10_like",
+      "protein_name": "Arp10-like actin-related protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00022"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "Arp10(?![0-9])",
+      "ordered_groups": []
+    },
+    {
+      "id": "alpha_actinin",
+      "parents": [
+        "alpha_actinin"
+      ],
+      "family": "alpha_actinin",
+      "protein_name": "Alpha-actinin-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00307"
+          ],
+          "count": 2
+        },
+        {
+          "models": [
+            "PF00435"
+          ],
+          "count": 2
+        }
+      ],
+      "specific_cdd_pattern": "ACTININ|ACTN",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "spectrin",
+      "parents": [
+        "alpha_actinin"
+      ],
+      "family": "spectrin_like",
+      "protein_name": "Spectrin-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00435"
+          ],
+          "count": 3
+        },
+        {
+          "models": [
+            "PF00169"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "SPECTRIN|SPEC",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "cofilin",
+      "parents": [
+        "cofilin"
+      ],
+      "family": "cofilin",
+      "protein_name": "Cofilin/ADF-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00241"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "COFILIN|ADF_COF|COF_ADF",
+      "ordered_groups": []
+    },
+    {
+      "id": "twinfilin",
+      "parents": [
+        "cofilin"
+      ],
+      "family": "twinfilin_like",
+      "protein_name": "Twinfilin-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00241"
+          ],
+          "count": 2
+        }
+      ],
+      "specific_cdd_pattern": "TWINFILIN|TWF",
+      "ordered_groups": []
+    },
+    {
+      "id": "drebrin",
+      "parents": [
+        "cofilin"
+      ],
+      "family": "drebrin_like",
+      "protein_name": "Drebrin-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00241"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00018"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "DREBRIN|DBN",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "gmf",
+      "parents": [
+        "cofilin"
+      ],
+      "family": "GMF_like",
+      "protein_name": "Glia maturation factor-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00241"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "GMF|GLIA_MATURATION",
+      "ordered_groups": []
+    },
+    {
+      "id": "filamin",
+      "parents": [
+        "filamin",
+        "alpha_actinin"
+      ],
+      "family": "filamin",
+      "protein_name": "Filamin-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00307"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00630"
+          ],
+          "count": 2
+        }
+      ],
+      "specific_cdd_pattern": "FILAMIN|IG_FLMN",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "paxillin",
+      "parents": [
+        "paxillin_like",
+        "zyxin_like",
+        "PDLIM_family",
+        "PINCH_like",
+        "LIM_scaffold_screen",
+        "FHL_screen"
+      ],
+      "family": "paxillin_like",
+      "protein_name": "Paxillin-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 2
+        }
+      ],
+      "specific_cdd_pattern": "PAXILLIN|LEUPAXIN",
+      "ordered_groups": []
+    },
+    {
+      "id": "pdlim",
+      "parents": [
+        "paxillin_like",
+        "zyxin_like",
+        "PDLIM_family",
+        "PINCH_like",
+        "LIM_scaffold_screen",
+        "FHL_screen"
+      ],
+      "family": "PDLIM_family",
+      "protein_name": "PDZ-LIM family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00595"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "PDLIM|PDZ_PDLIM",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "pet_lim",
+      "parents": [
+        "paxillin_like",
+        "zyxin_like",
+        "PDLIM_family",
+        "PINCH_like",
+        "LIM_scaffold_screen",
+        "FHL_screen"
+      ],
+      "family": "PET_LIM_like",
+      "protein_name": "PET-LIM family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PET"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 5
+        }
+      ],
+      "specific_cdd_pattern": "TESTIN|PRICKLE|LIMPET|PET_LIM",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "ajuba",
+      "parents": [
+        "paxillin_like",
+        "zyxin_like",
+        "PDLIM_family",
+        "PINCH_like",
+        "LIM_scaffold_screen",
+        "FHL_screen"
+      ],
+      "family": "zyxin_ajuba_like",
+      "protein_name": "Zyxin/Ajuba-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 3
+        }
+      ],
+      "specific_cdd_pattern": "AJUBA|JUB|LIMD1|WTIP",
+      "ordered_groups": []
+    },
+    {
+      "id": "zyxin",
+      "parents": [
+        "paxillin_like",
+        "zyxin_like",
+        "PDLIM_family",
+        "PINCH_like",
+        "LIM_scaffold_screen",
+        "FHL_screen"
+      ],
+      "family": "zyxin_like",
+      "protein_name": "Zyxin-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 3
+        }
+      ],
+      "specific_cdd_pattern": "ZYXIN|TRIP6|LPP",
+      "ordered_groups": []
+    },
+    {
+      "id": "Src",
+      "parents": [
+        "Src",
+        "Csk",
+        "Abl_family",
+        "Tec_family",
+        "FRK_PTK6_SRMS_family",
+        "generic_kinase_screen"
+      ],
+      "family": "Src",
+      "protein_name": "Src-family tyrosine kinase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00018"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00017"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF07714",
+            "PF00069"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "PTKc_(?:SRC|FYN|LYN|YES|HCK|FGR|BLK|LCK)|SH[23]_(?:SRC|FYN|LYN|YES|HCK|FGR|BLK|LCK)",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "Csk",
+      "parents": [
+        "Src",
+        "Csk",
+        "Abl_family",
+        "Tec_family",
+        "FRK_PTK6_SRMS_family",
+        "generic_kinase_screen"
+      ],
+      "family": "Csk",
+      "protein_name": "Csk/Chk-family tyrosine kinase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00018"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00017"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF07714",
+            "PF00069"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "CSK|CHK|MATK",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "Abl_family",
+      "parents": [
+        "Src",
+        "Csk",
+        "Abl_family",
+        "Tec_family",
+        "FRK_PTK6_SRMS_family",
+        "generic_kinase_screen"
+      ],
+      "family": "Abl_family",
+      "protein_name": "Abelson-family tyrosine kinase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00018"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00017"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF07714",
+            "PF00069"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "PTKc_ABL|SH[23]_ABL",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "Tec_family",
+      "parents": [
+        "Src",
+        "Csk",
+        "Abl_family",
+        "Tec_family",
+        "FRK_PTK6_SRMS_family",
+        "generic_kinase_screen"
+      ],
+      "family": "Tec_family",
+      "protein_name": "Tec/BTK-family tyrosine kinase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00018"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00017"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF07714",
+            "PF00069"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00169"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "PTKc_(?:TEC|BTK|BMX|ITK|TXK)|PH_BTK",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "fes",
+      "parents": [
+        "Src",
+        "generic_kinase_screen"
+      ],
+      "family": "Fes_Fps_like",
+      "protein_name": "Fes/Fps-family tyrosine kinase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00017"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF07714",
+            "PF00069"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "FES|FPS|FES_FPS",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "mlk",
+      "parents": [
+        "generic_kinase_screen",
+        "Src"
+      ],
+      "family": "MLK_like",
+      "protein_name": "Mixed-lineage kinase-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00018"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF07714",
+            "PF00069"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "CRIB"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "MLK|MAP3K9|MAP3K10|MAP3K11",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "tgfbr",
+      "parents": [
+        "generic_kinase_screen"
+      ],
+      "family": "TGFbeta_type_I_receptor_like",
+      "protein_name": "TGF-beta/activin type I receptor-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "GS_region"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF07714",
+            "PF00069"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "TGFBR1|ACVR1|ACTIVIN_TYPE_I|TGF_BETA_TYPE_I",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "ptpn1",
+      "parents": [
+        "generic_PTP_screen",
+        "PTP_PEST"
+      ],
+      "family": "PTPN1_PTP1B_like",
+      "protein_name": "PTPN1/PTP1B-like phosphatase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00102"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "PTPN1(?![0-9])|PTP1B",
+      "ordered_groups": []
+    },
+    {
+      "id": "ptprn",
+      "parents": [
+        "generic_PTP_screen",
+        "RPTP_alpha_epsilon",
+        "LAR_RPTP"
+      ],
+      "family": "PTPRN_PTPRN2_like",
+      "protein_name": "PTPRN/PTPRN2-like phosphatase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00102"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "PTPRN|R_PTP_N_N2|IA2",
+      "ordered_groups": []
+    },
+    {
+      "id": "lar",
+      "parents": [
+        "generic_PTP_screen",
+        "LAR_RPTP",
+        "fibronectin_III_ligand"
+      ],
+      "family": "LAR_RPTP",
+      "protein_name": "Type IIa receptor protein tyrosine phosphatase-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "IG"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00041"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00102"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "PTPR[DFS]|PTPc_LAR|PTP_LAR",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "collagen_iv",
+      "parents": [
+        "collagen_like"
+      ],
+      "family": "collagen_IV_like",
+      "protein_name": "Type IV collagen-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF01391"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "Collagen_NC1"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "COL4|COLLAGEN_IV",
+      "ordered_groups": []
+    },
+    {
+      "id": "collagen_v",
+      "parents": [
+        "collagen_like"
+      ],
+      "family": "collagen_V_like",
+      "protein_name": "Type V collagen-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF01391"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "COLFI"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "COL5|COLLAGEN_V(?!I)",
+      "ordered_groups": []
+    },
+    {
+      "id": "collagen_fibrillar",
+      "parents": [
+        "collagen_like"
+      ],
+      "family": "fibrillar_collagen_like",
+      "protein_name": "Fibrillar collagen-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF01391"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "COLFI"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "FIBRILLAR|COLFI",
+      "ordered_groups": []
+    },
+    {
+      "id": "laminin_alpha",
+      "parents": [
+        "laminin_like"
+      ],
+      "family": "laminin_alpha_like",
+      "protein_name": "Laminin alpha chain-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00055"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00053"
+          ],
+          "count": 3
+        }
+      ],
+      "specific_cdd_pattern": "LAMININ_ALPHA|LAMA[1-5]",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "laminin_beta",
+      "parents": [
+        "laminin_like"
+      ],
+      "family": "laminin_beta_like",
+      "protein_name": "Laminin beta chain-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00055"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00053"
+          ],
+          "count": 3
+        }
+      ],
+      "specific_cdd_pattern": "LAMININ_BETA|LAMB[1-5]",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "laminin_gamma",
+      "parents": [
+        "laminin_like"
+      ],
+      "family": "laminin_gamma_like",
+      "protein_name": "Laminin gamma chain-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00055"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00053"
+          ],
+          "count": 3
+        }
+      ],
+      "specific_cdd_pattern": "LAMININ_GAMMA|LAMC[1-5]",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "netrin",
+      "parents": [
+        "laminin_like"
+      ],
+      "family": "netrin_like",
+      "protein_name": "Netrin-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00055"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00053"
+          ],
+          "count": 3
+        }
+      ],
+      "specific_cdd_pattern": "NETRIN|NTN[1-5]",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "robo",
+      "parents": [
+        "fibronectin_III_ligand"
+      ],
+      "family": "ROBO_like",
+      "protein_name": "Roundabout/ROBO-like receptor",
+      "required_groups": [
+        {
+          "models": [
+            "IG"
+          ],
+          "count": 5
+        },
+        {
+          "models": [
+            "PF00041"
+          ],
+          "count": 2
+        }
+      ],
+      "specific_cdd_pattern": "ROBO|ROUNDABOUT",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "dcc",
+      "parents": [
+        "fibronectin_III_ligand"
+      ],
+      "family": "DCC_neogenin_like",
+      "protein_name": "DCC/neogenin-like receptor",
+      "required_groups": [
+        {
+          "models": [
+            "IG"
+          ],
+          "count": 2
+        },
+        {
+          "models": [
+            "PF00041"
+          ],
+          "count": 2
+        }
+      ],
+      "specific_cdd_pattern": "NEOGENIN|DCC|NEO1",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "giant_kinase",
+      "parents": [
+        "fibronectin_III_ligand",
+        "generic_kinase_screen"
+      ],
+      "family": "UNC89_obscurin_SPEG_like",
+      "protein_name": "UNC-89/obscurin/SPEG-like cytoskeletal kinase",
+      "required_groups": [
+        {
+          "models": [
+            "IG",
+            "PF00041"
+          ],
+          "count": 2
+        },
+        {
+          "models": [
+            "PF07714",
+            "PF00069"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "UNC_?89|OBSCURIN|SPEG",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "eph",
+      "parents": [
+        "fibronectin_III_ligand",
+        "generic_kinase_screen",
+        "Src"
+      ],
+      "family": "Eph_receptor_like",
+      "protein_name": "Eph receptor-like tyrosine kinase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00041"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF07714",
+            "PF00069"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "PTKc_EPH|EPH_RECEPTOR",
+      "ordered_groups": [
+        0,
+        1
+      ]
+    }
+  ]
+}

@@ -88,7 +88,7 @@ def scan(snapshot,families,regions,evidence,out,write_tsv,sequence_context=None)
                     rs=regions[family,record['id']]
                     domains=';'.join(sorted({n for n,x,y in rs if (n.startswith('PF') or n.startswith('CDD:')) and a<=y and b>=x}))
                     top=';'.join(sorted({n for n,x,y in rs if n in ('predicted_inside','predicted_outside','transmembrane','signal_peptide','cytoplasmic_tail') and x<=a<=b<=y}))
-                    tier='context_conflict' if any(r['status']=='contradicted' for r in relevant) else 'sequence_only_candidate'
+                    tier='context_conflict' if any(r['status']=='contradicted' for r in relevant) else 'context_supported_candidate' if any(r['status']=='supported' for r in relevant) else 'sequence_only_candidate'
                     annotations.append(dict(family=family,sequence_id=record['id'],motif_id=rule['rule_id'],library_id=rule['rule_id'],
                         motif_name=rule['motif_name'],start=a,end=b,peptide=peptide,
                         site_group_id=hashlib.sha256(f'{record["id"]}|{a}|{b}|{peptide}'.encode()).hexdigest()[:16],
@@ -105,4 +105,6 @@ def scan(snapshot,families,regions,evidence,out,write_tsv,sequence_context=None)
     write_tsv(out/'current_motif_rules.tsv',serial,list(serial[0]))
     return dict(master_records=len(serial),sequence_annotation_rows=len(annotations),
         generic_hit_rows=sum(r['scan_scope']!='adhesion_associated' for r in annotations),
-        context_filters_implemented=False,warning='Hits are sequence candidates; context requirements remain to be verified.',summary_discrepancies=[])
+        context_filters_implemented=False,supplied_site_context_evidence_used=bool(evidence),
+        context_supported_rows=sum(r['candidate_tier']=='context_supported_candidate' for r in annotations),
+        warning='Sequence-only matches retain partial support; supplied verified site-context evidence is reported separately.',summary_discrepancies=[])

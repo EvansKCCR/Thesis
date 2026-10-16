@@ -5,13 +5,12 @@ on resume/continue. The audit completes first and is retained even if trees fail
 Without `--phylogeny`, grouping alone does not run any trees. The standalone
 preparation/run commands below remain explicit optional operations.
 
-Family mode selects the current audit's `Resolved_candidates` worksheet: grades
-A, B and C, grouped by `assigned_family`. Grade D and other target proteins are
+Family mode selects the current audit's `Audited_family_assignment` worksheet: grades
+A, B and C, grouped by `putative_audited_family`. Grade D and other target proteins are
 excluded. Selection is data driven, with no hard-coded species or count.
-The current reference-gated rules can change earlier classifications and counts.
-Grade C `broad_only` candidates retain their broad homology group as a provisional
-tree grouping while their family identity remains unassigned. Older saved audits
-using `Collapsed_candidates` remain readable for recovery.
+The current architecture-gated rules can change earlier classifications and counts.
+Grade C candidates retain provisional family assignments for grouping. Older saved
+audits using `Resolved_candidates` or `Collapsed_candidates` remain readable.
 
 Selected targets remain included even without an orthologue or source group.
 Reference proteins from linked orthogroups are retained and deduplicated by ID.
@@ -43,14 +42,14 @@ python 04_orthology_phylogenetic_classification/scripts/phylogeny.py prepare \
   --proteomes runs/annotation/downstream/panel/proteomes \
   --species-list runs/annotation/downstream/panel/species.json \
   --target-species runs/annotation/downstream/panel/targets.json \
-  --audit-workbook runs/annotation/downstream/final/audited_candidates.xlsx \
+  --audit-workbook runs/annotation/downstream/final/Stage_2_output.xlsx \
   --candidate-report runs/annotation/downstream/orthology/candidates/candidate_report.tsv \
   --output runs/family_phylogeny_audited
 ```
 
 If duplication evidence is unavailable, replace `--duplications PATH` with
 `--allow-missing-duplications`. Use a new output folder. To prepare one family,
-append `--family talin`; repeat for several families. Use audit `assigned_family`
+append `--family talin`; repeat for several families. Use audit `putative_audited_family`
 names. Existing prepared trees are not rewritten.
 
 Preparation does not launch alignment or tree inference. First inspect
@@ -84,3 +83,8 @@ selection. Prepare a new project to apply the revised selection.
 The previous `--family-map TSV --family-column COLUMN` mode remains available
 explicitly for broad hypothesis exploration and includes entire source groups.
 Do not use it for the restricted audited selection described here.
+
+Current final outputs include compact `putative_audited_family`, `protein_name`
+and evidence confidence, plus a matching TSV. See [naming and output policy](COMPUTATIONAL_AUDIT.md).
+Hard/background-negative exclusions are absent from the audited assignment table
+and therefore cannot enter its family phylogenies.

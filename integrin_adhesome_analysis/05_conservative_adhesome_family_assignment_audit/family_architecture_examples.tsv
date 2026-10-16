@@ -1,0 +1,61 @@
+Protein_Family_and_Lineage	Conserved_and_Inferred_Domain_Architecture_N_to_C
+Canonical Talin (Subclade 1)	FERM N - Band 4.1 - IRS - Talin middle - I/LWEQ - VBS - ILWEQ
+Canonical Talin (Subclade 2)	FERM F0 - Band 4.1 - IRS - Talin middle - ILWEQ
+HIP1/HIP1R-related	ENTH-like - [Inferred: Coiled-coil] - ILWEQ
+Kindlin-like (Shorter paralogues)	FERM F0 kindlin - Band 4.1 (F1/F2) - PH-like (inserted in F2) - [Inferred: FERM F3/PTB]
+Kindlin-like (Longer paralogues)	FERM F0 kindlin - Band 4.1 (F1/F2) - PH-like (inserted in F2) - [Inferred: FERM F3/PTB]
+Conventional Actin	ASKHA NBD (Actin)
+Conventional Actin	ASKHA NBD (Actin)
+Arp2-like	ASKHA NBD Arp2
+Arp3-like	ASKHA NBD Arp3-like
+Arp1 / Arp10 / Arp4 / Arp5 / Arp6 / Arp8-like	ASKHA NBD + Subfamily-specific Arp insertions [Inferred: Chromatin-remodeling/dynactin loops]
+Schistosoma-restricted Arp-T1-3	ASKHA NBD actin Arp-T1-3
+Schistosoma-restricted Actin	ACTIN domain
+Schistosoma-restricted Actins	ASKHA NBD (Actin)
+Restricted Shared Actins	ASKHA NBD actin (OG0010705) / ACTIN domain (OG0000005)
+Canonical alpha-Actinin (2 Subclades)	[Inferred: 2x Tandem CH - 4x Spectrin repeats - C-terminal EF-hand pair]
+Spectrin-family (2 Subclades)	[Inferred: 2x Tandem CH] - Multiple Spectrin repeats - PH
+Invertebrate Spectrin-related	[Inferred: CH domains / Spectrin repeats]
+Schistosoma-restricted Spectrin/Actinin	2x Tandem CH - 5x Spectrin repeats - PH
+Cofilin/ADF-like	[Inferred: Single ADF-homology (ADF-H) domain]
+Twinfilin-like	2x Tandem ADF-H domains
+Drebrin-like	ADF-H - [Inferred: Coiled-coil/helical] - SH3
+GMF-like (Glia Maturation Factor)	GMF-like [Inferred: Single ADF-H domain with GMF-specific Arp2/3-binding surface]
+Vinculin-like (Canonical & Catenin-related)	Extended Vinculin-family [Inferred: Vinculin head (Vh1-Vh3) - Proline-rich linker - Vinculin tail (Vt)]
+Filamin-like (2 Subclades)	ABD (2x Tandem CH) - Multiple Ig-like filamin repeats
+Paxillin-like (4x LIM)	[Inferred: Disordered N-terminus] - 4x Tandem LIM
+Paxillin-like (2x LIM)	2x C-terminal LIM
+PDZ-LIM (Paxillin-associated group)	PDZ - 3x C-terminal LIM
+PET-LIM / SmLIMPETin (Subclade 1)	PET - 6x C-terminal LIM
+PET-less LIM (Subclade 2)	5x C-terminal LIM
+PINCH-like (Canonical & Restricted)	5x Tandem LIM
+Zyxin / Ajuba-like	[Inferred: Proline-rich N-terminus] - 3x Tandem LIM (with LIM2 Ajuba-like signature)
+Focal Adhesion Kinase (FAK)-like	FERM - [Inferred: Tyrosine Kinase (PTKc_FAK)] - FAT
+Integrin-Linked Kinase (ILK)-like	3x Tandem ANK - [Inferred: PH-like motif] - STYKc (Kinase-like)
+Canonical Src-family Kinases	SH3 (Src-like) - SH2 - Tyrosine Kinase (Src-like catalytic)
+Unassigned Src-related Kinases	SH3 - SH2 - Tyrosine Kinase
+Tec / BTK-family Kinases	PH (Btk-type) - [Inferred: BTK zinc finger] - SH3 - SH2 - Tyrosine Kinase
+Abelson (Abl)-family Kinases	SH3 (Abl-specific) - SH2 - Tyrosine Kinase - [Inferred: F-actin binding domain (FABD)]
+Fes / Fps-family Kinases	[Inferred: F-BAR] - SH2 (Fes/Fps) - Tyrosine Kinase
+Mixed-Lineage Kinases (MLK)	SH3 - Ser/Thr Kinase - CRIB - [Inferred: Leucine zipper]
+TGF-beta / Activin Type I Receptor	[Inferred: Activin ECD - TM] - GS motif - Ser/Thr Kinase
+Other Ser/Thr Kinases	Subfamily-specific Ser/Thr Kinase catalytic domains [Inferred: CCT domain in OSR1/SPAK; UBA in SNRK/AMPK]
+Nck-like Adaptors	3x Tandem SH3 (SH3 Nck 1, SH3 Nck 2, SH3_3) - SH2
+Shc-like Adaptors	PTB - [Inferred: CH1 collagen-homology linker] - SH2
+Grb2-like Adaptors (Canonical & Restricted)	SH3 (Grb2-N) - SH2 (Grb2) - SH3 (C-terminal)
+PTPN1 / PTP1B-like Phosphatases	N-terminal PTP catalytic - [Inferred: C-terminal ER-targeting region]
+PTPRN / PTPRN2-like Phosphatases	[Inferred: TM] - Middle-to-C-terminal PTP (R-PTP-N-N2 signature in Sj)
+Unresolved & Restricted PTPs	PTP catalytic domain
+Collagen Type IV-like	[Inferred: 7S N-terminal region] - Discontinuous Collagen triple-helix repeats - Collagen IV (C4/NC1)
+Collagen Type V-like	(LamG-like) - Collagen triple-helix repeats - [Inferred: COLFI]
+Fibrillar Collagen-like	(VWC) - Multiple Collagen repeats - (COLFI)
+Schistosoma-restricted Collagens	Multiple Collagen repeats (OG0012988) / Single Collagen domain (OG0013520)
+Laminin alpha-chain	LamN - Laminin EGF repeats - Laminin B (L4) - Laminin EGF repeats - [Inferred: Coiled-coil] - (LamG)
+Laminin beta-chain	LamN - 12-14x Laminin EGF repeats - [Inferred: Laminin coiled-coil (LCC)]
+Laminin gamma-chain	LamN - 11x Laminin EGF repeats - [Inferred: Laminin coiled-coil (LCC)]
+Netrin-like (2 Subclades)	LamN - 3x Laminin EGF repeats - (NTR)
+ROBO-like Receptors	5x Ig-like - 2x FN3 - [Inferred: TM - Cytoplasmic CC0-CC3 motifs]
+DCC / Neogenin-like Ig-FN3 Receptors	Variable N-terminal Ig-like repeats - Multiple FN3 domains - [Inferred: TM]
+Giant Cytoskeletal Kinases (UNC-89/Obscurin/SPEG-like)	Multiple Ig-like & FN3 repeats - 2x Kinase (OG0007310) or 1x Kinase (OG0007352)
+Putative Eph Receptor-like	(Signal Peptide) - [Inferred: Unannotated Eph LBD/Cys-rich] - FN3 repeats - TM - Tyrosine Kinase
+Type IIa Receptor PTPs (LAR/PTPRD/PTPRS-like)	N-terminal Ig-like repeats - Multiple FN3 - [Inferred: TM] - 1-2x C-terminal PTP (D1 catalytic + D2 pseudophosphatase)

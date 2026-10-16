@@ -14,6 +14,7 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
+from identity_probability import resource_hashes as probability_resources
 
 ROOT = Path(__file__).resolve().parent
 VERSION = '1.0'
@@ -21,6 +22,11 @@ DETECT = ROOT/'01_detection'
 MOTIF = ROOT/'03_functional_motif_annotation'
 ORTH = ROOT/'04_orthology_phylogenetic_classification/scripts'
 AUDIT = ROOT/'05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py'
+AUDIT_POLICY = AUDIT.with_name('audit_policy.json')
+AUDIT_EVIDENCE = ROOT/'audit_join.py'
+IDENTITY_CODE = ROOT/'family_identity.py'
+IDENTITY_LIBRARY = AUDIT.with_name('family_identity_rules.json')
+AUDIT_REPORT = ROOT/'audit_report.py'
 FIBRONECTIN_FAMILIES = {'fibronectin_like', 'fibronectin_III_ligand', 'fibronectin_like_candidate'}
 IDENTITY_FIELDS = ('reference_subfamily','subfamily_support_method','reciprocal_reference_subfamily',
                   'phylogeny_concordant','subfamily_profile_calibrated','top_profile_subfamily',
@@ -174,7 +180,7 @@ def start(args):
         sources[str(source)] = digest(source)
         for row in read(table, ','):
             fibronectin = row['family'] in FIBRONECTIN_FAMILIES
-            if row['status'] not in ('supported_candidate', 'provisional') and not (fibronectin and row['status']=='unresolved'):
+            if row['status'] not in ('supported_candidate', 'provisional', 'conflicting') and not (fibronectin and row['status']=='unresolved'):
                 continue
             pid, family = row['protein_id'], row['family']
             if not pid.startswith(sp+'__'):
@@ -193,10 +199,27 @@ def start(args):
                                    hypothesis_tier='supported' if row['status']=='supported_candidate' else 'provisional'))
     if not species or not hypotheses or (expected is not None and species != expected):
         raise ValueError('Expected configured target species and nonempty supported/provisional hypotheses')
+    # Preserve all initial hypotheses for each selected protein, including generic
+    # or unresolved alternatives. Selection never adds a new protein at stage 2.
+    seen_hypotheses={(r['Specie'],r['protein_id'],r['family']) for r in hypotheses}
+    for table in sorted(detection.glob('*/candidates/candidates.csv')):
+        sp=table.parents[1].name
+        for source_row in read(table,','):
+            pid,family=source_row['protein_id'],source_row['family']
+            if pid not in sequences or (sp,pid,family) in seen_hypotheses:continue
+            if not pid.startswith(sp+'__') or not re.fullmatch(r'[A-Za-z0-9_-]+',family):
+                raise ValueError(f'Invalid retained stage 1 hypothesis: {sp}, {pid}, {family}')
+            seen_hypotheses.add((sp,pid,family))
+            motif_family='fibronectin_like_candidate' if family in FIBRONECTIN_FAMILIES else family
+            hypotheses.append(dict(source_row,Specie=sp,sequence_sha256=hashlib.sha256(sequences[pid].encode()).hexdigest(),
+                motif_family=motif_family,export_basis='retained_stage1_alternative_for_selected_protein',hypothesis_tier='unresolved'))
+            families[motif_family][pid]=sequences[pid]
     (out/'families').mkdir()
     for family, seqs in families.items():
         write_fasta(out/'families'/f'{family}.faa', seqs)
     write(out/'hypotheses.tsv', hypotheses)
+    from classification_contract import stage_one_workbook
+    stage_one_workbook(hypotheses,out/'Stage_1_output.xlsx')
     coverage_rows=[]
     for table in sorted(detection.glob('*/candidates/reference_coverage.csv')):
         coverage_rows.extend(dict(row, Specie=table.parents[1].name) for row in read(table, ','))
@@ -230,6 +253,10 @@ def start(args):
     if provenance['unverified_records']:
         raise ValueError('Unverified domain source sequences; inspect provenance')
     sources.update(provenance['inputs'])
+    for sp in species:
+        homology=detection/sp/'homology'
+        for path in [homology/'homology.csv',homology/'homology.json',*(homology/'reference_snapshot').glob('*')]:
+            if path.is_file():sources[str(path.resolve())]=digest(path)
     for name in ('adhesome_pfam_manifest.csv','adhesome_component_crosswalk.csv','family_rules.json'):
         resource=DETECT/'config'/name
         sources[str(resource)]=digest(resource)
@@ -344,6 +371,13 @@ def downstream(args):
         if state['stages'].get('audit',{}).get('status')=='complete' and audit_meta.exists():
             saved=json.loads(audit_meta.read_text())
             if (saved.get('rules_sha256')!=digest(DETECT/'config/family_rules.json') or saved.get('audit_script_sha256')!=digest(AUDIT)
+                    or saved.get('audit_policy_sha256')!=digest(AUDIT_POLICY) or saved.get('audit_evidence_sha256')!=digest(AUDIT_EVIDENCE)
+                    or saved.get('classification_contract_sha256')!=digest(ROOT/'classification_contract.py')
+                    or saved.get('output_schema_sha256')!=digest(ROOT/'templates/output_schema.json')
+                    or saved.get('identity_code_sha256')!=digest(IDENTITY_CODE)
+                    or saved.get('identity_library_sha256')!=digest(IDENTITY_LIBRARY)
+                    or saved.get('audit_report_sha256')!=digest(AUDIT_REPORT)
+                    or saved.get('identity_probability_resources')!=probability_resources()
                     or saved.get('motif_snapshot_sha256')!=digest(MOTIF/'Motif_library/adhesion_core.json')):
                 state['stages'].pop('audit',None)
                 if state['settings'].get('phylogeny_grouping')=='family':
@@ -428,7 +462,7 @@ def downstream(args):
     if audit_refreshed and getattr(args,'phylogeny_grouping','orthogroup')=='family':
         state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
         dump(checkpoint,state)
-    print(f'Audit complete and available independently of phylogeny: {out}/final/audited_candidates.xlsx',flush=True)
+    print(f'Audit complete and available independently of phylogeny: {out}/final/Stage_2_output.xlsx',flush=True)
     candidates=out/'orthology/candidates'
     if getattr(args,'phylogeny',False):
       try:
@@ -442,7 +476,7 @@ def downstream(args):
                  '--orthologues',candidates/'direct_orthologues.tsv','--proteomes',out/'panel/proteomes',
                  '--species-list',out/'panel/species.json','--output',out/'phylogeny']
             if getattr(args,'phylogeny_grouping','orthogroup')=='family':
-                cmd+=['--audit-workbook',out/'final/audited_candidates.xlsx','--target-species',out/'panel/targets.json',
+                cmd+=['--audit-workbook',out/'final/Stage_2_output.xlsx','--target-species',out/'panel/targets.json',
                       '--candidate-report',candidates/'candidate_report.tsv']
             dup=candidates/'candidate_duplications.tsv'
             cmd+=['--duplications',dup] if dup.exists() else ['--allow-missing-duplications']
@@ -471,7 +505,7 @@ def downstream(args):
     seal(out,'completed_workflow',annotation=str(annotation),phylogeny_status=tree_status,
          optional_errors=optional_errors,benchmark_status='failed' if any(error.startswith('benchmark:') for error in optional_errors) else json.loads(summary_path.read_text()).get('status') if summary_path.exists() else 'failed',
          completion_status='completed_with_optional_failures' if optional_errors or tree_status=='partial_failure' else 'complete')
-    print(f'Workflow audit ready (phylogeny: {tree_status}): {out}/final/audited_candidates.xlsx')
+    print(f'Workflow audit ready (phylogeny: {tree_status}): {out}/final/Stage_2_output.xlsx')
 
 
 def archive_attempt(folder):
@@ -723,85 +757,61 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
 
 
 def audit(args):
-    annotation, orthology_dir = args.annotation.resolve(), args.orthology.resolve()
-    ann = verify(annotation, 'annotation')
-    ort = verify(orthology_dir, 'orthology', required_files=['candidates/candidate_report.tsv','candidates/provenance.json'])
-    panel = Path(ort['panel'])
-    pan = verify(panel, 'panel')
-    handoff = Path(ann['handoff'])
-    verify(handoff, 'handoff')
-    if ann['handoff_manifest'] != pan['handoff_manifest'] or digest(handoff/'workflow_manifest.json') != ann['handoff_manifest']:
-        raise ValueError('Annotation and orthology must use the same unchanged handoff')
-    if digest(panel/'workflow_manifest.json') != ort['panel_manifest']:
-        raise ValueError('Orthology panel manifest changed')
-    rows = read(handoff/'hypotheses.tsv')
-    reports = {r['candidate_id']:r for r in read(orthology_dir/'candidates/candidate_report.tsv')}
-    sites, contexts, cdd = defaultdict(list), {}, defaultdict(list)
-    motif_snapshot=MOTIF/'Motif_library/adhesion_core.json'
-    current_motif_ids={r['rule_id'] for r in json.loads(motif_snapshot.read_text())['rules']}
-    for r in read(annotation/'motifs/adhesion_motif_annotations.tsv'):
-        sites[r['family'],r['sequence_id']].append(r)
-    context_path = annotation/'motifs/sequence_context.tsv'
-    if context_path.exists():
-        contexts = {(r['family'],r['sequence_id']):r for r in read(context_path)}
-    cdd_path = annotation/'motifs/CDD_specific_hits.tsv'
-    if cdd_path.exists():
-        for r in read(cdd_path):
-            cdd[r['family'],r['sequence_id']].append(f"{r['short_name']}:{r['start']}-{r['end']}")
-    external = {r['protein_id']:r for r in read(annotation/'external_evidence.tsv')} if (annotation/'external_evidence.tsv').exists() else {}
-    topology = defaultdict(set)
-    for r in read(annotation/'motifs/used_regions.tsv'):
-        if r['region'] in ('transmembrane', 'signal_peptide'):
-            topology[r['family'],r['sequence_id']].add('TM' if r['region']=='transmembrane' else 'SP')
-    names = {'Hsap':'H. sapiens','Cele':'C. elegans','Dmel':'D. melanogaster','Mmus':'M. musculus','Xlae':'X. laevis'}
-    benchmark_folder=getattr(args,'benchmark',None) or orthology_dir/'benchmark'
+    annotation,orthology_dir=args.annotation.resolve(),args.orthology.resolve()
+    ann=verify(annotation,'annotation')
+    ort=verify(orthology_dir,'orthology',required_files=['candidates/candidate_report.tsv','candidates/provenance.json'])
+    panel=Path(ort['panel']);pan=verify(panel,'panel');handoff=Path(ann['handoff']);hand=verify(handoff,'handoff')
+    if ann['handoff_manifest']!=pan['handoff_manifest'] or digest(handoff/'workflow_manifest.json')!=ann['handoff_manifest']:
+        raise ValueError('Annotation and orthology must use the same unchanged stage 1 handoff')
+    if digest(panel/'workflow_manifest.json')!=ort['panel_manifest']:raise ValueError('Orthology panel manifest changed')
+    rows=read(handoff/'hypotheses.tsv');original_count=len(rows)
+    allowed={(r.get('Specie') or r['protein_id'].split('__',1)[0],r['protein_id']) for r in rows}
+    seen={(sp,pid,r['family']) for r in rows for sp,pid in [(r.get('Specie') or r['protein_id'].split('__',1)[0],r['protein_id'])]}
+    sequence_hashes={r['protein_id']:r.get('sequence_sha256','') for r in rows}
+    source_tables={}
+    if hand.get('detection'):
+        for sp in sorted({key[0] for key in allowed}):
+            table=Path(hand['detection'])/sp/'candidates/candidates.csv'
+            expected=hand.get('sources',{}).get(str(table.resolve()))
+            if expected is None:continue
+            if digest(table)!=expected:raise ValueError('Stage 1 source table changed: '+str(table))
+            source_tables[str(table.resolve())]=expected
+            for index,source_row in enumerate(read(table,','),2):
+                pid=source_row['protein_id'];key=(sp,pid,source_row['family'])
+                if (sp,pid) not in allowed or key in seen:continue
+                seen.add(key)
+                rows.append(dict(source_row,Specie=sp,sequence_sha256=sequence_hashes[pid],
+                    Stage1_source_table=str(table),Stage1_source_row=index,motif_family=source_row['family']))
+    benchmark_folder=getattr(args,'benchmark',None)
+    if benchmark_folder is None:
+        benchmark_folder=next((p for p in (orthology_dir/'benchmark',orthology_dir.parent/'benchmark') if (p/'summary.json').exists()),orthology_dir/'benchmark')
     benchmark_fields,benchmark_sha=benchmark_evidence(benchmark_folder,orthology_dir,ort,panel)
-    for row in rows:
-        row.update(benchmark_fields)
-        pid, fam = row['protein_id'], row.get('motif_family') or row['family']
-        report = reports[pid]
-        refs = [k.removesuffix('_orthologues') for k,v in report.items() if k.endswith('_orthologues') and v]
-        row['Orthology_reference_support'] = '; '.join(names.get(s,s) for s in refs)
-        row['Orthology_direct_reference_count'] = len(refs)
-        row['Orthology_HOG_status'] = report['HOG_status']
-        row['Orthology_HOG'] = report['HOG']
-        row['Orthology_interpretation'] = 'Direct pairwise evidence only; family-specific reference labels not inferred'
-        old_sites=sites[fam,pid]
-        ss=[dict(r,candidate_tier='context_conflict' if r.get('candidate_tier')=='context_conflict' else 'sequence_only_candidate')
-            for r in old_sites if r.get('motif_id') in current_motif_ids]
-        row['MotifPrediction_ignored_superseded_count']=len(old_sites)-len(ss)
-        row['MotifPrediction_candidate_tiers'] = ';'.join(sorted({r['candidate_tier'] for r in ss}))
-        row['MotifPrediction_context_supported_count'] = sum(r['candidate_tier'] in ('context_supported_candidate','high_confidence_hypothesis') for r in ss)
-        row['MotifPrediction_priority_site_count'] = sum(r['candidate_tier']=='sequence_only_candidate' for r in ss)
-        ctx, ext = contexts.get((fam,pid), {}), external.get(pid, {})
-        for field in IDENTITY_FIELDS:
-            if ext.get(field):row[field]=ext[field]
-        row['DeepLoc_2.1'] = ext.get('DeepLoc_2_1') or ctx.get('deeploc_localizations','')
-        row['SignalP.v6.0'] = ext.get('SignalP_v6_0') or ctx.get('signalp_prediction','')
-        row['DeepTMHMM'] = ext.get('DeepTMHMM') or ';'.join(sorted(topology[fam,pid]))
-        row['NCBI_CDD_architecture'] = ';'.join(filter(None, [ext.get('NCBI_CDD_architecture',''), *cdd[fam,pid]]))
-        row['External_evidence_source'] = ext.get('source','')
-        row['domain_match'] = str(row['domain_match']).lower() in ('true','1')
+    from audit_join import join
+    rows,support=join(annotation,handoff,panel,orthology_dir,rows,benchmark_fields)
+    if {(r.get('Specie') or r['protein_id'].split('__',1)[0],r['protein_id']) for r in rows}!=allowed:
+        raise ValueError('Stage 2 evidence join changed the stage 1 protein pool')
+    out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
+    write(out/'joined_evidence.tsv',rows)
+    dump(out/'supporting_data.json',support)
+    dump(out/'stage1_join_provenance.json',dict(handoff_hypotheses=original_count,retained_hypotheses=len(rows),
+        selected_species_proteins=len(allowed),source_tables=source_tables,protein_pool_preserved=True))
     from openpyxl import Workbook
-    out = args.out.resolve()
-    out.mkdir(parents=True, exist_ok=False)
-    write(out/'joined_evidence.tsv', rows)
-    wb = Workbook()
-    sh = wb.active
-    sh.title = 'candidates'
-    fields = list(dict.fromkeys(k for r in rows for k in r))
-    sh.append(fields)
-    for row in rows:
-        sh.append([row.get(k) for k in fields])
-    wb.save(out/'audit_input.xlsx')
-    audit_rules=DETECT/'config/family_rules.json'
-    execute([sys.executable,AUDIT,out/'audit_input.xlsx',out/'audited_candidates.xlsx','--rules',audit_rules,'--keep-all-audited'],out/'logs')
-    seal(out, 'audit', annotation=str(annotation), orthology=str(orthology_dir),
-         benchmark_summary_sha256=benchmark_sha,
-         motif_snapshot_sha256=digest(motif_snapshot),
-         rules_sha256=digest(audit_rules),audit_script_sha256=digest(AUDIT),
-         annotation_manifest=digest(annotation/'workflow_manifest.json'), orthology_manifest=digest(orthology_dir/'workflow_manifest.json'))
-    print(f'Workflow complete: {out}/audited_candidates.xlsx')
+    book=Workbook();sheet=book.active;sheet.title='candidates'
+    fields=list(dict.fromkeys(key for row in rows for key in row if key!='NCBI_CDD_hits'));sheet.append(fields)
+    for row in rows:sheet.append([row.get(key) for key in fields])
+    book.save(out/'audit_input.xlsx')
+    rules=DETECT/'config/family_rules.json'
+    execute([sys.executable,AUDIT,out/'audit_input.xlsx',out/'Stage_2_output.xlsx','--rules',rules,
+             '--supporting-data',out/'supporting_data.json'],out/'logs')
+    motif_snapshot=MOTIF/'Motif_library/adhesion_core.json'
+    seal(out,'audit',annotation=str(annotation),orthology=str(orthology_dir),benchmark_summary_sha256=benchmark_sha,
+        motif_snapshot_sha256=digest(motif_snapshot),rules_sha256=digest(rules),audit_script_sha256=digest(AUDIT),
+        audit_policy_sha256=digest(AUDIT_POLICY),audit_evidence_sha256=digest(AUDIT_EVIDENCE),
+        classification_contract_sha256=digest(ROOT/'classification_contract.py'),output_schema_sha256=digest(ROOT/'templates/output_schema.json'),stage1_source_tables=source_tables,
+        identity_code_sha256=digest(IDENTITY_CODE),identity_library_sha256=digest(IDENTITY_LIBRARY),audit_report_sha256=digest(AUDIT_REPORT),
+        identity_probability_resources=probability_resources(),
+        annotation_manifest=digest(annotation/'workflow_manifest.json'),orthology_manifest=digest(orthology_dir/'workflow_manifest.json'))
+    print(f'Stage 2 family refinement complete: {out}/Stage_2_output.xlsx')
 
 
 def main(argv=None):

@@ -4,6 +4,12 @@ A modular source distribution integrating detection, external topology/
 localization, motif annotation, whole-proteome orthology and conservative family
 assignment. Start with [WORKFLOW.md](README/WORKFLOW.md) for setup and all commands.
 
+The [two-stage family audit](README/COMPUTATIONAL_AUDIT.md) refines the original
+general family hypotheses using mandatory architecture gates and a 4/3/2/1
+evidence score. Its nine-sheet stage 2 workbook follows the supplied template,
+retains the same protein pool and includes current benchmark and motif evidence.
+Experimental annotation is not required. Pipeline version remains 1.0.
+
 ```text
 start -> supported/provisional hypotheses + external candidate FASTA
       -> external topology/localization analysis
@@ -35,7 +41,7 @@ Target inputs are configurable: use targets.example.json for one or more species
 
 For step-by-step reference preparation and orthology/phylogeny commands, start with [ORTHOLOGY_PHYLOGENY_GUIDE.md](ORTHOLOGY_PHYLOGENY_GUIDE.md).
 
-Detection uses the current 96-entry family catalogue, 176-model Pfam library and 230-component crosswalk. The reference-gated audit shares the same canonical rules. Resume scans the current 53-rule adhesion motif set, with the 347-rule master set available through `--motif-scope master`. `start` stops at the hypothesis/external-evidence handoff; topology, localization and phylogeny are part of the resumed workflow. See the [resource update guide](README/CURRENT_RESOURCES.md).
+Detection uses the current 96-entry family catalogue, 176-model Pfam library and 230-component crosswalk. The architecture-gated audit shares the same canonical rules. Resume scans the current 53-rule adhesion motif set, with the 347-rule master set available through `--motif-scope master`. `start` stops at the hypothesis/external-evidence handoff; topology, localization and phylogeny are part of the resumed workflow. See the [resource update guide](README/CURRENT_RESOURCES.md).
 
 Default resume is continuous: import topology/localization -> motif annotation -> reference preparation from inputs/reference_raw -> generated panel -> orthology -> evolutionary benchmark -> independent audit. Phylogeny is opt-in with --phylogeny and runs after audit; tree failures do not prevent audit completion. See [automated-run instructions](README/ORTHOLOGY_PHYLOGENY_GUIDE.md) and [benchmark setup and weight policy](README/EVOLUTIONARY_BENCHMARKING.md). Use continue with an existing annotation for reference-panel expansion without repeating motifs.
 

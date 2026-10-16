@@ -140,11 +140,16 @@ Input/RefOGs layout, integrity checks and the measured audit-context weight.
 
 ## 4. Final conservative audit
 
-For `resume --out runs/resumed`, the automatic final result is
-`runs/resumed/downstream/final/audited_candidates.xlsx`. The same directory holds
-`joined_evidence.tsv`, `audit_input.xlsx` and provenance. Every run retains
-alternative hypotheses and conservative architecture gates. Missing duplication
-evidence is explicitly unknown; it is not fabricated as negative evidence.
+The [two-stage family scheme](COMPUTATIONAL_AUDIT.md) refines the same stage 1
+protein pool. Complete family architecture plus orthology supports grade A;
+experimental annotation and manual identity labels are not prerequisites.
+
+For `resume --out runs/resumed`, the final workbook is
+`runs/resumed/downstream/final/Stage_2_output.xlsx`. Its nine sheets follow the
+supplied template; `Screening_hypothesis` retains original/recovered hypotheses,
+and `Audited_family_assignment` contains one ranked decision per species/protein.
+Current motifs, benchmark metrics/weight and actual reference-panel columns are
+included. `joined_evidence.tsv`, `audit_input.xlsx` and provenance accompany it.
 
 The annotation manifest records completion of annotation only. The downstream
 manifest is written only after all requested downstream stages and the final
@@ -186,3 +191,11 @@ All handoff target species, including targets with no exported hypotheses, must 
 ## Checkpoint recovery
 
 Use python adhesome_workflow.py recover --run runs/resumed --threads 2 --iqtree-threads 2 to reuse verified completed downstream stages and retry unfinished work. Older failed runs can be adopted with --adopt-existing --annotation runs/resumed. See the recovery section in [the guide](ORTHOLOGY_PHYLOGENY_GUIDE.md) for limits and exact paths. Continue creates a new downstream run; recover repairs the existing failed run.
+
+Current final outputs include compact `putative_audited_family`, `protein_name`
+and evidence confidence, plus a matching TSV. Eligible calls include positive-control
+calibrated assignment probabilities and uncertainty. Hard/background-negative
+matches are dropped from final assignments and retained in
+`negative_control_exclusions.tsv`. Retained and excluded proteins together account
+for the stage 1 pool. See [naming and output policy](COMPUTATIONAL_AUDIT.md) for
+calibration commands, exclusions and reference-overlap limits.

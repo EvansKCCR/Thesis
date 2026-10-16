@@ -15,6 +15,7 @@ import re
 import sys
 
 from pipeline import digest, records, write_tsv
+from prepare_reference import normalize_sequence, BENCHMARK_SEQUENCE_POLICY
 
 VERSION = '1.0'
 FASTA_PATTERN = re.compile(r'\.(?:fa|faa|fasta)(?:\.gz)?$', re.I)
@@ -78,9 +79,10 @@ def input_proteomes(input_dir, refogs):
             identifier = header.split()[0]
             if identifier in seqs:
                 raise ValueError('Duplicate benchmark input ID: '+identifier)
-            seqs[identifier] = seq.upper().removesuffix('*')
+            seqs[identifier] = seq
         if set(seqs) & expected:
-            found.append((path, seqs))
+            found.append((path, {identifier:normalize_sequence(seq,identifier,internal_stop_policy='mask')
+                                 for identifier,seq in seqs.items()}))
     if not found:
         raise ValueError('No benchmark proteome contains exact RefOG identifiers')
     return found
@@ -114,7 +116,7 @@ def predicted_groups(results):
 
 
 def reference_mapping(panel, benchmark_inputs):
-    """Match selected original proteins to prepared references by exact ID+sequence."""
+    """Match original IDs and exact sequences under the declared stop-marker policy."""
     panel = Path(panel)
     snapshot = json.loads((panel/'panel.snapshot.json').read_text())
     targets = set(json.loads((panel/'targets.json').read_text()))
@@ -131,6 +133,9 @@ def reference_mapping(panel, benchmark_inputs):
             continue
         source = (panel/entry['fasta']).resolve()
         mapping = source.parent/'identifier_map.tsv'
+        for name in ('preparation.json','sequence_qc.tsv'):
+            if (source.parent/name).is_file():
+                input_paths.append(source.parent/name)
         seqs = {h.split()[0]:s.upper().removesuffix('*') for h,s in records(source)}
         rows = []
         if mapping.is_file():
@@ -222,6 +227,7 @@ def run(args):
             refogs=str(Path(args.refogs).resolve()) if getattr(args,'refogs',None) else None,
             input_dir=str(Path(args.input_dir).resolve()) if getattr(args,'input_dir',None) else None),
         weight_policy='Reference-cohort pairwise F1 scales orthogroup-context evidence only; not a candidate identity probability',
+        sequence_policy=BENCHMARK_SEQUENCE_POLICY,
         inputs={},diagnostics=[])
     try:
         refogs_path, inputs_path=bundle(args.reference_raw,getattr(args,'refogs',None),getattr(args,'input_dir',None))
@@ -230,6 +236,21 @@ def run(args):
         else:
             refogs,uncertain,truth_paths=read_groups(refogs_path)
             benchmark_inputs=input_proteomes(inputs_path,refogs)
+            stop_proteins=stop_sites=terminal_stops=0
+            affected_truth=set()
+            truth_ids=set().union(*refogs.values())
+            for path,seqs in benchmark_inputs:
+                for header,sequence in records(path):
+                    identifier=header.split()[0]
+                    sites=sequence.removesuffix('*').count('*')
+                    terminal_stops+=int(sequence.endswith('*'))
+                    stop_proteins+=int(sites>0)
+                    stop_sites+=sites
+                    if sites and identifier in truth_ids:affected_truth.add(identifier)
+            summary['sequence_qc']=dict(internal_stop_proteins=stop_proteins,internal_stop_sites=stop_sites,
+                terminal_stops_removed=terminal_stops,affected_refog_proteins=sorted(affected_truth))
+            if stop_proteins:
+                summary['diagnostics'].append(f'{stop_sites} internal stop markers masked as X in {stop_proteins} benchmark proteins, including {len(affected_truth)} RefOG members; metrics describe this explicitly processed cohort, not unmodified-sequence performance')
             predictions,predicted_path=predicted_groups(args.results)
             universe,mapping,owners,missing,mapping_paths=reference_mapping(args.panel,benchmark_inputs)
             if summary['protocol']=='open_orthobench':
@@ -240,7 +261,8 @@ def run(args):
                 if observed!=expected:
                     raise ValueError('Original Open_Orthobench dataset is incomplete or replaced: '+str(observed)+'. Supply the complete original Input and RefOGs bundle; custom ground truth requires explicit --protocol custom.')
             inputs=[*truth_paths,*mapping_paths,predicted_path,Path(args.panel)/'workflow_manifest.json',
-                    Path(args.panel)/'panel.snapshot.json',Path(__file__),Path(__file__).with_name('benchmark.py')]
+                    Path(args.panel)/'panel.snapshot.json',Path(__file__),Path(__file__).with_name('benchmark.py'),
+                    Path(__file__).with_name('prepare_reference.py')]
             summary['inputs']={str(p.resolve()):digest(p) for p in inputs}
             summary.update(refogs_directory=str(refogs_path.resolve()),benchmark_input_directory=str(inputs_path.resolve()),
                 panel_manifest_sha256=digest(Path(args.panel)/'workflow_manifest.json'),prediction_file=str(predicted_path.resolve()),

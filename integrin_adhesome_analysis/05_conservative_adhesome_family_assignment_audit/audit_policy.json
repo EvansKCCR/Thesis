@@ -1,0 +1,71 @@
+{
+  "pipeline_version": "1.0",
+  "scheme": "Stage 1 general family hypotheses; stage 2 architecture-gated refinement with hard/background-negative exclusion and complete input-protein accounting",
+  "score_maxima": {
+    "domain": 4,
+    "orthology": 3,
+    "motif": 2,
+    "localization": 1
+  },
+  "orthology_reference_species_bands": [
+    [
+      3,
+      3
+    ],
+    [
+      2,
+      2
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "benchmark_scope": "Validated F1 weights orthology only; raw and weighted scores retained",
+  "architecture_gate_mandatory": true,
+  "exact_reference_sequence_exemption": false,
+  "experimental_annotation_required": false,
+  "recoveries": [
+    "PINCH_like",
+    "parvin_like"
+  ],
+  "pinch_length_range_inclusive": [
+    250,
+    500
+  ],
+  "specific_cdd_patterns": {
+    "PINCH_like": "PINCH|LIMS[12]?",
+    "parvin_like": "PARVIN|PARV[ABG]",
+    "Csk": "CSK|CHK|MATK",
+    "Syk": "SYK|ZAP.?70",
+    "Nck": "NCK[12]?",
+    "Grb2": "GRB.?2|DRK",
+    "Crk": "CRKL?",
+    "Shc": "SHC[1234]?"
+  },
+  "grades": {
+    "A": "complete family architecture gate and positive orthology support",
+    "B": "complete family architecture gate without sufficient orthology; panel restriction only when absence was tested",
+    "C": "partial family architecture and positive orthology support",
+    "D": "failed architecture gate or partial architecture without orthology support"
+  },
+  "ranking_order": [
+    "assignment_status",
+    "family_decision",
+    "grade",
+    "domain",
+    "architecture_recovery",
+    "orthology",
+    "motif",
+    "localization",
+    "total",
+    "candidate_status"
+  ],
+  "observed_cdd_complements_pfam": true,
+  "identity_refinement_library": "family_identity_rules.json",
+  "numerical_identity_probability": "Empirical isotonic assignment correctness calibration using positive adhesome controls only; leave-one-exact-sequence-out for overlapping queries. Reference-overlap context and uncertainty retained; not independent validation for novel lineages or an exact gene/paralogue probability.",
+  "negative_control_policy": "Hard/background negatives are exclusion gates only, never identity training classes. Exact negative sequences or a complete related architecture with an observed negative-specific curated CDD model are excluded from final assignments and retained in negative_control_exclusions.tsv. Shared domains alone cannot exclude a protein.",
+  "final_assignment_columns": "Compact populated view with putative_audited_family, protein_name and assignment_confidence; raw evidence retained separately",
+  "identity_probability_model": "../02_calibration_set/identity_probability_model.json",
+  "identity_probability_reference_panel_policy": "Do not transfer probabilities silently to a changed orthology panel; recalibrate after panel expansion."
+}

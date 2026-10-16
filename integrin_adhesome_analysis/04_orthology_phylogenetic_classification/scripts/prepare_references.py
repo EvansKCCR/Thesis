@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from pipeline import records, digest, write_tsv, VERSION
 from refseq_gene_map import parse_gff
-from prepare_reference import prepare
+from prepare_reference import prepare, BENCHMARK_SEQUENCE_POLICY
 from benchmark_workflow import bundle, read_groups, input_proteomes
 
 
@@ -62,7 +62,8 @@ def build(raw, handoff, out, benchmark_refogs=None, benchmark_input_dir=None):
             mapping=folder/'protein_gene.tsv'
             write_tsv(mapping,['protein_id','gene_id'],[dict(protein_id=h.split()[0],gene_id=h.split()[0]) for h,s in rows])
             provenance.update(method='original_benchmark_protein_units',benchmark_refogs=str(refogs.resolve()),
-                              benchmark_truth_sha256={str(p.relative_to(refogs)):digest(p) for p in truth_paths},unit_level='benchmark_protein')
+                              benchmark_truth_sha256={str(p.relative_to(refogs)):digest(p) for p in truth_paths},
+                              unit_level='benchmark_protein',sequence_policy=BENCHMARK_SEQUENCE_POLICY)
         elif maps:
             mapping=maps[0]
             provenance.update(mapping=str(mapping.resolve()),mapping_sha256=digest(mapping),method='explicit_tsv')
@@ -85,7 +86,13 @@ def build(raw, handoff, out, benchmark_refogs=None, benchmark_input_dir=None):
                 provenance['method']='explicit_header_gene_or_prefixed_gene_level'
             mapping=folder/'protein_gene.tsv'
             write_tsv(mapping,['protein_id','gene_id'],mapping_rows)
-        prepared=prepare(code,source,mapping,folder/'prepared')
+        prepared=prepare(code,source,mapping,folder/'prepared',internal_stop_policy='mask' if is_benchmark else 'reject')
+        preparation=folder/'prepared/preparation.json'
+        provenance.update(preparation=str(preparation.resolve()),preparation_sha256=digest(preparation),
+                          sequence_qc=json.loads(preparation.read_text())['sequence_qc'])
+        if is_benchmark and provenance['sequence_qc']['internal_stop_proteins']:
+            qc=provenance['sequence_qc']
+            print(f"{code}: masked {qc['internal_stop_sites']} stop markers as X in {qc['internal_stop_proteins']} proteins; see {folder/'prepared/sequence_qc.tsv'}",flush=True)
         (folder/'source.json').write_text(json.dumps(provenance,indent=2)+'\n')
         entries.append(dict(species=code,fasta=str(prepared.resolve()),gene_level=not is_benchmark,
                             unit_level='benchmark_protein' if is_benchmark else 'gene',source=json.dumps(provenance)))

@@ -37,5 +37,17 @@
     "models": 96,
     "metadata_sha256": "ca38d0bf63d8fc65df89e841ded3c4ec1480f7e2f99637920fbfec5bd07228ed",
     "replacement": "adhesome_v1.0.hmm"
+  },
+  "two_stage_protocol": {
+    "pipeline_version": "1.0",
+    "description_sha256": "2e70101e95dfd96cfd64319376bc76c2eb537b94ef6873b2fd0f031223fd207e",
+    "source_templates": {
+      "Stage_1_output.xlsx": "01ed8a97bf05b79614c56d07a0b3a55a8dfd01492aa075c1dd2c797985bdecc0",
+      "Stage_2_output.xlsx": "955cae097ba0285636a422f7ead6b19356b35020277a563c2e03baad22058b96"
+    },
+    "stage1": "general supported/provisional/conflicting/unresolved hypotheses",
+    "stage2": "mandatory family architecture gate; orthology 3, motifs 2, localization 1; same selected protein pool",
+    "removed": "catalogue-wide replacement classification and exact-reference/component exemptions",
+    "rules_sha256": "33b7022986a28262da684ea31bb60e7d77807f7a497f5e79fb152cc1070485c6"
   }
 }

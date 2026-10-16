@@ -6,6 +6,18 @@ import family_motifs as fm
 
 
 class MasterTests(unittest.TestCase):
+    def test_supplied_site_context_support_is_preserved_in_annotation_tier(self):
+        with tempfile.TemporaryDirectory() as td:
+            snapshot=ml.load(fm.HERE/'Motif_library/adhesion_core.json')
+            snapshot['rules']=[snapshot['rules'][0]]
+            rule=snapshot['rules'][0]
+            family={'fibronectin_like':[dict(id='p',sequence='MALDVAAA')]}
+            evidence=[dict(family='fibronectin_like',sequence_id='p',motif_id=rule['rule_id'],start=3,end=6,
+                status='supported',criterion='compatible extracellular context',source='verified context fixture')]
+            ml.scan(snapshot,family,defaultdict(list),evidence,Path(td),fm.write_tsv)
+            with (Path(td)/'adhesion_motif_annotations.tsv').open() as handle:rows=list(csv.DictReader(handle,delimiter='\t'))
+            self.assertEqual(rows[0]['candidate_tier'],'context_supported_candidate')
+
     def test_current_scopes_and_workbook_parity(self):
         root=fm.HERE/'Motif_library'
         core=ml.load(root/'adhesion_core.json');full=ml.load(root/'motif_master.json','master')

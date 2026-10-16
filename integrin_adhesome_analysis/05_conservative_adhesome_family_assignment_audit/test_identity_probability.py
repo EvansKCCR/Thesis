@@ -1,0 +1,54 @@
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from identity_probability import annotate,blocks,estimate,fingerprint
+from calibrate_identity import expected_families
+
+
+class IdentityProbabilityTests(unittest.TestCase):
+    def test_isotonic_pooling_is_monotone_and_data_driven(self):
+        samples=[dict(score=x,correct=y) for x,y in [(1,0),(2,1),(3,0),(4,1)]]
+        fitted=blocks(samples,min_bin=1)
+        self.assertEqual([(b['n'],b['correct']) for b in fitted],[(1,0),(2,1),(1,1)])
+        rates=[b['correct']/b['n'] for b in fitted];self.assertEqual(rates,sorted(rates))
+
+    def test_probability_does_not_extrapolate_beyond_control_scores(self):
+        samples=[dict(score=7,correct=1,stratum='same') for i in range(20)]
+        self.assertEqual(estimate(samples,dict(score=9,stratum='same'))['status'],'outside_observed_calibration_score_range')
+
+    def test_query_sequence_labels_are_excluded_in_full_and_do_not_set_names(self):
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/'model.json'
+            samples=[dict(score=7,correct=0,stratum='strong|family',sequence_sha256=str(i)) for i in range(20)]
+            samples.extend([dict(score=7,correct=1,stratum='strong|family',sequence_sha256='SELF')]*2)
+            path.write_text(json.dumps(dict(code_fingerprint=fingerprint(),input_hashes={},minimum_controls=20,
+                context={'reference_overlap':True},samples=samples,cross_validation={})))
+            rows=[dict(assigned_family='talin',total_score_0_10=7,family_confidence='strong',protein_name_scope='family',
+                sequence_sha256='SELF',protein_name='Putative Talin'),
+                dict(assigned_family='talin',total_score_0_10=7,family_confidence='strong',protein_name_scope='family',
+                sequence_sha256='NEW',protein_name='Putative Talin')]
+            result=annotate(rows,path)
+            self.assertEqual(result['applied'],2)
+            self.assertEqual(rows[0]['assignment_probability'],0)
+            self.assertEqual(rows[0]['probability_calibration_n'],20)
+            self.assertGreater(rows[0]['assignment_probability_upper_95'],0)
+            self.assertIn('leave_one_sequence_out',rows[0]['probability_method'])
+            self.assertAlmostEqual(rows[1]['assignment_probability'],2/22,places=6)
+            self.assertTrue(all(r['protein_name']=='Putative Talin' for r in rows))
+
+    def test_negative_adhesome_control_can_have_correct_hip1_identity(self):
+        truth=expected_families(dict(genes='HIP1',protein_name='Huntingtin-interacting protein 1',
+            **{'class':'hard_negative control'}),{})
+        self.assertIn('HIP1_HIP1R_like',truth)
+        self.assertNotIn('talin',truth)
+
+    def test_stale_probability_model_does_not_supply_a_number(self):
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/'model.json';path.write_text(json.dumps(dict(code_fingerprint={})))
+            row=dict(assigned_family='talin')
+            self.assertEqual(annotate([row],path)['status'],'probability_model_stale_after_scoring_change')
+            self.assertNotIn('assignment_probability',row)
+
+
+if __name__=='__main__':unittest.main()

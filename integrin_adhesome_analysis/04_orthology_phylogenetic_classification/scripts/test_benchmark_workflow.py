@@ -6,6 +6,7 @@ import unittest
 
 from benchmark_workflow import run, measure
 from pipeline import write_tsv
+from prepare_reference import prepare
 
 
 class BenchmarkWorkflowTests(unittest.TestCase):
@@ -96,6 +97,27 @@ class BenchmarkWorkflowTests(unittest.TestCase):
         summary=self.evaluate()
         self.assertEqual(summary['status'],'incompatible_reference_cohort')
         self.assertIsNone(summary['validated_weight'])
+
+    def test_explicit_stop_masking_matches_full_benchmark_cohort_and_reports_changed_truth(self):
+        source=self.inputs/'A.fa'
+        source.write_text(source.read_text().replace('>a1\nMAAA','>a1\nMA*A*'))
+        mapping=self.root/'map.tsv'
+        mapping.write_text('protein_id\tgene_id\na1\ta1\na2\ta2\na0\ta0\n')
+        prepared=prepare('A',source,mapping,self.root/'masked',internal_stop_policy='mask')
+        snapshot=json.loads((self.panel/'panel.snapshot.json').read_text())
+        snapshot['proteomes'][0]['fasta']=str(prepared)
+        (self.panel/'panel.snapshot.json').write_text(json.dumps(snapshot))
+        summary=self.evaluate()
+        self.assertEqual(summary['status'],'validated',summary['diagnostics'])
+        self.assertEqual(summary['validated_weight'],1.0)
+        self.assertEqual(summary['sequence_qc']['affected_refog_proteins'],['a1'])
+        self.assertEqual(summary['sequence_qc']['internal_stop_sites'],1)
+        self.assertIn(str((prepared.parent/'sequence_qc.tsv').resolve()),summary['inputs'])
+        self.assertIn('processed cohort',' '.join(summary['diagnostics']))
+        prepared.write_text(prepared.read_text().replace('MAXA','MAYA'))
+        changed=self.evaluate('changed_benchmark')
+        self.assertEqual(changed['status'],'incompatible_reference_cohort')
+        self.assertIsNone(changed['validated_weight'])
 
     def test_candidate_only_predictions_cannot_supply_a_benchmark(self):
         self.prediction.unlink()
