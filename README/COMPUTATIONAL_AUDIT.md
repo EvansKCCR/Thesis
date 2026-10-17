@@ -152,15 +152,21 @@ An inferred transmembrane segment, loop, subclade or restricted lineage in that
 table is not treated as an observation. Copy counts alone do not establish a
 lineage-restricted or species-restricted paralogue.
 
-Complete compatible architecture, concordant CDD evidence and positive orthology
-support can give strong putative identity at the reported family-like resolution.
+An unambiguous grade A call has strong family and protein-identity confidence at
+the reported scope: the required family architecture gate and computational
+orthology support are sufficient. Optional CDD corroboration is not an extra
+confidence gate; family-specific CDD remains required where the architecture rule
+needs it to distinguish related families. Experimental evidence is neither required
+nor scored, and its absence causes no penalty to assignment, annotation confidence
+or evidence weights. Reference import accepts computational sources without an
+experimental-evidence field. Experimental metadata, when present, is provenance only.
 Distinct isoforms, gene symbols or phylogenetic subclades are not inferred from
 broad HOG membership. Equally ranked or competing identities remain explicitly
 ambiguous. No experimental annotation is required. This interpretation follows
 [NCBI's distinction between specific CDD hits and broader domain evidence](https://www.ncbi.nlm.nih.gov/Structure/cdd/docs/cdd_how_to_protein_function.html).
 
 `assignment_confidence` describes evidence convergence. The supplied
-`calibration_set/calibration_set.xlsx` and `calibration.faa` now support an
+`02_calibration_set/calibration_set.xlsx` and `calibration.faa` now support an
 empirical isotonic correctness estimate at the reported family/name scope.
 `assignment_probability`, approximate Wilson 95% bounds, calibration count, method
 and evidence scope accompany eligible assignments. These are not probabilities of
@@ -201,7 +207,7 @@ of the controls against that panel, then run from the workflow root:
 python calibrate_identity.py --features runs/calibration_audit/identity_calibration_features.tsv --report-dir runs/identity_calibration_review
 ```
 
-The model is written automatically to `calibration_set/identity_probability_model.json`.
+The model is written automatically to `02_calibration_set/identity_probability_model.json`.
 Reaudit to apply it. No hand-written JSON is required. Prediction code, control
 files, model and reference-panel hashes prevent silent reuse after changes.
 

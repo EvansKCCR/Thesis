@@ -140,8 +140,8 @@ def build(args):
                     raise ValueError('Family not present in classification rules')
                 if rules.get(row['family'],{}).get('screening_only') and label != 'metazoan':
                     raise ValueError('Generic screening buckets cannot label forward reference families')
-                if label == 'adhesome' and any(not row.get(k) for k in ('module','evidence_source','experimental_evidence')):
-                    raise ValueError('Missing curated evidence fields')
+                if label == 'adhesome' and any(not row.get(k) for k in ('module','evidence_source')):
+                    raise ValueError('Missing reference module or evidence source')
                 entry,method,choices = resolve(row,client,args.repair_identity,args.ambiguity_policy)
                 if not valid_identity(entry,row):
                     raise ValueError('Resolved record identity mismatch')
@@ -160,7 +160,7 @@ def build(args):
                     sequence_version=entry.get('entryAudit',{}).get('sequenceVersion',''),entry_version=entry.get('entryAudit',{}).get('entryVersion',''),
                     reviewed=reviewed,resolve_method=method,source_url='https://www.uniprot.org/uniprotkb/'+accession+'/entry',
                     evidence_source=row.get('evidence_source',''),experimental_evidence=row.get('experimental_evidence',''),
-                    evidence_status='seed_claim_with_experimental_annotations' if exp else 'seed_claim_requires_review',
+                    evidence_status='reference_identity_verified',
                     adhesome_experiment_verified='false',experimental_annotation_count=len(exp),
                     experimental_pubmed_ids=';'.join(sorted({e['id'] for e in exp if e['source']=='PubMed'})),role=row.get('role','adhesome_seed'),
                     reference_tier='computational_anchor' if row.get('role')=='phylogenetic_anchor' else 'curated_seed' if label=='adhesome' else 'panel_reference',

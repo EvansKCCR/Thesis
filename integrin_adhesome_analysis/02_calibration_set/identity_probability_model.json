@@ -3,20 +3,20 @@
   "method": "isotonic_empirical_control_precision",
   "minimum_controls": 20,
   "code_fingerprint": {
-    "identity_probability.py": "569ccb6f8da3ceac0bfc209b3505d6947f39c9c681b21bf3b56158359ee6c888",
-    "family_identity.py": "0a87c9478a5407bc8426ca95ee1a987154ccea43ffb3ae4292a7d2b69e9d7157",
-    "control_exclusion.py": "d1e42356ff4f26bcd69be6d66ca52df37884018a6da447fad24ad91982af3a4d",
+    "identity_probability.py": "10703ac6237f87b63758a15684afb2c8e76b84ef6620318f4b59b84ab66ca85d",
+    "family_identity.py": "3cd4dd9824f5224fdc874d1625fcb63879370033f1ded7396385f4a74c91c4eb",
+    "control_exclusion.py": "3522ff9a1ef14affe70ea1407ff29203f4800a9de41c98c5a15083303c1ffec3",
     "01_detection/config/family_rules.json": "33b7022986a28262da684ea31bb60e7d77807f7a497f5e79fb152cc1070485c6",
     "05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py": "5a62936ec9650500ae7aae0c9e420956c0ecb3f0f9bb284373e7c3f8d4bc904d",
-    "05_conservative_adhesome_family_assignment_audit/audit_policy.json": "ea8aa1d656e3b0ca8fae288c6f84d4f9faeae9fce4798ef1a04ea7adf3cce278",
+    "05_conservative_adhesome_family_assignment_audit/audit_policy.json": "5053143c07417bf97da757b4f5c99f10629603146f566dfe8c90998ec360229e",
     "05_conservative_adhesome_family_assignment_audit/family_identity_rules.json": "2aadb9ff8bbd318e8c42d983f74134a8c62b7560a13136e6cbb33513762f54d2"
   },
   "input_hashes": {
-    "calibration_set/calibration_set.xlsx": "60b0717fadfc099b87ebbd848ff2db978b2d5047d33ae60af336d3fe559e5570",
-    "calibration_set/calibration.faa": "12ca98e1027983765f628ca4bc309dc266f197ba819f826e5bd8340ed5cc14c8",
-    "calibrate_identity.py": "dd8128dc48c20399f8b36ebc80d1dddd5dfc4354d9a05416db20c5d5b7407987"
+    "02_calibration_set/calibration_set.xlsx": "60b0717fadfc099b87ebbd848ff2db978b2d5047d33ae60af336d3fe559e5570",
+    "02_calibration_set/calibration.faa": "12ca98e1027983765f628ca4bc309dc266f197ba819f826e5bd8340ed5cc14c8",
+    "calibrate_identity.py": "55c72d51b1ffa1e148c103333ebfda8fdef68589526d4d06d2e3e32d1dfc17e6"
   },
-  "scored_features_sha256": "ff16a98ca8668613ffb18c2246e99c03f1fe387cbb8bbbba3059c020a1d12c48",
+  "scored_features_sha256": "0a5652ec8ab58fde4ee334233feb430c0cb91a9d9a0a5abbae1c934d6752a860",
   "context": {
     "label_rows": 583,
     "fasta_sequences": 581,
@@ -395,7 +395,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "f63326baee8bee75af28ec24210c7f6907962394ad1a18e60791d30c6009cbb4",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -403,7 +403,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "f51551a96d9892d7519de005d52cf5b94a1771c79864600e3dfbd707dab04ab9",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -411,7 +411,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "4ca97eb4c16e0376f909ac903496554b35f226cffbabe36819cc1f3d633b9eae",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -419,7 +419,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "1f0a5a2544b02a305ead1c891b2b8cd0ed571e0d110175d833be071d086e6560",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -427,7 +427,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "b07ed13d63c02ef0851215fefd766acb1f44da33e53f6c5e83b5887541f1368d",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -435,7 +435,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "3bcf893bbd5bfc4d1a7e00fb90cb47ffe43ea31f8e4f81c02ce5da2791adfebd",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -443,7 +443,7 @@
     },
     {
       "score": 6.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "7f2a95f7d8f5dcfcb2440648a4522b6123e43f7e3121a50299c403e854cb8044",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -451,7 +451,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "4cddf4a13140452745c98a99a48a575af575b9b36ef57879a13f36c8a32fd406",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -459,7 +459,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "81527b5b53a6b5dff0e20d6edc5983c529a0ad0390a4a7a453d467d88c886c6e",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -467,7 +467,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "99e8ba3957225436457038ded186b77e44aa3e644c7423d2c09fdb06a967d3aa",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -475,7 +475,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "e8992466bd05db4d22f38b0e4603add62e0fd5340d914be4d0397675ce981333",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -483,7 +483,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "1d60ed428e52aa748b8f0d297eae3e4f1e2869ba1df5137c60637281be586d9b",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -491,7 +491,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "a260ea91bf79978ff722e78a508757bebcf20dc67aadd4ed02e3f842e16ca788",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -499,7 +499,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "4dcc7bcfcead8f33eee44af53d05e2a520b1109d93ea0450cfc3cbfbb59ecb5f",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -507,7 +507,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "57ff7d0ca8b2156afe8b737627b299c5748c79f2a8c54625fb6828ac812e0d27",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -515,7 +515,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "d5e1e101edb8e81ca39900444877a2dcc9e6080adffde94a47d58b0ee6f6c811",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -523,7 +523,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "ff28f3995e32b234affcfa8d1dc586d693f48025e37ad8ada5f4e54b75f8bd69",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -531,7 +531,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "70a11d4643510a5b76e5df796fa80c2512f0cc83fc8b4edf3dbe83e26b19dabc",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -539,7 +539,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "c3c1c06fbc2adb28b9866a482134426b740f0ea6c224af21fdbe42b59cc61183",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -547,7 +547,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "dd1f27b57d8ba531160f0b9e03b9ae50533fbe1b3205765e545b0daa3c82bb52",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -555,7 +555,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "d385d15805ee541604af892865572eee0895c90bf121c52586437db4946acad2",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -563,7 +563,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "bd4f66185e4e7ba895a3613e5109f247d38e0f98da30d4eb06f6e38760074c49",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -571,7 +571,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "871c82602ef83b96fc7e48abb1d783377410233b25a6bf2f2850d98965d21860",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -579,7 +579,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "2e7f41cc4d42f28e5ade2dc7c0860f0c0b6d5f8dc852c60c04befe0fc89f410f",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -587,7 +587,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "3e4b96a0111a627054edc390b9a937a422d40a0fc83630318f248b0abaa5e70e",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -859,7 +859,7 @@
     },
     {
       "score": 7.960746,
-      "stratum": "moderate|family",
+      "stratum": "strong|family",
       "sequence_sha256": "9de700e779fda852223fbbdf9d6b517a5c6cfe574e634ffbeff6e358e7a32301",
       "orthology_panel_sha256": "abfd4e8c5e64364e3f9dfbc48fb2c1d8c30a89d9008ec56e7f8df4d1009cb295",
       "correct": 1,
@@ -1116,9 +1116,9 @@
   ],
   "cross_validation": {
     "method": "leave_one_exact_sequence_group_out",
-    "evaluated": 128,
-    "brier_score": 0.06926050801225,
-    "mean_predicted_probability": 0.47941296875,
-    "observed_correct_fraction": 0.4765625
+    "evaluated": 129,
+    "brier_score": 0.07465213037175195,
+    "mean_predicted_probability": 0.48344849612403096,
+    "observed_correct_fraction": 0.4806201550387597
   }
 }

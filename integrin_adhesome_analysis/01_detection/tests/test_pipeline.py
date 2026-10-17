@@ -12,6 +12,14 @@ from build_adhesome_pfam_library import build
 from parse_adhesome_domtblout import parse, FIELDS
 
 class PipelineTests(unittest.TestCase):
+    def test_reference_catalogue_accepts_computational_evidence_without_experimental_metadata(self):
+        from adhesome_pipeline import catalogue
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);refs=root/'refs.faa';metadata=root/'refs.csv'
+            refs.write_text('>ref\nMAAA\n')
+            metadata.write_text('reference_id,family,module,species,accession,evidence_source\nref,actin,actin_linking,human,P1,sequence and domain evidence\n')
+            self.assertEqual(set(catalogue(metadata,refs)),{'ref'})
+
     def test_selected_target_retry_preserves_completed_outputs_and_batch_status(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);out=root/'results'

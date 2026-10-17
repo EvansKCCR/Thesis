@@ -29,6 +29,29 @@ class FamilyIdentityTests(unittest.TestCase):
         out=audit_record(self.row(NCBI_CDD_architecture='B41:10-200;[Inferred: I_LWEQ:2000-2150]'),self.rules)
         self.assertEqual(out['grade'],'C');self.assertNotEqual(out['family_confidence'],'strong')
 
+    def test_complete_family_gate_and_orthology_are_strong_without_optional_cdd_or_experiments(self):
+        row=self.row(family='actin',length=400,architecture='PF00022:10-390',NCBI_CDD_architecture='')
+        out=audit_record(row,self.rules)
+        self.assertEqual(out['grade'],'A');self.assertTrue(out['domain_gate_passed'])
+        self.assertEqual(out['assigned_family'],'actin');self.assertEqual(out['family_confidence'],'strong')
+        self.assertEqual(out['protein_name'],'Putative Actin-family protein')
+
+    def test_experimental_flags_cannot_change_assignment_scores_name_or_confidence(self):
+        row=self.row(family='actin',length=400,architecture='PF00022:10-390',NCBI_CDD_architecture='')
+        variants=[{},dict(experimental_evidence='',adhesome_experiment_verified=False,experimental_annotation_count=0),
+            dict(experimental_evidence='experimental annotation',adhesome_experiment_verified=True,experimental_annotation_count=10)]
+        results=[audit_record(dict(row,**extra),self.rules) for extra in variants]
+        for field in ('assigned_family','protein_name','family_confidence','protein_identity_confidence','grade',
+                'domain_score_0_4','orthology_score_0_3','total_score_0_10'):
+            self.assertEqual(len({result[field] for result in results}),1,field)
+
+    def test_experimental_flags_cannot_bypass_a_required_family_gate(self):
+        row=self.row(family='Syk',length=600,architecture='PF00017:30-100;PF07714:250-500',
+            NCBI_CDD_architecture='',experimental_evidence='experiment',adhesome_experiment_verified=True)
+        out=audit_record(row,self.rules)
+        self.assertEqual(out['grade'],'C');self.assertFalse(out['domain_gate_passed'])
+        self.assertNotEqual(out['family_confidence'],'strong')
+
     def test_cdd_label_alone_does_not_replace_missing_domain_core(self):
         out=audit_record(self.row(NCBI_CDD_architecture='Talin_middle:600-900'),self.rules)
         self.assertEqual(out['grade'],'C')

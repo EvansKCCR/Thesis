@@ -139,8 +139,9 @@ def annotate_name(row,result):
     else:
         label=chosen['protein_name'] if chosen else NAMES.get(family,family.replace('_',' ')+' family protein')
         name='Putative '+label
-        concordant=result.get('cdd_concordant',False)
-        confidence='strong' if row['grade']=='A' and concordant else 'moderate' if row['grade'] in ('A','B') else 'provisional'
+        # Grade A already means the required family gate and orthology passed.
+        # Optional CDD corroboration and experimental annotations are not extra gates.
+        confidence='strong' if row['grade']=='A' else 'moderate' if row['grade']=='B' else 'provisional'
         scope='family_lineage' if chosen else 'family'
     conflicts=result.get('identity_competitors',[])
     if conflicts:confidence='ambiguous';scope='ambiguous_family';name='Putative '+NAMES.get(family,'unresolved family protein')+' (competing CDD identities)'

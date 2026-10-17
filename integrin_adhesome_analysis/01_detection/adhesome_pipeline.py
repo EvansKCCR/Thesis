@@ -140,10 +140,10 @@ def scan(args):
 
 def catalogue(path, sequence_path, rules=None):
     rows = table(path)
-    required = ['reference_id','family','module','species','accession','evidence_source','experimental_evidence']
+    required = ['reference_id','family','module','species','accession','evidence_source']
     seqs = sequence_dict(sequence_path)
     if not rows:
-        raise ValueError('Reference catalogue is empty; populate experimentally supported references first')
+        raise ValueError('Reference catalogue is empty; supply sequence-verified family references')
     found = {}
     for row in rows:
         if any(not row.get(k, '').strip() for k in required):

@@ -192,7 +192,7 @@ def classify_comparative(args):
             elif supported:
                 status, reason = 'supported_candidate', 'convergent_family_evidence'
             elif arch['specific'] or family_evidence or (rule.get('requires_identity_evidence') and arch['partial']):
-                status, reason = 'provisional', 'family_hypothesis_requires_validation'
+                status, reason = 'provisional', 'additional_computational_family_support_needed'
             else:
                 status, reason = 'unresolved', 'generic_domains_retained_without_family_assignment'
             tier = ('diagnostic_domain' if arch['diagnostic'] else 'complete_architecture' if arch['complete'] and arch['specific']

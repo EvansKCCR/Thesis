@@ -25,6 +25,8 @@
   "architecture_gate_mandatory": true,
   "exact_reference_sequence_exemption": false,
   "experimental_annotation_required": false,
+  "experimental_evidence_confidence_penalty": 0,
+  "strong_assignment_confidence": "An unambiguous grade A family/protein call is strong when the required family architecture gate and computational orthology support pass. Optional CDD corroboration or experimental validation is not an additional confidence requirement. Required family-specific CDD gates remain computational specificity constraints.",
   "recoveries": [
     "PINCH_like",
     "parvin_like"

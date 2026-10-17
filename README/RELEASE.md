@@ -86,3 +86,14 @@ unassigned calls, unsupported positive-family scope, absent sequence hashes,
 out-of-range scores, stale models or changed reference panels. Reference-overlapping
 controls do not establish independent novel-lineage accuracy. Recalibration is
 automatic from scored evidence with calibrate_identity.py; no manual JSON is needed.
+
+Computational-confidence policy (2026-10-16, version 1.0): an unambiguous grade A
+family/protein assignment is strong after its required architecture gate and
+computational orthology support pass. Removed the additional optional CDD confidence
+cap and the experimental-metadata requirement in reference import/building.
+Experimental flags, assertions and annotation counts do not affect grades, scores,
+names or confidence; reference experimental metadata is provenance only. Required
+family-specific CDD gates, computational conflicts and negative exclusions remain
+evidence constraints. Positive-control probability calibration is refitted after
+the confidence-stratum change; its empirical correctness is not an experimental
+validation weight.

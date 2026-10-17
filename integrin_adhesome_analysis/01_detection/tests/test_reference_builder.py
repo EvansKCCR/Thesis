@@ -62,7 +62,7 @@ class ReferenceTests(unittest.TestCase):
     def test_paired_build_and_sequence_identity_validation(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder)
-            curated=[dict(reference_id='ref',family='actin',module='actin_linking',species='Homo sapiens',taxon_id='9606',gene='GENE',accession='P1',evidence_source='seed',experimental_evidence='claim')]
+            curated=[dict(reference_id='ref',family='actin',module='actin_linking',species='Homo sapiens',taxon_id='9606',gene='GENE',accession='P1',evidence_source='seed')]
             anchor=dict(curated[0],reference_id='anchor',accession='P3',gene='',role='phylogenetic_anchor',identity_mode='accession_taxon')
             broad=[curated[0],dict(curated[0],reference_id='competitor',family='non_adhesome',accession='P2'),anchor]
             write_table(root/'c.csv',curated,list(curated[0]))
@@ -78,6 +78,7 @@ class ReferenceTests(unittest.TestCase):
             self.assertEqual(set(sequence_dict(root/'out/search_references.faa')),{'ref','anchor'})
             self.assertEqual(table(root/'out/anchor_catalogue.csv')[0]['reference_tier'],'computational_anchor')
             self.assertEqual(table(root/'out/reference_catalogue.csv')[0]['adhesome_experiment_verified'],'false')
+            self.assertEqual(table(root/'out/reference_catalogue.csv')[0]['evidence_status'],'reference_identity_verified')
             catalogue(root/'out/reference_catalogue.csv',root/'out/adhesome_references.faa')
             (root/'out/adhesome_references.faa').write_text('>ref\nCCCC\n')
             with self.assertRaisesRegex(ValueError,'checksum mismatch'):

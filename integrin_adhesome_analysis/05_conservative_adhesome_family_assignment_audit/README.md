@@ -5,6 +5,11 @@ the shared `../01_detection/config/family_rules.json` and `audit_policy.json`.
 One representative is selected per species/protein. Original alternatives and
 collapsed/recovery counts remain auditable. No new proteins or component calls
 are created. Experimental annotation is not required.
+Missing experimental evidence never lowers assignment or annotation confidence.
+An unambiguous grade A call is strong for both family and protein identity at the
+reported scope, using the passed family gate and computational orthology support.
+CDD is mandatory only for families whose specificity rule requires it; optional
+CDD is not a further confidence cap.
 
 From the workflow root:
 

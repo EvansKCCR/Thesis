@@ -50,5 +50,19 @@ class IdentityProbabilityTests(unittest.TestCase):
             self.assertEqual(annotate([row],path)['status'],'probability_model_stale_after_scoring_change')
             self.assertNotIn('assignment_probability',row)
 
+    def test_experimental_metadata_never_changes_calibrated_assignment_probability(self):
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/'model.json'
+            samples=[dict(score=7,correct=int(i<15),stratum='strong|family',sequence_sha256=str(i)) for i in range(20)]
+            path.write_text(json.dumps(dict(code_fingerprint=fingerprint(),input_hashes={},minimum_controls=20,
+                context={'positive_family_scope':['talin'],'positive_control_only':True},samples=samples,cross_validation={})))
+            base=dict(assigned_family='talin',total_score_0_10=7,family_confidence='strong',protein_name_scope='family',
+                sequence_sha256='NEW',protein_name='Putative Talin')
+            rows=[dict(base),dict(base,experimental_evidence='',adhesome_experiment_verified=False),
+                dict(base,experimental_evidence='experiment',adhesome_experiment_verified=True)]
+            self.assertEqual(annotate(rows,path)['applied'],3)
+            self.assertEqual({row['assignment_probability'] for row in rows},{0.75})
+            self.assertEqual(len({row['assignment_probability_lower_95'] for row in rows}),1)
+
 
 if __name__=='__main__':unittest.main()
