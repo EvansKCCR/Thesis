@@ -173,7 +173,8 @@ def inspect_domains(families, library, regions):
             count_supported = any(not m for m in missing)
             order_supported = ordered_groups_present(intervals, spec['ordered_domain_groups']) if spec.get('support_requires_order') else None
             rows.append(dict(family=family, sequence_id=r['id'],
-                             state='not_configured_component_hypothesis' if not alternatives else 'not_tested_missing_domains' if not counts else
+                             state=('not_configured_screening_hypothesis' if spec.get('classification_level')=='screening_hypothesis' else
+                                    'not_configured_component_hypothesis') if not alternatives else 'not_tested_missing_domains' if not counts else
                              'domain_count_order_rule_supported' if count_supported and order_supported else
                              'domain_count_order_conflict' if count_supported and order_supported is False else
                              'domain_count_rule_supported' if count_supported else 'domain_count_rule_not_met',
@@ -385,12 +386,14 @@ def main(argv=None):
     domain_rows=inspect_domains(families,rules,regions)
     print('Scanning current evidence-based motif definitions and generating exploratory candidates...',flush=True)
     discovery_families={name:records for name,records in families.items()
-                        if rules['families'][name].get('classification_level')!='component_hypothesis'}
+                        if rules['families'][name].get('classification_level') not in ('component_hypothesis','screening_hypothesis')}
     words,sites=discover(discovery_families,args.min_k,args.max_k,args.min_fraction,args.top)
     master_result=master_library.scan(snapshot,families,regions,evidence,out,write_tsv,sequence_context)
     result=dict(annotation_rows=master_result['sequence_annotation_rows'],context_filters_implemented=False)
     stages,tool_paths,versions=external(discovery_families,out,args)
-    stages.extend(dict(family=name,stage='family_discovery',status='skipped',reason='component_bucket_has_no_assigned_family')
+    stages.extend(dict(family=name,stage='family_discovery',status='skipped',
+                       reason='screening_bucket_has_no_assigned_family' if rules['families'][name].get('classification_level')=='screening_hypothesis'
+                       else 'component_bucket_has_no_assigned_family')
                   for name in families if name not in discovery_families)
     membership=defaultdict(set)
     for family,records in families.items():

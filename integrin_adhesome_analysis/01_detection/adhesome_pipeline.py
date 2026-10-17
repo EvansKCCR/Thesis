@@ -8,7 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
-from adhesome_core import fasta, write_fasta, table, write_table, digest, save_json, pf, sequence_dict, VERSION, detection_evidence
+from adhesome_core import fasta, write_fasta, table, write_table, digest, save_json, pf, sequence_dict, VERSION, detection_evidence, validate_protein_input
 from adhesome_components import annotate_components, load_crosswalk, CANDIDATE_FIELDS
 from reference_identity import identity_evidence, IDENTITY_FIELDS
 from parse_adhesome_domtblout import parse, FIELDS
@@ -22,7 +22,6 @@ MODULES = {'extracellular_matrix', 'integrin_receptors', 'membrane_proximal_adap
 
 def prepare(config, output):
     output = Path(output)
-    output.mkdir(parents=True, exist_ok=True)
     settings = json.loads(Path(config).read_text(encoding='utf-8'))
     qc = settings['qc']
     if not (qc['min_length'] > 0 and 0 <= qc['max_ambiguous_fraction'] <= 1 and qc['max_ambiguous_run'] >= 0):
@@ -30,6 +29,9 @@ def prepare(config, output):
     codes = [s['code'] for s in settings['proteomes']]
     if len(codes) != len(set(codes)) or any(not re.fullmatch(r'[A-Za-z0-9_]+', c) for c in codes):
         raise ValueError('Species codes must be unique safe identifiers')
+    for species in settings['proteomes']:
+        validate_protein_input(Path(config).resolve().parent/species['path'])
+    output.mkdir(parents=True, exist_ok=True)
     summaries = {}
     for species in settings['proteomes']:
         source = Path(config).resolve().parent / species['path']
@@ -99,6 +101,7 @@ def run(command, log):
         subprocess.run([str(x) for x in command], stdout=handle, stderr=subprocess.STDOUT, check=True)
 
 def scan(args):
+    validate_protein_input(args.proteome,hmmer_limit=True)
     output = Path(args.out)
     output.mkdir(parents=True, exist_ok=True)
     metadata = json.loads(Path(args.library + '.metadata.json').read_text(encoding='utf-8'))
@@ -136,7 +139,8 @@ def scan(args):
     write_table(output / 'domains.audit.csv', rows, FIELDS)
     save_json(output / 'scan.json', dict(pipeline_version=VERSION,commands=commands, proteome_sha256=digest(args.proteome),
         metadata_sha256=digest(args.library + '.metadata.json'), thresholds=dict(i=args.max_i,c=args.max_c,
-        profile_coverage=args.min_coverage), search_space=len(models), python=sys.version))
+        profile_coverage=args.min_coverage), search_space=len(models), python=sys.version,
+        artifact_checksums={name:digest(output/name) for name in ('domains.csv','domains.audit.csv','combined.domtblout')}))
 
 def catalogue(path, sequence_path, rules=None):
     rows = table(path)
@@ -483,6 +487,7 @@ def check_inputs(root,settings,excluded=None):
                     raise ValueError(f'{code}: gene_regex cannot extract a safe gene identifier from {identifier} in {path}; update this target entry in targets.json before detection')
                 genes.add(match.group(1))
         if not count:raise ValueError(f'{code}: no FASTA records in {path}')
+        validate_protein_input(path)
         summary[code]=dict(fasta=str(path),proteins=count,genes=len(genes))
     return paths,ignored,summary
 
@@ -490,6 +495,13 @@ def check_inputs(root,settings,excluded=None):
 def batch(args):
     settings = json.loads(Path(args.config).read_text(encoding='utf-8'))
     output = Path(args.out).resolve()
+    resuming=bool(getattr(args,'resume',False))
+    excluded=set(getattr(args,'exclude_target',None) or [])
+    if resuming and not (output/'batch.json').is_file():
+        raise ValueError('No detection batch checkpoint found for --resume: '+str(output/'batch.json'))
+    if excluded:
+        settings=dict(settings,proteomes=[entry for entry in settings['proteomes'] if entry['code'] not in excluded])
+    if not settings['proteomes']:raise ValueError('No active targets remain after exclusions')
     inputs, ignored, input_summary = check_inputs(args.input_dir,settings,output)
     requested=set(getattr(args,'species',None) or [])
     configured={entry['code'] for entry in settings['proteomes']}
@@ -510,15 +522,21 @@ def batch(args):
             raise ValueError('Build the HMM library and metadata before batch scanning')
     summary = dict(pipeline_version=VERSION,stage='detection',deferred_stages=['topology','localization','phylogeny'],input_root=str(Path(args.input_dir).resolve()), ignored_fastas=ignored,
                    mode='prepare_only' if args.prepare_only else 'prepare_scan_classify', species={})
-    if requested and (output/'batch.json').exists():
+    if (requested or resuming) and (output/'batch.json').exists():
         previous=json.loads((output/'batch.json').read_text(encoding='utf-8'))
         if previous.get('input_root')!=summary['input_root'] or previous.get('mode')!=summary['mode']:
             raise ValueError('Selected-target recovery requires the same input directory and analysis mode')
-        if set(previous.get('species',{}))-configured:
-            raise ValueError('Current target config omits earlier targets; keep the full config for selected-target recovery')
+        removed=set(previous.get('species',{}))-configured
+        complete_states={'completed_with_homology','completed_domain_screen','prepared'}
+        if removed and (not resuming or any(previous['species'][code]['status'] in complete_states for code in removed)):
+            raise ValueError('Current target config omits completed targets; retain them when resuming this run')
+        if resuming:
+            pending={code for code in configured if previous.get('species',{}).get(code,{}).get('status') not in complete_states}
+            requested=(requested & pending) if requested else pending
         for entry in settings['proteomes']:
             code=entry['code']
             if code in requested or code not in previous.get('species',{}):continue
+            if resuming and previous['species'][code]['status'] not in complete_states:continue
             stored=output/code/'proteome.json'
             if not stored.is_file():raise ValueError(f'{code}: prior configuration is missing; use a new run')
             old=json.loads(stored.read_text(encoding='utf-8'))
@@ -542,14 +560,21 @@ def batch(args):
                 for resource in (args.rules,args.manifest,crosswalk):
                     if resource and classification['checksums'].get(str(Path(resource).resolve()))!=digest(resource):
                         raise ValueError(f'{code}: classification resources changed; use a new run')
-        summary['species']=previous['species']
+        summary['species']={code:record for code,record in previous['species'].items() if code in configured}
+        if resuming:
+            summary['excluded_targets']=dict(previous.get('excluded_targets',{}))
+            for code in sorted(removed):
+                summary['excluded_targets'][code]=dict(previous['species'][code],
+                    exclusion_reason='user_requested_exclusion' if code in excluded else 'removed_from_target_configuration')
         summary['selected_target_attempts']=previous.get('selected_target_attempts',[])+[dict(targets=sorted(requested),previous_status={code:previous['species'].get(code,{}).get('status') for code in requested})]
     output.mkdir(parents=True, exist_ok=True)
     for species in settings['proteomes']:
         code = species['code']
-        if requested and code not in requested:continue
+        if (requested or resuming) and code not in requested:
+            if resuming:print(f'REUSE completed target {code}',flush=True)
+            continue
         folder = output / code
-        if requested and summary['species'].get(code,{}).get('status')=='failed' and folder.exists():
+        if not resuming and requested and summary['species'].get(code,{}).get('status')=='failed' and folder.exists():
             archives=output/'archived_attempts'
             if folder.resolve().parent!=output or archives.resolve().parent!=output:
                 raise ValueError('Failed-attempt archive must remain inside the detection run')
@@ -563,18 +588,39 @@ def batch(args):
         entry = dict(species)
         entry['path'] = str(inputs[code])
         config = folder / 'proteome.json'
-        save_json(config, dict(qc=settings['qc'], proteomes=[entry]))
+        target_settings=dict(qc=settings['qc'],proteomes=[entry])
+        old_preparation=folder/'prepared/preparation.json'
+        reuse_preparation=False
+        if resuming and config.is_file() and old_preparation.is_file():
+            prior=json.loads(old_preparation.read_text(encoding='utf-8')).get('species',{}).get(code,{})
+            reuse_preparation=(json.loads(config.read_text(encoding='utf-8'))==target_settings
+                and prior.get('input_sha256')==digest(inputs[code])
+                and (folder/'prepared'/f'{code}.faa').is_file()
+                and prior.get('output_sha256')==digest(folder/'prepared'/f'{code}.faa'))
+        if not reuse_preparation:save_json(config,target_settings)
         status = dict(species=species['species'], input=str(inputs[code]), output=str(folder), status='running')
         summary['species'][code] = status
         save_json(output / 'batch.json', summary)
         print(f'Processing {species["species"]}: {inputs[code]}', flush=True)
         try:
-            prepare(config, folder / 'prepared')
+            if reuse_preparation:print(f'REUSE {code} preparation',flush=True)
+            else:prepare(config, folder / 'prepared')
             if not args.prepare_only:
                 scan_args = argparse.Namespace(**vars(args))
                 scan_args.proteome = str(folder / 'prepared' / (code + '.faa'))
                 scan_args.out = str(folder / 'domains')
-                scan(scan_args)
+                scan_receipt=folder/'domains/scan.json'
+                reuse_scan=False
+                if resuming and scan_receipt.is_file():
+                    prior=json.loads(scan_receipt.read_text(encoding='utf-8'))
+                    artifacts=prior.get('artifact_checksums',{})
+                    reuse_scan=(prior.get('proteome_sha256')==digest(scan_args.proteome)
+                        and prior.get('metadata_sha256')==digest(args.library+'.metadata.json')
+                        and prior.get('thresholds')==dict(i=args.max_i,c=args.max_c,profile_coverage=args.min_coverage)
+                        and set(artifacts)=={'domains.csv','domains.audit.csv','combined.domtblout'}
+                        and all((folder/'domains'/name).is_file() and digest(folder/'domains'/name)==sha for name,sha in artifacts.items()))
+                if reuse_scan:print(f'REUSE {code} completed domain scan',flush=True)
+                else:scan(scan_args)
                 homology_path = None
                 if args.reference_set:
                     references = Path(args.reference_set)
@@ -597,6 +643,8 @@ def batch(args):
             raise
         save_json(output / 'batch.json', summary)
 
+    save_json(output / 'batch.json', summary)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -610,6 +658,8 @@ def main():
     p.add_argument('--prepare-only', action='store_true')
     p.add_argument('--check-inputs',action='store_true',help='Validate all configured FASTA headers and gene mappings, then exit without creating outputs')
     p.add_argument('--species',action='append',help='Run only selected target codes while retaining unselected species and batch status')
+    p.add_argument('--resume',action='store_true',help='Continue this batch in place; verify/reuse completed targets and stages without archiving or backups')
+    p.add_argument('--exclude-target',action='append',help='Omit an unfinished target; keep its files untouched and record its exclusion')
     p.add_argument('--reference-set', help='Paired reference directory; also run BLASTP and integrate its evidence')
     p.add_argument('--classification-mode', choices=['comparative','strict'], default='comparative')
     p.add_argument('--manifest', default=str(CONFIG / 'adhesome_pfam_manifest.csv'))

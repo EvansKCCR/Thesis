@@ -15,6 +15,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 from identity_probability import resource_hashes as probability_resources
+from evaluate_validation import after_audit as evaluate_controls,resource_hashes as validation_resources
 
 ROOT = Path(__file__).resolve().parent
 VERSION = '1.0'
@@ -127,10 +128,13 @@ def start(args):
     if not args.detection and not args.input_dir:
         raise ValueError('Supply --input-dir with target proteomes, or --detection with existing detection output')
     config_path = getattr(args, 'targets_config', None)
+    excluded=set(getattr(args,'exclude_target',None) or [])
+    resuming=bool(getattr(args,'resume',False))
     expected = None
     if config_path:
         config = json.loads(config_path.read_text(encoding='utf-8'))
-        entries = config['proteomes']
+        entries = [entry for entry in config['proteomes'] if entry['code'] not in excluded]
+        config=dict(config,proteomes=entries)
         codes = [r['code'] for r in entries]
         if not codes or len(codes)!=len(set(codes)) or any(not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', s) or '__' in s for s in codes):
             raise ValueError('Target config requires unique safe species codes without double underscores')
@@ -155,22 +159,29 @@ def start(args):
             return
     elif getattr(args,'check_inputs',False):
         raise ValueError('--check-inputs requires raw --input-dir and --targets-config')
-    out.mkdir(parents=True, exist_ok=False)
+    if resuming and (out/'workflow_manifest.json').exists():
+        raise ValueError('This handoff is already complete; use its existing outputs')
+    if resuming and not (out/'detection/batch.json').is_file() and not args.detection:
+        raise ValueError('No failed detection batch found in '+str(out/'detection'))
+    out.mkdir(parents=True, exist_ok=resuming)
     detection = args.detection.resolve() if args.detection else out/'detection'
     if not args.detection:
         cmd = [sys.executable, DETECT/'scripts/run_detection.py', '--out', detection, '--cpu', args.threads]
         if args.input_dir:
             cmd += ['--input-dir', args.input_dir.resolve()]
         cmd += ['--config', config_path.resolve()]
+        if resuming:cmd+=['--resume']
+        for code in sorted(excluded):cmd+=['--exclude-target',code]
         execute(cmd, out/'logs')
     batch_path=detection/'batch.json'
     if batch_path.exists():
         statuses=json.loads(batch_path.read_text(encoding='utf-8')).get('species',{})
-        unfinished=[sp for sp in (expected or set(statuses)) if statuses.get(sp,{}).get('status') not in ('completed_with_homology','completed_domain_screen')]
+        unfinished=[sp for sp in ((expected or set(statuses))-excluded) if statuses.get(sp,{}).get('status') not in ('completed_with_homology','completed_domain_screen')]
         if unfinished:raise ValueError('Detection is incomplete for '+', '.join(sorted(unfinished))+'. Finish those targets before exporting the handoff.')
     hypotheses, sequences, families, sources, species = [], {}, defaultdict(dict), {}, set()
     for table in sorted(detection.glob('*/candidates/candidates.csv')):
         sp = table.parents[1].name
+        if sp in excluded or (expected is not None and sp not in expected):continue
         if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', sp) or '__' in sp:
             raise ValueError(f'Unsafe target species code: {sp}')
         species.add(sp)
@@ -204,6 +215,7 @@ def start(args):
     seen_hypotheses={(r['Specie'],r['protein_id'],r['family']) for r in hypotheses}
     for table in sorted(detection.glob('*/candidates/candidates.csv')):
         sp=table.parents[1].name
+        if sp in excluded or (expected is not None and sp not in expected):continue
         for source_row in read(table,','):
             pid,family=source_row['protein_id'],source_row['family']
             if pid not in sequences or (sp,pid,family) in seen_hypotheses:continue
@@ -214,7 +226,7 @@ def start(args):
             hypotheses.append(dict(source_row,Specie=sp,sequence_sha256=hashlib.sha256(sequences[pid].encode()).hexdigest(),
                 motif_family=motif_family,export_basis='retained_stage1_alternative_for_selected_protein',hypothesis_tier='unresolved'))
             families[motif_family][pid]=sequences[pid]
-    (out/'families').mkdir()
+    (out/'families').mkdir(exist_ok=resuming)
     for family, seqs in families.items():
         write_fasta(out/'families'/f'{family}.faa', seqs)
     write(out/'hypotheses.tsv', hypotheses)
@@ -222,6 +234,7 @@ def start(args):
     stage_one_workbook(hypotheses,out/'Stage_1_output.xlsx')
     coverage_rows=[]
     for table in sorted(detection.glob('*/candidates/reference_coverage.csv')):
+        if table.parents[1].name not in species:continue
         coverage_rows.extend(dict(row, Specie=table.parents[1].name) for row in read(table, ','))
         sources[str(table)]=digest(table)
     if coverage_rows:
@@ -229,6 +242,7 @@ def start(args):
     component_rows=[]
     component_fields=[]
     for table in sorted(detection.glob('*/candidates/component_hypotheses.csv')):
+        if table.parents[1].name not in species:continue
         rows=read(table,',')
         if rows:
             component_fields=list(rows[0])
@@ -245,8 +259,8 @@ def start(args):
     write(out/'external_evidence_template.tsv', [dict(protein_id=k, sequence_sha256=hashlib.sha256(v.encode()).hexdigest(),
           DeepLoc_2_1='', DeepTMHMM='', SignalP_v6_0='', NCBI_CDD_architecture='', source='',
           **{field:'' for field in IDENTITY_FIELDS}) for k,v in sorted(sequences.items())])
-    domains = sorted(detection.glob('*/domains/domains.csv'))
-    source_fastas = sorted(detection.glob('*/prepared/*.faa'))
+    domains = sorted(path for path in detection.glob('*/domains/domains.csv') if path.parents[1].name in species)
+    source_fastas = sorted(path for path in detection.glob('*/prepared/*.faa') if path.parents[1].name in species)
     execute([sys.executable, MOTIF/'import_domain_regions.py', '--input-dir', out/'families',
              '--domains', *domains, '--source-fasta', *source_fastas, '--out', out/'verified_regions.tsv'], out/'logs')
     provenance = json.loads((out/'verified_regions.provenance.json').read_text(encoding='utf-8'))
@@ -264,6 +278,7 @@ def start(args):
         sources[str(config_path.resolve())] = digest(config_path)
     seal(out, 'handoff', detection=str(detection), sources=sources,
          completed_stages=['detection'],deferred_stages=['topology','localization','phylogeny'],
+         excluded_target_species=sorted(set(json.loads(batch_path.read_text()).get('excluded_targets',{}))|excluded) if batch_path.exists() else sorted(excluded),
          target_species=sorted(species), state='awaiting_external_context', hypotheses=len(hypotheses), proteins=len(sequences))
     print(f'Handoff ready: {out}/external_candidates.faa ({len(sequences)} proteins; {len(hypotheses)} hypotheses)')
 
@@ -294,12 +309,11 @@ def resume(args):
     out = args.out.resolve()
     seqs = fasta(handoff/'external_candidates.faa')
     external = context_rows(args.external_evidence, seqs) if args.external_evidence else []
-    out.mkdir(parents=True, exist_ok=False)
     cmd = [sys.executable, MOTIF/'family_motifs.py', '--input-dir', handoff/'families',
            '--regions', handoff/'verified_regions.tsv', '--out', out/'motifs',
            '--motif-scope',getattr(args,'motif_scope','adhesion')]
     if getattr(args,'motif_library',None):cmd+=['--library',args.motif_library.resolve()]
-    inputs = {}
+    inputs, copies = {}, []
     for flag in ('topology_file','context_dir','evidence'):
         value = getattr(args, flag)
         if value:
@@ -307,7 +321,6 @@ def resume(args):
             inputs.update({str(p.resolve()):digest(p) for p in paths if p.is_file()})
             if flag == 'context_dir':
                 staged = out/'context'
-                staged.mkdir()
                 aliases = {
                     'DeepLoc_adhesome_candidate_list.csv':'adhesome_DeepLoc_results.csv',
                     'SignalP_adhesome_candidate_list.txt':'adhesome_SiganP_prediction_results.txt',
@@ -317,13 +330,58 @@ def resume(args):
                     source = value/canonical if (value/canonical).exists() else value/alternative
                     if canonical.endswith('.3line') and args.topology_file:
                         continue
-                    shutil.copyfile(source, staged/canonical)
+                    if not source.is_file():
+                        raise ValueError(f'Missing context input: {source}')
+                    copies.append((source, staged/canonical))
                 value = staged
             cmd += ['--'+flag.replace('_','-'), value.resolve()]
     if args.external_evidence:
         inputs[str(args.external_evidence.resolve())] = digest(args.external_evidence)
-        write(out/'external_evidence.tsv', external)
-    execute(cmd, out/'logs')
+    if getattr(args,'motif_library',None):
+        inputs[str(args.motif_library.resolve())]=digest(args.motif_library)
+    contract=dict(handoff_manifest=digest(handoff/'workflow_manifest.json'),sources=inputs,
+                  command=[str(x) for x in cmd[1:]],allow_missing_context=args.allow_missing_context)
+    retrying=bool(getattr(args,'retry_failed',False))
+    checkpoint=out/'annotation_recovery.json'
+    if out.exists():
+        if not retrying:
+            raise ValueError('Annotation output already exists; use --retry-failed for a failed annotation before motif output, or recover for a failed downstream run')
+        if (out/'workflow_manifest.json').exists():
+            raise ValueError('Annotation is already complete; use recover --run with this annotation directory for downstream failures')
+        if (out/'motifs').exists() or (out/'downstream').exists():
+            raise ValueError('Retry requires an annotation failure before motif output was created; existing partial motif output must be reviewed separately')
+        if checkpoint.exists():
+            previous=json.loads(checkpoint.read_text(encoding='utf-8'))
+            if previous.get('status')!='failed' or previous.get('contract')!=contract:
+                raise ValueError('Failed annotation inputs/settings changed or attempt is not marked failed; retry refused')
+        else:
+            # Older releases did not checkpoint annotation. Adopt only the narrow
+            # pre-output failure with an identical logged command and staged inputs.
+            logs=sorted((out/'logs').glob('command_*.json'))
+            previous=json.loads(logs[-1].read_text(encoding='utf-8')) if logs else {}
+            if (previous.get('status')!='failed' or previous.get('command',[])[1:]!=contract['command']
+                    or args.topology_file or args.evidence or args.external_evidence or not copies
+                    or any(p.name not in ('context','logs') for p in out.iterdir())):
+                raise ValueError('Cannot verify this older failed annotation for in-place retry')
+            if any(not dest.is_file() or digest(source)!=digest(dest) for source,dest in copies):
+                raise ValueError('Returned context differs from the failed attempt; retry refused')
+    elif retrying:
+        raise ValueError('--retry-failed requires the existing failed annotation directory')
+    out.mkdir(parents=True, exist_ok=retrying)
+    state=dict(status='running',contract=contract)
+    dump(checkpoint,state)
+    try:
+        for source,dest in copies:
+            dest.parent.mkdir(parents=True,exist_ok=True)
+            if source.resolve()!=dest.resolve():shutil.copyfile(source,dest)
+        if args.external_evidence:write(out/'external_evidence.tsv',external)
+        execute(cmd, out/'logs')
+    except (ValueError,OSError,KeyError) as exc:
+        state.update(status='failed',error=str(exc))
+        dump(checkpoint,state)
+        raise
+    state['status']='complete'
+    dump(checkpoint,state)
     seal(out, 'annotation', handoff=str(handoff), handoff_manifest=digest(handoff/'workflow_manifest.json'), sources=inputs,
          context_policy='missing_allowed' if args.allow_missing_context else 'external_supplied')
     print(f'Annotation complete: {out}.')
@@ -378,6 +436,7 @@ def downstream(args):
                     or saved.get('identity_library_sha256')!=digest(IDENTITY_LIBRARY)
                     or saved.get('audit_report_sha256')!=digest(AUDIT_REPORT)
                     or saved.get('identity_probability_resources')!=probability_resources()
+                    or ('validation_evaluation_resources' in saved and saved['validation_evaluation_resources']!=validation_resources())
                     or saved.get('motif_snapshot_sha256')!=digest(MOTIF/'Motif_library/adhesion_core.json')):
                 state['stages'].pop('audit',None)
                 if state['settings'].get('phylogeny_grouping')=='family':
@@ -803,6 +862,7 @@ def audit(args):
     rules=DETECT/'config/family_rules.json'
     execute([sys.executable,AUDIT,out/'audit_input.xlsx',out/'Stage_2_output.xlsx','--rules',rules,
              '--supporting-data',out/'supporting_data.json'],out/'logs')
+    validation=evaluate_controls(out,handoff)
     motif_snapshot=MOTIF/'Motif_library/adhesion_core.json'
     seal(out,'audit',annotation=str(annotation),orthology=str(orthology_dir),benchmark_summary_sha256=benchmark_sha,
         motif_snapshot_sha256=digest(motif_snapshot),rules_sha256=digest(rules),audit_script_sha256=digest(AUDIT),
@@ -810,8 +870,13 @@ def audit(args):
         classification_contract_sha256=digest(ROOT/'classification_contract.py'),output_schema_sha256=digest(ROOT/'templates/output_schema.json'),stage1_source_tables=source_tables,
         identity_code_sha256=digest(IDENTITY_CODE),identity_library_sha256=digest(IDENTITY_LIBRARY),audit_report_sha256=digest(AUDIT_REPORT),
         identity_probability_resources=probability_resources(),
+        validation_evaluation=validation,validation_evaluation_resources=validation_resources(),
         annotation_manifest=digest(annotation/'workflow_manifest.json'),orthology_manifest=digest(orthology_dir/'workflow_manifest.json'))
     print(f'Stage 2 family refinement complete: {out}/Stage_2_output.xlsx')
+    if validation['status']=='complete':
+        print(f"Validation target performance: {validation['directory']} (F1={validation['F1']}, PPV={validation['PPV']})",flush=True)
+    elif validation['status']=='failed':
+        print('Validation evaluation failed; completed audit retained: '+validation['error'],flush=True)
 
 
 def main(argv=None):
@@ -823,6 +888,8 @@ def main(argv=None):
     s.add_argument('--input-dir', type=Path)
     s.add_argument('--targets-config', type=Path, help='JSON target proteome configuration; required for new detection')
     s.add_argument('--check-inputs',action='store_true',help='Validate all target file/header/gene mappings and exit without creating a run')
+    s.add_argument('--resume',action='store_true',help='Continue a failed start in the same directory; reuse completed targets without backups')
+    s.add_argument('--exclude-target',action='append',help='Omit an unfinished target from detection and handoff export')
     s.add_argument('--threads', type=int, default=8)
     s.set_defaults(func=start)
     s = sub.add_parser('resume', help='Import external context and run motif annotation')
@@ -833,6 +900,7 @@ def main(argv=None):
         s.add_argument('--'+flag, type=Path)
     s.add_argument('--allow-missing-context', action='store_true')
     s.add_argument('--annotation-only',action='store_true',help='Stop after motif annotation instead of continuing automatically')
+    s.add_argument('--retry-failed',action='store_true',help='Retry a failed annotation before motif output in the same directory; verify unchanged inputs and preserve logs without backups')
     s.set_defaults(func=resume)
     s = sub.add_parser('continue',help='Run reference preparation, orthology, evolutionary benchmarking and audit; phylogeny is opt-in')
     s.add_argument('--annotation',type=Path,required=True)

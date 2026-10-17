@@ -1,4 +1,5 @@
 import json
+import csv
 import tempfile
 import unittest
 from pathlib import Path
@@ -8,6 +9,29 @@ import family_motifs as fm
 
 
 class MotifTests(unittest.TestCase):
+    def test_unassigned_alternative_retained_without_pooled_discovery(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);inputs=root/'inputs';inputs.mkdir()
+            for family in ('unassigned_domain_candidate','component_reference_candidate','fibronectin_like_candidate'):
+                (inputs/(family+'.faa')).write_text('>one\nACDENPAY\n>two\nACDENPVY\n')
+            regions=root/'regions.tsv'
+            regions.write_text('family\tsequence_id\tregion\tstart\tend\n'
+                               'unassigned_domain_candidate\tone\tPF00041\t1\t8\n')
+            out=root/'out'
+            with patch.object(fm,'discover',wraps=fm.discover) as discovery,patch.object(fm,'external',wraps=fm.external) as external:
+                self.assertEqual(fm.main(['--input-dir',str(inputs),'--regions',str(regions),'--out',str(out)]),0)
+            self.assertEqual(set(discovery.call_args.args[0]),{'fibronectin_like_candidate'})
+            self.assertEqual(set(external.call_args.args[0]),{'fibronectin_like_candidate'})
+            def rows(name):
+                with (out/(name+'.tsv')).open() as handle:return list(csv.DictReader(handle,delimiter='\t'))
+            self.assertEqual(len(rows('sequence_qc')),6)
+            domain=next(row for row in rows('domain_inspection') if row['family']=='unassigned_domain_candidate' and row['sequence_id']=='one')
+            self.assertEqual(domain['state'],'not_configured_screening_hypothesis')
+            self.assertIn('PF00041',domain['observed'])
+            self.assertTrue(any(row['family']=='unassigned_domain_candidate' for row in rows('motif_annotations')))
+            self.assertEqual({row['family'] for row in rows('external_stages') if row['stage']=='family_discovery'},
+                             {'unassigned_domain_candidate','component_reference_candidate'})
+
     def test_overlaps_and_ambiguity(self):
         self.assertEqual(list(fm.occurrences('P..P', 'PPPPP')), [(1, 4, 'PPPP'), (2, 5, 'PPPP')])
         self.assertEqual(list(fm.occurrences('NP.Y', 'NPXY')), [])

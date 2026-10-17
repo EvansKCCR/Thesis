@@ -98,6 +98,24 @@ python adhesome_workflow.py resume --handoff runs/handoff --topology-file return
 ```
 
 For a combined predictor folder, use `--context-dir returned/context` instead.
+If annotation failed before it created `runs/annotation/motifs`, rerun the same
+command with `--retry-failed`. For example, from the workflow directory:
+
+```bash
+python adhesome_workflow.py resume --handoff runs/handoff --context-dir returned/context --out runs/annotation --phylogeny --threads 4 --retry-failed
+```
+
+This verifies the handoff and unchanged external inputs, reuses the failed
+annotation directory, preserves command logs and creates no backups. It does not
+rerun detection. The older unknown-family failure can be adopted using its failed
+command log and exact staged context files. A completed annotation is preserved;
+use `recover --run runs/annotation` for downstream failures. Existing partial motif
+output or an attempt still marked running is refused for review.
+
+`unassigned_domain_candidate` alternatives are retained for the already selected
+proteins, including their domain, motif and returned context evidence. They do not
+establish a family assignment and are excluded from pooled family motif discovery.
+
 That folder must contain these files (either name in each pair is accepted):
 
 | Predictor | Canonical filename | Alternate filename |
@@ -190,6 +208,11 @@ All handoff target species, including targets with no exported hypotheses, must 
 
 ## Checkpoint recovery
 
+For a failed detection/start step, continue in the same handoff directory with
+`start --resume`; this mode reuses verified completed targets without backups.
+Use `--exclude-target Sguin` to leave the failed transcript input out of this run.
+See [DETECTION_RECOVERY.md](DETECTION_RECOVERY.md) for the exact command and limits.
+
 Use python adhesome_workflow.py recover --run runs/resumed --threads 2 --iqtree-threads 2 to reuse verified completed downstream stages and retry unfinished work. Older failed runs can be adopted with --adopt-existing --annotation runs/resumed. See the recovery section in [the guide](ORTHOLOGY_PHYLOGENY_GUIDE.md) for limits and exact paths. Continue creates a new downstream run; recover repairs the existing failed run.
 
 Current final outputs include compact `putative_audited_family`, `protein_name`
@@ -199,3 +222,8 @@ matches are dropped from final assignments and retained in
 `negative_control_exclusions.tsv`. Retained and excluded proteins together account
 for the stage 1 pool. See [naming and output policy](COMPUTATIONAL_AUDIT.md) for
 calibration commands, exclusions and reference-overlap limits.
+
+If `validation.faa` is an active target, every audit also produces F1/PPV, recall,
+confusion matrices and per-control decisions in `validation_evaluation` beside
+the audit tables. See [VALIDATION_PERFORMANCE.md](VALIDATION_PERFORMANCE.md) for
+the dual gates, complete control denominators, family correctness and overlap scope.

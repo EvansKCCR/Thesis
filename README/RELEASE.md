@@ -97,3 +97,39 @@ family-specific CDD gates, computational conflicts and negative exclusions remai
 evidence constraints. Positive-control probability calibration is refitted after
 the confidence-stratum change; its empirical correctness is not an experimental
 validation weight.
+
+In-place detection recovery (2026-10-17, version 1.0): diagnosed the Sguin SIGABRT
+as a nucleotide mRNA file supplied as protein input, including records exceeding
+HMMER's 100,000-residue limit. Protein-input preflight now catches this before
+analysis. `start --resume --exclude-target Sguin` continues the same failed handoff,
+verifies/reuses completed targets, processes pending targets and records exclusion
+without archives or backups. Failed targets removed from targets.json are also
+supported; completed targets cannot be silently removed. Excluded target files
+remain untouched and are omitted from all exported analysis inputs. Preparation
+and completed domain scans can be reused using verified receipts/artifact hashes.
+All 90 detection and 14 workflow fixture tests passed. No sequence translation or
+DNA-as-protein scanning is used. See DETECTION_RECOVERY.md.
+
+Post-audit control evaluation (2026-10-17, version 1.0): added evaluate_validation.py
+and automatic evaluation after audit calls for the validation target. Reports
+compare recruitment, complete audited family gates before/after negative exclusion,
+strong grade A calls and exploratory provisional coverage. They include F1, PPV,
+recall, specificity, accuracy, binary and family confusion matrices, full-cohort
+control accounting and source hashes. Positive controls lost before audit remain
+false negatives; unlabelled controls and known sequence mismatches are explicitly
+unscored. Labelled accessions lacking duplicate trusted sequences remain in the
+primary cohort and are flagged, with a sequence-verified comparison also exported.
+Wrong-family calls are reported separately from membership decisions. The report
+is a reference-overlapping control self-test; its scores do not change calls,
+confidence, calibration or orthology weights. Evaluation errors preserve completed
+audit results. See VALIDATION_PERFORMANCE.md.
+
+Annotation recovery (2026-10-17, version 1.0): accept the retained
+unassigned_domain_candidate screening alternative in motif annotation, preserve
+its sequence/domain/context evidence, and exclude it from pooled family motif
+discovery. Added resume --retry-failed for verified failures before motif output;
+the same directory and failed logs are retained without backups. Changed inputs,
+completed annotations, partial motif output and running attempts are refused.
+Older failures can be adopted from an identical failed command and unchanged
+staged context. Detection is reused and no biological analysis is launched during
+installation.

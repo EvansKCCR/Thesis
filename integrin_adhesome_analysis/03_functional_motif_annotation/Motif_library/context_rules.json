@@ -4,6 +4,11 @@
   "domain_rule_source": "../../01_detection/config/family_rules.json",
   "confidence_policy": "Current evidence-based definitions; all regex hits remain sequence candidates. Context filters are not implemented.",
   "families": {
+    "unassigned_domain_candidate": {
+      "classification_level": "screening_hypothesis",
+      "domain_alternatives": [],
+      "classification_note": "Retained domain-only alternative for an already selected protein; no family or shared architecture assigned."
+    },
     "component_reference_candidate": {
       "classification_level": "component_hypothesis",
       "domain_alternatives": [],

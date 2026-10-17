@@ -13,6 +13,30 @@ import adhesome_workflow as w
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_failed_start_resumes_in_place_and_excludes_failed_target_everywhere(self):
+        with tempfile.TemporaryDirectory() as td:
+            handoff=Path(td)/'handoff';detection=handoff/'detection'
+            for code in ('Good','Bad'):
+                base=detection/code
+                for name in ('prepared','domains','candidates'):(base/name).mkdir(parents=True,exist_ok=True)
+                (base/'prepared'/f'{code}.faa').write_text('>Good__g\nMAAA\n' if code=='Good' else 'not a protein FASTA\n')
+                w.write(base/'domains/domains.csv',[dict(query_name=code+'__g',pfam_accession='PF00041',ali_from=1,ali_to=4,decision='retained')])
+                # Detection tables are CSV, unlike the handoff TSVs.
+                for path in (base/'domains/domains.csv',):path.write_text(path.read_text().replace('\t',','))
+                w.write(base/'candidates/candidates.csv',[dict(protein_id=code+'__g',family='fibronectin_like',status='provisional')])
+                path=base/'candidates/candidates.csv';path.write_text(path.read_text().replace('\t',','))
+            w.dump(detection/'batch.json',dict(species={'Good':dict(status='completed_domain_screen'),'Bad':dict(status='failed')}))
+            (handoff/'families').mkdir();(handoff/'logs').mkdir()
+            (handoff/'logs/command_001.json').write_text('{"status":"failed"}')
+            original=(handoff/'logs/command_001.json').read_bytes()
+            self.assertEqual(w.main(['start','--resume','--exclude-target','Bad','--detection',str(detection),'--out',str(handoff)]),0)
+            metadata=w.verify(handoff,'handoff')
+            self.assertEqual(metadata['target_species'],['Good']);self.assertEqual(metadata['excluded_target_species'],['Bad'])
+            self.assertFalse(any('/Bad/' in path.replace('\\','/') for path in metadata['sources']))
+            self.assertEqual((handoff/'logs/command_001.json').read_bytes(),original)
+            self.assertEqual(set(w.fasta(handoff/'external_candidates.faa')),{'Good__g'})
+            self.assertFalse(list(handoff.glob('*backup*')))
+
     def test_phylogeny_cli_is_opt_in(self):
         for flags,expected in [([],False),(['--skip-phylogeny'],False),(['--phylogeny'],True),(['--phylogeny-grouping','family'],False)]:
             with patch.object(w,'downstream') as action:
@@ -357,7 +381,14 @@ class WorkflowTests(unittest.TestCase):
             report=w.read(ort/'candidates/candidate_report.tsv')
             self.assertEqual(report[0]['NewRef_orthologues'],'NewRef__g')
             final=root/'final'
-            w.audit(argparse.Namespace(annotation=a,orthology=ort,out=final))
+            def evaluation_after_calls(audit_dir,handoff):
+                self.assertTrue((audit_dir/'Stage_2_output.xlsx').exists())
+                self.assertEqual(handoff,h)
+                return dict(status='validation_target_not_present')
+            with patch.object(w,'evaluate_controls',side_effect=evaluation_after_calls) as evaluate:
+                w.audit(argparse.Namespace(annotation=a,orthology=ort,out=final))
+            evaluate.assert_called_once_with(final,h)
+            self.assertEqual(w.verify(final,'audit')['validation_evaluation']['status'],'validation_target_not_present')
             joined=w.read(final/'joined_evidence.tsv')
             self.assertEqual(joined[0]['Orthology_direct_reference_count'],'1')
             from openpyxl import load_workbook
@@ -371,6 +402,11 @@ class WorkflowTests(unittest.TestCase):
             self.assertIn('putative_audited_family',rows[0])
             self.assertIn('protein_name',rows[0])
             wb.close()
+            failed_evaluation=root/'final_eval_error'
+            with patch('evaluate_validation.evaluate',side_effect=ValueError('simulated invalid validation input')):
+                w.audit(argparse.Namespace(annotation=a,orthology=ort,out=failed_evaluation))
+            self.assertTrue((failed_evaluation/'Stage_2_output.xlsx').exists())
+            self.assertEqual(w.verify(failed_evaluation,'audit')['validation_evaluation']['status'],'failed')
             # Add a reference, rerun extraction and compare by candidate ID.
             cfg=json.loads((root/'panel.json').read_text())
             w.write_fasta(root/'Extra.faa',{'Extra__g':'MAAA'})

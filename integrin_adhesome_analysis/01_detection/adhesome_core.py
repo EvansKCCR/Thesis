@@ -52,6 +52,33 @@ def sequence_dict(path):
         raise ValueError(f'Empty FASTA: {path}')
     return result
 
+
+def validate_protein_input(path,hmmer_limit=False):
+    """Reject an overwhelmingly nucleotide FASTA before protein analysis starts.
+
+    A/C/G/T are valid amino-acid symbols too. Require nucleotide alphabet,
+    sufficient length, nucleotide diversity and overwhelming file-level support;
+    do not reject ordinary proteins or short/simple low-complexity fixtures.
+    """
+    total=bases=suspect_count=suspect_bases=0;examples=[];oversized=[]
+    for header,raw in fasta(path):
+        sequence=raw.removesuffix('*');length=len(sequence);alphabet=set(sequence)
+        total+=1;bases+=length
+        if length>=100 and alphabet<=set('ACGTUN') and len(alphabet&set('ACGTU'))>=3:
+            suspect_count+=1;suspect_bases+=length
+            if len(examples)<3:examples.append(header.split()[0])
+        if length>100000 and len(oversized)<3:oversized.append(f'{header.split()[0]} ({length} residues)')
+    if not total:raise ValueError(f'No FASTA records in {path}')
+    if suspect_count/total>=.9 and suspect_bases/max(bases,1)>=.9:
+        raise ValueError(f'{path}: nucleotide/transcript FASTA supplied to a protein workflow '
+            f'({suspect_count}/{total} nucleotide-only records; examples: {", ".join(examples)}). '
+            'Use the matching protein/peptide FASTA, not mRNA_transcripts, CDS or genomic DNA. '
+            'Do not rename or directly translate full mRNA to bypass this check.')
+    if hmmer_limit and oversized:
+        raise ValueError('HMMER comparison limit exceeded before scanning: '+', '.join(oversized)+
+            '. Verify that this is a protein FASTA; genuine proteins above 100,000 residues need a dedicated long-protein analysis.')
+    return dict(records=total,nucleotide_only_records=suspect_count)
+
 def table(path):
     with open(path, newline='', encoding='utf-8-sig') as handle:
         return list(csv.DictReader(handle))

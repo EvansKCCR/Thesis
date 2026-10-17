@@ -15,6 +15,8 @@ def main():
     parser.add_argument('--out',type=Path,default=root/'results/detection_v1.0')
     parser.add_argument('--check-inputs',action='store_true',help='Validate target inputs without running detection')
     parser.add_argument('--species',action='append',help='Process only this configured target; repeat to select several and preserve other target results')
+    parser.add_argument('--resume',action='store_true',help='Continue in place without backups; verify and retain completed targets')
+    parser.add_argument('--exclude-target',action='append',help='Exclude an unfinished target from the active batch')
     for name,path in [('library','databases/pfam/adhesome_v1.0.hmm'),
                       ('manifest','config/adhesome_pfam_manifest.csv'),
                       ('crosswalk','config/adhesome_component_crosswalk.csv'),
@@ -29,6 +31,8 @@ def main():
     for flag in ('library','manifest','crosswalk','reference_set','rules'):
         command+=['--'+flag.replace('_','-'),str(getattr(args,flag).resolve())]
     if args.check_inputs:command+=['--check-inputs']
+    if args.resume:command+=['--resume']
+    for code in args.exclude_target or []:command+=['--exclude-target',code]
     for code in args.species or []:command+=['--species',code]
     subprocess.run(command,check=True,cwd=root)
 
