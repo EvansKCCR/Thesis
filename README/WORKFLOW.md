@@ -227,3 +227,32 @@ If `validation.faa` is an active target, every audit also produces F1/PPV, recal
 confusion matrices and per-control decisions in `validation_evaluation` beside
 the audit tables. See [VALIDATION_PERFORMANCE.md](VALIDATION_PERFORMANCE.md) for
 the dual gates, complete control denominators, family correctness and overlap scope.
+# Selecting expanded Stage 2 family coverage
+
+The main `audit`, `resume` and `continue` commands accept
+`--family-coverage expanded`. Omitting it retains the original pair (96 family
+configurations / 57 identity rules). Expanded coverage selects the supplied
+190-family / 136-identity pair together; it does not change Stage 1 recruitment.
+
+For completed annotation and orthology, run from the installation directory:
+
+```bash
+python adhesome_workflow.py audit \
+  --annotation runs/annotation \
+  --orthology runs/annotation/downstream/orthology \
+  --family-coverage expanded \
+  --out runs/final_expanded
+```
+
+Choose a new output path if `runs/final_expanded` already exists. This reuses
+the completed upstream evidence for all targets and writes
+`runs/final_expanded/Stage_2_output.xlsx`, plus validation performance reports
+when the validation target is present. The console identifies the selected
+pair and its counts. Configuration files and SHA256 receipts accompany the
+new audit. No external analyses or phylogeny are run by this command.
+
+For a fresh `resume` or `continue` run, add `--family-coverage expanded` to the
+usual command. Do not repeat `resume` against a completed annotation directory;
+use the audit command above. Existing missing target domains remain missing:
+the expanded JSON files do not install additional Pfam HMMs or change detection.
+

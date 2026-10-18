@@ -14,11 +14,12 @@ def sha(path):
 
 
 def fingerprint():
+    from family_identity import LIBRARY
     files=['identity_probability.py','family_identity.py','stage2_resolution.py','control_exclusion.py','calibrate_identity.py','label_ontology.py','01_detection/config/family_rules.json',
         '05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py',
         '05_conservative_adhesome_family_assignment_audit/audit_policy.json',
         '05_conservative_adhesome_family_assignment_audit/family_identity_rules.json']
-    return {name:sha(ROOT/name) for name in files}
+    return {name:sha(LIBRARY if name.endswith('/family_identity_rules.json') else ROOT/name) for name in files}
 
 
 def resource_hashes():
@@ -80,10 +81,12 @@ def estimate(samples,query,minimum=20):
         upper_95=round(min(1,centre+delta),6),n=n,scope=scope)
 
 
-def annotate(rows,model_path=DEFAULT_MODEL):
+def annotate(rows,model_path=DEFAULT_MODEL,family_rules_sha256=None):
     """A matching training sequence is excluded in full before its probability is fit."""
     if not model_path.exists():return dict(status='no_labelled_probability_model')
     model=json.loads(model_path.read_text(encoding='utf-8'))
+    if family_rules_sha256 and model['code_fingerprint'].get('01_detection/config/family_rules.json')!=family_rules_sha256:
+        return dict(status='probability_model_incompatible_with_selected_family_rules')
     if model['code_fingerprint']!=fingerprint():return dict(status='probability_model_stale_after_scoring_change')
     for name,expected in model['input_hashes'].items():
         path=ROOT/name

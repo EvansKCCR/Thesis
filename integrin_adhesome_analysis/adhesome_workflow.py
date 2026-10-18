@@ -43,6 +43,20 @@ def dump(path, value):
     Path(path).write_text(json.dumps(value, indent=2)+'\n', encoding='utf-8')
 
 
+def audit_configuration(coverage='original'):
+    """Select family and identity rules as one pair; never alter recruitment."""
+    if coverage not in ('original','expanded'):
+        raise ValueError('Unknown audit family coverage: '+str(coverage))
+    if coverage=='expanded':
+        rules=AUDIT.with_name('family_rules_expanded.json')
+        identities=AUDIT.with_name('family_identity_rules_expanded.json')
+    else:
+        rules=DETECT/'config/family_rules.json';identities=IDENTITY_LIBRARY
+    from evaluate_family_expansion import validate_pair
+    validate_pair(json.loads(rules.read_text()),json.loads(identities.read_text()))
+    return rules,identities
+
+
 def read(path, delimiter='\t'):
     with Path(path).open(encoding='utf-8-sig', newline='') as f:
         return list(csv.DictReader(f, delimiter=delimiter))
@@ -392,7 +406,8 @@ def resume(args):
             benchmark_refogs=getattr(args,'benchmark_refogs',None),benchmark_input_dir=getattr(args,'benchmark_input_dir',None),
             benchmark_protocol=getattr(args,'benchmark_protocol','open_orthobench'),
             iqtree_threads=args.iqtree_threads,allow_partial_phylogeny=args.allow_partial_phylogeny,
-            phylogeny_grouping=args.phylogeny_grouping))
+            phylogeny_grouping=args.phylogeny_grouping,
+            family_coverage=getattr(args,'family_coverage','original')))
 
 
 def downstream(args):
@@ -428,12 +443,13 @@ def downstream(args):
         audit_meta=out/'final/workflow_manifest.json'
         if state['stages'].get('audit',{}).get('status')=='complete' and audit_meta.exists():
             saved=json.loads(audit_meta.read_text())
-            if (saved.get('rules_sha256')!=digest(DETECT/'config/family_rules.json') or saved.get('audit_script_sha256')!=digest(AUDIT)
+            selected_rules,selected_identity=audit_configuration(state['settings'].get('family_coverage','original'))
+            if (saved.get('rules_sha256')!=digest(selected_rules) or saved.get('audit_script_sha256')!=digest(AUDIT)
                     or saved.get('audit_policy_sha256')!=digest(AUDIT_POLICY) or saved.get('audit_evidence_sha256')!=digest(AUDIT_EVIDENCE)
                     or saved.get('classification_contract_sha256')!=digest(ROOT/'classification_contract.py')
                     or saved.get('output_schema_sha256')!=digest(ROOT/'templates/output_schema.json')
                     or saved.get('identity_code_sha256')!=digest(IDENTITY_CODE)
-                    or saved.get('identity_library_sha256')!=digest(IDENTITY_LIBRARY)
+                    or saved.get('identity_library_sha256')!=digest(selected_identity)
                     or saved.get('audit_report_sha256')!=digest(AUDIT_REPORT)
                     or saved.get('identity_probability_resources')!=probability_resources()
                     or ('validation_evaluation_resources' in saved and saved['validation_evaluation_resources']!=validation_resources())
@@ -517,7 +533,8 @@ def downstream(args):
                 state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
             dump(checkpoint,state)
     audit_refreshed=state['stages'].get('audit',{}).get('status')!='complete'
-    stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final',benchmark=out/'benchmark')))
+    stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final',benchmark=out/'benchmark',
+          family_coverage=getattr(args,'family_coverage',state['settings'].get('family_coverage','original')))))
     if audit_refreshed and getattr(args,'phylogeny_grouping','orthogroup')=='family':
         state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
         dump(checkpoint,state)
@@ -816,6 +833,8 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
 
 
 def audit(args):
+    coverage=getattr(args,'family_coverage','original')
+    selected_rules,selected_identity=audit_configuration(coverage)
     annotation,orthology_dir=args.annotation.resolve(),args.orthology.resolve()
     ann=verify(annotation,'annotation')
     ort=verify(orthology_dir,'orthology',required_files=['candidates/candidate_report.tsv','candidates/provenance.json'])
@@ -850,6 +869,11 @@ def audit(args):
     if {(r.get('Specie') or r['protein_id'].split('__',1)[0],r['protein_id']) for r in rows}!=allowed:
         raise ValueError('Stage 2 evidence join changed the stage 1 protein pool')
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
+    configuration=out/'configuration';configuration.mkdir()
+    rules=configuration/'family_rules.json';identities=configuration/'family_identity_rules.json'
+    shutil.copyfile(selected_rules,rules);shutil.copyfile(selected_identity,identities)
+    print(f"Audit family coverage: {coverage} ({len(json.loads(rules.read_text())['families'])} family configurations; "
+          f"{len(json.loads(identities.read_text())['rules'])} identity rules).",flush=True)
     write(out/'joined_evidence.tsv',rows)
     dump(out/'supporting_data.json',support)
     dump(out/'stage1_join_provenance.json',dict(handoff_hypotheses=original_count,retained_hypotheses=len(rows),
@@ -859,16 +883,16 @@ def audit(args):
     fields=list(dict.fromkeys(key for row in rows for key in row if key!='NCBI_CDD_hits'));sheet.append(fields)
     for row in rows:sheet.append([row.get(key) for key in fields])
     book.save(out/'audit_input.xlsx')
-    rules=DETECT/'config/family_rules.json'
     execute([sys.executable,AUDIT,out/'audit_input.xlsx',out/'Stage_2_output.xlsx','--rules',rules,
-             '--supporting-data',out/'supporting_data.json'],out/'logs')
+             '--identity-rules',identities,'--supporting-data',out/'supporting_data.json'],out/'logs')
     validation=evaluate_controls(out,handoff)
     motif_snapshot=MOTIF/'Motif_library/adhesion_core.json'
     seal(out,'audit',annotation=str(annotation),orthology=str(orthology_dir),benchmark_summary_sha256=benchmark_sha,
+        family_coverage=coverage,family_rules_source=str(selected_rules),identity_library_source=str(selected_identity),
         motif_snapshot_sha256=digest(motif_snapshot),rules_sha256=digest(rules),audit_script_sha256=digest(AUDIT),
         audit_policy_sha256=digest(AUDIT_POLICY),audit_evidence_sha256=digest(AUDIT_EVIDENCE),
         classification_contract_sha256=digest(ROOT/'classification_contract.py'),output_schema_sha256=digest(ROOT/'templates/output_schema.json'),stage1_source_tables=source_tables,
-        identity_code_sha256=digest(IDENTITY_CODE),identity_library_sha256=digest(IDENTITY_LIBRARY),audit_report_sha256=digest(AUDIT_REPORT),
+        identity_code_sha256=digest(IDENTITY_CODE),identity_library_sha256=digest(identities),audit_report_sha256=digest(AUDIT_REPORT),
         identity_probability_resources=probability_resources(),
         validation_evaluation=validation,validation_evaluation_resources=validation_resources(),
         annotation_manifest=digest(annotation/'workflow_manifest.json'),orthology_manifest=digest(orthology_dir/'workflow_manifest.json'))
@@ -949,6 +973,9 @@ def main(argv=None):
     s.add_argument('--orthology', type=Path, required=True)
     s.add_argument('--benchmark',type=Path,help='Sealed benchmark output; standalone orthology uses its own benchmark subdirectory by default')
     s.set_defaults(func=audit)
+    for name in ('resume','continue','audit'):
+        sub.choices[name].add_argument('--family-coverage',choices=['original','expanded'],default='original',
+            help='Audit rule pair: expanded selects 190 family configurations and 136 identity rules; Stage 1 is unchanged')
     for s in sub.choices.values():
         s.add_argument('--out', type=Path, required=True, help='New output directory')
     s=sub.add_parser('recover',help='Resume a checkpointed failed downstream run in place')

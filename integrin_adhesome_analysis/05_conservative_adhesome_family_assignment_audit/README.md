@@ -48,6 +48,35 @@ Shared domains cannot trigger exclusion by themselves. The bundled model uses
 reference-overlapping controls and does not establish novel-lineage accuracy.
 See the full protocol for recalibration and reference-panel requirements.
 
+## Run the expanded pair through the main audit
+
+From the installation containing your completed `runs/annotation` directory:
+
+```bash
+python adhesome_workflow.py audit \
+  --annotation runs/annotation \
+  --orthology runs/annotation/downstream/orthology \
+  --family-coverage expanded \
+  --out runs/final_expanded
+```
+
+This audits all existing Stage 1 candidates using both expanded JSON files.
+It reuses annotation/orthology and writes a new audit rather than restarting
+recruitment. Expect the message `Audit family coverage: expanded (190 family
+configurations; 136 identity rules).` The result is
+`runs/final_expanded/Stage_2_output.xlsx`; the validation target's metrics are in
+`runs/final_expanded/validation_evaluation/` when that target is present.
+Use an unused output directory. For a new continuous run, add the same
+`--family-coverage expanded` option to `resume` or `continue`; their default
+remains `original`. Completed annotation should be reused with `audit` above.
+
+The selected pair is recorded under the audit's `configuration/` and verified
+by both the audit and evaluation receipts. A numerical probability model fitted
+to the original pair cannot be applied to expanded calls. Computational family
+confidence remains governed by the observed family gates and orthology.
+Stage 1 and its Pfam scan library are unchanged: this option cannot supply
+missing domain observations or recruit Defensin-6.
+
 ## Expanded family coverage: isolated development comparison
 
 From the `integrin_adhesome_analysis` directory, use the existing handoff and

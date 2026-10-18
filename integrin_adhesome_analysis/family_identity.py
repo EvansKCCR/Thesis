@@ -4,6 +4,7 @@ CDD imports of Pfam models corroborate coordinates, not independent votes.
 Inferred regions and target identifiers never supply family-specific evidence.
 """
 from collections import Counter
+from contextlib import contextmanager
 from functools import lru_cache
 import json
 from pathlib import Path
@@ -20,6 +21,21 @@ def observed_text(value):
 
 @lru_cache(maxsize=1)
 def library():return json.loads(LIBRARY.read_text(encoding='utf-8'))
+
+
+@contextmanager
+def using_library(path=None):
+    """Select one audit's identity library and restore the default afterwards."""
+    global LIBRARY
+    previous=LIBRARY
+    selected=Path(path).resolve() if path is not None else previous
+    # Validate readability before changing process-wide state.
+    json.loads(selected.read_text(encoding='utf-8'))
+    try:
+        LIBRARY=selected;library.cache_clear()
+        yield selected
+    finally:
+        LIBRARY=previous;library.cache_clear()
 
 
 def cdd_hits(row):

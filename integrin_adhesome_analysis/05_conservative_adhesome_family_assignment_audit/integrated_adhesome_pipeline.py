@@ -14,6 +14,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from classification_contract import general_family,general_rules,write_sheet,schema
 from family_identity import combined_domains,scoped_refinement,cdd_text,annotate_name,model_counts,LIBRARY as IDENTITY_LIBRARY
+import family_identity
 from stage2_resolution import broad_architecture,annotate_resolution,common_broad_family,BROAD_LABELS
 
 VERSION='1.0'
@@ -339,11 +340,16 @@ def classify_rows(rows,rules):
                 row[key]=match[key]
     if {unique_key(row) for row in resolved}|set(exclusions)!=set(grouped):raise ValueError('Retained and excluded protein accounting is incomplete')
     from identity_probability import annotate as calibrate_probabilities
-    calibrate_probabilities(resolved)
+    calibrate_probabilities(resolved,family_rules_sha256=rules.get('_sha256'))
     return audited,resolved
 
 
-def run_xlsx(source,dest,sheet_name,rules,supporting=None):
+def run_xlsx(source,dest,sheet_name,rules,supporting=None,identity_library=None):
+    with family_identity.using_library(identity_library):
+        return _run_xlsx(source,dest,sheet_name,rules,supporting)
+
+
+def _run_xlsx(source,dest,sheet_name,rules,supporting=None):
     from openpyxl import load_workbook,Workbook
     if source.resolve()==dest.resolve():raise ValueError('Choose a new output workbook')
     input_book=load_workbook(source,read_only=True,data_only=True)
@@ -395,7 +401,7 @@ def run_xlsx(source,dest,sheet_name,rules,supporting=None):
         writer=csv.DictWriter(handle,fieldnames=exclusion_fields,delimiter='\t',extrasaction='ignore')
         writer.writeheader();writer.writerows(exclusions)
     from identity_probability import annotate as probability_context
-    calibration=probability_context(resolved)
+    calibration=probability_context(resolved,family_rules_sha256=rules.get('_sha256'))
     metrics=[('Pipeline version',VERSION),('Original stage 1 hypotheses',len(rows)),('Stage 2 recovery hypotheses',sum(r['row_origin']=='stage2_recovery' for r in audited)),
         ('Stage 1 species/protein pairs',len({unique_key(r) for r in rows})),('Final species/protein pairs',len(resolved)),
         ('Negative controls excluded',len(exclusions)),('All input proteins accounted for',len(resolved)+len(exclusions)==len({unique_key(r) for r in rows})),
@@ -423,7 +429,8 @@ def run_xlsx(source,dest,sheet_name,rules,supporting=None):
         writer.writeheader();writer.writerows(resolved)
     manifest=dict(pipeline_version=VERSION,input_sha256=checksum(source),rule_sha256=rules.get('_sha256'),
         policy_sha256=rules.get('_policy_sha256'),output_sha256=checksum(dest),counts=dict(counts),
-        identity_library_sha256=checksum(IDENTITY_LIBRARY),identity_probability_calibration=calibration,column_cleanup=cleanup,
+        identity_library_sha256=checksum(family_identity.LIBRARY),identity_library_path=str(family_identity.LIBRARY.resolve()),
+        family_rules_path=rules.get('_source_path'),identity_probability_calibration=calibration,column_cleanup=cleanup,
         input_hypotheses=len(rows),audited_hypotheses=len(audited),unique_proteins=len(resolved),
         input_unique_proteins=len({unique_key(r) for r in rows}),excluded_negative_controls=len(exclusions),
         protein_pool_preserved=not exclusions,protein_accounting_complete=True)
@@ -436,12 +443,17 @@ def main():
     parser.add_argument('input',type=Path);parser.add_argument('output',type=Path);parser.add_argument('--sheet',default='candidates')
     parser.add_argument('--rules',type=Path,default=ROOT/'01_detection/config/family_rules.json')
     parser.add_argument('--policy',type=Path,default=Path(__file__).with_name('audit_policy.json'))
+    parser.add_argument('--identity-rules',type=Path,default=ROOT/'05_conservative_adhesome_family_assignment_audit/family_identity_rules.json',
+                        help='Identity rules paired with --rules; the workflow selects both together')
     parser.add_argument('--supporting-data',type=Path);parser.add_argument('--keep-all-audited',action='store_true')
     parser.add_argument('--version',action='version',version='adhesome-audit '+VERSION)
     args=parser.parse_args();rules=json.loads(args.rules.read_text());rules['_sha256']=checksum(args.rules)
+    rules['_source_path']=str(args.rules.resolve())
+    from evaluate_family_expansion import validate_pair
+    validate_pair(rules,json.loads(args.identity_rules.read_text()))
     rules['_audit_policy']=json.loads(args.policy.read_text());rules['_policy_sha256']=checksum(args.policy)
     support=json.loads(args.supporting_data.read_text()) if args.supporting_data else None
-    print(json.dumps(run_xlsx(args.input,args.output,args.sheet,rules,support),indent=2))
+    print(json.dumps(run_xlsx(args.input,args.output,args.sheet,rules,support,args.identity_rules),indent=2))
 
 
 if __name__=='__main__':main()

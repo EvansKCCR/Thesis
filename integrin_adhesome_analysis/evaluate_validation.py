@@ -80,16 +80,19 @@ def control_class(value):
         'backgroundnegativecontrol':'background_negative'}.get(key)
 
 
-def resource_hashes():
+def resource_hashes(family_rules=None,identity_rules=None):
     paths=[Path(__file__),LABELS,CONTROL_FASTA,ROOT/'calibrate_identity.py',ROOT/'label_ontology.py',ROOT/'validation_reporting.py',ROOT/'classification_contract.py',
         ROOT/'05_conservative_adhesome_family_assignment_audit/family_identity_rules.json',
         ROOT/'02_calibration_set/identity_probability_model.json',
         ROOT/'01_detection/config/family_rules.json',ROOT/'01_detection/references/adhesome_v1.0/search_catalogue.csv',
         ROOT/'01_detection/references/adhesome_v1.0/metazoan_catalogue.csv']
-    return {p.relative_to(ROOT).as_posix():sha(p) if p.exists() else None for p in paths}
+    result={p.relative_to(ROOT).as_posix():sha(p) if p.exists() else None for p in paths}
+    if family_rules:result['01_detection/config/family_rules.json']=sha(family_rules)
+    if identity_rules:result['05_conservative_adhesome_family_assignment_audit/family_identity_rules.json']=sha(identity_rules)
+    return result
 
 
-def load_gold(labels,control_fasta):
+def load_gold(labels,control_fasta,family_rules=None,identity_rules=None):
     from openpyxl import load_workbook
     book=load_workbook(labels,read_only=True,data_only=True)
     try:
@@ -112,7 +115,8 @@ def load_gold(labels,control_fasta):
     for key,row in gold.items():
         if key in trusted:categories[trusted[key]].add(row['control_class']=='positive')
     if any(len(values)>1 for values in categories.values()):raise ValueError('Conflicting positive/negative labels on the same control sequence')
-    config=json.loads((ROOT/'01_detection/config/family_rules.json').read_text());catalogue=defaultdict(set);references=set();reverse=set()
+    config=json.loads(Path(family_rules or ROOT/'01_detection/config/family_rules.json').read_text());catalogue=defaultdict(set);references=set();reverse=set()
+    configured=set(config['families'])|{r['family'] for r in json.loads(Path(identity_rules or ROOT/'05_conservative_adhesome_family_assignment_audit/family_identity_rules.json').read_text())['rules']}
     for name,digests in [('search_catalogue.csv',references),('metazoan_catalogue.csv',reverse)]:
         for row in read_table(ROOT/'01_detection/references/adhesome_v1.0'/name,','):
             digests.add(row['sequence_sha256'])
@@ -129,9 +133,23 @@ def load_gold(labels,control_fasta):
         from stage2_resolution import BROAD_LABELS
         specific=set(row['expected_families'])-set(BROAD_LABELS)
         row['expected_specific_families']=specific
-        configured=set(config['families'])|{r['family'] for r in json.loads((ROOT/'05_conservative_adhesome_family_assignment_audit/family_identity_rules.json').read_text())['rules']}
         row['family_rule_coverage']='configured' if row['expected_families']&configured else 'outside_configured_family_gates' if row['expected_families'] else 'needs_mapping_review'
     return gold,trusted,references,reverse
+
+
+def audit_rule_paths(audit_dir):
+    """Evaluation uses the pair recorded by the completed Stage 2 invocation."""
+    receipt=Path(audit_dir)/'Stage_2_output.manifest.json'
+    if not receipt.exists():return None,None
+    meta=json.loads(receipt.read_text())
+    if not meta.get('family_rules_path'):return None,None  # legacy/direct API output
+    if not meta.get('identity_library_path'):
+        raise ValueError('Audit has a family-rule path without its paired identity library')
+    pair=Path(meta['family_rules_path']),Path(meta['identity_library_path'])
+    for path,expected in zip(pair,(meta.get('rule_sha256'),meta.get('identity_library_sha256'))):
+        if not expected or sha(path)!=expected:
+            raise ValueError('Audit configuration differs from its Stage 2 receipt: '+str(path))
+    return pair
 
 
 def read_audit(audit_dir,target):
@@ -298,7 +316,8 @@ def evaluate(audit_dir,handoff,out,target=None,labels=LABELS,control_fasta=CONTR
     for path in (prepared,detection/target/'candidates/candidates.csv'):
         expected=hand.get('sources',{}).get(str(path.resolve()))
         if expected is None or sha(path)!=expected:raise ValueError('Unverified validation detection source: '+str(path))
-    gold,trusted,references,reverse=load_gold(Path(labels),Path(control_fasta))
+    selected_rules,selected_identity=audit_rule_paths(audit_dir)
+    gold,trusted,references,reverse=load_gold(Path(labels),Path(control_fasta),selected_rules,selected_identity)
     mapping=read_table(mapping_path,',');by_original={r['original_id']:r for r in mapping}
     if len(by_original)!=len(mapping):raise ValueError('Duplicate validation original-ID mappings')
     sequences={h.split()[0]:s for h,s in records(prepared)}
@@ -392,7 +411,8 @@ def evaluate(audit_dir,handoff,out,target=None,labels=LABELS,control_fasta=CONTR
         interpretation='Reference-panel control self-test with exact reference overlap, calibrated controls and configured negative exclusions. This is not independent held-out or novel-lineage performance. Membership and family correctness are reported separately; evaluation never changes calls or weights.')
     paths=[raw,prepared,mapping_path,preparation,config_path,Path(labels),Path(control_fasta),handoff/'workflow_manifest.json',handoff/'hypotheses.tsv',
         detection/target/'candidates/candidates.csv',audit_dir/'Stage_2_output.xlsx',audit_dir/'audited_family_assignments.tsv',audit_dir/'negative_control_exclusions.tsv']
-    summary['input_sha256']={str(p):sha(p) for p in paths};summary['evaluation_resources']=resource_hashes()
+    paths.extend(p for p in (selected_rules,selected_identity) if p is not None)
+    summary['input_sha256']={str(p):sha(p) for p in paths};summary['evaluation_resources']=resource_hashes(selected_rules,selected_identity)
     out.mkdir(parents=True,exist_ok=False)
     for name,rows in [('metrics.tsv',metrics),('confusion_matrices.tsv',confusions),('family_metrics.tsv',family_metrics),('family_confusion_matrix.tsv',families),('control_predictions.tsv',predictions)]:
         write_table(out/name,rows,list(rows[0]) if rows else ['policy','actual_admissible_families','predicted_family','count'])
