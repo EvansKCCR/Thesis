@@ -230,8 +230,9 @@ the dual gates, complete control denominators, family correctness and overlap sc
 # Selecting expanded Stage 2 family coverage
 
 The main `audit`, `resume` and `continue` commands accept
-`--family-coverage expanded`. Omitting it retains the original pair (96 family
-configurations / 57 identity rules). Expanded coverage selects the supplied
+`--family-coverage expanded`, which is now the default. Original coverage
+(96 family configurations / 57 identity rules) remains an explicit comparison
+option. Expanded coverage selects the supplied
 190-family / 136-identity pair together; it does not change Stage 1 recruitment.
 
 For completed annotation and orthology, run from the installation directory:
@@ -251,8 +252,8 @@ when the validation target is present. The console identifies the selected
 pair and its counts. Configuration files and SHA256 receipts accompany the
 new audit. No external analyses or phylogeny are run by this command.
 
-For a fresh `resume` or `continue` run, add `--family-coverage expanded` to the
-usual command. Do not repeat `resume` against a completed annotation directory;
+Fresh `resume` or `continue` runs use expanded coverage automatically. Do not
+repeat `resume` against a completed annotation directory;
 use the audit command above. Existing missing target domains remain missing:
 the expanded JSON files do not install additional Pfam HMMs or change detection.
 

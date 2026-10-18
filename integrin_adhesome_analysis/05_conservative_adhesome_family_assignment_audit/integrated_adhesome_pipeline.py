@@ -441,9 +441,9 @@ def _run_xlsx(source,dest,sheet_name,rules,supporting=None):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('input',type=Path);parser.add_argument('output',type=Path);parser.add_argument('--sheet',default='candidates')
-    parser.add_argument('--rules',type=Path,default=ROOT/'01_detection/config/family_rules.json')
+    parser.add_argument('--rules',type=Path,default=Path(__file__).with_name('family_rules_expanded.json'))
     parser.add_argument('--policy',type=Path,default=Path(__file__).with_name('audit_policy.json'))
-    parser.add_argument('--identity-rules',type=Path,default=ROOT/'05_conservative_adhesome_family_assignment_audit/family_identity_rules.json',
+    parser.add_argument('--identity-rules',type=Path,default=Path(__file__).with_name('family_identity_rules_expanded.json'),
                         help='Identity rules paired with --rules; the workflow selects both together')
     parser.add_argument('--supporting-data',type=Path);parser.add_argument('--keep-all-audited',action='store_true')
     parser.add_argument('--version',action='version',version='adhesome-audit '+VERSION)

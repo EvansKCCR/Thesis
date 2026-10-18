@@ -66,9 +66,10 @@ recruitment. Expect the message `Audit family coverage: expanded (190 family
 configurations; 136 identity rules).` The result is
 `runs/final_expanded/Stage_2_output.xlsx`; the validation target's metrics are in
 `runs/final_expanded/validation_evaluation/` when that target is present.
-Use an unused output directory. For a new continuous run, add the same
-`--family-coverage expanded` option to `resume` or `continue`; their default
-remains `original`. Completed annotation should be reused with `audit` above.
+Use an unused output directory. Expanded coverage is the default for `audit`,
+`resume` and `continue`; the flag above is optional. Original rules remain
+available with `--family-coverage original` for comparison only. Completed
+annotation should be reused with `audit` above.
 
 The selected pair is recorded under the audit's `configuration/` and verified
 by both the audit and evaluation receipts. A numerical probability model fitted

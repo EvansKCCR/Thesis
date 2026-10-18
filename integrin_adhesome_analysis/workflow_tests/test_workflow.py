@@ -217,7 +217,7 @@ class WorkflowTests(unittest.TestCase):
                 self.assertFalse(any('prepare_references.py' in c[1] for c in recovered))
                 self.assertTrue(any('--retry-failed' in c for c in recovered))
             self.assertTrue((out/'final/Stage_2_output.xlsx').exists())
-            self.assertEqual(json.loads((out/'final/workflow_manifest.json').read_text())['rules_sha256'],w.digest(w.DETECT/'config/family_rules.json'))
+            self.assertEqual(json.loads((out/'final/workflow_manifest.json').read_text())['rules_sha256'],w.digest(w.audit_configuration()[0]))
             self.assertEqual(w.fasta(out/'references/RefA/prepared/RefA.faa'),{'RefA__GeneID_1':'MAAA'})
             self.assertFalse(json.loads((out/'references/RefC/source.json').read_text())['reference_scope']['complete_proteome'])
             self.assertEqual(json.loads((out/'phylogeny/manifest.json').read_text())['duplication_evidence_status'],'unavailable_not_evidence_of_no_duplication')

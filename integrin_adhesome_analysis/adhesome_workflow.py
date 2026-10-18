@@ -19,6 +19,7 @@ from evaluate_validation import after_audit as evaluate_controls,resource_hashes
 
 ROOT = Path(__file__).resolve().parent
 VERSION = '1.0'
+DEFAULT_FAMILY_COVERAGE = 'expanded'
 DETECT = ROOT/'01_detection'
 MOTIF = ROOT/'03_functional_motif_annotation'
 ORTH = ROOT/'04_orthology_phylogenetic_classification/scripts'
@@ -43,7 +44,7 @@ def dump(path, value):
     Path(path).write_text(json.dumps(value, indent=2)+'\n', encoding='utf-8')
 
 
-def audit_configuration(coverage='original'):
+def audit_configuration(coverage=DEFAULT_FAMILY_COVERAGE):
     """Select family and identity rules as one pair; never alter recruitment."""
     if coverage not in ('original','expanded'):
         raise ValueError('Unknown audit family coverage: '+str(coverage))
@@ -407,7 +408,7 @@ def resume(args):
             benchmark_protocol=getattr(args,'benchmark_protocol','open_orthobench'),
             iqtree_threads=args.iqtree_threads,allow_partial_phylogeny=args.allow_partial_phylogeny,
             phylogeny_grouping=args.phylogeny_grouping,
-            family_coverage=getattr(args,'family_coverage','original')))
+            family_coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE)))
 
 
 def downstream(args):
@@ -443,7 +444,7 @@ def downstream(args):
         audit_meta=out/'final/workflow_manifest.json'
         if state['stages'].get('audit',{}).get('status')=='complete' and audit_meta.exists():
             saved=json.loads(audit_meta.read_text())
-            selected_rules,selected_identity=audit_configuration(state['settings'].get('family_coverage','original'))
+            selected_rules,selected_identity=audit_configuration(state['settings'].get('family_coverage',DEFAULT_FAMILY_COVERAGE))
             if (saved.get('rules_sha256')!=digest(selected_rules) or saved.get('audit_script_sha256')!=digest(AUDIT)
                     or saved.get('audit_policy_sha256')!=digest(AUDIT_POLICY) or saved.get('audit_evidence_sha256')!=digest(AUDIT_EVIDENCE)
                     or saved.get('classification_contract_sha256')!=digest(ROOT/'classification_contract.py')
@@ -534,7 +535,7 @@ def downstream(args):
             dump(checkpoint,state)
     audit_refreshed=state['stages'].get('audit',{}).get('status')!='complete'
     stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final',benchmark=out/'benchmark',
-          family_coverage=getattr(args,'family_coverage',state['settings'].get('family_coverage','original')))))
+          family_coverage=getattr(args,'family_coverage',state['settings'].get('family_coverage',DEFAULT_FAMILY_COVERAGE)))))
     if audit_refreshed and getattr(args,'phylogeny_grouping','orthogroup')=='family':
         state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
         dump(checkpoint,state)
@@ -833,7 +834,7 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
 
 
 def audit(args):
-    coverage=getattr(args,'family_coverage','original')
+    coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE)
     selected_rules,selected_identity=audit_configuration(coverage)
     annotation,orthology_dir=args.annotation.resolve(),args.orthology.resolve()
     ann=verify(annotation,'annotation')
@@ -974,8 +975,8 @@ def main(argv=None):
     s.add_argument('--benchmark',type=Path,help='Sealed benchmark output; standalone orthology uses its own benchmark subdirectory by default')
     s.set_defaults(func=audit)
     for name in ('resume','continue','audit'):
-        sub.choices[name].add_argument('--family-coverage',choices=['original','expanded'],default='original',
-            help='Audit rule pair: expanded selects 190 family configurations and 136 identity rules; Stage 1 is unchanged')
+        sub.choices[name].add_argument('--family-coverage',choices=['original','expanded'],default=DEFAULT_FAMILY_COVERAGE,
+            help='Default: expanded (190 family configurations; 136 identity rules). Original is retained for comparison; Stage 1 is unchanged')
     for s in sub.choices.values():
         s.add_argument('--out', type=Path, required=True, help='New output directory')
     s=sub.add_parser('recover',help='Resume a checkpointed failed downstream run in place')

@@ -25,6 +25,15 @@ class ExpandedWorkflowTests(unittest.TestCase):
                 self.assertEqual(w.main([command,*extra,'--out','new','--family-coverage','expanded']),0)
                 self.assertEqual(run.call_args.args[0].family_coverage,'expanded')
 
+    def test_expanded_is_the_default_for_all_main_commands(self):
+        cases=[('audit',w.audit,['--annotation','a','--orthology','o']),
+               ('resume',w.resume,['--handoff','h']),('continue',w.downstream,['--annotation','a'])]
+        for command,fn,extra in cases:
+            with self.subTest(command=command),patch.object(w,fn.__name__) as run:
+                self.assertEqual(w.main([command,*extra,'--out','new']),0)
+                self.assertEqual(run.call_args.args[0].family_coverage,'expanded')
+        self.assertEqual(w.audit_configuration(),w.audit_configuration('expanded'))
+
     def test_new_rule_is_reached_and_default_library_is_restored(self):
         spec=importlib.util.spec_from_file_location('expanded_test_audit',w.AUDIT)
         module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
@@ -80,7 +89,7 @@ class ExpandedWorkflowTests(unittest.TestCase):
             with patch('audit_join.join',return_value=(w.read(h/'hypotheses.tsv'),{})), \
                  patch.object(w,'evaluate_controls',return_value=dict(status='validation_target_not_present')):
                 self.assertEqual(w.main(['audit','--annotation',str(annotation),'--orthology',str(ort),
-                    '--out',str(output),'--family-coverage','expanded']),0)
+                    '--out',str(output)]),0)
             meta=w.verify(output,'audit')
             families,identities=w.audit_configuration('expanded')
             self.assertEqual(meta['family_coverage'],'expanded')
