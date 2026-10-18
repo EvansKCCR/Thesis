@@ -18,7 +18,7 @@
     "PF00018": "^SH3(?:_|$)",
     "PF07714": "^(?:PTKc|TyrKc)(?:_|$)",
     "PF00069": "^(?:STKc|S_TKc|STYKc|Pkinase|PK_Tyr_Ser.Thr)(?:_|$)",
-    "PF00102": "^(?:PTPc|PTP|Y_phosphatase)(?:_|$)",
+    "PF00102": "^(?:(?:R[-_])?PTPc|PTP|Y_phosphatase)(?:[-_]|$)",
     "PF00630": "^(?:Filamin|IG_FLMN)(?:_|$)",
     "PF00169": "^PH(?:_|$)",
     "PF00023": "^(?:ANK|ANKYR|Ankyrin)(?:_|$)",
@@ -28,7 +28,17 @@
     "PF01391": "^Collagen(?:_|$)",
     "PF01044": "^(?:Vinculin|Vinculin_head|Vinculin_tail)(?:_|$)",
     "PF00640": "^(?:PTB|PID)(?:_|$)",
-    "PF03623": "^(?:FAT|Focal_AT)(?:_|$)"
+    "PF03623": "^(?:FAT|Focal_AT)(?:_|$)",
+    "PF02187": "^GAS2(?:_|$)",
+    "PF00769": "^ERM_C(?:_|$)",
+    "PF02218": "^HS1_rep(?:_|$)",
+    "PF00568": "^(?:WH1|EVH1)(?:_|$)",
+    "PF08776": "^VASP_tetra(?:_|$)",
+    "PF00880": "^(?:Nebulin|NEBU)(?:_|$)",
+    "PF12026": "^(?:CAS_C|FAT-like_BCAR1_C)(?:_|$)",
+    "PF08953": "^DUF1899(?:_|$)",
+    "PF00400": "^WD40(?:_|$)",
+    "PF14604": "^SH3_9(?:_|$)"
   },
   "additional_cdd_domains": {
     "ENTH": "ENTH|EPSIN_N",
@@ -311,7 +321,14 @@
       "ordered_groups": [
         0,
         1
-      ]
+      ],
+      "length_range": [
+        400,
+        1500
+      ],
+      "maximum_model_counts": {
+        "PF00435": 4
+      }
     },
     {
       "id": "spectrin",
@@ -505,17 +522,62 @@
       ]
     },
     {
-      "id": "pet_lim",
+      "id": "testin",
       "parents": [
         "paxillin_like",
         "zyxin_like",
         "PDLIM_family",
         "PINCH_like",
         "LIM_scaffold_screen",
-        "FHL_screen"
+        "FHL_screen",
+        "component_reference_candidate",
+        "unassigned_domain_candidate",
+        "PET_LIM_like",
+        "Prickle_like",
+        "Testin_like"
       ],
-      "family": "PET_LIM_like",
-      "protein_name": "PET-LIM family protein",
+      "family": "Testin_like",
+      "protein_name": "Testin-like PET-LIM protein",
+      "required_groups": [
+        {
+          "models": [
+            "PET"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 3
+        }
+      ],
+      "specific_cdd_pattern": "TESTIN",
+      "ordered_groups": [
+        0,
+        1
+      ],
+      "maximum_model_counts": {
+        "PF00412": 3
+      },
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "prickle",
+      "parents": [
+        "paxillin_like",
+        "zyxin_like",
+        "PDLIM_family",
+        "PINCH_like",
+        "LIM_scaffold_screen",
+        "FHL_screen",
+        "component_reference_candidate",
+        "unassigned_domain_candidate",
+        "PET_LIM_like",
+        "Prickle_like"
+      ],
+      "family": "Prickle_like",
+      "protein_name": "Prickle/Limpet-like PET-LIM protein",
       "required_groups": [
         {
           "models": [
@@ -530,11 +592,15 @@
           "count": 5
         }
       ],
-      "specific_cdd_pattern": "TESTIN|PRICKLE|LIMPET|PET_LIM",
+      "specific_cdd_pattern": "PRICKLE|LIMPET|PET_LIM",
       "ordered_groups": [
         0,
         1
-      ]
+      ],
+      "allow_diagnostic_dispatch": true,
+      "maximum_model_counts": {
+        "PF00412": 5
+      }
     },
     {
       "id": "ajuba",
@@ -845,7 +911,9 @@
       "id": "ptpn1",
       "parents": [
         "generic_PTP_screen",
-        "PTP_PEST"
+        "PTP_PEST",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
       ],
       "family": "PTPN1_PTP1B_like",
       "protein_name": "PTPN1/PTP1B-like phosphatase",
@@ -857,15 +925,18 @@
           "count": 1
         }
       ],
-      "specific_cdd_pattern": "PTPN1(?![0-9])|PTP1B",
-      "ordered_groups": []
+      "specific_cdd_pattern": "PTPN1(?![0-9])|PTP1B|PTPc[-_]N1(?:$|[-_:])",
+      "ordered_groups": [],
+      "allow_diagnostic_dispatch": true
     },
     {
       "id": "ptprn",
       "parents": [
         "generic_PTP_screen",
         "RPTP_alpha_epsilon",
-        "LAR_RPTP"
+        "LAR_RPTP",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
       ],
       "family": "PTPRN_PTPRN2_like",
       "protein_name": "PTPRN/PTPRN2-like phosphatase",
@@ -878,14 +949,17 @@
         }
       ],
       "specific_cdd_pattern": "PTPRN|R_PTP_N_N2|IA2",
-      "ordered_groups": []
+      "ordered_groups": [],
+      "allow_diagnostic_dispatch": true
     },
     {
       "id": "lar",
       "parents": [
         "generic_PTP_screen",
         "LAR_RPTP",
-        "fibronectin_III_ligand"
+        "fibronectin_III_ligand",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
       ],
       "family": "LAR_RPTP",
       "protein_name": "Type IIa receptor protein tyrosine phosphatase-like protein",
@@ -914,7 +988,8 @@
         0,
         1,
         2
-      ]
+      ],
+      "allow_diagnostic_dispatch": true
     },
     {
       "id": "collagen_iv",
@@ -1209,6 +1284,347 @@
         0,
         1
       ]
+    },
+    {
+      "id": "ptpra",
+      "parents": [
+        "PTP_PEST",
+        "generic_PTP_screen",
+        "RPTP_alpha_epsilon",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "RPTP_alpha_epsilon",
+      "protein_name": "Receptor PTP alpha/epsilon-like protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00102"
+          ],
+          "count": 2
+        }
+      ],
+      "specific_cdd_pattern": "R[-_]PTPc[-_]A[-_][12]|PTPR[AE](?:$|_)",
+      "ordered_groups": [],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "shp",
+      "parents": [
+        "PTP_PEST",
+        "generic_PTP_screen",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "SHP_PTPN6_11_like",
+      "protein_name": "SHP-family protein tyrosine phosphatase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00017"
+          ],
+          "count": 2
+        },
+        {
+          "models": [
+            "PF00102"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "SH2_.*SHP|PTPc[-_]N(?:6|11)(?:$|_)",
+      "ordered_groups": [
+        0,
+        1
+      ],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "macf",
+      "parents": [
+        "alpha_actinin",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "MACF1_spectraplakin_like",
+      "protein_name": "MACF1-like spectraplakin",
+      "required_groups": [
+        {
+          "models": [
+            "PF00307"
+          ],
+          "count": 2
+        },
+        {
+          "models": [
+            "PF00435"
+          ],
+          "count": 3
+        },
+        {
+          "models": [
+            "PF02187"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "CH_MACF1|MACF1|ACF7",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "cortactin",
+      "parents": [
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "cortactin_HS1_like",
+      "protein_name": "Cortactin/HS1-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF02218"
+          ],
+          "count": 2
+        },
+        {
+          "models": [
+            "PF00018",
+            "PF14604"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "SH3_Cortactin|SH3_HS1",
+      "ordered_groups": [
+        0,
+        1
+      ],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "lasp",
+      "parents": [
+        "PDLIM_family",
+        "paxillin_like",
+        "LIM_scaffold_screen",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "LASP_like",
+      "protein_name": "LIM/SH3 LASP-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00880"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00018",
+            "PF14604"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "LIM_LASP|SH3_Lasp",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "ena_vasp",
+      "parents": [
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "ENA_VASP_like",
+      "protein_name": "Ena/VASP-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00568"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF08776"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "EVH1_Ena_VASP|WH2_hVASP",
+      "ordered_groups": [
+        0,
+        1
+      ],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "erm",
+      "parents": [
+        "talin",
+        "kindlin",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "ERM_like",
+      "protein_name": "Ezrin/radixin/moesin-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00373"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00769"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "FERM_.*(?:ERM|Ezrin|Radixin|Moesin)",
+      "ordered_groups": [
+        0,
+        1
+      ],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "bcar_cas",
+      "parents": [
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "BCAR_CAS_like",
+      "protein_name": "BCAR/CAS-family scaffold",
+      "required_groups": [
+        {
+          "models": [
+            "PF00018",
+            "PF14604"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF12026"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "SH3_BCAR|FAT.like_BCAR|CAS_C",
+      "ordered_groups": [
+        0,
+        1
+      ],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "fhl",
+      "parents": [
+        "FHL_screen",
+        "paxillin_like",
+        "zyxin_like",
+        "LIM_scaffold_screen",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "FHL_like",
+      "protein_name": "Four-and-a-half LIM family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 4
+        }
+      ],
+      "specific_cdd_pattern": "LIM[1-4]_FHL",
+      "ordered_groups": [],
+      "maximum_model_counts": {
+        "PF00412": 4
+      },
+      "length_range": [
+        180,
+        450
+      ],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "csrp",
+      "parents": [
+        "paxillin_like",
+        "LIM_scaffold_screen",
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "CSRP_like",
+      "protein_name": "Cysteine/glycine-rich LIM family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 2
+        }
+      ],
+      "specific_cdd_pattern": "LIM[12]_CRP",
+      "ordered_groups": [],
+      "maximum_model_counts": {
+        "PF00412": 2
+      },
+      "length_range": [
+        120,
+        300
+      ],
+      "allow_diagnostic_dispatch": true
+    },
+    {
+      "id": "coronin",
+      "parents": [
+        "component_reference_candidate",
+        "unassigned_domain_candidate"
+      ],
+      "family": "coronin_like",
+      "protein_name": "Coronin-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF08953"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00400"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "DUF1899|CORONIN",
+      "ordered_groups": [
+        0,
+        1
+      ],
+      "allow_diagnostic_dispatch": true
     }
-  ]
+  ],
+  "rule_revision_context": "Reviewed diagnostic dispatch and coordinate-resolved observed domain cores; separate Testin and Prickle architectures. Computational evidence only; no threshold reduction, calibration fitting, or independent-validation claim."
 }

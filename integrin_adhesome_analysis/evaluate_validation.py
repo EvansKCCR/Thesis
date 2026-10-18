@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 import re
 
-from calibrate_identity import expected_families
+from calibrate_identity import expected_family_resolution,expected_broad_families
 from classification_contract import general_family
 
 ROOT=Path(__file__).resolve().parent
@@ -17,9 +17,15 @@ LABELS=ROOT/'02_calibration_set/calibration_set.xlsx'
 CONTROL_FASTA=ROOT/'02_calibration_set/calibration.faa'
 POLICIES={
     'stage1_recruitment':'Exported stage 1 hypothesis, including provisional follow-up',
+    'stage2_candidate_retention':'Stage 1 candidate present in the final audit after exclusions, including unresolved candidates; membership retention only, not family correctness',
     'audit_before_negative_exclusion':'Stage 1 plus unambiguous A/B call passing the complete family gate, before negative exclusions',
+    'audit_without_exact_negative_exclusion':'Complete unambiguous A/B family gate with diagnostic negative exclusions retained and exact-sequence exclusions removed; counterfactual audit only',
     'dual_gate_supported':'Stage 1 plus unambiguous final A/B call passing the complete family gate, after negative exclusions',
     'dual_gate_strong':'Stage 1 plus a final strong grade A call passing the complete family gate, after negative exclusions',
+    'broad_family_supported':'Stage 1 plus a supported broad or distinct named family at the declared resolution; no provisional or ambiguous promotion',
+    'specific_family_supported':'Stage 1 plus a supported distinct named family at the declared resolution; does not establish an exact gene or paralogue; legacy unresolved resolution is unevaluable',
+    'provisional_annotation':'Stage 1 plus a named provisional annotation, reported separately from supported calls',
+    'ambiguous_annotation':'Stage 1 with competing family annotations, reported separately from supported and provisional calls',
     'audit_including_provisional':'Stage 1 plus any final A/B/C named family; exploratory coverage, not a passed full family gate'}
 
 
@@ -75,7 +81,9 @@ def control_class(value):
 
 
 def resource_hashes():
-    paths=[Path(__file__),LABELS,CONTROL_FASTA,ROOT/'calibrate_identity.py',ROOT/'classification_contract.py',
+    paths=[Path(__file__),LABELS,CONTROL_FASTA,ROOT/'calibrate_identity.py',ROOT/'label_ontology.py',ROOT/'validation_reporting.py',ROOT/'classification_contract.py',
+        ROOT/'05_conservative_adhesome_family_assignment_audit/family_identity_rules.json',
+        ROOT/'02_calibration_set/identity_probability_model.json',
         ROOT/'01_detection/config/family_rules.json',ROOT/'01_detection/references/adhesome_v1.0/search_catalogue.csv',
         ROOT/'01_detection/references/adhesome_v1.0/metazoan_catalogue.csv']
     return {p.relative_to(ROOT).as_posix():sha(p) if p.exists() else None for p in paths}
@@ -109,11 +117,20 @@ def load_gold(labels,control_fasta):
         for row in read_table(ROOT/'01_detection/references/adhesome_v1.0'/name,','):
             digests.add(row['sequence_sha256'])
             if row['family'] in config['families']:
-                for gene in re.split('[;,\\s]+',row.get('gene','').upper()):catalogue[gene].add(general_family(row['family'],config['families']))
+                for gene in re.split(r'[;,\s]+',row.get('gene','').upper()):catalogue[gene].add(general_family(row['family'],config['families']))
     for row in gold.values():
-        explicit=str(row.get('trusted_family') or '').strip()
-        row['expected_families']=set(explicit.split(';')) if explicit else expected_families(row,catalogue)
-        row['expected_families'].discard('other_named_identity_outside_current_family_catalogue')
+        resolution=expected_family_resolution(row,catalogue)
+        row.update({key:value for key,value in resolution.items() if key!='families'})
+        row['expected_families']=resolution['families']-{'other_named_identity_outside_current_family_catalogue'}
+        row['expected_broad_families']=expected_broad_families(row,row['expected_families'])
+        # Alternatives from an explicit label remain accepted at their declared
+        # scope. A parent cannot substitute for a supplied finer label when the
+        # distinct-family policy is being evaluated.
+        from stage2_resolution import BROAD_LABELS
+        specific=set(row['expected_families'])-set(BROAD_LABELS)
+        row['expected_specific_families']=specific
+        configured=set(config['families'])|{r['family'] for r in json.loads((ROOT/'05_conservative_adhesome_family_assignment_audit/family_identity_rules.json').read_text())['rules']}
+        row['family_rule_coverage']='configured' if row['expected_families']&configured else 'outside_configured_family_gates' if row['expected_families'] else 'needs_mapping_review'
     return gold,trusted,references,reverse
 
 
@@ -162,27 +179,48 @@ def supported(row,strong=False):
         row.get('grade')=='A' and confidence=='strong' if strong else row.get('grade') in ('A','B'))
 
 
+def resolution_decisions(row):
+    """Reporting tiers never relax the full family gate or promote grade C."""
+    if not row:return dict(broad_family_supported=False,specific_family_supported=False,
+        provisional_annotation=False,ambiguous_annotation=False)
+    level=str(row.get('family_support_level') or '').strip()
+    resolution=str(row.get('annotation_resolution') or '').strip()
+    family=row.get('putative_audited_family') or row.get('assigned_family') or 'unassigned'
+    confidence=row.get('assignment_confidence') or row.get('family_confidence') or ''
+    ambiguous=level=='ambiguous' or confidence=='ambiguous'
+    complete=supported(row) and not ambiguous
+    broad=complete and (not level or level in ('broad_supported','specific_supported'))
+    if level:specific=complete and level=='specific_supported'
+    elif not complete:specific=False
+    elif resolution:specific=resolution in ('family','family_lineage','specific_family')
+    else:specific=None
+    provisional=(row.get('grade')=='C' or level=='provisional') and not ambiguous and family not in ('','unassigned','unresolved')
+    return dict(broad_family_supported=broad,specific_family_supported=specific,
+        provisional_annotation=provisional,ambiguous_annotation=ambiguous)
+
+
 def aggregate(predictions):
+    from validation_reporting import populations,policy_expected_families,policy_prediction
     scored=[row for row in predictions if row['evaluation_status']=='scored']
     metrics=[];confusions=[];family_metrics=[];family_cells=Counter()
     for policy in POLICIES:
-        for population,allowed in [('all_controls',{'positive','hard_negative','background_negative'}),
-                ('positive_vs_hard_negative',{'positive','hard_negative'}),('positive_vs_background_negative',{'positive','background_negative'}),
-                ('sequence_verified_controls',{'positive','hard_negative','background_negative'})]:
-            cohort=[r for r in scored if r['control_class'] in allowed and
-                (population!='sequence_verified_controls' or r['label_sequence_verification']=='trusted_fasta_match')];counts=Counter()
+        for population,cohort in populations(scored):
+            unavailable=sum(row.get(policy) is None for row in cohort)
+            cohort=[row for row in cohort if row.get(policy) is not None]
+            counts=Counter()
             for row in cohort:
-                actual=row['control_class']=='positive';called=bool(row[policy])
+                actual=row['control_class']=='positive';called=truthy(row[policy])
                 counts['TP' if actual and called else 'FN' if actual else 'FP' if called else 'TN']+=1
-            result=dict(policy=policy,population=population,**binary_metrics(*(counts[k] for k in ('TP','FP','TN','FN'))))
+            result=dict(policy=policy,population=population,unevaluable_policy_controls=unavailable,**binary_metrics(*(counts[k] for k in ('TP','FP','TN','FN'))))
             metrics.append(result)
             for key,actual,predicted in [('TP','positive','accepted'),('FN','positive','not_accepted'),('FP','negative','accepted'),('TN','negative','not_accepted')]:
                 confusions.append(dict(policy=policy,population=population,actual=actual,predicted=predicted,count=counts[key]))
-        if policy=='stage1_recruitment':continue
+        if policy in ('stage1_recruitment','stage2_candidate_retention','ambiguous_annotation'):continue
         tp=fp=fn=unmapped=0
         for row in scored:
-            actual_positive=row['control_class']=='positive';expected=set(row['expected_families'].split(';'))-{''}
-            called=bool(row[policy]);predicted=row['pre_exclusion_family'] if policy=='audit_before_negative_exclusion' else row['audited_family']
+            if row.get(policy) is None:continue
+            actual_positive=row['control_class']=='positive';expected=policy_expected_families(row,policy)
+            called=truthy(row[policy]);predicted=policy_prediction(row,policy)
             if actual_positive and not expected:unmapped+=1;continue
             if actual_positive:
                 correct=called and predicted in expected
@@ -190,13 +228,15 @@ def aggregate(predictions):
                 actual=';'.join(sorted(expected))
             else:fp+=called;actual='__'+row['control_class']+'__'
             family_cells[policy,actual,predicted if called else '__not_accepted__']+=1
+        from validation_reporting import macro_family_metrics
+        macro,_=macro_family_metrics(scored,policy)
         family_metrics.append(dict(policy=policy,TP=tp,FP=fp,FN=fn,PPV=rate(tp,tp+fp),recall=rate(tp,tp+fn),
-            F1=rate(2*tp,2*tp+fp+fn),positive_controls_without_mapped_family=unmapped))
+            F1=rate(2*tp,2*tp+fp+fn),positive_controls_without_mapped_family=unmapped,**macro))
     families=[dict(policy=p,actual_admissible_families=a,predicted_family=b,count=n) for (p,a,b),n in sorted(family_cells.items())]
     return metrics,confusions,family_metrics,families
 
 
-def write_html(path,summary,metrics,confusions,family_metrics):
+def write_html(path,summary,metrics,confusions,family_metrics,reports=None):
     esc=lambda value:html.escape(str(value))
     def table(rows,fields):
         return '<table><thead><tr>'+''.join('<th>'+esc(f)+'</th>' for f in fields)+'</tr></thead><tbody>'+''.join(
@@ -209,10 +249,19 @@ def write_html(path,summary,metrics,confusions,family_metrics):
     body='<h1>Validation target performance</h1><p>'+esc(summary['interpretation'])+'</p>'
     body+='<p>Scored controls: '+str(summary['scored_controls'])+' / input sequences: '+str(summary['input_sequences'])+'. Unscored reasons: '+esc(summary['unscored_reasons'])+'.</p>'
     body+='<p>Sequence-verified labels: '+str(summary['sequence_verified_controls'])+'. Accession labels without a duplicate trusted sequence: '+str(summary['accession_label_only_controls'])+'. The sequence-verified comparison is included in metrics.tsv.</p>'
-    body+='<h2>Membership performance</h2><p>PPV is precision. F1 = 2TP / (2TP + FP + FN). Rates are fractions from 0 to 1.</p>'+table([r for r in metrics if r['population']=='all_controls'],['policy','TP','FP','TN','FN','PPV','recall','F1','specificity','accuracy'])
-    body+='<h2>Confusion matrices</h2><p>Rows are actual classes; columns are predicted decisions. A correct membership decision does not prove a correct family name.</p>'+''.join(matrices)
-    body+='<h2>Family correctness at the reported scope</h2>'+table(family_metrics,['policy','TP','FP','FN','PPV','recall','F1','positive_controls_without_mapped_family'])
+    body+='<h2>Membership and disposition coverage</h2><p>PPV is precision. F1 = 2TP / (2TP + FP + FN). Rates are fractions from 0 to 1. Candidate retention, provisional annotation and ambiguity are coverage dispositions, not supported family acceptance. Specific supported means a distinct family at its declared scope, never an exact gene or paralogue.</p>'+table([r for r in metrics if r['population']=='all_controls'],['policy','TP','FP','TN','FN','PPV','recall','F1','specificity','accuracy','unevaluable_policy_controls'])
+    body+='<h2>Confusion matrices</h2><p>Rows are actual classes; columns indicate the policy decision. For retention, provisional and ambiguous policies, accepted means that disposition was reported. A correct membership decision does not prove a correct family name.</p>'+''.join(matrices)
+    body+='<h2>Family correctness at the reported scope</h2>'+table(family_metrics,['policy','TP','FP','FN','PPV','recall','F1','positive_controls_without_mapped_family','macro_precision','macro_recall','macro_F1'])
     body+='<p>A wrong positive-family call contributes one FP and one FN here. Admissible family labels come only from the trusted labels and ontology. This does not evaluate exact gene, isoform or paralogue names.</p>'
+    body+='<p>Broad-family policy alone accepts the explicitly declared actin, Src/Csk and PET–LIM ontology ancestors. These are ontology roll-ups rather than independently curated new gold labels. Specific-family policy retains distinct gold labels. Macro scores give equal weight to each admissible gold-family set, keeping alternative labels together, plus predicted-only wrong-family groups. Undefined group denominators are omitted from that mean and their counts are exported in family_macro_metrics.tsv; per-group decisions are in family_per_group_metrics.tsv.</p>'
+    if reports:
+        body+='<h2>Negative-exclusion ablation</h2><p>Counterfactuals use the same saved family decisions. Removing exact matches retains diagnostic negative gates. Older single-gate records cannot establish this counterfactual and are counted as unevaluable. Removing all exclusions measures the saved classifier before those gates. Neither establishes independent specificity.</p>'+table(reports['exclusion_ablation.tsv'],['population','policy','n','unevaluable_policy_controls','TP','FP','TN','FN','PPV','recall','F1','specificity'])
+        body+='<h2>Calibration and reference overlap</h2><p>Strata describe overlap with the saved training and reference resources. No-overlap strata are not independently retrained holdouts. Empty denominators remain n.a.</p>'+table([r for r in metrics if r['policy']=='dual_gate_supported' and r['population'] in ('identity_calibration_overlap','no_identity_calibration_overlap','no_forward_reference_overlap','no_reference_or_calibration_overlap')],['population','TP','FP','TN','FN','PPV','recall','F1'])
+        body+='<h2>Distinct reporting tiers</h2>'+table(reports['confidence_tiers.tsv'],['control_class','tier','count'])
+        body+='<h2>Family-label coverage</h2>'+table(reports['family_label_coverage.tsv'],['family_rule_coverage','positive_controls'])
+        body+=table(reports['family_label_coverage_summary.tsv'],['positive_controls','mapped_expected_family_controls','unmapped_expected_family_controls','mapped_fraction','mapped_specific_family_controls','broad_ancestor_rollup_controls'])
+        body+='<p>Trusted-name mapping can extend beyond the configured family gates. It does not add classifier rules or turn crosswalk components into supported calls. See family_mapping_review.tsv, missed_positive_review.tsv, family_misclassifications.tsv and per_expected_family.tsv.</p>'
+        body+='<h2>Stage 2 gate diagnostics</h2><p>stage2_gate_diagnostics.tsv preserves the saved per-protein trace and reports only established reason codes. Missing or invalid traces are explicit; missing CDD support does not establish an unrecognized alias. Multiple limitation codes can apply to one candidate.</p>'+table(reports['stage2_reason_code_counts.tsv'],['control_class','reason_code','count'])
     body+='<h2>Interpretation and files</h2><p>Reference overlap: '+esc(summary['exact_forward_reference_overlap'])+' scored controls. Exact control exclusions and calibration overlap are reported per protein. Negative controls remain exclusion gates; post-exclusion specificity includes these configured rules.</p>'
     body+='<p>Undefined denominators are n.a. Reports never change assignments, confidence or evidence weights. See metrics.tsv, confusion_matrices.tsv, family_metrics.tsv, family_confusion_matrix.tsv and control_predictions.tsv for full data.</p>'
     style='body{font:15px system-ui;color:#15324a;margin:36px;max-width:1400px}table{border-collapse:collapse;margin:18px 0 32px;width:100%}th,td{border:1px solid #cedae4;padding:9px;text-align:right;overflow-wrap:anywhere}th:first-child,td:first-child{text-align:left}th{background:#e8f0f6}h2{margin-top:38px}p{line-height:1.5}'
@@ -253,7 +302,10 @@ def evaluate(audit_dir,handoff,out,target=None,labels=LABELS,control_fasta=CONTR
     mapping=read_table(mapping_path,',');by_original={r['original_id']:r for r in mapping}
     if len(by_original)!=len(mapping):raise ValueError('Duplicate validation original-ID mappings')
     sequences={h.split()[0]:s for h,s in records(prepared)}
-    selected={r['protein_id'] for r in read_table(handoff/'hypotheses.tsv') if (r.get('Specie') or r['protein_id'].split('__',1)[0])==target}
+    initial_hypotheses=defaultdict(set)
+    for r in read_table(handoff/'hypotheses.tsv'):
+        if (r.get('Specie') or r['protein_id'].split('__',1)[0])==target:initial_hypotheses[r['protein_id']].add(r['family'])
+    selected=set(initial_hypotheses)
     if not selected<=set(sequences):raise ValueError('A recruited validation candidate is absent from its prepared proteome')
     before,final,excluded=read_audit(audit_dir,target)
     if set(before)!=selected:raise ValueError('Validation audit does not account for every exported stage 1 candidate')
@@ -274,24 +326,50 @@ def evaluate(audit_dir,handoff,out,target=None,labels=LABELS,control_fasta=CONTR
         gate1=retained and pid in selected
         final_family=current.get('putative_audited_family') or current.get('assigned_family') or 'unassigned'
         expected=actual.get('expected_families',set())
+        exact_excluded=excluded.get(pid,{}).get('exclusion_gate')=='exact_negative_control_sequence' if retained else False
+        all_gates=excluded.get(pid,{}).get('exclusion_gates','') if retained else ''
+        diagnostic_excluded='diagnostic_negative_subfamily_and_complete_architecture' in all_gates.split(';')
+        exact_ablation_known=not exact_excluded or bool(all_gates)
+        without_exact=prior if exact_excluded and not diagnostic_excluded else current
         row=dict(accession=key,protein_id=pid,original_id=original,sequence_sha256=digest,evaluation_status=status,
             label_sequence_verification=verification,
             control_class=actual.get('control_class',''),trusted_protein_name=actual.get('protein_name',''),
             expected_families=';'.join(sorted(expected)),preparation_decision=unit['decision'],
+            expected_broad_families=';'.join(sorted(actual.get('expected_broad_families',set()))),
+            expected_specific_families=';'.join(sorted(actual.get('expected_specific_families',set()))),
+            trusted_genes=actual.get('genes',''),family_label_source=actual.get('family_label_source',''),family_rule_coverage=actual.get('family_rule_coverage',''),
+            family_label_review_required=actual.get('family_label_review_required',''),
+            family_label_review_reason=actual.get('family_label_review_reason',''),
+            legacy_catalogue_families_ignored=actual.get('legacy_catalogue_families_ignored',''),
             stage1_recruitment=gate1,audit_before_negative_exclusion=gate1 and supported(prior),
+            stage2_candidate_retention=gate1 and bool(current),
+            audit_without_exact_negative_exclusion=(gate1 and supported(without_exact)) if exact_ablation_known else None,
+            exact_exclusion_ablation_status='complete_gate_provenance' if exact_ablation_known else 'unavailable_legacy_single_gate_record',
+            without_exact_exclusion_family=(without_exact.get('putative_audited_family') or without_exact.get('assigned_family') or 'unassigned'),
             dual_gate_supported=gate1 and supported(current),dual_gate_strong=gate1 and supported(current,strong=True),
-            audit_including_provisional=gate1 and current.get('grade') in ('A','B','C') and final_family not in ('','unassigned','unresolved'),
+            audit_including_provisional=gate1 and current.get('grade') in ('A','B','C') and final_family not in ('','unassigned','unresolved') and current.get('assignment_confidence')!='ambiguous',
             audited_family=final_family,pre_exclusion_family=prior.get('assigned_family','unassigned'),grade=current.get('grade',''),
             assignment_confidence=current.get('assignment_confidence',''),protein_name=current.get('protein_name',''),
             protein_name_scope=current.get('protein_name_scope',''),negative_exclusion=retained and pid in excluded,
             exclusion_gate=excluded.get(pid,{}).get('exclusion_gate','') if retained else '',
+            exclusion_gates=all_gates,
             exact_forward_reference_overlap=digest in references,exact_reverse_reference_overlap=digest in reverse,
             identity_calibration_training_overlap=digest in training)
+        row.update({name:(gate1 and decision) if decision is not None else None
+                    for name,decision in resolution_decisions(current).items()})
+        for field in ('identity_gate_trace','family_support_level','annotation_resolution'):
+            row[field]=current.get(field) or prior.get(field) or ''
+        for field in ('architecture_evidence','domain_score_0_4','orthology_score_0_3','identity_rule','identity_competitors','equally_ranked_hypotheses'):
+            row['review_'+field]=prior.get(field,'')
+        row['review_assignment_confidence']=prior.get('family_confidence','')
+        row['stage1_family_hypotheses']=';'.join(sorted(initial_hypotheses.get(pid,set())))
         predictions.append(row)
     if input_ids!=set(by_original):raise ValueError('Validation input/preparation-map membership differs')
     scored=[r for r in predictions if r['evaluation_status']=='scored']
     if not scored:raise ValueError('No sequence-verified labelled controls in the validation target')
     metrics,confusions,family_metrics,families=aggregate(predictions)
+    from validation_reporting import reports as diagnostic_reports
+    reports=diagnostic_reports(predictions,metrics)
     main=next(r for r in metrics if r['policy']=='dual_gate_supported' and r['population']=='all_controls')
     summary=dict(pipeline_version='1.0',status='complete',validation_target=target,input_sequences=len(predictions),
         labelled_input_controls=sum(r['accession'] in gold for r in predictions),scored_controls=len(scored),
@@ -302,6 +380,13 @@ def evaluate(audit_dir,handoff,out,target=None,labels=LABELS,control_fasta=CONTR
         scored_control_classes=dict(Counter(r['control_class'] for r in scored)),
         labels_absent_from_validation_input=sorted(set(gold)-seen),exact_forward_reference_overlap=sum(r['exact_forward_reference_overlap'] for r in scored),
         identity_calibration_training_overlap=sum(r['identity_calibration_training_overlap'] for r in scored),
+        family_label_coverage=reports['family_label_coverage.tsv'],
+        family_label_coverage_summary=reports['family_label_coverage_summary.tsv'][0],
+        gate_trace_coverage=dict(Counter(r['gate_trace_status'] for r in reports['stage2_gate_diagnostics.tsv'])),
+        exact_exclusion_ablation_unavailable_controls=sum(r['audit_without_exact_negative_exclusion'] is None for r in scored),
+        robustness_scope='Saved-output exclusion ablation, exact-sequence deduplication and reference/calibration overlap strata. No model retraining, reference removal or independent holdout inference performed.',
+        calibration_training_overlap_is_acceptance_gate=False,
+        identity_calibration_overlap_basis='Exact sequences in the saved training model, including historical overlap if its numerical estimates are stale/disabled; not a classification gate',
         negative_control_exclusions=sum(r['negative_exclusion'] for r in scored),primary_policy='dual_gate_supported',primary_metrics=main,
         policies=POLICIES,undefined_metric_policy='null in JSON, blank in TSV, n.a. in HTML; never fabricated zero',
         interpretation='Reference-panel control self-test with exact reference overlap, calibrated controls and configured negative exclusions. This is not independent held-out or novel-lineage performance. Membership and family correctness are reported separately; evaluation never changes calls or weights.')
@@ -311,7 +396,15 @@ def evaluate(audit_dir,handoff,out,target=None,labels=LABELS,control_fasta=CONTR
     out.mkdir(parents=True,exist_ok=False)
     for name,rows in [('metrics.tsv',metrics),('confusion_matrices.tsv',confusions),('family_metrics.tsv',family_metrics),('family_confusion_matrix.tsv',families),('control_predictions.tsv',predictions)]:
         write_table(out/name,rows,list(rows[0]) if rows else ['policy','actual_admissible_families','predicted_family','count'])
-    write_html(out/'performance_report.html',summary,metrics,confusions,family_metrics)
+    empty_fields={'family_misclassifications.tsv':[*predictions[0],'review_reason'],
+                  'missed_positive_review.tsv':[*predictions[0],'review_reason'],
+                  'sequence_group_conflicts.tsv':['sequence_sha256','accessions','reason'],
+                  'family_macro_metrics.tsv':['policy','macro_precision','macro_recall','macro_F1','macro_family_groups'],
+                  'family_per_group_metrics.tsv':['policy','expected_admissible_families','TP','FP','FN','precision','recall','F1'],
+                  'stage2_reason_code_counts.tsv':['control_class','reason_code','count'],
+                  'exclusion_impact.tsv':['exclusion_gate','control_class','excluded','passed_family_gate_before_exclusion']}
+    for name,rows in reports.items():write_table(out/name,rows,list(rows[0]) if rows else empty_fields.get(name,['status']))
+    write_html(out/'performance_report.html',summary,metrics,confusions,family_metrics,reports)
     (out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n',encoding='utf-8')
     return dict(status='complete',directory=str(out),summary_sha256=sha(out/'summary.json'),scored_controls=len(scored),
         primary_policy='dual_gate_supported',F1=main['F1'],PPV=main['PPV'],recall=main['recall'])

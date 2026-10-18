@@ -133,3 +133,25 @@ completed annotations, partial motif output and running attempts are refused.
 Older failures can be adopted from an identical failed command and unchanged
 staged context. Detection is reused and no biological analysis is launched during
 installation.
+
+Validation revision (2026-10-18, version 1.0): added exact-negative exclusion
+ablation with all applicable gate provenance, overlap strata, sequence-group
+comparisons, separate confidence-tier accounting, expanded trusted-name ontology,
+family-label coverage and missed/wrong-family review tables. Added 11 diagnostic
+CDD/core refinements and tightened PTP-PEST, alpha-actinin and shared-LIM family
+gates. Individual CDD-model matching fixes anchored-pattern sensitivity. Same
+stage 1 protein pool and optional phylogeny behavior are preserved. Old numerical
+probability calibration is left unchanged and disabled as stale pending local
+refit; evidence-based confidence is unaffected. No inference or calibration is
+run during installation. See VALIDATION_PERFORMANCE.md for reports and local tests.
+
+Stage 2 recall routing revision (version 1.0): explicitly dispatch reviewed
+diagnostic CDD/core rules from the existing selected candidate pool, add Testin
+PET+three-LIM and distinct Prickle five-LIM gates, recognize observed PET/PTP CDD
+aliases, and count overlapping alternative domain footprints once. Added complete
+broad-family support with separately unresolved specific identity, compact
+candidate traces and detailed rule TSVs. Corrected trusted identity ontology
+binding-partner errors; separate retention/broad/specific/provisional/ambiguous
+metrics and family macro metrics preserve explicit denominators. The uncurated
+benchmark template is not used as gold, the existing global negative policy is
+preserved, and no analysis, calibration fit or backup is made by installation.

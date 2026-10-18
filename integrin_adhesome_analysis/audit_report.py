@@ -2,6 +2,7 @@
 import re
 
 FINAL_COLUMNS=['Specie','protein_id','putative_audited_family','protein_name','assignment_confidence',
+    'family_support_level','annotation_resolution','specific_identity_status','unresolved_specific_families','identity_gate_trace',
     'assignment_probability','assignment_probability_lower_95','assignment_probability_upper_95',
     'probability_calibration_n','probability_method','probability_calibration_scope',
     'protein_name_scope','grade','family_decision','length','Pfam_architecture','NCBI_CDD_architecture',

@@ -43,14 +43,15 @@ def controls():
 def apply(rows):
     bank=controls();retained=[];excluded=[]
     for row in rows:
-        matches=bank['negative_by_hash'].get(str(row.get('sequence_sha256') or ''),[]);gate='exact_negative_control_sequence'
-        if not matches and str(row.get('sequence_sha256') or '') not in bank.get('positive_hashes',set()) and row.get('domain_score_0_4')==4 and row.get('family_specific_CDD_support'):
+        exact=bank['negative_by_hash'].get(str(row.get('sequence_sha256') or ''),[]);diagnostic=[]
+        if str(row.get('sequence_sha256') or '') not in bank.get('positive_hashes',set()) and row.get('domain_score_0_4')==4 and row.get('family_specific_CDD_support'):
             from family_identity import cdd_hits
             observed={hit['short_name'] for hit in cdd_hits(row)}
-            matches=[m for m in bank['negative_families'].get(row['assigned_family'],[]) if observed&m['negative_specific_models']]
-            gate='diagnostic_negative_subfamily_and_complete_architecture'
+            diagnostic=[m for m in bank['negative_families'].get(row['assigned_family'],[]) if observed&m['negative_specific_models']]
+        matches=exact or diagnostic
+        gates=(['exact_negative_control_sequence'] if exact else [])+(['diagnostic_negative_subfamily_and_complete_architecture'] if diagnostic else [])
         if matches:
-            row.update(stage2_excluded=True,exclusion_gate=gate,
+            row.update(stage2_excluded=True,exclusion_gate=gates[0],exclusion_gates=';'.join(gates),
                 control_class='; '.join(sorted({m['class'] for m in matches})),
                 control_accession='; '.join(sorted({m['accession'] for m in matches})),
                 exclusion_reason='Hard/background-negative control evidence excludes this protein from final adhesome classification',

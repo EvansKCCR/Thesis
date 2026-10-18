@@ -28,8 +28,12 @@ def cdd_hits(row):
         records=json.loads(raw) if isinstance(raw,str) else raw
     else:
         text=observed_text(row.get('NCBI_CDD_architecture') or row.get('CDD_architecture'))
-        records=[dict(short_name=m[1].strip(),start=m[2],end=m[3],accession='') for m in
-            re.finditer(r'([^;:]+):\s*(\d+)\s*-\s*(\d+)',text)]
+        records=[]
+        for part in text.split(';'):
+            match=re.fullmatch(r'\s*(.*?)\s*(?::\s*(\d+)\s*-\s*(\d+)|\[\s*(\d+)\s*-\s*(\d+)\s*\])\s*',part)
+            if not match:continue
+            name=re.sub(r'^(?:cd\d+|smart\d+|pfam\d+|COG\d+)\s+','',match[1].strip(),flags=re.I)
+            records.append(dict(short_name=name,start=match[2] or match[4],end=match[3] or match[5],accession=''))
     seen=set();result=[]
     for raw in records:
         item=dict(raw);name=str(item.get('short_name') or '')
@@ -52,9 +56,14 @@ def overlaps(a,b):
 def combined_domains(row,pfam_hits):
     """Complement missing domain models using observed CDD footprints; merge copies."""
     config=library();combined=[]
-    pfam_extra={'PF07679':'IG','PF00047':'IG','PF13927':'IG','PF13895':'IG'}
+    pfam_extra={'PF07679':'IG','PF00047':'IG','PF13927':'IG','PF13895':'IG','PF06297':'PET'}
     for model,start,end in pfam_hits:
-        combined.append(dict(model=pfam_extra.get(model,model),start=start,end=end,sources={'Pfam'},cdd_models=set()))
+        # Broad architecture aliases must not erase the original observed model:
+        # expanded rules may require its more specific Pfam accession. These
+        # entries share a footprint, so distinct_footprints never counts an
+        # accession and its alias as two domain copies within a model group.
+        for label in dict.fromkeys((model,pfam_extra.get(model,model))):
+            combined.append(dict(model=label,start=start,end=end,sources={'Pfam'},cdd_models=set()))
     for hit in cdd_hits(row):
         name=hit['short_name']
         models=[model for model,pattern in {**config['pfam_cdd_aliases'],**config['additional_cdd_domains']}.items() if re.search(pattern,name,re.I)]
@@ -74,11 +83,45 @@ def cdd_text(row):
     return ';'.join(names+[text])
 
 
+def observed_cdd_names(row):
+    """Read model labels without treating workbook summary counts as coordinates."""
+    names=[hit['short_name'] for hit in cdd_hits(row)]
+    # Coordinate-free returned labels can corroborate identity but never add
+    # missing domain copies. Exclude inferred/absent entries as elsewhere.
+    for part in observed_text(row.get('NCBI_CDD_architecture') or row.get('CDD_architecture')).split(';'):
+        name=re.sub(r'^(?:cd\d+|smart\d+|pfam\d+|COG\d+)\s+','',part.strip(),flags=re.I)
+        # Located observations were already validated in cdd_hits. Do not
+        # resurrect rejected out-of-sequence hits through their text labels.
+        if re.search(r'(?::\s*\d+\s*-\s*\d+|\[\s*\d+\s*-\s*\d+\s*\])\s*$',name):continue
+        name=re.sub(r'\s*(?::\s*\d+\s*-\s*\d+|\[.*?\])\s*$','',name).strip()
+        if name:names.append(name)
+    return list(dict.fromkeys(names))
+
+
+def diagnostic_cdd(row,pattern):
+    """Match each observed model separately, including anchored model patterns."""
+    return any(re.search(pattern,name,re.I) for name in observed_cdd_names(row))
+
+
+def distinct_footprints(hits,models):
+    """Alternative domain models on one footprint count as a single copy."""
+    accepted=[]
+    # Selecting the shortest-ending footprint also avoids broad CDD superfamily
+    # spans consuming several independently observed repeat copies.
+    for hit in sorted((h for h in hits if h['model'] in models and h['start'] is not None),key=lambda h:(h['end'],h['start'])):
+        if not any(overlaps(hit,old) for old in accepted):accepted.append(hit)
+    return accepted
+
+
+def model_counts(hits):
+    return Counter({model:len(distinct_footprints(hits,{model})) for model in {h['model'] for h in hits}})
+
+
 def ordered_core(hits,rule):
     last=0
     for index in rule.get('ordered_groups',[]):
         group=rule['required_groups'][index]
-        choices=sorted((hit['start'],hit['end']) for hit in hits if hit['model'] in group['models'] and hit['start'] is not None and hit['start']>last)
+        choices=sorted(((hit['start'],hit['end']) for hit in hits if hit['model'] in group['models'] and hit['start'] is not None and hit['start']>last),key=lambda pair:(pair[1],pair[0]))
         if len(choices)<group['count']:return False
         # Select distinct nonoverlapping footprints, not overlapping alternative models.
         accepted=0
@@ -90,24 +133,59 @@ def ordered_core(hits,rule):
     return True
 
 
-def scoped_refinement(row,parent,hits):
-    counts=Counter(hit['model'] for hit in hits);text=cdd_text(row);matches=[]
+def refinement_trace(row,parent,hits):
+    """Explain each reviewed rule without adding proteins or relaxing its core.
+
+    Cross-parent dispatch is opt-in per rule and requires both a diagnostic CDD
+    model and a coordinate-bearing Pfam anchor belonging to that rule's core.
+    Generic domains, gene names, and calibration labels cannot dispatch a rule.
+    """
+    counts=model_counts(hits);text=cdd_text(row);names=observed_cdd_names(row);traces=[]
+    length=int(float(row.get('length') or row.get('Length') or 0))
     for rule in library()['rules']:
         allowed=rule['parents']
-        if parent not in allowed and not (parent=='fibronectin_like_candidate' and 'fibronectin_III_ligand' in allowed):continue
-        if not re.search(rule['specific_cdd_pattern'],text,re.I):continue
-        if rule['id']=='actin_conventional' and re.search(r'ARP\d',text,re.I):continue
-        if not all(sum(counts[model] for model in group['models'])>=group['count'] for group in rule['required_groups']):continue
-        if not ordered_core(hits,rule):continue
+        parent_scope=parent in allowed or (parent=='fibronectin_like_candidate' and 'fibronectin_III_ligand' in allowed)
         core={model for group in rule['required_groups'] for model in group['models']}
-        if not any(hit['model'] in core and 'Pfam' in hit['sources'] for hit in hits):continue
-        matches.append(rule)
+        diagnostic=[name for name in names if re.search(rule['specific_cdd_pattern'],name,re.I)]
+        anchor=any(hit['model'] in core and 'Pfam' in hit['sources'] and hit['start'] is not None for hit in hits)
+        dispatched=bool(rule.get('allow_diagnostic_dispatch') and diagnostic and anchor)
+        reached=parent_scope or dispatched
+        groups=[dict(models=group['models'],required=group['count'],observed=len(distinct_footprints(hits,set(group['models'])))) for group in rule['required_groups']]
+        missing=[group for group in groups if group['observed']<group['required']]
+        order=ordered_core(hits,rule)
+        coordinates=all(hit['start'] is not None and hit['start']>=1 and hit['end']>=hit['start'] and (not length or hit['end']<=length) for hit in hits if hit['model'] in core)
+        length_ok=not rule.get('length_range') or rule['length_range'][0]<=length<=rule['length_range'][1]
+        maximum=all(counts[model]<=limit for model,limit in rule.get('maximum_model_counts',{}).items())
+        competitors=rule['id']=='actin_conventional' and bool(re.search(r'ARP\d',text,re.I))
+        codes=[]
+        if not reached:codes.append('NO_IDENTITY_RULE_REACHED')
+        if not diagnostic:codes.append('DIAGNOSTIC_CDD_UNCONFIRMED')
+        if not anchor:codes.append('PFAM_ANCHOR_MISSING')
+        if missing:codes.append('MISSING_REQUIRED_DOMAIN')
+        if not order:codes.append('DOMAIN_ORDER_CONFLICT')
+        if not coordinates:codes.append('DOMAIN_COORDINATES_UNCONFIRMED')
+        if not length_ok:codes.append('LENGTH_OUTSIDE_RULE_RANGE')
+        if not maximum:codes.append('EXCESS_DOMAIN_COPIES')
+        if competitors:codes.append('COMPETING_FAMILY')
+        traces.append(dict(rule_id=rule['id'],family=rule['family'],parent=parent,parent_scope_passed=parent_scope,
+            routing_scope='parent' if parent_scope else 'diagnostic_dispatch' if dispatched else 'out_of_scope',
+            reached=reached,evaluated=reached,diagnostic_cdd_matched=bool(diagnostic),matched_cdd_models=diagnostic,
+            pfam_anchor_passed=anchor,domain_groups=groups,missing_domains=missing,order_passed=order,
+            coordinates_passed=coordinates,length_passed=length_ok,maximum_counts_passed=maximum,
+            matched=not codes,limitation_codes=codes,reason_codes=codes))
+    return traces
+
+
+def scoped_refinement(row,parent,hits):
+    trace=refinement_trace(row,parent,hits)
+    matched={entry['rule_id'] for entry in trace if entry['matched']}
+    matches=[rule for rule in library()['rules'] if rule['id'] in matched]
     # A named collagen subtype refines the broader fibrillar architecture.
     if any(rule['id']=='collagen_v' for rule in matches):matches=[r for r in matches if r['id']!='collagen_fibrillar']
     families={rule['family'] for rule in matches}
     return dict(rule=matches[0] if len(families)==1 else None,
         competing_families=sorted(families) if len(families)>1 else [],
-        matches=matches)
+        matches=matches,trace=trace)
 
 
 NAMES={'talin':'Talin','kindlin':'Kindlin-like protein','actin':'Actin-family protein',

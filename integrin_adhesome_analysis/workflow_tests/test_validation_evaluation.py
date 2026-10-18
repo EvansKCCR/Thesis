@@ -71,6 +71,43 @@ class ValidationEvaluationTests(unittest.TestCase):
         self.assertIsNone(empty['PPV']);self.assertIsNone(empty['recall']);self.assertIsNone(empty['F1'])
         self.assertEqual(empty['specificity'],1)
 
+    def test_exact_exclusion_ablation_keeps_concurrent_diagnostic_negative_gate(self):
+        for gates,fp in [('exact_negative_control_sequence',1),
+                ('exact_negative_control_sequence;diagnostic_negative_subfamily_and_complete_architecture',0),('',None)]:
+            with self.subTest(gates=gates),tempfile.TemporaryDirectory() as td:
+                args=self.fixture(Path(td));path=args['audit_dir']/'negative_control_exclusions.tsv'
+                rows=ev.read_table(path);rows[0]['exclusion_gates']=gates;self.write(path,rows)
+                ev.evaluate(**args)
+                metrics=ev.read_table(args['out']/'exclusion_ablation.tsv')
+                row=next(r for r in metrics if r['policy']=='audit_without_exact_negative_exclusion' and r['population']=='all_controls')
+                if fp is None:self.assertEqual(int(row['unevaluable_policy_controls']),1)
+                else:self.assertEqual(int(row['FP']),fp);self.assertEqual(int(row['unevaluable_policy_controls']),0)
+                # Reporting a counterfactual never removes the actual exclusion.
+                main=next(r for r in ev.read_table(args['out']/'metrics.tsv') if r['policy']=='dual_gate_supported' and r['population']=='all_controls')
+                self.assertEqual(int(main['FP']),0)
+
+    def test_overlap_strata_and_disjoint_confidence_tiers_have_complete_denominators(self):
+        from validation_reporting import reports
+        predictions=[]
+        for accession,trained,accepted,provisional in [('A',True,True,True),('B',False,False,True),('C',False,False,False)]:
+            predictions.append(dict(accession=accession,protein_id=accession,sequence_sha256=accession,evaluation_status='scored',
+                label_sequence_verification='trusted_fasta_match',control_class='positive',expected_families='talin',
+                family_rule_coverage='configured',identity_calibration_training_overlap=trained,
+                exact_forward_reference_overlap=trained,exact_reverse_reference_overlap=trained,
+                stage1_recruitment=True,audit_before_negative_exclusion=accepted,audit_without_exact_negative_exclusion=accepted,
+                dual_gate_supported=accepted,dual_gate_strong=accepted,audit_including_provisional=provisional,
+                audited_family='talin' if provisional else 'unassigned',pre_exclusion_family='talin',negative_exclusion=False,
+                exclusion_gate='',preparation_decision='retained'))
+        metrics,*_=ev.aggregate(predictions)
+        unseen=next(r for r in metrics if r['policy']=='dual_gate_supported' and r['population']=='no_identity_calibration_overlap')
+        self.assertEqual((unseen['TP'],unseen['FN']),(0,2));self.assertIsNone(unseen['PPV'])
+        self.assertIsNone(unseen['specificity'])
+        diagnostic=reports(predictions,metrics)
+        tiers={r['tier']:r['count'] for r in diagnostic['confidence_tiers.tsv']}
+        self.assertEqual(tiers,{'supported':1,'provisional_only':1,'recruited_unresolved':1})
+        self.assertEqual(sum(tiers.values()),3)
+        self.assertEqual(len(diagnostic['missed_positive_review.tsv']),2)
+
     def test_end_to_end_denominators_missed_positives_and_negative_gate_diagnostics(self):
         with tempfile.TemporaryDirectory() as td:
             args=self.fixture(Path(td));before=ev.sha(args['audit_dir']/'audited_family_assignments.tsv')

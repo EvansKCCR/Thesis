@@ -10,7 +10,7 @@ from adhesome_core import digest, table, sequence_dict
 import master_library
 
 
-def validate():
+def validate(allow_stale_calibration=False):
     detection=ROOT/'01_detection'
     rules=json.loads((detection/'config/family_rules.json').read_text())
     models=json.loads((detection/'databases/pfam/adhesome_v1.0.hmm.metadata.json').read_text())
@@ -67,9 +67,14 @@ def validate():
         raise ValueError('Family architecture example checksum mismatch')
     identifiers=[rule['id'] for rule in identities['rules']]
     if len(set(identifiers))!=len(identifiers):raise ValueError('Duplicate family identity rule IDs')
-    allowed=set(models['models'])|set(identities['additional_cdd_domains'])
+    # A returned, observed CDD model may complement a domain absent from the
+    # bundled detection HMM subset; this does not add an HMM or infer a region.
+    allowed=set(models['models'])|set(identities['additional_cdd_domains'])|set(identities['pfam_cdd_aliases'])
+    scopes=set(rules['families'])|set(json.loads((motif/'context_rules.json').read_text())['families'])
+    from stage2_resolution import BROAD_LABELS
+    scopes|=set(BROAD_LABELS)|{rule['family'] for rule in identities['rules']}
     for rule in identities['rules']:
-        if set(rule['parents'])-set(rules['families']):raise ValueError('Unknown parent scope: '+rule['id'])
+        if set(rule['parents'])-scopes:raise ValueError('Unknown parent scope: '+rule['id'])
         if not re.fullmatch(r'[A-Za-z0-9_.-]+',rule['family']):raise ValueError('Unsafe identity family name')
         re.compile(rule['specific_cdd_pattern'],re.I)
         for group in rule['required_groups']:
@@ -81,10 +86,13 @@ def validate():
     if DEFAULT_MODEL.exists():
         calibration=json.loads(DEFAULT_MODEL.read_text(encoding='utf-8'))
         if not calibration['context'].get('positive_control_only'):raise ValueError('Refit identity probabilities using positive controls only')
-        if calibration['code_fingerprint']!=fingerprint():raise ValueError('Refit identity probabilities after scoring code/policy changes')
+        stale=calibration['code_fingerprint']!=fingerprint()
+        if stale and not allow_stale_calibration:raise ValueError('Refit identity probabilities after scoring code/policy changes; --allow-stale-calibration validates resources with numerical probabilities disabled')
         for name,expected in calibration['input_hashes'].items():
-            if digest(ROOT/name)!=expected:raise ValueError('Identity calibration input changed: '+name)
-        calibration_status='positive_control_only';training_controls=len(calibration['samples'])
+            if digest(ROOT/name)!=expected:
+                if not allow_stale_calibration:raise ValueError('Identity calibration input changed: '+name)
+                stale=True
+        calibration_status='stale_disabled_pending_local_refit' if stale else 'positive_control_only';training_controls=len(calibration['samples'])
     return dict(pipeline_version='1.0',family_rules=len(rules['families']),pfam_models=len(models['models']),
                 components=len(crosswalk),component_references=len(component_refs),forward_references=len(forward),
                 reciprocal_references=len(reverse),adhesion_motifs=len(core_rules),master_motifs=len(full_rules),
@@ -95,7 +103,8 @@ def validate():
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version',action='version',version='adhesome-resource-validator 1.0')
-    parser.parse_args();print(json.dumps(validate(),indent=2))
+    parser.add_argument('--allow-stale-calibration',action='store_true',help='Check resources without fitting; report stale numerical probability calibration as disabled')
+    args=parser.parse_args();print(json.dumps(validate(args.allow_stale_calibration),indent=2))
 
 
 if __name__=='__main__':main()

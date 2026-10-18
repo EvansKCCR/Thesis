@@ -37,7 +37,7 @@ Run `python -B -m unittest discover -p 'test_*.py'` here for audit regression te
 The final table now uses `putative_audited_family` and `protein_name`, with one
 `assignment_confidence` field and no MULocDeep, empty or unused columns. A matching
 `audited_family_assignments.tsv` is exported. Observed CDD footprints complement
-Pfam architecture without double-counting overlapping domain copies. Forty-five
+Pfam architecture without double-counting overlapping domain copies. The current
 scoped identity refinements use `family_identity_rules.json`; inferred example
 features are not observations. Positive adhesome controls alone calibrate the
 reported family/name correctness estimate, with uncertainty and control counts.
@@ -47,3 +47,38 @@ Retained plus excluded proteins must account for every stage 1 input protein.
 Shared domains cannot trigger exclusion by themselves. The bundled model uses
 reference-overlapping controls and does not establish novel-lineage accuracy.
 See the full protocol for recalibration and reference-panel requirements.
+
+## Expanded family coverage: isolated development comparison
+
+From the `integrin_adhesome_analysis` directory, use the existing handoff and
+completed audit's full `joined_evidence.tsv`. Replace `/path/to/existing/installation`
+with the installation containing those runs; choose a new output directory:
+
+```bash
+python evaluate_family_expansion.py \
+  --handoff /path/to/existing/installation/runs/handoff \
+  --evidence /path/to/existing/installation/runs/annotation/downstream/final/joined_evidence.tsv \
+  --out development/family_coverage_review
+```
+
+The script installs `family_rules_expanded.json` and
+`family_identity_rules_expanded.json` together in the development output's
+`installed_pair/`. It replays only Stage 2 for the existing validation target,
+using unchanged observed Pfam/CDD, orthology, motif and topology evidence. The
+baseline and expanded arms share the current classifier, frozen gold labels and
+negative gates. Expected family labels never supply missing target domains.
+Numerical calibration is disabled for this paired experiment; it is not refitted.
+
+Read `report.md`, `regression_checks.tsv`, `new_identity_positives.tsv` and
+`unresolved_identity_proposals.tsv`. Each arm also reports membership versus
+family correctness, broad versus specific support, provisional calls,
+family macro-F1, reference/calibration overlap and negative-exclusion ablations.
+All 235 positive controls remain in membership-recall denominators, including
+the unrecruited screening-only Defensin-6. The 115 identity proposals and 16
+screening-only positives are evaluated separately.
+
+The tool rejects unsupported identity-rule fields or parent routes and verifies
+source checksums before/after replay. It neither installs expanded rules into
+production nor runs Stage 1, external tools or phylogeny. Expanded JSON rules do
+not add missing Pfam HMMs: inspect `missing_model_review.tsv` and the scan-library
+coverage in `summary.json` before considering a production library update.

@@ -13,7 +13,8 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from classification_contract import general_family,general_rules,write_sheet,schema
-from family_identity import combined_domains,scoped_refinement,cdd_text,annotate_name,LIBRARY as IDENTITY_LIBRARY
+from family_identity import combined_domains,scoped_refinement,cdd_text,annotate_name,model_counts,LIBRARY as IDENTITY_LIBRARY
+from stage2_resolution import broad_architecture,annotate_resolution,common_broad_family,BROAD_LABELS
 
 VERSION='1.0'
 DOM_RE=re.compile(r'(?<!\w)(PF\d{5})(?:\s*:\s*(\d+)\s*-\s*(\d+))?',re.I)
@@ -84,7 +85,7 @@ def cdd_support(row,family,policy):
     return bool(re.search(r'(?<![A-Z0-9])(?:'+pattern+r')(?![A-Z0-9])',text,re.I))
 
 
-def architecture(row,family,rules):
+def _architecture(row,family,rules):
     """Only the supplied hypothesis is tested; no catalogue-wide replacement search."""
     policy=policy_for(rules);catalogue=rules['families'];general=general_family(family,catalogue)
     aliases={'Csk_family':'Csk','Src_family':'Src','paxillin_family':'paxillin_like','zyxin_family':'zyxin_like'}
@@ -99,10 +100,12 @@ def architecture(row,family,rules):
         valid=all(h['start'] is not None and (not length or h['end']<=length) for h in combined if h['model'] in core)
         if valid:
             return dict(score=4,fraction=1,family=named['family'],note='Observed Pfam/CDD core and diagnostic CDD support scoped '+named['id']+' refinement',
-                cdd=True,complete=True,identity_rule=named,combined_hits=combined,cdd_concordant=True,identity_competitors=[])
+                cdd=True,complete=True,identity_rule=named,combined_hits=combined,cdd_concordant=True,identity_competitors=[],
+                rule_trace=refinement.get('trace',[]),baseline_gate=dict(configured=True,complete=True,reason_codes=[]))
     if rule.get('screening_only') or rule.get('classification_level') in ('screen','screening','component_hypothesis'):
-        return dict(score=0,fraction=0,family=general,note='Generic screening bucket cannot establish a family assignment',cdd=False,complete=False)
-    counts=Counter(pf for pf,start,end in hits)
+        return dict(score=0,fraction=0,family=general,note='Generic screening bucket cannot establish a family assignment',cdd=False,complete=False,
+                    combined_hits=combined,identity_competitors=refinement['competing_families'],rule_trace=refinement.get('trace',[]),baseline_gate=dict(configured=False,complete=False,reason_codes=['NO_IDENTITY_RULE_REACHED']))
+    counts=model_counts(combined)
     length=num(value(row,'length','Length'))
     specific=general in policy['specific_cdd_patterns']
     if general=='PINCH_like':
@@ -113,11 +116,15 @@ def architecture(row,family,rules):
         rule.update(domain_alternatives=[{'PF00017':2,'PF07714':1},{'PF00017':2,'PF00069':1}],ordered_domain_groups=[['PF00017'],['PF00017'],['PF07714','PF00069']])
     elif general in ('Csk','Src'):
         rule.update(domain_alternatives=[{'PF00018':1,'PF00017':1,'PF07714':1},{'PF00018':1,'PF00017':1,'PF00069':1}],ordered_domain_groups=[['PF00018'],['PF00017'],['PF07714','PF00069']])
+    elif general=='alpha_actinin':
+        rule.update(domain_alternatives=[{'PF00307':2,'PF00435':2}])
     requirements=rule.get('domain_alternatives',[])
-    if not requirements:return dict(score=0,fraction=0,family=general,note='No family-specific architecture configured for this stage 1 hypothesis',cdd=False,complete=False)
+    if not requirements:return dict(score=0,fraction=0,family=general,note='No family-specific architecture configured for this stage 1 hypothesis',cdd=False,complete=False,
+        combined_hits=combined,identity_competitors=refinement['competing_families'],rule_trace=refinement.get('trace',[]),baseline_gate=dict(configured=False,complete=False,reason_codes=['NO_IDENTITY_RULE_REACHED']))
     fractions=[sum(min(counts[p],n) for p,n in group.items())/sum(group.values()) for group in requirements]
     fraction=max(fractions)
-    if fraction==0:return dict(score=0,fraction=0,family=general,note='Required family domain anchors absent',cdd=False,complete=False)
+    if fraction==0:return dict(score=0,fraction=0,family=general,note='Required family domain anchors absent',cdd=False,complete=False,
+        combined_hits=combined,identity_competitors=refinement['competing_families'],rule_trace=refinement.get('trace',[]),baseline_gate=dict(configured=True,complete=False,reason_codes=['MISSING_REQUIRED_DOMAIN']))
     complete=fraction>=1
     groups=rule.get('ordered_domain_groups') or rule.get('ordered_domains')
     alternatives=rule.get('support_order_alternatives') or ([groups] if groups else [])
@@ -126,6 +133,7 @@ def architecture(row,family,rules):
     length_ok=not rule.get('min_length') or length>=rule['min_length']
     if general=='PINCH_like':length_ok=policy['pinch_length_range_inclusive'][0]<=length<=policy['pinch_length_range_inclusive'][1]
     if general=='PINCH_like' and counts['PF00412']!=5:complete=False
+    if general=='alpha_actinin' and (counts['PF00435']>4 or length>1500):complete=False
     cdd=cdd_support(row,general,policy)
     score=4 if complete and ordered and valid_coordinates and length_ok and (not specific or cdd) else 3 if complete else 2 if fraction>=.5 else 1
     notes=[f'family domain recovery={fraction:.2f}']
@@ -145,8 +153,22 @@ def architecture(row,family,rules):
         notes.append('stage 1 supported baseline rechecked against domain types/copies')
     core_models={model for group in requirements for model in group}
     concordant=any(h['model'] in core_models and 'CDD' in h['sources'] for h in combined)
+    reasons=[]
+    if not complete:reasons.append('MISSING_REQUIRED_DOMAIN')
+    if not ordered:reasons.append('DOMAIN_ORDER_CONFLICT')
+    if not valid_coordinates:reasons.append('DOMAIN_COORDINATES_UNCONFIRMED')
+    if not length_ok:reasons.append('LENGTH_OUTSIDE_RULE_RANGE')
+    if specific and not cdd:reasons.append('DIAGNOSTIC_CDD_UNCONFIRMED')
+    if refinement['competing_families']:reasons.append('COMPETING_FAMILY')
     return dict(score=score,fraction=fraction,family=call,note='; '.join(notes),cdd=cdd,complete=score==4,
-        combined_hits=combined,cdd_concordant=cdd or concordant,identity_competitors=refinement['competing_families'])
+        combined_hits=combined,cdd_concordant=cdd or concordant,identity_competitors=refinement['competing_families'],
+        rule_trace=refinement.get('trace',[]),baseline_gate=dict(configured=True,complete=score==4,required_domain_groups=requirements,
+            observed_counts=dict(counts),ordered=ordered,coordinates_passed=valid_coordinates,length_passed=length_ok,
+            diagnostic_cdd_required=specific,diagnostic_cdd_passed=cdd,reason_codes=reasons))
+
+
+def architecture(row,family,rules):
+    return broad_architecture(row,_architecture(row,family,rules))
 
 
 def benchmark_weight(row):
@@ -230,13 +252,15 @@ def audit_record(row,rules):
         discovery_rule=value(row,'discovery_rule') or 'stage1_hypothesis',pipeline_version=VERSION,
         rationale=result['note']+f'; reference species={ref_count}; orthology={orth:g}; motif={motif}; localization={loc}; '+decision)
     if 'combined_hits' not in result:result['combined_hits']=combined_domains(row,domains(row))
-    return annotate_name(out,result)
+    out['_rule_gate_trace']=result.get('rule_trace',[])
+    return annotate_resolution(annotate_name(out,result),result)
 
 
 def rank(row):
     return ({'assigned':3,'provisional':2,'unassigned':0}.get(row['assignment_status'],0),
         ({'family_supported':3,'target_panel_restricted':2,'orthology_support_insufficient':2,'orthology_unavailable':1,'provisional_family':1}.get(row['family_decision'],0),int(row.get('family_specific_CDD_support',False))),
         {'A':4,'B':3,'C':2,'D':1}[row['grade']],row['domain_score_0_4'],
+        2 if row.get('family_support_level')=='specific_supported' else 1 if row.get('family_support_level')=='broad_supported' else 0,
         int(row.get('row_origin')=='stage2_recovery'),row['orthology_score_0_3'],row['motif_score_0_2'],
         row['localization_score_0_1'],row['total_score_0_10'],{'supported_candidate':3,'supported':3,'provisional':2,'conflicting':1}.get(value(row,'status'),0))
 
@@ -253,9 +277,24 @@ def collapse_rows(rows):
             equally_ranked_hypotheses='; '.join(sorted({r['audit_family'] for r in ordered if rank(r)==rank(ordered[0])})))
         tied={r['assigned_family'] for r in ordered if rank(r)==rank(ordered[0])}-{'unassigned'}
         if len(tied)>1:
-            chosen.update(family_confidence='ambiguous',protein_identity_confidence='ambiguous',protein_name_scope='ambiguous_family',
-                protein_name='Putative unresolved '+' / '.join(sorted(tied))+' family protein',
-                naming_evidence=chosen['naming_evidence']+'; equally ranked competing families remain unresolved')
+            broad=common_broad_family(tied) if all(r['domain_score_0_4']==4 for r in ordered if rank(r)==rank(ordered[0])) else None
+            if broad:
+                chosen.update(assigned_family=broad,audit_family=broad,family_support_level='broad_supported',
+                    annotation_resolution='broad_family',protein_name_scope='broad_family',
+                    protein_name='Putative '+BROAD_LABELS[broad],protein_identity_confidence='supported_at_broad_family_scope',
+                    specific_identity_status='specific_lineage_or_paralogue_unresolved',unresolved_specific_families=';'.join(sorted(tied)))
+                trace=json.loads(chosen.get('identity_gate_trace') or '{}')
+                trace.update(tested_family=broad,unresolved_specific_families=sorted(tied),
+                             reason_codes=sorted(set(trace.get('reason_codes',[]))|{'SPECIFIC_IDENTITY_UNRESOLVED'}))
+                chosen['identity_gate_trace']=json.dumps(trace,sort_keys=True)
+            else:
+                chosen.update(family_confidence='ambiguous',protein_identity_confidence='ambiguous',protein_name_scope='ambiguous_family',
+                    family_support_level='ambiguous',annotation_resolution='ambiguous_family',
+                    protein_name='Putative unresolved '+' / '.join(sorted(tied))+' family protein',
+                    naming_evidence=chosen['naming_evidence']+'; equally ranked competing families remain unresolved')
+                trace=json.loads(chosen.get('identity_gate_trace') or '{}')
+                trace['reason_codes']=sorted(set(trace.get('reason_codes',[]))|{'COMPETING_FAMILY'})
+                chosen['identity_gate_trace']=json.dumps(trace,sort_keys=True)
         resolved.append(chosen)
     return sorted(resolved,key=unique_key)
 
@@ -296,7 +335,7 @@ def classify_rows(rows,rules):
     for row in audited:
         match=exclusions.get(unique_key(row))
         if match:
-            for key in ('stage2_excluded','exclusion_gate','control_class','control_accession','exclusion_reason','excluded_putative_family','excluded_protein_name'):
+            for key in ('stage2_excluded','exclusion_gate','exclusion_gates','control_class','control_accession','exclusion_reason','excluded_putative_family','excluded_protein_name'):
                 row[key]=match[key]
     if {unique_key(row) for row in resolved}|set(exclusions)!=set(grouped):raise ValueError('Retained and excluded protein accounting is incomplete')
     from identity_probability import annotate as calibrate_probabilities
@@ -322,14 +361,36 @@ def run_xlsx(source,dest,sheet_name,rules,supporting=None):
     for row in rows:
         if row['protein_id'] in cdd_by_id:row['NCBI_CDD_hits']=list(cdd_by_id[row['protein_id']].values())
     audited,resolved=classify_rows(rows,rules)
+    # Detailed rule explanations remain in TSV, never in an Excel cell whose
+    # 32767-character limit could truncate the structured evidence.
+    trace_fields=['Specie','protein_id','stage1_family','rule_id','family','reached','routing_scope',
+                  'diagnostic_cdd_matched','matched_cdd_models','pfam_anchor_passed','domain_groups','missing_domains',
+                  'order_passed','coordinates_passed','length_passed','maximum_counts_passed','matched','reason_codes']
+    with (dest.parent/'stage2_rule_gate_trace.tsv').open('w',encoding='utf-8',newline='') as handle:
+        writer=csv.DictWriter(handle,fieldnames=trace_fields,delimiter='\t',extrasaction='ignore');writer.writeheader()
+        for row in audited:
+            for trace in row.get('_rule_gate_trace',[]):
+                if not trace.get('reached') and not trace.get('diagnostic_cdd_matched'):continue
+                entry=dict(trace,Specie=row['Specie'],protein_id=row['protein_id'],stage1_family=row['preaudit_family'])
+                writer.writerow({k:json.dumps(v,sort_keys=True) if isinstance(v,(dict,list)) else v for k,v in entry.items()})
+    candidates=collapse_rows(audited)
+    with (dest.parent/'stage2_candidate_gate_trace.tsv').open('w',encoding='utf-8',newline='') as handle:
+        fields=['Specie','protein_id','assigned_family','family_support_level','annotation_resolution','grade',
+                'domain_gate_passed','stage2_excluded','exclusion_gate','identity_gate_trace']
+        writer=csv.DictWriter(handle,fieldnames=fields,delimiter='\t',extrasaction='ignore');writer.writeheader()
+        for row in candidates:
+            if row.get('stage2_excluded'):
+                trace=json.loads(row['identity_gate_trace']);trace['reason_codes']=sorted(set(trace.get('reason_codes',[]))|{'NEGATIVE_EXCLUSION'})
+                row=dict(row,identity_gate_trace=json.dumps(trace,sort_keys=True))
+            writer.writerow(row)
     screening=[]
     for row in audited:
-        item=dict(row);item['assigned_family']=row['stage1_assigned_family'];screening.append(item)
+        item={key:value for key,value in row.items() if not key.startswith('_')};item['assigned_family']=row['stage1_assigned_family'];screening.append(item)
     tables=dict(supporting.get('tables',{}))
     tables.update(Screening_hypothesis=screening,Audited_family_assignment=resolved)
     counts=Counter(row['grade'] for row in resolved)
     exclusions=list({unique_key(row):row for row in audited if row.get('stage2_excluded')}.values())
-    exclusion_fields=['Specie','protein_id','control_class','control_accession','exclusion_gate','exclusion_reason','excluded_putative_family','excluded_protein_name']
+    exclusion_fields=['Specie','protein_id','control_class','control_accession','exclusion_gate','exclusion_gates','exclusion_reason','excluded_putative_family','excluded_protein_name']
     with (dest.parent/'negative_control_exclusions.tsv').open('w',encoding='utf-8',newline='') as handle:
         writer=csv.DictWriter(handle,fieldnames=exclusion_fields,delimiter='\t',extrasaction='ignore')
         writer.writeheader();writer.writerows(exclusions)

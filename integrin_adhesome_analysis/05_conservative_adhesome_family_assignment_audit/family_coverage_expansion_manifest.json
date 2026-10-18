@@ -1,0 +1,104 @@
+{
+  "classification": "Reference-based configuration expansion",
+  "source_files": [
+    "calibration_set.xlsx",
+    "family_mapping_review.tsv",
+    "stage2_gate_diagnostics.tsv",
+    "family_rules.json",
+    "family_identity_rules_recalibrated.json"
+  ],
+  "positive_controls": 235,
+  "prior_configured_positive_controls": 78,
+  "previous_correct_supported_in_configured_scope": 77,
+  "new_family_configuration_count": 94,
+  "new_identity_refinement_proposals": 79,
+  "identity_proposal_positive_controls": 115,
+  "new_screen_only_configurations": 15,
+  "screen_only_positive_controls": 16,
+  "total_new_covered_positives": 131,
+  "potential_configuration_coverage_positives": 209,
+  "potential_configuration_coverage_fraction": 0.8893617021276595,
+  "unconfigured_positive_controls": 21,
+  "unconfigured_family_sets": 19,
+  "unconfigured_families": {
+    "nexilin_like": [
+      "Q0ZGT2"
+    ],
+    "supervillin_like": [
+      "O95425"
+    ],
+    "RACK1_like": [
+      "P63244"
+    ],
+    "synemin_like": [
+      "O15061"
+    ],
+    "polycystin_like": [
+      "P98161"
+    ],
+    "calreticulin_like": [
+      "P27797"
+    ],
+    "RAVER_like": [
+      "Q8IY67"
+    ],
+    "SPTLC_like": [
+      "O15269"
+    ],
+    "PPM_like": [
+      "Q96MI6",
+      "P49593"
+    ],
+    "PEAK_like": [
+      "Q9H792"
+    ],
+    "PPP6_regulatory_like": [
+      "O15084"
+    ],
+    "myomesin_like": [
+      "P52179"
+    ],
+    "CIB_like": [
+      "Q99828",
+      "O75838"
+    ],
+    "SRCIN1_like": [
+      "Q9C0H9"
+    ],
+    "layilin_like": [
+      "Q6UX15"
+    ],
+    "THY1_like": [
+      "P04216"
+    ],
+    "RAPGEF_like": [
+      "Q13905"
+    ],
+    "LIMK_like": [
+      "P53667"
+    ],
+    "TESK_like": [
+      "Q15569"
+    ]
+  },
+  "unmapped_expected_family_positive_controls": 5,
+  "screening_scope": "Pfam observed in calibration_set and matching raw NCBI_CDD text; proposed identity tier requires named curated cd-model hit across all supplied target positives",
+  "specificity_screen": "All 583 control sequences checked for simultaneous architecture and CDD cross-match; zero cross-matched existing other positives and negatives for added rules",
+  "baseline_assignment_note": "Of the 131 newly covered reference positives, 130 were recruited in Stage 1; one defensin (Q01524) was not recruited. Four already have supported membership decisions; two are correct parvin assignments and two are wrong ERM/spectrin assignments.",
+  "limitations": [
+    "Candidate rules have not been executed by original Stage 2 classifier",
+    "No numerical probability model refit",
+    "Many new families represented by one characterized sequence",
+    "Simultaneous Pfam and CDD evidence is not necessarily statistically independent",
+    "Adding family configuration is not equivalent to correct supported annotation",
+    "Distinct family identity and physical adhesome membership remain separate"
+  ],
+  "sha256": {
+    "family_rules.json": "33b7022986a28262da684ea31bb60e7d77807f7a497f5e79fb152cc1070485c6",
+    "family_identity_rules_recalibrated.json": "7df85d2febdcc67178d6b1d84fa991a96e36bbcdc1d7cb8a03b916669234e7e6",
+    "calibration_set.xlsx": "60b0717fadfc099b87ebbd848ff2db978b2d5047d33ae60af336d3fe559e5570",
+    "family_rules_expanded.json": "5583b06397cf6c03cbf5212b1343dc23e9af3dc7c6c7098dc0a8f00134ceb08c",
+    "family_identity_rules_expanded.json": "7026f17e214e5ddf271ce4c437a5e2ca56d4692799d734c15986ec2280bef747",
+    "family_coverage_expansion_audit.tsv": "c00425818230f92d9bcc9093a6d2e854a9f86172f90a1c02ab6a23a052792a5c"
+  }
+}

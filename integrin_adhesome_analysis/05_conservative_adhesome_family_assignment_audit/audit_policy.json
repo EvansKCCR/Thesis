@@ -43,7 +43,12 @@
     "Nck": "NCK[12]?",
     "Grb2": "GRB.?2|DRK",
     "Crk": "CRKL?",
-    "Shc": "SHC[1234]?"
+    "Shc": "SHC[1234]?",
+    "PTP_PEST": "PTPN(?:12|18|22)|PTPc N(?:12|18|22)|PTP PEST",
+    "alpha_actinin": "ACTININ|ACTN",
+    "paxillin_like": "PAXILLIN|LEUPAXIN",
+    "PDLIM_family": "PDLIM|PDZ PDLIM",
+    "zyxin_like": "ZYXIN|TRIP6|LPP|AJUBA|JUB|LIMD1|WTIP"
   },
   "grades": {
     "A": "complete family architecture gate and positive orthology support",
@@ -64,10 +69,21 @@
     "candidate_status"
   ],
   "observed_cdd_complements_pfam": true,
+  "diagnostic_dispatch_policy": "Reviewed rules may dispatch within the selected protein pool only with an observed diagnostic CDD model, coordinate-bearing compatible Pfam anchor and complete rule core; no target-name or calibration-label dispatch.",
+  "family_support_levels": {
+    "broad_supported": "Complete explicit broad-family core; specific lineage/paralogue remains unresolved",
+    "specific_supported": "Complete distinct-family gate at the reported scope; exact gene identity is not inferred",
+    "provisional": "Partial family evidence; not a passed supported gate",
+    "ambiguous": "Competing identities without an explicit supported common broad family",
+    "unresolved": "No accepted family identity"
+  },
+  "broad_family_gate_policy": "Only explicit actin, Src/Csk and PET-LIM shared full cores can resolve their narrower competing identities; generic PH/FERM/LIM hits and arbitrary grade C calls are not promoted.",
+  "gate_trace_outputs": ["stage2_rule_gate_trace.tsv", "stage2_candidate_gate_trace.tsv"],
   "identity_refinement_library": "family_identity_rules.json",
   "numerical_identity_probability": "Empirical isotonic assignment correctness calibration using positive adhesome controls only; leave-one-exact-sequence-out for overlapping queries. Reference-overlap context and uncertainty retained; not independent validation for novel lineages or an exact gene/paralogue probability.",
   "negative_control_policy": "Hard/background negatives are exclusion gates only, never identity training classes. Exact negative sequences or a complete related architecture with an observed negative-specific curated CDD model are excluded from final assignments and retained in negative_control_exclusions.tsv. Shared domains alone cannot exclude a protein.",
   "final_assignment_columns": "Compact populated view with putative_audited_family, protein_name and assignment_confidence; raw evidence retained separately",
   "identity_probability_model": "../02_calibration_set/identity_probability_model.json",
-  "identity_probability_reference_panel_policy": "Do not transfer probabilities silently to a changed orthology panel; recalibrate after panel expansion."
+  "identity_probability_reference_panel_policy": "Do not transfer probabilities silently to a changed orthology panel; recalibrate after panel expansion.",
+  "validation_revision": "Architecture-gated diagnostic CDD refinements; separate exclusion ablation, overlap strata and confidence tiers; no probability refit during code installation."
 }

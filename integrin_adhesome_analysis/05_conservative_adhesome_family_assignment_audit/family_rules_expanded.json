@@ -1,0 +1,5712 @@
+{
+  "schema_version": "5.0",
+  "status": "UNVALIDATED reference-guided rule proposals: thresholds & subfamily calls require benchmark calibration; no homology implies adhesome recruitment.",
+  "scope": "Hierarchical homology annotation for comparative adhesome candidate screening",
+  "model_requirements": {
+    "hard_gates": [
+      "compatible_domain_architecture_or_validated_partial_profile",
+      "nonconflicting_reference_subfamily_support_for_specific_labels"
+    ],
+    "accepted_identity_methods": [
+      "curated_reference",
+      "phylogeny",
+      "reciprocal_best_hit",
+      "calibrated_hmm"
+    ],
+    "reference_evidence_input_columns": [
+      "reference_subfamily",
+      "subfamily_support_method",
+      "reciprocal_reference_subfamily",
+      "phylogeny_support",
+      "subfamily_profile_calibrated",
+      "top_profile_subfamily",
+      "profile_score_margin",
+      "profile_domain_gate_verified"
+    ],
+    "orthology_rule": "Shared HOG is homology not orthology or paralog identity. Reciprocal lineage resolution required for specific calls.",
+    "benchmark_rule": "No E-values, bit score deltas, margin thresholds, or confidence grades are validated by this JSON. Calibrate per clade via held-out phylogenetic references and outgroups.",
+    "function_rule": "Protein identity and confirmed physical adhesome membership must be recorded separately.",
+    "topology_rule": "SignalP/DeepTMHMM parsed cautiously; secretion/TM can contradict intracellular scaffold identity and support ECM/receptor cases; not proof alone."
+  },
+  "families": {
+    "integrin_alpha": {
+      "module": "integrin_receptors",
+      "min_length": 500,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01839": 2
+        },
+        {
+          "PF01839": 1,
+          "PF08441": 1
+        },
+        {
+          "PF01839": 1,
+          "PF20805": 1
+        },
+        {
+          "PF01839": 1,
+          "PF20806": 1
+        },
+        {
+          "PF01839": 1,
+          "PF00357": 1
+        },
+        {
+          "PF08441": 1,
+          "PF20805": 1
+        }
+      ],
+      "requires_topology": true,
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01839",
+        "PF08441",
+        "PF20805",
+        "PF20806",
+        "PF00357"
+      ],
+      "diagnostic_domains": [
+        "PF08441",
+        "PF20805",
+        "PF20806",
+        "PF00357"
+      ],
+      "screening_specific": false,
+      "classification_note": "Variable detectable FG-GAP counts; alpha-specific stalk models recover divergent receptors. An alpha-I/VWA domain is optional, not required. No vertebrate alpha-subtype assignment.",
+      "ordered_domain_groups": [
+        [
+          "PF01839"
+        ],
+        [
+          "PF08441",
+          "PF20805",
+          "PF20806",
+          "PF00357"
+        ]
+      ],
+      "classification_level": "family",
+      "family_group": "integrin_alpha",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "integrin_alpha"
+    },
+    "integrin_beta": {
+      "module": "integrin_receptors",
+      "min_length": 400,
+      "diagnostic": true,
+      "domain_alternatives": [
+        {
+          "PF00362": 1
+        }
+      ],
+      "requires_topology": true,
+      "motif_c_terminal_window": 100,
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00362",
+        "PF08725"
+      ],
+      "diagnostic_domains": [
+        "PF00362",
+        "PF08725"
+      ],
+      "classification_level": "family",
+      "family_group": "integrin_beta",
+      "requires_identity_evidence": false,
+      "negative_class_competition": false,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "integrin_beta"
+    },
+    "collagen_like": {
+      "module": "extracellular_matrix",
+      "min_length": 150,
+      "diagnostic": true,
+      "domain_alternatives": [
+        {
+          "PF01391": 1
+        }
+      ],
+      "requires_topology": true,
+      "min_partial_fraction": 0.5,
+      "diagnostic_domains": [
+        "PF01391"
+      ],
+      "classification_level": "family",
+      "family_group": "collagen_like",
+      "requires_identity_evidence": false,
+      "negative_class_competition": false,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "collagen_like"
+    },
+    "laminin_like": {
+      "module": "extracellular_matrix",
+      "min_length": 400,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00055": 1,
+          "PF00053": 1
+        },
+        {
+          "PF00052": 1,
+          "PF02210": 1
+        }
+      ],
+      "requires_topology": true,
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00055",
+        "PF00052",
+        "PF00053",
+        "PF00054",
+        "PF02210"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "laminin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "laminin_like"
+    },
+    "fibronectin_III_ligand": {
+      "module": "extracellular_matrix",
+      "min_length": 150,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00041": 1
+        }
+      ],
+      "requires_topology": true,
+      "min_partial_fraction": 0.5,
+      "screening_only": true,
+      "classification_note": "Legacy generic FNIII screening bucket, not a fibronectin-family assignment; reference FN1 moved explicitly to fibronectin_like in v4.",
+      "classification_level": "screen",
+      "family_group": "fibronectin_III_ligand",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "fibronectin_III_ligand"
+    },
+    "talin": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 800,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00373": 1,
+          "PF01608": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01608"
+      ],
+      "classification_level": "family",
+      "family_group": "talin",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "talin"
+    },
+    "kindlin": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 400,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF18124": 1,
+          "PF00373": 1
+        },
+        {
+          "PF18124": 1,
+          "PF00169": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF18124"
+      ],
+      "diagnostic_domains": [
+        "PF18124"
+      ],
+      "classification_note": "Kindlin-specific N-terminal model plus FERM/PH; PH insertion can interrupt FERM detection; generic FERM plus PH alone is insufficient.",
+      "ordered_domain_groups": [
+        [
+          "PF18124"
+        ],
+        [
+          "PF00373",
+          "PF00169"
+        ]
+      ],
+      "support_requires_order": true,
+      "classification_level": "family",
+      "family_group": "kindlin",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "kindlin"
+    },
+    "vinculin": {
+      "module": "actin_linking",
+      "min_length": 500,
+      "diagnostic": true,
+      "domain_alternatives": [
+        {
+          "PF01044": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01044"
+      ],
+      "diagnostic_domains": [
+        "PF01044"
+      ],
+      "classification_level": "family",
+      "family_group": "vinculin",
+      "requires_identity_evidence": false,
+      "negative_class_competition": false,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "vinculin"
+    },
+    "filamin": {
+      "module": "actin_linking",
+      "min_length": 500,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00307": 1,
+          "PF00630": 2
+        }
+      ],
+      "ordered_domains": [
+        "PF00307",
+        "PF00630"
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00630"
+      ],
+      "classification_level": "family",
+      "family_group": "filamin",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "filamin"
+    },
+    "alpha_actinin": {
+      "module": "actin_linking",
+      "min_length": 400,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00307": 1,
+          "PF00435": 2
+        }
+      ],
+      "ordered_domains": [
+        "PF00307",
+        "PF00435"
+      ],
+      "min_partial_fraction": 0.5,
+      "classification_level": "family",
+      "family_group": "alpha_actinin",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "alpha_actinin"
+    },
+    "actin": {
+      "module": "actin_linking",
+      "min_length": 250,
+      "diagnostic": true,
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "diagnostic_domains": [
+        "PF00022"
+      ],
+      "classification_level": "screen",
+      "family_group": "actin_superfamily",
+      "screening_only": true,
+      "classification_note": "Legacy name: do not classify as conventional actin from PF00022; evaluate actin_conventional versus ARP1-11.",
+      "requires_identity_evidence": false,
+      "negative_class_competition": false,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "actin"
+    },
+    "cofilin": {
+      "module": "actin_linking",
+      "min_length": 90,
+      "diagnostic": true,
+      "domain_alternatives": [
+        {
+          "PF00241": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "diagnostic_domains": [
+        "PF00241"
+      ],
+      "classification_level": "screen",
+      "family_group": "ADF_H_superfamily",
+      "screening_only": true,
+      "classification_note": "Legacy name: PF00241 screens all ADF-H homologs; cannot diagnose CFL/ADF.",
+      "requires_identity_evidence": false,
+      "negative_class_competition": false,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "cofilin"
+    },
+    "profilin": {
+      "module": "actin_linking",
+      "min_length": 80,
+      "diagnostic": true,
+      "domain_alternatives": [
+        {
+          "PF00235": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "diagnostic_domains": [
+        "PF00235"
+      ],
+      "classification_level": "family",
+      "family_group": "profilin",
+      "requires_identity_evidence": false,
+      "negative_class_competition": false,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "profilin"
+    },
+    "paxillin_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 200,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00412"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "LIM_scaffolds",
+      "screening_only": true,
+      "classification_note": "Legacy 3-LIM ambiguous screen; use PF03535/LD and reference sequence to assess paxillin family.",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "paxillin_like"
+    },
+    "zyxin_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 200,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00412"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "LIM_scaffolds",
+      "screening_only": true,
+      "classification_note": "Legacy 3-LIM ambiguous screen; require specific reference evidence and negative controls.",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "zyxin_like"
+    },
+    "FAK": {
+      "module": "downstream_signalling",
+      "min_length": 500,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00373": 1,
+          "PF00069": 1,
+          "PF03623": 1
+        },
+        {
+          "PF00373": 1,
+          "PF07714": 1,
+          "PF03623": 1
+        },
+        {
+          "PF21477": 1,
+          "PF00069": 1,
+          "PF03623": 1
+        },
+        {
+          "PF21477": 1,
+          "PF07714": 1,
+          "PF03623": 1
+        },
+        {
+          "PF18038": 1,
+          "PF07714": 1,
+          "PF03623": 1
+        },
+        {
+          "PF18038": 1,
+          "PF00069": 1,
+          "PF03623": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF03623",
+        "PF21477",
+        "PF18038"
+      ],
+      "diagnostic_domains": [
+        "PF21477"
+      ],
+      "classification_note": "FAK-family includes PTK2/PTK2B/kin-32 relatives, including inactive kinases; PF03623 is focal adhesion targeting. PF02259 is PIKK FAT, not FAK. Human Y397 is not a transferable position.",
+      "ordered_domain_groups": [
+        [
+          "PF00373",
+          "PF21477",
+          "PF18038"
+        ],
+        [
+          "PF00069",
+          "PF07714"
+        ],
+        [
+          "PF03623"
+        ]
+      ],
+      "support_requires_order": true,
+      "support_order_alternatives": [
+        [
+          [
+            "PF00373",
+            "PF21477",
+            "PF18038"
+          ],
+          [
+            "PF00069",
+            "PF07714"
+          ],
+          [
+            "PF03623"
+          ]
+        ],
+        [
+          [
+            "PF21477"
+          ],
+          [
+            "PF00069",
+            "PF07714"
+          ]
+        ]
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "FAK",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "FAK"
+    },
+    "Src": {
+      "module": "downstream_signalling",
+      "min_length": 300,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "ordered_domains": [
+        "PF00018",
+        "PF00017"
+      ],
+      "min_partial_fraction": 0.5,
+      "classification_level": "screen",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "screening_only": true,
+      "classification_note": "Legacy name: generic SH3-SH2-TK screen, not an SFK assignment.",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "Src"
+    },
+    "ILK": {
+      "module": "downstream_signalling",
+      "min_length": 300,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF12796": 1,
+          "PF07714": 1
+        },
+        {
+          "PF12796": 1,
+          "PF00069": 1
+        },
+        {
+          "PF00023": 2,
+          "PF07714": 1
+        },
+        {
+          "PF00023": 2,
+          "PF00069": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "ILK/pseudokinase: PF12796 Ank_2 plus kinase-like PF07714/PF00069, or legacy PF00023 repeats plus kinase. Alternative ankyrin HMMs are not additive repeat counts; catalytic activity is not required. Reciprocal evidence is needed.",
+      "ordered_domain_groups": [
+        [
+          "PF12796",
+          "PF00023"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "classification_level": "family",
+      "family_group": "ILK",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "ILK"
+    },
+    "PTP_PEST": {
+      "module": "downstream_signalling",
+      "min_length": 150,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00102": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "PTPN12/PTPN18/PTPN22-related PEST group, not one-to-one orthology. Requires reciprocal similarity extending at least 60 residues beyond catalytic-domain end or independent phylogeny; generic PxxP/PEST composition is not diagnostic.",
+      "noncatalytic_alignment": {
+        "domains": [
+          "PF00102"
+        ],
+        "minimum_residues": 60
+      },
+      "classification_level": "family",
+      "family_group": "PTP_PEST",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "PTP_PEST"
+    },
+    "LAR_RPTP": {
+      "module": "downstream_signalling",
+      "min_length": 500,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00102": 2,
+          "PF00041": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "requires_topology": true,
+      "classification_note": "LAR/type-IIa receptor PTP group (PTPRF/PTPRD/PTPRS); truncated relatives may be recovered by homology",
+      "classification_level": "family",
+      "family_group": "LAR_RPTP",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "LAR_RPTP"
+    },
+    "RPTP_alpha_epsilon": {
+      "module": "downstream_signalling",
+      "min_length": 400,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00102": 2
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "PTPRA/PTPRE/type-IV group; membrane topology is isoform dependent",
+      "classification_level": "family",
+      "family_group": "RPTP_alpha_epsilon",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "RPTP_alpha_epsilon"
+    },
+    "generic_kinase_screen": {
+      "module": "downstream_signalling",
+      "min_length": 180,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00069": 1
+        },
+        {
+          "PF07714": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_only": true,
+      "classification_note": "Generic catalytic-domain bucket; not an orthologous family or adhesion assignment",
+      "classification_level": "screen",
+      "family_group": "generic_kinase_screen",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "generic_kinase_screen"
+    },
+    "generic_PTP_screen": {
+      "module": "downstream_signalling",
+      "min_length": 150,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00102": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_only": true,
+      "classification_note": "Generic catalytic-domain bucket; not an orthologous family or adhesion assignment",
+      "classification_level": "screen",
+      "family_group": "generic_PTP_screen",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "generic_PTP_screen"
+    },
+    "fibronectin_like": {
+      "module": "extracellular_matrix",
+      "min_length": 400,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00039": 1,
+          "PF00040": 1,
+          "PF00041": 1
+        }
+      ],
+      "screening_domains": [
+        "PF00039",
+        "PF00040",
+        "PF00041"
+      ],
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "ordered_domain_groups": [
+        [
+          "PF00039"
+        ],
+        [
+          "PF00040"
+        ],
+        [
+          "PF00041"
+        ]
+      ],
+      "support_order_alternatives": [
+        [
+          [
+            "PF00039"
+          ],
+          [
+            "PF00040"
+          ],
+          [
+            "PF00041"
+          ]
+        ],
+        [
+          [
+            "PF00039"
+          ],
+          [
+            "PF00041"
+          ]
+        ]
+      ],
+      "support_requires_order": true,
+      "requires_topology": true,
+      "classification_note": "FN1/FN2/FN3 combination; counts need not match vertebrate FN1. Isolated repeat types are nonspecific. Partial architectures remain hypotheses unless independently resolved; no integrin-binding claim.",
+      "classification_level": "family",
+      "family_group": "fibronectin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "fibronectin_like"
+    },
+    "vitronectin_like": {
+      "module": "extracellular_matrix",
+      "min_length": 200,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01033": 1,
+          "PF00045": 1
+        }
+      ],
+      "screening_domains": [
+        "PF01033",
+        "PF00045"
+      ],
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "ordered_domain_groups": [
+        [
+          "PF01033"
+        ],
+        [
+          "PF00045"
+        ]
+      ],
+      "support_requires_order": true,
+      "requires_topology": true,
+      "classification_note": "Somatomedin-B followed by hemopexin-like region plus reciprocal family evidence. SMB occurs in ENPPs and hemopexin in proteases/HPX; neither alone assigns vitronectin.",
+      "classification_level": "family",
+      "family_group": "vitronectin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "vitronectin_like"
+    },
+    "generic_ECM_domain_screen": {
+      "module": "extracellular_matrix",
+      "min_length": 50,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00039": 1
+        },
+        {
+          "PF00040": 1
+        },
+        {
+          "PF01033": 1
+        },
+        {
+          "PF00045": 1
+        }
+      ],
+      "screening_only": true,
+      "min_partial_fraction": 0.5,
+      "classification_note": "Generic FN1/FN2/SMB/hemopexin domain bucket; extracellular location and adhesome membership are not inferred from a domain alone.",
+      "classification_level": "screen",
+      "family_group": "generic_ECM_domain_screen",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "generic_ECM_domain_screen"
+    },
+    "Syk": {
+      "module": "downstream_signalling",
+      "min_length": 350,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00017": 2,
+          "PF07714": 1
+        },
+        {
+          "PF00017": 2,
+          "PF00069": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00017"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "Syk/ZAP70 family, not a one-to-one SYK orthology call. Tandem SH2 before kinase plus reciprocal family evidence; incomplete sequences stay provisional.",
+      "family_group": "SYK_ZAP70",
+      "classification_level": "family",
+      "requires_identity_evidence": true,
+      "reference_labels": [
+        "SYK",
+        "ZAP70",
+        "ZAP-70"
+      ],
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "Syk"
+    },
+    "Csk": {
+      "module": "downstream_signalling",
+      "min_length": 300,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "CSK/MATK family. Shares SH3-SH2-kinase architecture with Src; reciprocal competition is essential. No Csk-specific motif or catalytic activity is inferred.",
+      "classification_level": "screen",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "screening_only": true,
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "Csk"
+    },
+    "Nck": {
+      "module": "downstream_signalling",
+      "min_length": 200,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00018": 3,
+          "PF00017": 1
+        },
+        {
+          "PF00018": 2,
+          "PF00017": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "NCK1/NCK2/dock family. Usually three SH3 domains before SH2; two detected SH3 are an allowed comparative alternative because NCK2 has an SH3_9 call outside the current HMM panel. No vertebrate paralogue assignment.",
+      "classification_level": "family",
+      "family_group": "Nck",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "Nck"
+    },
+    "Grb2": {
+      "module": "downstream_signalling",
+      "min_length": 140,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00018": 2,
+          "PF00017": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF00018"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "GRB2/drk family architecture; reciprocal evidence required. Shared architectures cannot resolve vertebrate paralogues.",
+      "classification_level": "family",
+      "family_group": "Grb2",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "Grb2"
+    },
+    "Crk": {
+      "module": "downstream_signalling",
+      "min_length": 140,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00017": 1,
+          "PF00018": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00017"
+        ],
+        [
+          "PF00018"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "CRK/CRKL family. SH2 before SH3 permits CRK-I and SH3_2 domains not represented in the current panel; reciprocal family evidence required.",
+      "classification_level": "family",
+      "family_group": "Crk",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "Crk"
+    },
+    "Shc": {
+      "module": "downstream_signalling",
+      "min_length": 250,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00640": 1,
+          "PF00017": 1
+        }
+      ],
+      "ordered_domain_groups": [
+        [
+          "PF00640"
+        ],
+        [
+          "PF00017"
+        ]
+      ],
+      "support_requires_order": true,
+      "screening_specific": false,
+      "min_partial_fraction": 0.5,
+      "requires_family_evidence": true,
+      "classification_note": "SHC1/2/3/4 family. PTB/PID before SH2 with reciprocal family evidence; no phosphosite or vertebrate paralogue assignment.",
+      "classification_level": "family",
+      "family_group": "Shc",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "label": "Shc"
+    },
+    "actin_superfamily_screen": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "screen",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 100,
+      "requires_identity_evidence": false,
+      "classification_note": "Actin-fold screening only; conventional actins and Arps share PF00022.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "label": "actin_superfamily_screen"
+    },
+    "actin_conventional": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 250,
+      "requires_identity_evidence": true,
+      "classification_note": "Conventional actin; do not interpret PF00022 as distinguishing from ARPs. Cytoplasmic/muscle paralog names require species-resolved phylogeny.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTB",
+        "ACTG1",
+        "ACTA1",
+        "ACTA2",
+        "ACTC1",
+        "ACTG2",
+        "ACTIN",
+        "ACT1"
+      ],
+      "label": "actin_conventional"
+    },
+    "ARP1": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 1; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR1",
+        "ACTR1A",
+        "ACTR1B",
+        "ARP1",
+        "ARP1A",
+        "ARP1B"
+      ],
+      "label": "ARP1"
+    },
+    "ARP2": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 2; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR2",
+        "ARP2"
+      ],
+      "label": "ARP2"
+    },
+    "ARP3": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 3; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR3",
+        "ARP3"
+      ],
+      "label": "ARP3"
+    },
+    "ARP4": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 4; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTL6A",
+        "ACTL6B",
+        "ACTR4",
+        "ARP4"
+      ],
+      "label": "ARP4"
+    },
+    "ARP5": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 5; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR5",
+        "ARP5"
+      ],
+      "label": "ARP5"
+    },
+    "ARP6": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 6; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR6",
+        "ARP6"
+      ],
+      "label": "ARP6"
+    },
+    "ARP7": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 7; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR7",
+        "ARP7"
+      ],
+      "allow_profile_rescue": true,
+      "label": "ARP7"
+    },
+    "ARP8": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 8; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR8",
+        "ARP8"
+      ],
+      "allow_profile_rescue": true,
+      "label": "ARP8"
+    },
+    "ARP9": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 9; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR9",
+        "ARP9"
+      ],
+      "allow_profile_rescue": true,
+      "label": "ARP9"
+    },
+    "ARP10": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 10; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR10",
+        "ARP10"
+      ],
+      "allow_profile_rescue": true,
+      "label": "ARP10"
+    },
+    "ARP11": {
+      "module": "actin_linking",
+      "family_group": "actin_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00022": 1
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": true,
+      "classification_note": "Actin-related protein subfamily 11; conserved fold is insufficient; require reference-profile competition/phylogeny. Some Arps are primarily nuclear and not adhesion-specific.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "actin_superfamily_screen",
+      "reference_labels": [
+        "ACTR10",
+        "ACTR11",
+        "ARP11"
+      ],
+      "allow_profile_rescue": true,
+      "label": "ARP11"
+    },
+    "ADF_H_screen": {
+      "module": "actin_linking",
+      "family_group": "ADF_H_superfamily",
+      "classification_level": "screen",
+      "domain_alternatives": [
+        {
+          "PF00241": 1
+        }
+      ],
+      "min_length": 60,
+      "requires_identity_evidence": false,
+      "classification_note": "ADF-H homology screening: cofilin, twinfilin, drebrin/Abp1 and GMF-like proteins require separation.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "label": "ADF_H_screen"
+    },
+    "ADF_cofilin": {
+      "module": "actin_linking",
+      "family_group": "ADF_H_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00241": 1
+        }
+      ],
+      "min_length": 90,
+      "requires_identity_evidence": true,
+      "classification_note": "Single ADF-H class; identical domain count occurs in other ADF-H groups.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "ADF_H_screen",
+      "reference_labels": [
+        "CFL1",
+        "CFL2",
+        "DSTN",
+        "ADF",
+        "COFILIN",
+        "COF1"
+      ],
+      "label": "ADF_cofilin"
+    },
+    "twinfilin": {
+      "module": "actin_linking",
+      "family_group": "ADF_H_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00241": 2
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "Two tandem ADF-H domains; one-domain truncations should remain provisional rather than be called cofilin.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "ADF_H_screen",
+      "reference_labels": [
+        "TWF1",
+        "TWF2",
+        "TWINFILIN"
+      ],
+      "label": "twinfilin"
+    },
+    "drebrin_Abp1": {
+      "module": "actin_linking",
+      "family_group": "ADF_H_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00241": 1
+        }
+      ],
+      "min_length": 120,
+      "requires_identity_evidence": true,
+      "classification_note": "Drebrin/Abp1 group; SH3 is present in some members but not all; do not require SH3. Compete with cofilin and GMF.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "ADF_H_screen",
+      "reference_labels": [
+        "DBN1",
+        "DBNL",
+        "DREBRIN",
+        "ABP1",
+        "SH3P7"
+      ],
+      "label": "drebrin_Abp1"
+    },
+    "GMF": {
+      "module": "actin_linking",
+      "family_group": "ADF_H_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00241": 1
+        }
+      ],
+      "min_length": 100,
+      "requires_identity_evidence": true,
+      "classification_note": "Divergent ADF-H/glia maturation factor branch; Pfam absence possible; allow curated/profile partial recovery, not motif-only assignment.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "ADF_H_screen",
+      "reference_labels": [
+        "GMFA",
+        "GMFB",
+        "GMF",
+        "GLIA MATURATION FACTOR"
+      ],
+      "allow_profile_rescue": true,
+      "label": "GMF"
+    },
+    "coactosin": {
+      "module": "actin_linking",
+      "family_group": "ADF_H_superfamily",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00241": 1
+        }
+      ],
+      "min_length": 90,
+      "requires_identity_evidence": true,
+      "classification_note": "ADF-H homolog related to drebrin group; do not relabel as cofilin automatically.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "ADF_H_screen",
+      "reference_labels": [
+        "COTL1",
+        "COACTOSIN"
+      ],
+      "label": "coactosin"
+    },
+    "LIM_scaffold_screen": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "screen",
+      "domain_alternatives": [
+        {
+          "PF00412": 1
+        }
+      ],
+      "min_length": 50,
+      "requires_identity_evidence": false,
+      "classification_note": "LIM zinc fingers are highly promiscuous; nuclear LIM-only/homeodomain/PDLIM proteins are adversarial negatives.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "label": "LIM_scaffold_screen"
+    },
+    "PINCH_like": {
+      "module": "membrane_proximal_adaptors",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00412": 5
+        }
+      ],
+      "min_length": 230,
+      "requires_identity_evidence": true,
+      "classification_note": "Five LIM domains characteristic of PINCH; must distinguish other multi-LIM proteins and verify family profile; four detected LIMs plus identity may be fragment.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "LIM_scaffold_screen",
+      "reference_labels": [
+        "LIMS1",
+        "LIMS2",
+        "PINCH",
+        "PINCH1",
+        "PINCH2"
+      ],
+      "label": "PINCH_like"
+    },
+    "paxillin_family": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "family",
+      "domain_alternatives": [
+        {
+          "PF03535": 1,
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "Paxillin-type N-terminal LD/PF03535 plus C-terminal LIMs; four LIM domains often expected; CDD paxillin LIM models helpful but must not distinguish PXN/LPXN/TGFB1I1 by themselves.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF03535"
+        ],
+        [
+          "PF00412"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "LIM_scaffold_screen",
+      "reference_labels": [
+        "PXN",
+        "TGFB1I1",
+        "LPXN",
+        "PAXILLIN",
+        "HIC5",
+        "HIC-5",
+        "LEUPAXIN"
+      ],
+      "label": "paxillin_family"
+    },
+    "PXN": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF03535": 1,
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "PXN: requires paralog-resolving reference evidence; generic paxillin LIM or LD architecture does not discriminate.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF03535"
+        ],
+        [
+          "PF00412"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "paxillin_family",
+      "reference_labels": [
+        "PXN",
+        "PAXILLIN"
+      ],
+      "label": "PXN"
+    },
+    "LPXN": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF03535": 1,
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "LPXN: requires paralog-resolving reference evidence; generic paxillin LIM or LD architecture does not discriminate.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF03535"
+        ],
+        [
+          "PF00412"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "paxillin_family",
+      "reference_labels": [
+        "LPXN",
+        "LEUPAXIN"
+      ],
+      "label": "LPXN"
+    },
+    "TGFB1I1": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF03535": 1,
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "TGFB1I1: requires paralog-resolving reference evidence; generic paxillin LIM or LD architecture does not discriminate.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF03535"
+        ],
+        [
+          "PF00412"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "paxillin_family",
+      "reference_labels": [
+        "TGFB1I1",
+        "HIC5",
+        "HIC-5"
+      ],
+      "label": "TGFB1I1"
+    },
+    "zyxin_family": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "family",
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "Three C-terminal LIM domains and variable proline-rich N-terminus; architecture alone overlaps many LIM proteins.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "LIM_scaffold_screen",
+      "reference_labels": [
+        "ZYX",
+        "LPP",
+        "TRIP6",
+        "AJUBA",
+        "LIMD1",
+        "WTIP",
+        "FBLIM1"
+      ],
+      "label": "zyxin_family"
+    },
+    "ZYX": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "ZYX; branch=zyxin_core. Triplicate LIM arrangement cannot distinguish these paralogous proteins; reference-based phylogeny is mandatory.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "zyxin_family",
+      "reference_labels": [
+        "ZYX",
+        "ZYXIN"
+      ],
+      "label": "ZYX"
+    },
+    "LPP": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "LPP; branch=zyxin_core. Triplicate LIM arrangement cannot distinguish these paralogous proteins; reference-based phylogeny is mandatory.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "zyxin_family",
+      "reference_labels": [
+        "LPP",
+        "LIPOMA PREFERRED PARTNER"
+      ],
+      "label": "LPP"
+    },
+    "TRIP6": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "TRIP6; branch=zyxin_core. Triplicate LIM arrangement cannot distinguish these paralogous proteins; reference-based phylogeny is mandatory.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "zyxin_family",
+      "reference_labels": [
+        "TRIP6"
+      ],
+      "label": "TRIP6"
+    },
+    "AJUBA": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "AJUBA; branch=ajuba. Triplicate LIM arrangement cannot distinguish these paralogous proteins; reference-based phylogeny is mandatory.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "zyxin_family",
+      "reference_labels": [
+        "AJUBA",
+        "JUB"
+      ],
+      "label": "AJUBA"
+    },
+    "LIMD1": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "LIMD1; branch=ajuba. Triplicate LIM arrangement cannot distinguish these paralogous proteins; reference-based phylogeny is mandatory.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "zyxin_family",
+      "reference_labels": [
+        "LIMD1"
+      ],
+      "label": "LIMD1"
+    },
+    "WTIP": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "WTIP; branch=ajuba. Triplicate LIM arrangement cannot distinguish these paralogous proteins; reference-based phylogeny is mandatory.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "zyxin_family",
+      "reference_labels": [
+        "WTIP"
+      ],
+      "label": "WTIP"
+    },
+    "FBLIM1": {
+      "module": "focal_adhesion_scaffolds",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00412": 3
+        }
+      ],
+      "min_length": 200,
+      "requires_identity_evidence": true,
+      "classification_note": "FBLIM1; branch=FBLIM1. Triplicate LIM arrangement cannot distinguish these paralogous proteins; reference-based phylogeny is mandatory.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "parent_family": "zyxin_family",
+      "reference_labels": [
+        "FBLIM1",
+        "MIGFILIN"
+      ],
+      "label": "FBLIM1"
+    },
+    "PDLIM_family": {
+      "module": "actin_linking",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "family",
+      "domain_alternatives": [
+        {
+          "PF00595": 1,
+          "PF00412": 1
+        }
+      ],
+      "min_length": 150,
+      "requires_identity_evidence": false,
+      "classification_note": "PDZ (PF00595), followed by LIM (PF00412); PF00307 is calponin homology and is not a PDZ anchor. Important competitor for zyxin/PINCH.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00595"
+        ],
+        [
+          "PF00412"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "LIM_scaffold_screen",
+      "label": "PDLIM_family"
+    },
+    "LHX_LIM_homeobox_screen": {
+      "module": "other_LIM",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "screen",
+      "domain_alternatives": [
+        {
+          "PF00412": 2,
+          "PF00046": 1
+        }
+      ],
+      "min_length": 170,
+      "requires_identity_evidence": false,
+      "classification_note": "Two LIM + homeodomain transcription factors; negative class for adhesion LIM scaffolds.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "label": "LHX_LIM_homeobox_screen"
+    },
+    "FHL_screen": {
+      "module": "other_LIM",
+      "family_group": "LIM_scaffolds",
+      "classification_level": "screen",
+      "domain_alternatives": [
+        {
+          "PF00412": 4
+        }
+      ],
+      "min_length": 180,
+      "requires_identity_evidence": false,
+      "classification_note": "Four-and-a-half LIM proteins; repeated LIM does not imply PINCH.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "label": "FHL_screen"
+    },
+    "SH3_SH2_TK_screen": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "screen",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 250,
+      "requires_identity_evidence": false,
+      "classification_note": "Shared Src/Csk/Abl/Tec/FRK/BRK module; broad-screen only.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "label": "SH3_SH2_TK_screen"
+    },
+    "Src_family": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "family",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "Src-family tyrosine kinases with SH4 membrane-anchor region and typical regulatory tail; other kinase families share SH3-SH2-TK. Myristoylation and tail Tyr are not standalone identification tests.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "SH3_SH2_TK_screen",
+      "reference_labels": [
+        "SRC",
+        "FYN",
+        "YES1",
+        "LYN",
+        "LCK",
+        "HCK",
+        "BLK",
+        "FGR",
+        "SFK"
+      ],
+      "label": "Src_family"
+    },
+    "SRC": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "SRC Src paralog; require split-aware phylogeny/RBH against other Src paralogs.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Src_family",
+      "reference_labels": [
+        "SRC",
+        "C-SRC"
+      ],
+      "label": "SRC"
+    },
+    "FYN": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "FYN Src paralog; require split-aware phylogeny/RBH against other Src paralogs.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Src_family",
+      "reference_labels": [
+        "FYN"
+      ],
+      "label": "FYN"
+    },
+    "YES1": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "YES1 Src paralog; require split-aware phylogeny/RBH against other Src paralogs.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Src_family",
+      "reference_labels": [
+        "YES1",
+        "YES"
+      ],
+      "label": "YES1"
+    },
+    "LYN": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "LYN Src paralog; require split-aware phylogeny/RBH against other Src paralogs.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Src_family",
+      "reference_labels": [
+        "LYN"
+      ],
+      "label": "LYN"
+    },
+    "LCK": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "LCK Src paralog; require split-aware phylogeny/RBH against other Src paralogs.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Src_family",
+      "reference_labels": [
+        "LCK"
+      ],
+      "label": "LCK"
+    },
+    "HCK": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "HCK Src paralog; require split-aware phylogeny/RBH against other Src paralogs.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Src_family",
+      "reference_labels": [
+        "HCK"
+      ],
+      "label": "HCK"
+    },
+    "BLK": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "BLK Src paralog; require split-aware phylogeny/RBH against other Src paralogs.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Src_family",
+      "reference_labels": [
+        "BLK"
+      ],
+      "label": "BLK"
+    },
+    "FGR": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "FGR Src paralog; require split-aware phylogeny/RBH against other Src paralogs.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Src_family",
+      "reference_labels": [
+        "FGR"
+      ],
+      "label": "FGR"
+    },
+    "Csk_family": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "family",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "CSK/MATK share SH3-SH2-kinase order with Src. Family-specific profile/phylogenetic evidence required.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "SH3_SH2_TK_screen",
+      "reference_labels": [
+        "CSK",
+        "MATK",
+        "CHK"
+      ],
+      "label": "Csk_family"
+    },
+    "CSK": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "CSK subfamily: do not infer from the domain architecture or Csk/Chk motif alone.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Csk_family",
+      "reference_labels": [
+        "CSK"
+      ],
+      "label": "CSK"
+    },
+    "MATK": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "MATK subfamily: do not infer from the domain architecture or Csk/Chk motif alone.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Csk_family",
+      "reference_labels": [
+        "MATK",
+        "CHK"
+      ],
+      "label": "MATK"
+    },
+    "Abl_family": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "family",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 450,
+      "requires_identity_evidence": true,
+      "classification_note": "Abl-family kinases often contain C-terminal extended actin-binding region (may be missing from isoforms/fragments); resolve from the competing SH3-SH2-TK families by phylogeny.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "SH3_SH2_TK_screen",
+      "reference_labels": [
+        "ABL1",
+        "ABL2",
+        "ABL",
+        "ARG"
+      ],
+      "label": "Abl_family"
+    },
+    "ABL1": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 450,
+      "requires_identity_evidence": true,
+      "classification_note": "ABL1; ABL1 versus ABL2 requires paralog resolution, not kinase-core architecture.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Abl_family",
+      "reference_labels": [
+        "ABL1",
+        "ABL",
+        "C-ABL"
+      ],
+      "label": "ABL1"
+    },
+    "ABL2": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 450,
+      "requires_identity_evidence": true,
+      "classification_note": "ABL2; ABL1 versus ABL2 requires paralog resolution, not kinase-core architecture.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Abl_family",
+      "reference_labels": [
+        "ABL2",
+        "ARG"
+      ],
+      "label": "ABL2"
+    },
+    "Tec_family": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "family",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "Tec-family kinases typically PH/TH-SH3-SH2-kinase. TXK is exceptional: its N-terminal region lacks PH-TH. Family identity requires competing profile/phylogeny.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "SH3_SH2_TK_screen",
+      "reference_labels": [
+        "BTK",
+        "TEC",
+        "ITK",
+        "BMX",
+        "TXK",
+        "RLK"
+      ],
+      "label": "Tec_family"
+    },
+    "BTK": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00169": 1,
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00169": 1,
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "BTK Tec family; TXK lacks PH-TH and requires non-architecture subfamily evidence. PH domain is not unique to Tec kinases.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00169"
+        ],
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Tec_family",
+      "reference_labels": [
+        "BTK",
+        "BRUTONS TYROSINE KINASE"
+      ],
+      "label": "BTK"
+    },
+    "TEC": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00169": 1,
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00169": 1,
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "TEC Tec family; TXK lacks PH-TH and requires non-architecture subfamily evidence. PH domain is not unique to Tec kinases.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00169"
+        ],
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Tec_family",
+      "reference_labels": [
+        "TEC"
+      ],
+      "label": "TEC"
+    },
+    "ITK": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00169": 1,
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00169": 1,
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "ITK Tec family; TXK lacks PH-TH and requires non-architecture subfamily evidence. PH domain is not unique to Tec kinases.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00169"
+        ],
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Tec_family",
+      "reference_labels": [
+        "ITK",
+        "EMT"
+      ],
+      "label": "ITK"
+    },
+    "BMX": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00169": 1,
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00169": 1,
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "BMX Tec family; TXK lacks PH-TH and requires non-architecture subfamily evidence. PH domain is not unique to Tec kinases.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00169"
+        ],
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Tec_family",
+      "reference_labels": [
+        "BMX",
+        "ETK"
+      ],
+      "label": "BMX"
+    },
+    "TXK": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 300,
+      "requires_identity_evidence": true,
+      "classification_note": "TXK Tec family; TXK lacks PH-TH and requires non-architecture subfamily evidence. PH domain is not unique to Tec kinases.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Tec_family",
+      "reference_labels": [
+        "TXK",
+        "RLK"
+      ],
+      "label": "TXK"
+    },
+    "FRK_PTK6_SRMS_family": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "family",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 250,
+      "requires_identity_evidence": true,
+      "classification_note": "FRK/PTK6/SRMS are essential outgroups for Src/Csk/ABL/Tec competitions.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "SH3_SH2_TK_screen",
+      "reference_labels": [
+        "FRK",
+        "PTK6",
+        "BRK",
+        "SRMS"
+      ],
+      "label": "FRK_PTK6_SRMS_family"
+    },
+    "FRK": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 250,
+      "requires_identity_evidence": true,
+      "classification_note": "FRK, negative competitor for conventional Src family.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "FRK_PTK6_SRMS_family",
+      "reference_labels": [
+        "FRK"
+      ],
+      "label": "FRK"
+    },
+    "PTK6": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 250,
+      "requires_identity_evidence": true,
+      "classification_note": "PTK6, negative competitor for conventional Src family.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "FRK_PTK6_SRMS_family",
+      "reference_labels": [
+        "PTK6",
+        "BRK"
+      ],
+      "label": "PTK6"
+    },
+    "SRMS": {
+      "module": "downstream_signalling",
+      "family_group": "nonreceptor_SH3_SH2_kinases",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF07714": 1
+        },
+        {
+          "PF00018": 1,
+          "PF00017": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 250,
+      "requires_identity_evidence": true,
+      "classification_note": "SRMS, negative competitor for conventional Src family.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00018"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "FRK_PTK6_SRMS_family",
+      "reference_labels": [
+        "SRMS"
+      ],
+      "label": "SRMS"
+    },
+    "SYK": {
+      "module": "downstream_signalling",
+      "family_group": "SYK_ZAP70",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00017": 2,
+          "PF07714": 1
+        },
+        {
+          "PF00017": 2,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 350,
+      "requires_identity_evidence": true,
+      "classification_note": "Syk rather than ZAP70 requires phylogenetic support.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00017"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Syk",
+      "reference_labels": [
+        "SYK"
+      ],
+      "label": "SYK"
+    },
+    "ZAP70": {
+      "module": "downstream_signalling",
+      "family_group": "SYK_ZAP70",
+      "classification_level": "subfamily",
+      "domain_alternatives": [
+        {
+          "PF00017": 2,
+          "PF07714": 1
+        },
+        {
+          "PF00017": 2,
+          "PF00069": 1
+        }
+      ],
+      "min_length": 350,
+      "requires_identity_evidence": true,
+      "classification_note": "ZAP70 rather than Syk requires phylogenetic support.",
+      "benchmark_status": "reference_required_not_calibrated",
+      "negative_class_competition": true,
+      "ordered_domain_groups": [
+        [
+          "PF00017"
+        ],
+        [
+          "PF00017"
+        ],
+        [
+          "PF07714",
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": true,
+      "parent_family": "Syk",
+      "reference_labels": [
+        "ZAP70",
+        "ZAP-70"
+      ],
+      "label": "ZAP70"
+    },
+    "RhoGEF_like": {
+      "module": "downstream_signalling",
+      "min_length": 465,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00621": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00621"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "RhoGEF_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. Broad RhoGEF domain classification; TIAM/SOS refinements take precedence",
+      "label": "RhoGEF_like"
+    },
+    "RhoGAP_like": {
+      "module": "downstream_signalling",
+      "min_length": 448,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00620": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00620"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "RhoGAP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "RhoGAP_like"
+    },
+    "ASAP_AGAP_like": {
+      "module": "downstream_signalling",
+      "min_length": 541,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01412": 1,
+          "PF12796": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01412",
+        "PF12796"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "ASAP_AGAP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "ASAP_AGAP_like",
+      "ordered_domain_groups": [
+        [
+          "PF01412"
+        ],
+        [
+          "PF12796"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "PKC_like": {
+      "module": "downstream_signalling",
+      "min_length": 403,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00069": 1,
+          "PF00130": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00069",
+        "PF00130"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PKC_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PKC_like",
+      "ordered_domain_groups": [
+        [
+          "PF00069"
+        ],
+        [
+          "PF00130"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "tubulin_like": {
+      "module": "actin_linking",
+      "min_length": 268,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF03953": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF03953"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "tubulin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. Alpha-tubulin superfamily, not exact isoform",
+      "label": "tubulin_like"
+    },
+    "SORBS_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 402,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF02208": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF02208"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "SORBS_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "SORBS_like"
+    },
+    "ABI_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 219,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF07815": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF07815"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "ABI_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "ABI_like"
+    },
+    "GIT_like": {
+      "module": "downstream_signalling",
+      "min_length": 455,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01412": 1,
+          "PF08518": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01412",
+        "PF08518"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "GIT_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "GIT_like",
+      "ordered_domain_groups": [
+        [
+          "PF01412"
+        ],
+        [
+          "PF08518"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "INPP5_SHIP_like": {
+      "module": "downstream_signalling",
+      "min_length": 713,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00017": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00017"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "INPP5_SHIP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "INPP5_SHIP_like"
+    },
+    "MAPK_like": {
+      "module": "downstream_signalling",
+      "min_length": 216,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00069": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00069"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "MAPK_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "MAPK_like"
+    },
+    "RNF5_185_like": {
+      "module": "downstream_signalling",
+      "min_length": 108,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF13920": 1
+        },
+        {
+          "PF00097": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF13920",
+        "PF00097"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "RNF5_185_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "RNF5_185_like"
+    },
+    "Rho_GTPase_like": {
+      "module": "downstream_signalling",
+      "min_length": 115,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00071": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00071"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "Rho_GTPase_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. Broad RHO identity; other Ras subfamilies must compete",
+      "label": "Rho_GTPase_like"
+    },
+    "calpain_like": {
+      "module": "actin_linking",
+      "min_length": 420,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00648": 1,
+          "PF01067": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00648",
+        "PF01067"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "calpain_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "calpain_like",
+      "ordered_domain_groups": [
+        [
+          "PF00648"
+        ],
+        [
+          "PF01067"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "neuropilin_like": {
+      "module": "extracellular_matrix",
+      "min_length": 553,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00431": 1,
+          "PF00629": 1,
+          "PF00754": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00431",
+        "PF00629",
+        "PF00754"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "neuropilin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "neuropilin_like",
+      "ordered_domain_groups": [
+        [
+          "PF00431"
+        ],
+        [
+          "PF00629"
+        ],
+        [
+          "PF00754"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "parvin_like": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 218,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00307": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00307"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "parvin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "parvin_like"
+    },
+    "syndecan_like": {
+      "module": "integrin_receptors",
+      "min_length": 118,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01034": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01034"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "syndecan_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "syndecan_like",
+      "screening_only": true
+    },
+    "tensin_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 845,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF10409": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF10409"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "tensin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "tensin_like"
+    },
+    "tetraspanin_like": {
+      "module": "integrin_receptors",
+      "min_length": 144,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00335": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00335"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "tetraspanin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "tetraspanin_like"
+    },
+    "ADAM_like": {
+      "module": "extracellular_matrix",
+      "min_length": 545,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01421": 1,
+          "PF00200": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01421",
+        "PF00200"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "ADAM_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "ADAM_like",
+      "ordered_domain_groups": [
+        [
+          "PF01421"
+        ],
+        [
+          "PF00200"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "AKT_like": {
+      "module": "downstream_signalling",
+      "min_length": 288,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00069": 1,
+          "PF00169": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00069",
+        "PF00169"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "AKT_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "AKT_like",
+      "ordered_domain_groups": [
+        [
+          "PF00069"
+        ],
+        [
+          "PF00169"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "ARF_GTPase_like": {
+      "module": "downstream_signalling",
+      "min_length": 108,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00025": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00025"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "ARF_GTPase_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "ARF_GTPase_like"
+    },
+    "ARPC2_like": {
+      "module": "actin_linking",
+      "min_length": 180,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF04045": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF04045"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "ARPC2_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "ARPC2_like",
+      "screening_only": true
+    },
+    "BCAR3_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 495,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00017": 1,
+          "PF00617": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00017",
+        "PF00617"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "BCAR3_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "BCAR3_like",
+      "ordered_domain_groups": [
+        [
+          "PF00017"
+        ],
+        [
+          "PF00617"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "CBL_like": {
+      "module": "downstream_signalling",
+      "min_length": 543,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF02262": 1,
+          "PF02761": 1,
+          "PF02762": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF02262",
+        "PF02761",
+        "PF02762"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "CBL_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "CBL_like",
+      "ordered_domain_groups": [
+        [
+          "PF02262"
+        ],
+        [
+          "PF02761"
+        ],
+        [
+          "PF02762"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "CD47_like": {
+      "module": "integrin_receptors",
+      "min_length": 193,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF04549": 1,
+          "PF08204": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF04549",
+        "PF08204"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "CD47_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "CD47_like",
+      "ordered_domain_groups": [
+        [
+          "PF04549"
+        ],
+        [
+          "PF08204"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "CEACAM_like": {
+      "module": "integrin_receptors",
+      "min_length": 315,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF07686": 1,
+          "PF13927": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF07686",
+        "PF13927"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "CEACAM_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "CEACAM_like",
+      "ordered_domain_groups": [
+        [
+          "PF07686"
+        ],
+        [
+          "PF13927"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "DOCK_like": {
+      "module": "downstream_signalling",
+      "min_length": 1119,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF16172": 1,
+          "PF14429": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF16172",
+        "PF14429"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "DOCK_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "DOCK_like",
+      "ordered_domain_groups": [
+        [
+          "PF16172"
+        ],
+        [
+          "PF14429"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "ELMO_like": {
+      "module": "downstream_signalling",
+      "min_length": 436,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF04727": 1,
+          "PF11841": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF04727",
+        "PF11841"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "ELMO_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "ELMO_like",
+      "ordered_domain_groups": [
+        [
+          "PF04727"
+        ],
+        [
+          "PF11841"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "FABP_like": {
+      "module": "downstream_signalling",
+      "min_length": 79,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00061": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00061"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "FABP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. FABP family evidence specific to reference, not lineage generalization",
+      "label": "FABP_like"
+    },
+    "GAB_like": {
+      "module": "downstream_signalling",
+      "min_length": 416,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00169": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00169"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "GAB_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. Cannot use generic PH domain alone",
+      "label": "GAB_like"
+    },
+    "GRB7_family": {
+      "module": "downstream_signalling",
+      "min_length": 319,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00017": 1,
+          "PF00169": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00017",
+        "PF00169"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "GRB7_family",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "GRB7_family",
+      "ordered_domain_groups": [
+        [
+          "PF00017"
+        ],
+        [
+          "PF00169"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "HSP70_like": {
+      "module": "downstream_signalling",
+      "min_length": 383,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00012": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00012"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "HSP70_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "HSP70_like"
+    },
+    "ICAP1_like": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 120,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF10480": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF10480"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "ICAP1_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "ICAP1_like"
+    },
+    "INSR_like": {
+      "module": "integrin_receptors",
+      "min_length": 829,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01030": 1,
+          "PF07714": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01030",
+        "PF07714"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "INSR_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "INSR_like",
+      "ordered_domain_groups": [
+        [
+          "PF01030"
+        ],
+        [
+          "PF07714"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "IRS_like": {
+      "module": "downstream_signalling",
+      "min_length": 745,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00169": 1,
+          "PF02174": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00169",
+        "PF02174"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "IRS_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "IRS_like",
+      "ordered_domain_groups": [
+        [
+          "PF00169"
+        ],
+        [
+          "PF02174"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "ITGB3BP_like": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 106,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF06729": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF06729"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "ITGB3BP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. CENPR own identity, not integrin-beta identity Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "ITGB3BP_like",
+      "screening_only": true
+    },
+    "KCNH_like": {
+      "module": "integrin_receptors",
+      "min_length": 695,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00520": 1,
+          "PF13426": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00520",
+        "PF13426"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "KCNH_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "KCNH_like",
+      "ordered_domain_groups": [
+        [
+          "PF00520"
+        ],
+        [
+          "PF13426"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "LDLR_related_like": {
+      "module": "extracellular_matrix",
+      "min_length": 2726,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00057": 1,
+          "PF00058": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00057",
+        "PF00058"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "LDLR_related_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. LDLR superfamily screening only unless independently corroborated",
+      "label": "LDLR_related_like",
+      "ordered_domain_groups": [
+        [
+          "PF00057"
+        ],
+        [
+          "PF00058"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "MAPK8IP_like": {
+      "module": "downstream_signalling",
+      "min_length": 801,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF09744": 1,
+          "PF16471": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF09744",
+        "PF16471"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "MAPK8IP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "MAPK8IP_like",
+      "ordered_domain_groups": [
+        [
+          "PF09744"
+        ],
+        [
+          "PF16471"
+        ]
+      ],
+      "support_requires_order": false,
+      "screening_only": true
+    },
+    "MARCKS_like": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 199,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF02063": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF02063"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "MARCKS_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "MARCKS_like",
+      "screening_only": true
+    },
+    "MMP_like": {
+      "module": "extracellular_matrix",
+      "min_length": 349,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00413": 1,
+          "PF01471": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00413",
+        "PF01471"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "MMP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "MMP_like",
+      "ordered_domain_groups": [
+        [
+          "PF00413"
+        ],
+        [
+          "PF01471"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "NDEL1_like": {
+      "module": "actin_linking",
+      "min_length": 207,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF04880": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF04880"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "NDEL1_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "NDEL1_like",
+      "screening_only": true
+    },
+    "NF2_merlin_like": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 357,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00373": 1,
+          "PF00769": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00373",
+        "PF00769"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "NF2_merlin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "NF2_merlin_like",
+      "ordered_domain_groups": [
+        [
+          "PF00373"
+        ],
+        [
+          "PF00769"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "OSTF1_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 128,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF12796": 1,
+          "PF00018": 1
+        },
+        {
+          "PF12796": 1,
+          "PF14604": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF12796",
+        "PF00018",
+        "PF14604"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "OSTF1_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "OSTF1_like",
+      "ordered_domain_groups": [
+        [
+          "PF12796"
+        ],
+        [
+          "PF00018",
+          "PF14604"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "PABP_like": {
+      "module": "downstream_signalling",
+      "min_length": 381,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00658": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00658"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PABP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PABP_like"
+    },
+    "PAK_like": {
+      "module": "downstream_signalling",
+      "min_length": 327,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00786": 1,
+          "PF00069": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00786",
+        "PF00069"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PAK_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PAK_like",
+      "ordered_domain_groups": [
+        [
+          "PF00786"
+        ],
+        [
+          "PF00069"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "PDE4_like": {
+      "module": "downstream_signalling",
+      "min_length": 485,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00233": 1,
+          "PF18100": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00233",
+        "PF18100"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "PDE4_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "PDE4_like",
+      "ordered_domain_groups": [
+        [
+          "PF00233"
+        ],
+        [
+          "PF18100"
+        ]
+      ],
+      "support_requires_order": false,
+      "screening_only": true
+    },
+    "PDPK1_like": {
+      "module": "downstream_signalling",
+      "min_length": 333,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00069": 1,
+          "PF14593": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00069",
+        "PF14593"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PDPK1_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PDPK1_like",
+      "ordered_domain_groups": [
+        [
+          "PF00069"
+        ],
+        [
+          "PF14593"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "PI3K_like": {
+      "module": "downstream_signalling",
+      "min_length": 640,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00454": 1,
+          "PF00794": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00454",
+        "PF00794"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PI3K_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PI3K_like",
+      "ordered_domain_groups": [
+        [
+          "PF00454"
+        ],
+        [
+          "PF00794"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "PIP5K_like": {
+      "module": "downstream_signalling",
+      "min_length": 400,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01504": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01504"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PIP5K_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PIP5K_like"
+    },
+    "PKA_like": {
+      "module": "downstream_signalling",
+      "min_length": 210,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00069": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00069"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PKA_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PKA_like"
+    },
+    "PLAUR_like": {
+      "module": "integrin_receptors",
+      "min_length": 201,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00021": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00021"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PLAUR_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PLAUR_like"
+    },
+    "PLCG_like": {
+      "module": "downstream_signalling",
+      "min_length": 774,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00387": 1,
+          "PF00388": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00387",
+        "PF00388"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PLCG_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PLCG_like",
+      "ordered_domain_groups": [
+        [
+          "PF00387"
+        ],
+        [
+          "PF00388"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "PLD_like": {
+      "module": "downstream_signalling",
+      "min_length": 644,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00787": 1,
+          "PF00614": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00787",
+        "PF00614"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PLD_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PLD_like",
+      "ordered_domain_groups": [
+        [
+          "PF00787"
+        ],
+        [
+          "PF00614"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "PPP2_like": {
+      "module": "downstream_signalling",
+      "min_length": 185,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00149": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00149"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PPP2_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. Broad PP2A/4/6, not PP2A-specific without extra evidence",
+      "label": "PPP2_like"
+    },
+    "PRKD_like": {
+      "module": "downstream_signalling",
+      "min_length": 547,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00069": 1,
+          "PF00130": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00069",
+        "PF00130"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PRKD_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PRKD_like",
+      "ordered_domain_groups": [
+        [
+          "PF00069"
+        ],
+        [
+          "PF00130"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "PTEN_like": {
+      "module": "downstream_signalling",
+      "min_length": 241,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF10409": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF10409"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PTEN_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PTEN_like"
+    },
+    "PTPN2_like": {
+      "module": "downstream_signalling",
+      "min_length": 249,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00102": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00102"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PTPN2_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PTPN2_like"
+    },
+    "PTPRH_like": {
+      "module": "downstream_signalling",
+      "min_length": 669,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00041": 1,
+          "PF00102": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00041",
+        "PF00102"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PTPRH_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PTPRH_like",
+      "ordered_domain_groups": [
+        [
+          "PF00041"
+        ],
+        [
+          "PF00102"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "PTPRO_like": {
+      "module": "downstream_signalling",
+      "min_length": 729,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00041": 1,
+          "PF00102": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00041",
+        "PF00102"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "PTPRO_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "PTPRO_like",
+      "ordered_domain_groups": [
+        [
+          "PF00041"
+        ],
+        [
+          "PF00102"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "ROCK_like": {
+      "module": "downstream_signalling",
+      "min_length": 812,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00069": 1,
+          "PF08912": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00069",
+        "PF08912"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "ROCK_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "ROCK_like",
+      "ordered_domain_groups": [
+        [
+          "PF00069"
+        ],
+        [
+          "PF08912"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "RasGAP_like": {
+      "module": "downstream_signalling",
+      "min_length": 628,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00616": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00616"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "RasGAP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "RasGAP_like"
+    },
+    "Ras_GTPase_like": {
+      "module": "downstream_signalling",
+      "min_length": 113,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00071": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00071"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "Ras_GTPase_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "Ras_GTPase_like"
+    },
+    "SH2B_like": {
+      "module": "downstream_signalling",
+      "min_length": 453,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF08916": 1,
+          "PF00017": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF08916",
+        "PF00017"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "SH2B_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "SH2B_like",
+      "ordered_domain_groups": [
+        [
+          "PF08916"
+        ],
+        [
+          "PF00017"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "SH3KBP1_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 399,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF14604": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF14604"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "SH3KBP1_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "SH3KBP1_like"
+    },
+    "SHARPIN_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 232,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF16764": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF16764"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "SHARPIN_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "SHARPIN_like"
+    },
+    "SIRP_like": {
+      "module": "integrin_receptors",
+      "min_length": 302,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF07654": 1
+        },
+        {
+          "PF07686": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF07654",
+        "PF07686"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "SIRP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "SIRP_like"
+    },
+    "SLC16_like": {
+      "module": "integrin_receptors",
+      "min_length": 279,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF07690": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF07690"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "SLC16_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "SLC16_like"
+    },
+    "SLC3_like": {
+      "module": "integrin_receptors",
+      "min_length": 317,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF16028": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF16028"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "SLC3_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "SLC3_like"
+    },
+    "SLC9_like": {
+      "module": "integrin_receptors",
+      "min_length": 489,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00999": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00999"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "SLC9_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. Transporter superfamily; exact lineage unresolved Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "SLC9_like",
+      "screening_only": true
+    },
+    "SMPX_like": {
+      "module": "actin_linking",
+      "min_length": 52,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF15355": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF15355"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "SMPX_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "SMPX_like",
+      "screening_only": true
+    },
+    "SOS_like": {
+      "module": "downstream_signalling",
+      "min_length": 799,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00617": 1,
+          "PF00618": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00617",
+        "PF00618"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "SOS_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "SOS_like",
+      "ordered_domain_groups": [
+        [
+          "PF00617"
+        ],
+        [
+          "PF00618"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "STAT_like": {
+      "module": "downstream_signalling",
+      "min_length": 462,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01017": 1,
+          "PF02864": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01017",
+        "PF02864"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "STAT_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "STAT_like",
+      "ordered_domain_groups": [
+        [
+          "PF01017"
+        ],
+        [
+          "PF02864"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "TIAM_like": {
+      "module": "downstream_signalling",
+      "min_length": 954,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00621": 1,
+          "PF02196": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00621",
+        "PF02196"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "TIAM_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "TIAM_like",
+      "ordered_domain_groups": [
+        [
+          "PF00621"
+        ],
+        [
+          "PF02196"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "TRPM_like": {
+      "module": "integrin_receptors",
+      "min_length": 1119,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF16519": 1,
+          "PF18139": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF16519",
+        "PF18139"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "TRPM_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "TRPM_like",
+      "ordered_domain_groups": [
+        [
+          "PF16519"
+        ],
+        [
+          "PF18139"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "ZFYVE21_like": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 140,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01363": 1,
+          "PF16696": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01363",
+        "PF16696"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "ZFYVE21_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "ZFYVE21_like",
+      "ordered_domain_groups": [
+        [
+          "PF01363"
+        ],
+        [
+          "PF16696"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "caspase_like": {
+      "module": "downstream_signalling",
+      "min_length": 287,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00656": 1,
+          "PF01335": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00656",
+        "PF01335"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "caspase_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "caspase_like",
+      "ordered_domain_groups": [
+        [
+          "PF00656"
+        ],
+        [
+          "PF01335"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "caveolin_like": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 106,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01146": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01146"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "caveolin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "caveolin_like",
+      "screening_only": true
+    },
+    "cytohesin_like": {
+      "module": "downstream_signalling",
+      "min_length": 240,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF01369": 1,
+          "PF00169": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF01369",
+        "PF00169"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "cytohesin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "cytohesin_like",
+      "ordered_domain_groups": [
+        [
+          "PF01369"
+        ],
+        [
+          "PF00169"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "defensin_like": {
+      "module": "extracellular_matrix",
+      "min_length": 60,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00323": 1,
+          "PF00879": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00323",
+        "PF00879"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "defensin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "defensin_like",
+      "ordered_domain_groups": [
+        [
+          "PF00323"
+        ],
+        [
+          "PF00879"
+        ]
+      ],
+      "support_requires_order": false,
+      "screening_only": true
+    },
+    "dynamin_like": {
+      "module": "downstream_signalling",
+      "min_length": 522,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00350": 1,
+          "PF01031": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00350",
+        "PF01031"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "dynamin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "dynamin_like",
+      "ordered_domain_groups": [
+        [
+          "PF00350"
+        ],
+        [
+          "PF01031"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "intermediate_filament_like": {
+      "module": "actin_linking",
+      "min_length": 279,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00038": 1,
+          "PF04732": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00038",
+        "PF04732"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "intermediate_filament_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "intermediate_filament_like",
+      "ordered_domain_groups": [
+        [
+          "PF00038"
+        ],
+        [
+          "PF04732"
+        ]
+      ],
+      "support_requires_order": false,
+      "screening_only": true
+    },
+    "kinectin_like": {
+      "module": "actin_linking",
+      "min_length": 814,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF05104": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF05104"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "kinectin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "kinectin_like",
+      "screening_only": true
+    },
+    "liprin_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 721,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00536": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00536"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "liprin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "liprin_like"
+    },
+    "migfilin_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 223,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00412": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00412"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "migfilin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "migfilin_like"
+    },
+    "myosin_like": {
+      "module": "actin_linking",
+      "min_length": 1176,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00063": 1,
+          "PF01576": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00063",
+        "PF01576"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "myosin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "myosin_like",
+      "ordered_domain_groups": [
+        [
+          "PF00063"
+        ],
+        [
+          "PF01576"
+        ]
+      ],
+      "support_requires_order": false,
+      "screening_only": true
+    },
+    "nectin_PVR_like": {
+      "module": "integrin_receptors",
+      "min_length": 250,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF08205": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF08205"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "nectin_PVR_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "nectin_PVR_like"
+    },
+    "nischarin_like": {
+      "module": "focal_adhesion_scaffolds",
+      "min_length": 902,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00787": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00787"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "nischarin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "nischarin_like"
+    },
+    "palladin_like": {
+      "module": "actin_linking",
+      "min_length": 829,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF07679": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF07679"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "palladin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "palladin_like"
+    },
+    "plakin_like": {
+      "module": "actin_linking",
+      "min_length": 2810,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF03501": 1,
+          "PF00307": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF03501",
+        "PF00307"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "plakin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "plakin_like",
+      "ordered_domain_groups": [
+        [
+          "PF03501"
+        ],
+        [
+          "PF00307"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "prion_like": {
+      "module": "extracellular_matrix",
+      "min_length": 151,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF11587": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF11587"
+      ],
+      "screening_specific": false,
+      "classification_level": "screen",
+      "family_group": "prion_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold.  Architecture-screen only: all characterized positives lack a matching named curated cd model; do not treat as supported identity.",
+      "label": "prion_like",
+      "screening_only": true
+    },
+    "slingshot_like": {
+      "module": "downstream_signalling",
+      "min_length": 629,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00782": 1,
+          "PF08766": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00782",
+        "PF08766"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "slingshot_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "slingshot_like",
+      "ordered_domain_groups": [
+        [
+          "PF00782"
+        ],
+        [
+          "PF08766"
+        ]
+      ],
+      "support_requires_order": false
+    },
+    "small_HSP_like": {
+      "module": "actin_linking",
+      "min_length": 123,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00011": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00011"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "small_HSP_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "small_HSP_like"
+    },
+    "syntenin_like": {
+      "module": "membrane_proximal_adaptors",
+      "min_length": 178,
+      "diagnostic": false,
+      "domain_alternatives": [
+        {
+          "PF00595": 1
+        }
+      ],
+      "min_partial_fraction": 0.5,
+      "screening_domains": [
+        "PF00595"
+      ],
+      "screening_specific": false,
+      "classification_level": "family",
+      "family_group": "syntenin_like",
+      "requires_identity_evidence": true,
+      "negative_class_competition": true,
+      "benchmark_status": "reference_required_not_calibrated",
+      "classification_note": "Observed reference-panel Pfam/C DD architecture; requires independent family-specific CDD evidence and competing-family assessment. Not a calibrated novelty threshold. ",
+      "label": "syntenin_like"
+    }
+  },
+  "family_aliases": {
+    "PTPN12": "PTP_PEST",
+    "PTPRF": "LAR_RPTP",
+    "PTPRA": "RPTP_alpha_epsilon",
+    "adhesion_kinase": "generic_kinase_screen",
+    "adhesion_phosphatase": "generic_PTP_screen",
+    "actin": "actin_superfamily_screen",
+    "cofilin": "ADF_H_screen",
+    "Src": "SH3_SH2_TK_screen",
+    "Csk": "Csk_family",
+    "paxillin_like": "LIM_scaffold_screen",
+    "zyxin_like": "LIM_scaffold_screen",
+    "PINCH": "PINCH_like",
+    "twinfilin_like": "twinfilin",
+    "drebrin_like": "drebrin_Abp1",
+    "GMF_like": "GMF",
+    "Tec": "Tec_family",
+    "BTK_like": "BTK",
+    "Abelson": "Abl_family",
+    "Abl": "Abl_family",
+    "paxillin": "paxillin_family",
+    "zyxin": "zyxin_family"
+  },
+  "screening_notes": "Expected architectures and lengths describe reference-like proteins, not universal metazoan requirements. Comparative mode retains incomplete architectures and generic-domain candidates without assigning family identity. Screening anchors are recruitment evidence, not necessarily family-specific domains.",
+  "motif_library": "../../03_functional_motif_annotation/Motif_library/adhesion_core.json",
+  "reference_sources": [
+    {
+      "id": "Muller2005_ARP",
+      "doi": "10.1091/mbc.e05-06-0508"
+    },
+    {
+      "id": "Lappalainen1998_ADF_H",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC25446/"
+    },
+    {
+      "id": "Src_module_2018",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6328253/"
+    },
+    {
+      "id": "Paxillin_PXN_CDD",
+      "url": "https://www.ncbi.nlm.nih.gov/gene/5829"
+    },
+    {
+      "id": "Zyxin_TRIP6",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3156290/"
+    }
+  ],
+  "pipeline_version": "1.0",
+  "stage1_general_hypotheses": true,
+  "stage1_motif_rule_ids": {
+    "collagen_like": [
+      "MOTIF_E0028F6150AE"
+    ],
+    "fibronectin_like": [
+      "MOTIF_BE539E21B9BA",
+      "MOTIF_82A954768410",
+      "MOTIF_3C56710552E5"
+    ],
+    "fibronectin_III_ligand": [
+      "MOTIF_BE539E21B9BA"
+    ],
+    "vitronectin_like": [
+      "MOTIF_BE539E21B9BA"
+    ],
+    "integrin_alpha": [
+      "MOTIF_E48A4D05278A"
+    ],
+    "integrin_beta": [
+      "MOTIF_77D93F85C286"
+    ]
+  }
+}

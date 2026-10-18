@@ -80,7 +80,9 @@ class FamilyIdentityTests(unittest.TestCase):
     def test_competing_arp_signatures_remain_ambiguous(self):
         out=audit_record(self.row(family='actin',length=400,architecture='PF00022:10-390',
             NCBI_CDD_architecture='actin_Arp4_Arp6:10-390'),self.rules)
-        self.assertEqual(out['family_confidence'],'ambiguous');self.assertNotEqual(out['grade'],'A')
+        self.assertEqual(out['assigned_family'],'actin');self.assertEqual(out['family_support_level'],'broad_supported')
+        self.assertEqual(out['specific_identity_status'],'specific_lineage_or_paralogue_unresolved')
+        self.assertEqual(out['unresolved_specific_families'],'arp4_like;arp6_like')
 
     def test_src_specific_cdd_refines_core_to_src_instead_of_src_csk(self):
         out=audit_record(self.row(family='Src',length=550,architecture='PF00018:20-80;PF00017:100-190;PF07714:240-500',

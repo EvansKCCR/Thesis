@@ -14,7 +14,7 @@ def sha(path):
 
 
 def fingerprint():
-    files=['identity_probability.py','family_identity.py','control_exclusion.py','01_detection/config/family_rules.json',
+    files=['identity_probability.py','family_identity.py','stage2_resolution.py','control_exclusion.py','calibrate_identity.py','label_ontology.py','01_detection/config/family_rules.json',
         '05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py',
         '05_conservative_adhesome_family_assignment_audit/audit_policy.json',
         '05_conservative_adhesome_family_assignment_audit/family_identity_rules.json']
@@ -23,7 +23,7 @@ def fingerprint():
 
 def resource_hashes():
     # Negative exclusion gates must invalidate recovery even without a fitted model.
-    result={name:sha(ROOT/name) for name in ('identity_probability.py','control_exclusion.py')}
+    result={name:sha(ROOT/name) for name in ('identity_probability.py','stage2_resolution.py','control_exclusion.py')}
     for path in sorted((ROOT/'02_calibration_set').glob('*')):
         if path.suffix.lower() in ('.xlsx','.faa'):
             result[path.relative_to(ROOT).as_posix()]=sha(path)
