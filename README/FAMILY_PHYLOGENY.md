@@ -1,5 +1,37 @@
 # Audited family phylogenies
 
+## Resume the stopped validation project locally
+
+The existing validation project is an orthogroup run. Resume its original
+prepared membership in place; preparation and audit are not repeated:
+
+```bash
+cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/pipeline_validation/integrin_adhesome_analysis
+conda activate adhesome-workflow-v1
+python 04_orthology_phylogenetic_classification/scripts/phylogeny.py run \
+  --project runs/annotation/downstream/phylogeny \
+  --resume --threads 4 --iqtree-threads 2
+```
+
+`--resume` verifies and skips completed groups, reuses valid saved alignments,
+and invokes IQ-TREE with its existing prefix/checkpoint. A partial MAFFT stage
+must restart that stage because MAFFT has no checkpoint here. Existing failed
+groups remain flagged and are skipped while interrupted/not-started groups
+continue. Inspect `run_summary.tsv` afterwards: retained failures keep the
+project's final status as partial failure. The alignment QC thresholds are
+unchanged. Scientific settings and prepared membership must match the saved run.
+Do not start a second process against the same project.
+
+To retry a reviewed failed group without attempt backups, use the same command
+with `--resume --retry-failed --hog GROUP_ID`. Without `--resume`, the historical
+`--retry-failed` option retains its archived-attempt behavior. New resume runs
+record stage hashes, numbered command logs and interruption state in `run.json`.
+No inference directory is renamed or backed up by `--resume`.
+
+The stopped project retains its original orthogroups. To use the current expanded
+audit for newly grouped family trees, prepare a separate family project as below;
+resuming does not change an existing project's sequence membership.
+
 Integrated phylogeny is opt-in: supply both `--phylogeny --phylogeny-grouping family`
 on resume/continue. The audit completes first and is retained even if trees fail.
 Without `--phylogeny`, grouping alone does not run any trees. The standalone
@@ -22,19 +54,12 @@ Fibronectin-like candidates follow the same A/B/C rule. The broad fibronectin
 hypothesis handoff and external-evidence return remain available; rejected audit
 assignments do not enter these trees.
 
-## Update the local test copy
-
-Copy these updated files to the same locations in `Test_pipeline_v1`:
-
-- `adhesome_workflow.py`
-- `04_orthology_phylogenetic_classification/scripts/phylogeny.py`
-
 ## Reuse completed orthology without running it again
 
 In WSL, activate your workflow environment, then run from the test project root:
 
 ```bash
-cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Test_pipeline_v1
+cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/pipeline_validation/integrin_adhesome_analysis
 python 04_orthology_phylogenetic_classification/scripts/phylogeny.py prepare \
   --hogs runs/annotation/downstream/orthology/candidates/candidate_HOGs.tsv \
   --orthologues runs/annotation/downstream/orthology/candidates/direct_orthologues.tsv \
@@ -42,7 +67,7 @@ python 04_orthology_phylogenetic_classification/scripts/phylogeny.py prepare \
   --proteomes runs/annotation/downstream/panel/proteomes \
   --species-list runs/annotation/downstream/panel/species.json \
   --target-species runs/annotation/downstream/panel/targets.json \
-  --audit-workbook runs/annotation/downstream/final/Stage_2_output.xlsx \
+  --audit-workbook runs/final_expanded/Stage_2_output.xlsx \
   --candidate-report runs/annotation/downstream/orthology/candidates/candidate_report.tsv \
   --output runs/family_phylogeny_audited
 ```
@@ -68,7 +93,8 @@ python 04_orthology_phylogenetic_classification/scripts/phylogeny.py run \
   --project runs/family_phylogeny_audited --threads 2 --iqtree-threads 2
 ```
 
-For failure recovery, repeat this run command with `--retry-failed`. Completed
+For interruption recovery, repeat this run command with `--resume`. To retry
+reviewed failed families in place, use `--resume --retry-failed`. Completed
 families are preserved. Fewer than four tips produces an intentional skip.
 
 ## Integrated execution

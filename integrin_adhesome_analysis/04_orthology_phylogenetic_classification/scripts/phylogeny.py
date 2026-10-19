@@ -3,7 +3,9 @@
 import argparse
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
+from contextlib import contextmanager
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -14,7 +16,9 @@ from pipeline import SPECIES, table_species, digest, members, read_tsv, records,
 
 
 def dump(path, value):
-    path.write_text(json.dumps({'pipeline_version':VERSION,**value}, indent=2)+'\n', encoding='utf-8')
+    temporary=path.with_name(path.name+'.tmp')
+    temporary.write_text(json.dumps({'pipeline_version':VERSION,**value}, indent=2)+'\n', encoding='utf-8')
+    temporary.replace(path)
 
 
 def fasta(path, sequences):
@@ -324,7 +328,85 @@ def annotate(treefile, folder, outgroups):
         'direct_orthology_edges_within','exact_duplication_rows','interpretation'],rows)
 
 
+@contextmanager
+def project_lock(project):
+    """Prevent two current drivers from writing one inference project."""
+    lock=(project/'.phylogeny.lock').open('a+b')
+    acquired=False
+    try:
+        try:
+            if os.name=='nt':
+                import msvcrt
+                if lock.seek(0,2)==0:lock.write(b'0');lock.flush()
+                lock.seek(0);msvcrt.locking(lock.fileno(),msvcrt.LK_NBLCK,1)
+            else:
+                import fcntl
+                fcntl.flock(lock.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
+            acquired=True
+        except OSError as exc:
+            raise ValueError('Another phylogeny driver holds this project lock') from exc
+        yield
+    finally:
+        if acquired:
+            if os.name=='nt':
+                lock.seek(0);msvcrt.locking(lock.fileno(),msvcrt.LK_UNLCK,1)
+            else:fcntl.flock(lock.fileno(),fcntl.LOCK_UN)
+        lock.close()
+
+
+def active_legacy_processes(project):
+    """Check Linux/WSL drivers and tools predating the project lock."""
+    proc=Path('/proc');found=[]
+    if not proc.is_dir():return found
+    for entry in proc.iterdir():
+        if not entry.name.isdigit() or int(entry.name)==os.getpid():continue
+        try:
+            argv=[part.decode(errors='replace') for part in (entry/'cmdline').read_bytes().split(b'\0') if part]
+            if not argv:continue
+            names={Path(arg).name for arg in argv[:3]}
+            relevant=bool(names&{'phylogeny.py','mafft','trimal','iqtree','iqtree2','iqtree3'})
+            if not relevant:continue
+            linked=any(str(project.resolve()) in arg for arg in argv)
+            if '--project' in argv:
+                selected=Path(argv[argv.index('--project')+1])
+                if not selected.is_absolute():selected=(entry/'cwd').resolve()/selected
+                linked=linked or selected.resolve()==project.resolve()
+            if linked:found.append(int(entry.name))
+        except (OSError,IndexError):continue
+    return found
+
+
+def resume_settings(previous,args,group):
+    if previous.get('input_hashes')!=group['files']:
+        raise ValueError('Inference input hashes differ from prepared inputs; prepare a new project')
+    settings=previous.get('settings',{})
+    for name in ('seed','aligner','min_sites','max_gap','outgroup'):
+        if name not in settings or settings[name]!=getattr(args,name):
+            raise ValueError('Cannot resume with changed or unrecorded '+name+'; retain the original scientific settings')
+
+
+def check_trimmed(work,raw,aligned,args):
+    trimmed,qc,after=alignment_qc(work/'trimmed.faa',raw,args.min_sites,args.max_gap)
+    order=sorted(raw)
+    original_columns=iter(zip(*(aligned[n] for n in order)))
+    for column in zip(*(trimmed[n] for n in order)):
+        if not any(candidate==column for candidate in original_columns):
+            raise ValueError('Trimmed alignment is not a column subsequence of the original alignment')
+    if after['distinct_aligned_sequences']<4 or after['parsimony_informative_sites']==0:
+        raise ValueError('Fewer than four distinct aligned sequences or no parsimony-informative sites')
+    return qc,after
+
+
 def run(args):
+    # This driver resumes prepared membership; it never regenerates the project.
+    with project_lock(args.project):
+        if getattr(args,'resume',False):
+            active=active_legacy_processes(args.project)
+            if active:raise ValueError('Phylogeny processes are still active for this project: '+','.join(map(str,active)))
+        return run_locked(args)
+
+
+def run_locked(args):
     manifest = json.loads((args.project/'manifest.json').read_text())
     groups = [g for g in manifest['groups'] if not args.hog or g['group'] in args.hog]
     if args.hog and set(args.hog)-{g['group'] for g in groups}:
@@ -360,23 +442,43 @@ def run(args):
             statuses.append(dict(group=group['group'],status='skipped',category='too_few_taxa',stage='preparation',error=group['status'],stderr_log=''))
             continue
         work = folder/'inference'
-        if work.exists() and getattr(args,'retry_failed',False):
+        resuming=work.exists() and getattr(args,'resume',False)
+        previous=None
+        if work.exists() and (resuming or getattr(args,'retry_failed',False)):
             previous=json.loads((work/'run.json').read_text())
+            if resuming:resume_settings(previous,args,group)
             if previous['status']=='complete':
+                if resuming:
+                    if not previous.get('outputs'):raise ValueError('Completed inference has no output checksums: '+str(work))
+                    for filename,expected in previous['outputs'].items():
+                        if digest(work/filename)!=expected:raise ValueError('Completed inference output changed: '+str(work/filename))
                 statuses.append(dict(group=group['group'],status='complete',category='previously_complete',stage='complete',error='',stderr_log=''))
+                print('REUSE completed '+group['group'],flush=True)
                 continue
-            if previous['status']!='failed':
+            if resuming and previous['status']=='failed' and not getattr(args,'retry_failed',False):
+                statuses.append(dict(group=group['group'],status='failed',category=previous.get('failure_category',''),
+                    stage=previous.get('failed_stage','unknown'),error=previous.get('error',''),stderr_log=previous.get('last_stderr_log','')))
+                print('RETAIN failed '+group['group']+': review QC/tool error; use --resume --retry-failed to retry in place',flush=True)
+                continue
+            if resuming and previous['status'] not in ('failed','running','interrupted'):
+                raise ValueError('Unknown inference state: '+str(work))
+            if not resuming and previous['status']!='failed':
                 raise ValueError(f'{work}: run is not marked failed; inspect before retrying')
-            attempt=1
-            while (folder/f'inference_attempt_{attempt:03d}').exists():
-                attempt+=1
-            work.rename(folder/f'inference_attempt_{attempt:03d}')
-        work.mkdir(exist_ok=False)
-        info = {'pipeline_version':VERSION,'versions':versions,'settings':vars(args).copy(),'commands':[], 'status':'running',
+            if not resuming:
+                attempt=1
+                while (folder/f'inference_attempt_{attempt:03d}').exists():attempt+=1
+                work.rename(folder/f'inference_attempt_{attempt:03d}')
+        work.mkdir(exist_ok=resuming)
+        info = previous if resuming else {'pipeline_version':VERSION,'versions':versions,'commands':[],
                 'input_hashes':group['files'],'started_utc':datetime.now(timezone.utc).isoformat()}
+        if resuming:
+            info.setdefault('resume_events',[]).append(dict(previous_status=info['status'],utc=datetime.now(timezone.utc).isoformat(),
+                threads=args.threads,iqtree_threads=iq_threads,tool_versions=versions))
+        info.update(status='running',settings=vars(args).copy(),pid=os.getpid(),reused_stages=[])
         info['settings'] = {k:str(v) if isinstance(v,Path) else v for k,v in info['settings'].items() if k!='func'}
         def execute(command, stdout_name=None):
             info['commands'].append(command)
+            info['active_stage']=stage
             dump(work/'run.json',info)
             index = len(info['commands'])
             info['last_stderr_log']=str(work/f'command_{index}.stderr.log')
@@ -389,26 +491,43 @@ def run(args):
                 raise ValueError('Outgroup must be a proper subset of this group')
             method = ['--localpair','--maxiterate','1000'] if args.aligner=='linsi' else ['--ep','0','--genafpair','--maxiterate','1000']
             stage='mafft'
-            execute([tools['mafft'],'--amino','--thread',str(args.threads),'--threadit','0',*method,str((folder/'members.faa').resolve())],'aligned.faa')
+            reuse_alignment=False
+            if resuming and (work/'aligned.faa').exists():
+                expected=info.get('checkpoints',{}).get('aligned.faa')
+                if expected and digest(work/'aligned.faa')!=expected:raise ValueError('Checkpoint alignment changed; resume refused')
+                try:
+                    candidate,_,_=alignment_qc(work/'aligned.faa',raw,1,0.999999)
+                    reuse_alignment=all(candidate[n].replace('-','')==raw[n] for n in raw)
+                except ValueError:pass
+            if reuse_alignment:
+                info['reused_stages'].append('mafft');print('REUSE alignment '+group['group'],flush=True)
+            else:
+                if resuming and (work/'gene_tree.ckp.gz').exists():raise ValueError('IQ-TREE checkpoint has no valid upstream alignment; resume refused')
+                execute([tools['mafft'],'--amino','--thread',str(args.threads),'--threadit','0',*method,str((folder/'members.faa').resolve())],'aligned.faa')
             stage='alignment_qc'
             aligned, _, before = alignment_qc(work/'aligned.faa',raw,1,0.999999)
             if any(aligned[n].replace('-','')!=raw[n] for n in raw):
                 raise ValueError('MAFFT changed residue sequences')
-            aliases=trim_input(aligned,work)
-            stage='trimal'
-            execute([tools['trimal'],'-in',str((work/'trimal_input.faa').resolve()),'-out',str((work/'trimmed_aliases.faa').resolve()),'-automated1'])
-            restore_trimmed(work/'trimmed_aliases.faa',aliases,work/'trimmed.faa')
+            info.setdefault('checkpoints',{})['aligned.faa']=digest(work/'aligned.faa');dump(work/'run.json',info)
+            reuse_trimmed=False
+            if resuming and (work/'trimmed.faa').exists():
+                expected=info['checkpoints'].get('trimmed.faa')
+                if expected and digest(work/'trimmed.faa')!=expected:raise ValueError('Checkpoint trimmed alignment changed; resume refused')
+                try:check_trimmed(work,raw,aligned,args);reuse_trimmed=True
+                except ValueError:pass
+            if reuse_trimmed:
+                info['reused_stages'].append('trimal');print('REUSE trimmed alignment '+group['group'],flush=True)
+            else:
+                if resuming and (work/'gene_tree.ckp.gz').exists():raise ValueError('IQ-TREE checkpoint has no valid trimmed alignment; resume refused')
+                aliases=trim_input(aligned,work)
+                stage='trimal'
+                execute([tools['trimal'],'-in',str((work/'trimal_input.faa').resolve()),'-out',str((work/'trimmed_aliases.faa').resolve()),'-automated1'])
+                restore_trimmed(work/'trimmed_aliases.faa',aliases,work/'trimmed.faa')
             stage='trimmed_alignment_qc'
-            trimmed, qc, after = alignment_qc(work/'trimmed.faa',raw,args.min_sites,args.max_gap)
-            order = sorted(raw)
-            original_columns = iter(zip(*(aligned[n] for n in order)))
-            for column in zip(*(trimmed[n] for n in order)):
-                if not any(candidate == column for candidate in original_columns):
-                    raise ValueError('Trimmed alignment is not a column subsequence of the original alignment')
+            qc,after=check_trimmed(work,raw,aligned,args)
             write_tsv(work/'sequence_qc.tsv',list(qc[0]),qc)
             dump(work/'alignment_qc.json',dict(before=before,after=after,retained_fraction=after['sites']/before['sites']))
-            if after['distinct_aligned_sequences']<4 or after['parsimony_informative_sites']==0:
-                raise ValueError('Fewer than four distinct aligned sequences or no parsimony-informative sites')
+            info['checkpoints']['trimmed.faa']=digest(work/'trimmed.faa');dump(work/'run.json',info)
             stage='iqtree'
             execute([tools['iqtree'],'-s',str((work/'trimmed.faa').resolve()),'-st','AA','-m','MFP',
                      '-B','1000','--alrt','1000','-bnni','-seed',str(args.seed),'-T',str(iq_threads),
@@ -420,6 +539,10 @@ def run(args):
             annotate(treefile,work,args.outgroup)
             info['status']='complete'
             info['outputs']={p.name:digest(p) for p in work.iterdir() if p.is_file() and p.name!='run.json'}
+        except KeyboardInterrupt:
+            info.update(status='interrupted',active_stage=stage)
+            dump(work/'run.json',info)
+            raise
         except Exception as exc:
             info['status']='failed'
             info['error']=str(exc)
@@ -439,7 +562,7 @@ def run(args):
     dump(args.project/'run_summary.json',dict(status='partial_failure' if any(s['status']=='failed' for s in statuses) else 'complete',
         counts=dict(Counter(s['status'] for s in statuses)),groups=statuses))
     if any(s['status']=='failed' for s in statuses) and not getattr(args,'allow_partial',False):
-        raise ValueError('One or more groups failed; inspect run_summary.tsv and per-group run.json/logs. Use --retry-failed after reviewing the cause.')
+        raise ValueError('One or more groups failed; inspect run_summary.tsv and per-group run.json/logs. Use --resume --retry-failed after reviewing the cause.')
 
 
 def main():
@@ -467,7 +590,8 @@ def main():
     p.add_argument('--outgroup',action='append',default=[],help='Explicit justified tip ID; repeat for a multi-tip outgroup; one HOG only')
     p.add_argument('--threads',type=int,default=8)
     p.add_argument('--iqtree-threads',type=int,default=2,help='Independent IQ-TREE thread count; exit status 2 does not by itself imply resource exhaustion')
-    p.add_argument('--retry-failed',action='store_true',help='Archive failed inference attempts and retry; preserve completed groups')
+    p.add_argument('--retry-failed',action='store_true',help='Retry failed groups; with --resume retries in place, otherwise preserves the legacy archived-attempt behavior')
+    p.add_argument('--resume',action='store_true',help='Continue an interrupted project in place: verify/reuse completed stages and IQ-TREE checkpoints; failed groups stay flagged unless --retry-failed is also supplied; no attempt backups')
     p.add_argument('--allow-partial',action='store_true',help='Return success with an explicit partial_failure summary when some groups fail')
     p.add_argument('--seed',type=int,default=20260920)
     p.add_argument('--aligner',choices=['linsi','einsi'],default='linsi')

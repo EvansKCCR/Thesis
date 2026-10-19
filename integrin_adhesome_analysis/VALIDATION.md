@@ -44,3 +44,20 @@ evidence. It does not rerun Stage 1, OrthoFinder or optional phylogeny.
 Stage 1 recruitment and its scan library are unchanged. Expanded family coverage
 does not invent missing observed domains or recruit the missing Defensin-6
 control. Reference-overlapping validation is not independent held-out validation.
+
+## Resume the original stopped phylogeny
+
+From this installation, with `adhesome-workflow-v1` active:
+
+```bash
+python 04_orthology_phylogenetic_classification/scripts/phylogeny.py run \
+  --project runs/annotation/downstream/phylogeny \
+  --resume --threads 4 --iqtree-threads 2
+```
+
+This continues the existing orthogroup project with its original membership;
+it does not prepare trees from the newer expanded audit. Valid completed trees,
+alignments and IQ-TREE checkpoints are reused. Existing failed groups remain
+flagged for review while unfinished groups continue. To retry them explicitly
+in place after review, add `--retry-failed` alongside `--resume`. Resume creates
+no attempt backups. See `../README/FAMILY_PHYLOGENY.md` for new family preparation.
