@@ -33,3 +33,10 @@ proteome. See [the crosswalk panel guide](../../../README/COMPONENT_REFERENCE_PA
 for BLAST-only refresh, output interpretation and calibration instructions.
 
 Historical seed/panel names retain provenance; the active pipeline version is 1.0.
+
+Unused-resource cleanup (2026-10-19): the obsolete `schistosome_v4/` panel and
+empty `motifs/` directory were removed after checking current code and configured
+inputs. Detection uses `scripts/run_detection.py`; its unused `run_domain_v5.py`
+compatibility alias was removed. The active reference panel remains
+`adhesome_v1.0/`, and the configured motif library is
+`03_functional_motif_annotation/Motif_library/adhesion_core.json`.
