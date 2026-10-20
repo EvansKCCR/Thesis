@@ -40,3 +40,7 @@ inputs. Detection uses `scripts/run_detection.py`; its unused `run_domain_v5.py`
 compatibility alias was removed. The active reference panel remains
 `adhesome_v1.0/`, and the configured motif library is
 `03_functional_motif_annotation/Motif_library/adhesion_core.json`.
+
+The unused `seeds/schistosome_v4/` directory was also removed. The base-panel
+builder defaults to `seeds/adhesome_v1.0/`, which remains available alongside
+the active panel, cached source records and provenance.

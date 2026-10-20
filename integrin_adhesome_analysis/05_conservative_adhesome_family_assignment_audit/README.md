@@ -1,7 +1,8 @@
 # Stage 2 family refinement — version 1.0
 
 `integrated_adhesome_pipeline.py` refines original stage 1 family hypotheses using
-the shared `../01_detection/config/family_rules.json` and `audit_policy.json`.
+the selected family/identity pair and `audit_policy.json`. The integrated workflow
+defaults to `family_rules_expanded.json` and `family_identity_rules_expanded.json`.
 One representative is selected per species/protein. Original alternatives and
 collapsed/recovery counts remain auditable. No new proteins or component calls
 are created. Experimental annotation is not required.
@@ -38,7 +39,7 @@ The final table now uses `putative_audited_family` and `protein_name`, with one
 `assignment_confidence` field and no MULocDeep, empty or unused columns. A matching
 `audited_family_assignments.tsv` is exported. Observed CDD footprints complement
 Pfam architecture without double-counting overlapping domain copies. The current
-scoped identity refinements use `family_identity_rules.json`; inferred example
+scoped identity refinements use the selected identity rules; inferred example
 features are not observations. Positive adhesome controls alone calibrate the
 reported family/name correctness estimate, with uncertainty and control counts.
 Hard/background negatives act only as exclusion gates; matching proteins are
@@ -112,3 +113,12 @@ source checksums before/after replay. It neither installs expanded rules into
 production nor runs Stage 1, external tools or phylogeny. Expanded JSON rules do
 not add missing Pfam HMMs: inspect `missing_model_review.tsv` and the scan-library
 coverage in `summary.json` before considering a production library update.
+
+## Maintained validation tools
+
+Use workflow-root `evaluate_family_expansion.py` for paired rule validation and
+`evaluate_validation.py` for labelled control evaluation. Evolutionary benchmarking
+uses the maintained scripts in `04_orthology_phylogenetic_classification/scripts/`.
+The unused one-off expansion generator/checker and obsolete benchmark scorer with
+its uncurated placeholder panel were removed on 2026-10-19. Expanded rules,
+expansion provenance, labelled calibration data and active benchmark inputs remain.

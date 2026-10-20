@@ -17,13 +17,15 @@ The active runner is `scripts/run_detection.py`. The active library is
 `databases/pfam/adhesome_v1.0.hmm`, containing all 176 accessions in the updated
 `config/adhesome_pfam_manifest.csv`. The 230-row
 `config/adhesome_component_crosswalk.csv` is validated against that manifest.
-The canonical `config/family_rules.json` contains the current 96 hierarchical
-entries and is shared with the reference-gated audit. References are in
+The canonical `config/family_rules.json` contains the 96 Stage 1 hierarchical
+entries. Stage 2 defaults to the expanded family and identity rules in
+`05_conservative_adhesome_family_assignment_audit/`; the original pair remains
+available for comparison. References are in
 `references/adhesome_v1.0`, now covering all 230 crosswalk components with 354
 forward and 425 reciprocal reference records. See
 [the expanded panel guide](../../README/COMPONENT_REFERENCE_PANEL.md) to refresh
-BLAST evidence while reusing existing domain scans. The previous runner name remains
-as a compatibility entry point to version 1.0. Historical seed/model filenames
+BLAST evidence while reusing existing domain scans. The unused previous runner
+alias has been removed. Historical seed/model filenames
 identify source provenance rather than a different active pipeline version.
 
 Each target's `candidates/` directory contains:
