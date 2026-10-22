@@ -115,6 +115,30 @@ class WorkflowTests(unittest.TestCase):
             self.assertFalse(any(command[0]=='orthofinder' for command in commands[boundary:]))
             self.assertEqual(w.read(failed/'final/joined_evidence.tsv')[0]['Orthology_benchmark_status'],'validated')
             self.assertEqual(w.verify(failed,'completed_workflow')['completion_status'],'complete')
+            # A genuine low-quality partition keeps its scores, completes the audit,
+            # and cannot acquire an accepted benchmark weight.
+            def merged_predictions(command,logs):
+                simulated(command,logs)
+                if str(command[0])=='orthofinder':
+                    result=Path(command[command.index('-o')+1])/'Results_fixture'
+                    w.write(result/'Phylogenetic_Hierarchical_Orthogroups/N0.tsv',[
+                        dict(HOG='HOG0',TargetA='',Bench_A='Bench_A__a0',Bench_B='Bench_B__b0'),
+                        dict(HOG='HOG1',TargetA='TargetA__g',Bench_A='Bench_A__a1, Bench_A__a2',Bench_B='Bench_B__b1, Bench_B__b2')])
+            rejected=root/'quality_rejected'
+            with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=merged_predictions):
+                w.downstream(argparse.Namespace(annotation=annotation,out=rejected,reference_raw=raw,threads=1,analysis_threads=1,
+                    compare=None,benchmark_protocol='custom',orthofinder_inflation=1.5,
+                    orthofinder_search='diamond_ultra_sens',orthofinder_method='msa'))
+            summary=json.loads((rejected/'benchmark/summary.json').read_text())
+            self.assertEqual(summary['status'],'quality_rejected')
+            self.assertAlmostEqual(summary['metrics']['f1'],1/3)
+            self.assertTrue((rejected/'final/Stage_2_output.xlsx').exists())
+            self.assertEqual(w.read(rejected/'final/joined_evidence.tsv')[0]['Orthology_benchmark_weight'],'')
+            complete=w.verify(rejected,'completed_workflow')
+            self.assertEqual(complete['benchmark_status'],'quality_rejected')
+            self.assertEqual(complete['completion_status'],'completed_with_optional_failures')
+            receipt=json.loads((rejected/'orthology/inference_complete.json').read_text())
+            self.assertEqual(receipt['inference_settings'],dict(inflation=1.5,search='diamond_ultra_sens',method='msa'))
             # A changed ground-truth file cannot keep supplying a validated weight.
             (truth/'RefOG001.txt').write_text('a1\nb2\n')
             fields,sha=w.benchmark_evidence(out/'benchmark',out/'orthology',json.loads((out/'orthology/workflow_manifest.json').read_text()),out/'panel')

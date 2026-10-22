@@ -1,5 +1,10 @@
 # Main validation pipeline — version 1.0
 
+Benchmark performance acceptance now requires **pairwise precision >=0.80 and
+F1 >=0.70**. Valid input files alone do not imply accepted performance. See
+[BENCHMARK_RECALIBRATION.md](BENCHMARK_RECALIBRATION.md) for the saved-result
+diagnosis, report refresh, tree-level comparison and explicit inference tuning.
+
 The main installation is:
 
 ```text
@@ -10,6 +15,14 @@ Expanded Stage 2 coverage is the default for `resume`, `continue` and `audit`:
 190 family configurations and 136 identity rules. Both files are selected as
 one pair. `--family-coverage original` is retained for explicit regression
 comparisons; it is not the main validation configuration.
+
+Adhesome-specific orthology benchmarking is available with `--scope adhesome`
+on `benchmark` or `--benchmark-scope adhesome` in a resumed workflow. The original
+`benchmark.py` remains the default; the explicitly selected alternative uses
+`adhesome_benchmark_subset.py`. It requires
+a curated RefOG/family selection TSV and retains full predicted benchmark-group
+membership. See [ADHESOME_BENCHMARK.md](ADHESOME_BENCHMARK.md) for preparation,
+completed-run reuse, fibronectin coverage and family-scoped audit weights.
 
 ## Current completed validation
 

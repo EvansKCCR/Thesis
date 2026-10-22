@@ -1,0 +1,9 @@
+{
+  "pipeline_version": "1.0",
+  "metric": "open_orthobench_weighted_pairwise",
+  "minimum_precision": 0.8,
+  "minimum_f1": 0.7,
+  "minimum_recall": null,
+  "minimum_exact_fraction": null,
+  "interpretation": "Precision means the benchmark pairwise PPV, not area under a precision-recall curve. Input validity and performance acceptance are separate."
+}

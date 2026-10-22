@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from benchmark_workflow import run, measure
 from pipeline import write_tsv
@@ -75,15 +76,17 @@ class BenchmarkWorkflowTests(unittest.TestCase):
     def test_merged_refogs_reduce_the_actual_supplied_scorer_metric(self):
         self.predict([('A__a1','B__b1','A__a2','B__b2'),('A__a0','B__b0')])
         summary=self.evaluate()
-        self.assertEqual(summary['status'],'validated')
-        self.assertAlmostEqual(summary['validated_weight'],1/3)
+        self.assertEqual(summary['status'],'quality_rejected')
+        self.assertIsNone(summary['validated_weight'])
+        self.assertAlmostEqual(summary['metrics']['f1'],1/3)
         self.assertEqual(summary['metrics']['recall'],1.0)
 
-    def test_zero_f1_is_a_valid_zero_weight_not_missing_evidence(self):
+    def test_zero_f1_is_reported_as_zero_but_does_not_pass_acceptance(self):
         self.predict([(name,) for name in ('A__a1','A__a2','A__a0','B__b1','B__b2','B__b0')])
         summary=self.evaluate()
-        self.assertEqual(summary['status'],'validated')
-        self.assertEqual(summary['validated_weight'],0.0)
+        self.assertEqual(summary['status'],'quality_rejected')
+        self.assertIsNone(summary['validated_weight'])
+        self.assertEqual(summary['metrics']['f1'],0.0)
 
     def test_unrelated_target_members_are_not_false_positive_reference_genes(self):
         text=self.prediction.read_text()
@@ -139,6 +142,125 @@ class BenchmarkWorkflowTests(unittest.TestCase):
             {'one':{'c'},'singleton':set()},[{'a','b','c'},{'x'}])
         self.assertEqual(metrics['f1'],1.0)
         self.assertEqual(metrics['evaluated_refogs'],1)
+        self.assertEqual(metrics['exact_reconstructed_refogs'],1)
+        self.assertEqual(metrics['exact_reconstruction_fraction'],1)
+
+    def subset(self, rows=None, name='subset', protocol='custom'):
+        selection=self.raw/'adhesome_refog_selection.tsv'
+        write_tsv(selection,['refog','family','curation_source','curation_status'],rows if rows is not None else [
+            dict(refog='RefOG001',family='profilin',curation_source='independent synthetic fixture',curation_status='curated')])
+        return run(argparse.Namespace(results=self.results,panel=self.panel,reference_raw=self.raw,
+            out=self.root/name,protocol=protocol,scope='adhesome'))
+
+    def test_subset_ignores_unselected_truth_performance_without_deleting_prediction_members(self):
+        self.predict([('A__a1','B__b1'),('A__a2',),('B__b2',),('A__a0','B__b0')])
+        summary=self.subset()
+        self.assertEqual(summary['status'],'validated',summary['diagnostics'])
+        self.assertEqual(summary['reference_orthogroups'],2)
+        self.assertEqual(summary['metrics']['evaluated_refogs'],1)
+        self.assertEqual(summary['metrics']['ppv'],1)
+        self.assertEqual(summary['family_metrics']['profilin']['f1'],1)
+        self.assertEqual(summary['selected_reference_orthogroups'],1)
+        self.assertIn(str((self.raw/'adhesome_refog_selection.tsv').resolve()),summary['inputs'])
+        self.assertTrue((self.root/'subset/family_coverage.tsv').is_file())
+
+    def test_unselected_and_background_members_still_penalize_subset_precision(self):
+        for suffix, extra in [('other_refog',('A__a2','B__b2')),('background',('A__a0','B__b0'))]:
+            self.predict([('A__a1','B__b1',*extra),tuple(x for x in ('A__a0','B__b0','A__a2','B__b2') if x not in extra)])
+            summary=self.subset(name=suffix)
+            self.assertAlmostEqual(summary['metrics']['precision'],.2)
+            self.assertAlmostEqual(summary['metrics']['f1'],1/3)
+            self.assertEqual(summary['metrics']['recall'],1)
+            self.assertEqual(summary['family_metrics']['profilin']['f1'],summary['metrics']['f1'])
+            import csv
+            with (self.root/suffix/'refog_scores.tsv').open() as handle:
+                row=next(csv.DictReader(handle,delimiter='\t'))
+            self.assertAlmostEqual(float(row['ppv']),.2)
+            self.assertAlmostEqual(float(row['f1']),1/3)
+
+    def test_multiple_refogs_in_one_family_do_not_merge_ground_truth(self):
+        self.predict([('A__a1','B__b1','A__a2','B__b2'),('A__a0','B__b0')])
+        summary=self.subset([dict(refog=name,family='profilin',curation_source='synthetic fixture',curation_status='curated')
+            for name in ('RefOG001','RefOG002')])
+        self.assertEqual(summary['family_metrics']['profilin']['evaluated_refogs'],2)
+        self.assertAlmostEqual(summary['family_metrics']['profilin']['f1'],1/3)
+
+    def test_fibronectin_uses_curated_selection_and_other_fibronectin_scopes_remain_untested(self):
+        summary=self.subset([dict(refog='RefOG001',family='fibronectin_like',curation_source='synthetic curation only',curation_status='curated')])
+        self.assertEqual(set(summary['family_metrics']),{'fibronectin_like'})
+        with (self.root/'subset/family_coverage.tsv').open() as handle:
+            import csv
+            coverage={row['family']:row for row in csv.DictReader(handle,delimiter='\t')}
+        self.assertEqual(coverage['fibronectin_like']['status'],'evaluated')
+        self.assertEqual(coverage['fibronectin_III_ligand']['status'],'no_curated_ground_truth')
+        self.assertEqual(coverage['fibronectin_like_candidate']['f1'],'')
+
+    def test_invalid_or_empty_curated_selections_never_fallback_to_all_refogs(self):
+        base=dict(refog='RefOG001',family='profilin',curation_source='synthetic fixture',curation_status='curated')
+        cases=[[],[dict(base,refog='RefOG999')],[dict(base,family='not_a_family')],
+               [dict(base,curation_source='')],[dict(base,curation_status='provisional')],[base,base]]
+        for index,rows in enumerate(cases):
+            summary=self.subset(rows,name='invalid_'+str(index))
+            self.assertEqual(summary['status'],'invalid_benchmark_inputs')
+            self.assertIsNone(summary['validated_weight'])
+            self.assertNotIn('metrics',summary)
+
+    def test_missing_selection_and_original_integrity_cannot_be_bypassed_by_subset_scope(self):
+        missing=run(argparse.Namespace(results=self.results,panel=self.panel,reference_raw=self.raw,
+            out=self.root/'missing_selection',protocol='custom',scope='adhesome'))
+        self.assertEqual(missing['status'],'invalid_benchmark_inputs')
+        summary=self.subset(protocol='open_orthobench')
+        self.assertEqual(summary['status'],'invalid_benchmark_inputs')
+        self.assertIsNone(summary['validated_weight'])
+        self.assertEqual(summary['original_dataset_integrity']['observed']['reference_orthogroups'],2)
+
+    def test_selected_uncertain_members_are_excluded_only_for_their_refog(self):
+        folder=self.refogs/'low_certainty_assignments';folder.mkdir()
+        (folder/'RefOG001.txt').write_text('a0\n')
+        self.predict([('A__a1','B__b1','A__a0'),('A__a2','B__b2'),('B__b0',)])
+        self.assertEqual(self.subset()['metrics']['f1'],1)
+
+    def test_explicit_selection_is_honoured_and_cannot_be_used_with_all_scope(self):
+        selection=self.root/'explicit.tsv'
+        write_tsv(selection,['refog','family','curation_source','curation_status'],[
+            dict(refog='RefOG002',family='profilin',curation_source='synthetic fixture',curation_status='curated')])
+        args=argparse.Namespace(results=self.results,panel=self.panel,reference_raw=self.raw,
+            out=self.root/'explicit',protocol='custom',scope='adhesome',selection=selection)
+        summary=run(args)
+        self.assertEqual(summary['selection_file'],str(selection.resolve()))
+        self.assertEqual(summary['family_metrics']['profilin']['f1'],1)
+        args.scope='all';args.out=self.root/'invalid_all'
+        self.assertEqual(run(args)['status'],'invalid_benchmark_inputs')
+
+    def test_separate_subset_entrypoint_defaults_to_adhesome_scope(self):
+        from adhesome_benchmark_subset import main
+        with patch('benchmark_workflow.run',return_value={'status':'synthetic'}) as execute:
+            self.assertEqual(main(['--results','results','--panel','panel','--reference-raw','raw','--out','out']),0)
+        self.assertEqual(execute.call_args.args[0].scope,'adhesome')
+
+    def test_separate_subset_entrypoint_cannot_silently_run_the_original_scope(self):
+        import contextlib
+        import io
+        from adhesome_benchmark_subset import main
+        with patch('benchmark_workflow.run') as execute,contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as error:
+                main(['--results','results','--panel','panel','--reference-raw','raw','--out','out','--scope','all'])
+        self.assertEqual(error.exception.code,2)
+        execute.assert_not_called()
+
+    def test_cohort_lca_preserves_all_benchmark_members_and_declares_the_tree_level(self):
+        folder=self.results/'Species_Tree';folder.mkdir()
+        (folder/'SpeciesTree_rooted_node_labels.txt').write_text('(TargetA:1,(A:1,B:1)N2:1)N0;')
+        (self.results/'Phylogenetic_Hierarchical_Orthogroups/N2.tsv').write_text(self.prediction.read_text())
+        args=argparse.Namespace(results=self.results,panel=self.panel,reference_raw=self.raw,
+            out=self.root/'lca',protocol='custom',level='cohort-lca')
+        summary=run(args)
+        self.assertEqual(summary['status'],'validated',summary['diagnostics'])
+        self.assertEqual(summary['prediction_configuration']['selected_node'],'N2')
+        self.assertEqual(summary['quality_acceptance']['status'],'accepted')
+        self.assertIn(str((folder/'SpeciesTree_rooted_node_labels.txt').resolve()),summary['inputs'])
+        self.assertTrue((args.out/'orthogroup_error_matrix.tsv').exists())
+        self.assertTrue((args.out/'acceptance_checks.tsv').exists())
 
 
 if __name__=='__main__':

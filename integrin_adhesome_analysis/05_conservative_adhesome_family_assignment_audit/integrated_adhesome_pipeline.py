@@ -172,13 +172,23 @@ def architecture(row,family,rules):
     return broad_architecture(row,_architecture(row,family,rules))
 
 
-def benchmark_weight(row):
+def benchmark_weight(row,family=None):
     if value(row,'Orthology_benchmark_status')!='validated':return 1.0,'unavailable_neutral_weight'
+    if value(row,'Orthology_benchmark_scope')=='adhesome_subset_reference_orthogroup_inference':
+        try:
+            weights=json.loads(value(row,'Orthology_benchmark_family_weights') or '{}')
+            if not isinstance(weights,dict):raise ValueError('Family weights must be a mapping')
+            family=family or value(row,'family')
+            if family not in weights:return 1.0,'family_not_benchmarked_neutral_weight'
+            weight=float(weights[family])
+            return (weight,'validated_adhesome_family_weight') if math.isfinite(weight) and 0<=weight<=1 else (1.0,'invalid_weight_ignored')
+        except (ValueError,TypeError):
+            return 1.0,'invalid_weight_ignored'
     weight=num(value(row,'Orthology_benchmark_weight'),-1)
     return (weight,'validated_reference_cohort_weight') if 0<=weight<=1 else (1.0,'invalid_weight_ignored')
 
 
-def orthology_score(row,policy):
+def orthology_score(row,policy,family=None):
     references=set()
     for key,item in row.items():
         if key.startswith('Orthology_') and key.endswith('_HOG_copy_count') and num(item)>0:references.add(key[len('Orthology_'):-len('_HOG_copy_count')])
@@ -188,7 +198,7 @@ def orthology_score(row,policy):
     if count==0 and value(row,'Orthology_reference_support'):
         count=len({x.strip() for x in re.split('[;,]',value(row,'Orthology_reference_support')) if x.strip()})
     score=next((score for minimum,score in policy['orthology_reference_species_bands'] if count>=minimum),0)
-    weight,status=benchmark_weight(row)
+    weight,status=benchmark_weight(row,family)
     return score,round(score*weight,6),count,weight,status
 
 
@@ -231,7 +241,7 @@ def unique_key(row,index=0):
 def audit_record(row,rules):
     policy=policy_for(rules);baseline=value(row,'family')
     result=architecture(row,baseline,rules)
-    raw,orth,ref_count,weight,weight_status=orthology_score(row,policy)
+    raw,orth,ref_count,weight,weight_status=orthology_score(row,policy,result['family'])
     motif=motif_score(row);loc,loc_note=localization(row,result['family'],rules)
     domain=result['score'];supported_orthology=orth>0
     grade='A' if domain==4 and supported_orthology else 'B' if domain==4 else 'C' if domain>0 and supported_orthology else 'D'
@@ -252,6 +262,9 @@ def audit_record(row,rules):
         restriction_scope='sampled target/reference panel' if decision=='target_panel_restricted' else '',
         discovery_rule=value(row,'discovery_rule') or 'stage1_hypothesis',pipeline_version=VERSION,
         rationale=result['note']+f'; reference species={ref_count}; orthology={orth:g}; motif={motif}; localization={loc}; '+decision)
+    if value(row,'Orthology_benchmark_scope')=='adhesome_subset_reference_orthogroup_inference':
+        out['Orthology_benchmark_weight']=weight if weight_status=='validated_adhesome_family_weight' else ''
+        if weight_status=='family_not_benchmarked_neutral_weight':out['Orthology_benchmark_status']='family_not_benchmarked'
     if 'combined_hits' not in result:result['combined_hits']=combined_domains(row,domains(row))
     out['_rule_gate_trace']=result.get('rule_trace',[])
     return annotate_resolution(annotate_name(out,result),result)

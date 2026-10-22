@@ -1,5 +1,21 @@
 # Automatic evolutionary benchmarking — workflow 1.0
 
+The current acceptance policy requires pairwise precision >=0.80 and F1 >=0.70.
+Input validity is separate from performance acceptance. See
+[benchmark recalibration](../integrin_adhesome_analysis/BENCHMARK_RECALIBRATION.md)
+for quality rejection, version-aware root tables, explicit cohort-LCA evaluation
+and inference-parameter calibration commands. The original scoring equations remain.
+
+For an adhesome-only evaluation of selected curated RefOGs, see
+[the adhesome-subset guide](../integrin_adhesome_analysis/ADHESOME_BENCHMARK.md).
+Use `--benchmark-scope adhesome` in the workflow or `--scope adhesome` on the
+standalone benchmark, with an independently curated RefOG/family selection TSV.
+The default runs the original `benchmark.py`; explicit adhesome selection invokes
+`adhesome_benchmark_subset.py`. Failures do not automatically change the benchmark.
+Full predicted benchmark-group membership is retained. Fibronectin-like families
+are eligible where curated ground truth exists; untested families receive no
+validated score. The existing all-RefOG evaluation remains the default.
+
 Run commands from the directory containing `adhesome_workflow.py`:
 
 ```bash
@@ -89,7 +105,8 @@ The order is reference preparation → panel → orthology → evolutionary benc
 → final audit. **Phylogeny is disabled by default.** No pause or hand-written panel
 configuration is needed between these stages.
 
-The benchmark reads full root `N0.tsv`, falling back to full `Orthogroups.tsv`;
+The benchmark reads full root `N0.tsv`, or `Orthogroups.tsv` for OrthoFinder 3.1.5+
+(where the latter replaces N0);
 candidate-filtered HOG tables are never scored. Exact protein IDs and sequences
 link benchmark inputs to selected prepared references. All benchmark reference
 proteins, including background proteins outside the curated RefOGs, must be

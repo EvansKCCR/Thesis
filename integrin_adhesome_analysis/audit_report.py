@@ -11,7 +11,7 @@ FINAL_COLUMNS=['Specie','protein_id','putative_audited_family','protein_name','a
     'localization_score_0_1','total_score_0_10','family_specific_CDD_support',
     'Orthology_Orthogroup','Orthology_HOG','Orthology_HOG_status',
     'orthology_reference_species_count','Orthology_direct_reference_count','Orthology_reference_support',
-    'Orthology_benchmark_status','Orthology_benchmark_weight',
+    'Orthology_benchmark_status','Orthology_benchmark_scope','Orthology_benchmark_acceptance','Orthology_benchmark_weight','orthology_benchmark_weight_status',
     'MotifPrediction_distinct_site_count','MotifPrediction_context_supported_count',
     'MotifPrediction_sequence_only_count','MotifPrediction_context_conflict_count',
     'DeepLoc_2.1','DeepTMHMM','SignalP.v6.0','NCBI_CDD_selected_hit_count','NCBI_CDD_best_evalue',

@@ -109,6 +109,41 @@ class TwoStageAuditTests(unittest.TestCase):
         result=audit_record(self.row(Orthology_benchmark_status='validated',Orthology_benchmark_weight=0),self.rules)
         self.assertEqual(result['grade'],'B');self.assertNotEqual(result['family_decision'],'target_panel_restricted')
 
+    def test_adhesome_weight_is_measured_per_exact_audited_family(self):
+        fields=dict(Orthology_benchmark_status='validated',
+            Orthology_benchmark_scope='adhesome_subset_reference_orthogroup_inference',
+            Orthology_benchmark_weight=.01,
+            Orthology_benchmark_family_weights=json.dumps({'profilin':.5,'fibronectin_like':0.0}))
+        result=audit_record(self.row(**fields),self.rules)
+        self.assertEqual(result['orthology_score_0_3'],1.5)
+        self.assertEqual(result['Orthology_benchmark_weight'],.5)
+        self.assertEqual(result['orthology_benchmark_weight_status'],'validated_adhesome_family_weight')
+        fields['Orthology_benchmark_family_weights']='{"fibronectin_like":0.2}'
+        result=audit_record(self.row(**fields),self.rules)
+        self.assertEqual(result['orthology_score_0_3'],3)
+        self.assertEqual(result['Orthology_benchmark_weight'],'')
+        self.assertEqual(result['orthology_benchmark_weight_status'],'family_not_benchmarked_neutral_weight')
+
+    def test_subset_zero_weight_and_invalid_weights_do_not_leak_to_untested_families(self):
+        from integrated_adhesome_pipeline import benchmark_weight
+        row=dict(Orthology_benchmark_status='validated',
+            Orthology_benchmark_scope='adhesome_subset_reference_orthogroup_inference',
+            Orthology_benchmark_family_weights='{"fibronectin_like":0}')
+        self.assertEqual(benchmark_weight(row,'fibronectin_like'),(0,'validated_adhesome_family_weight'))
+        self.assertEqual(benchmark_weight(row,'fibronectin_III_ligand'),(1,'family_not_benchmarked_neutral_weight'))
+        for invalid in ('[]','bad JSON','{"profilin":-1}','{"profilin":"nan"}'):
+            row['Orthology_benchmark_family_weights']=invalid
+            self.assertEqual(benchmark_weight(row,'profilin'),(1,'invalid_weight_ignored'))
+
+    def test_refined_family_does_not_inherit_baseline_subset_weight(self):
+        row=self.row(family='Src',length=500,architecture=self.arch('PF00018','PF00017','PF07714'),NCBI_CDD_architecture='SH3_CHK',
+            Orthology_benchmark_status='validated',Orthology_benchmark_scope='adhesome_subset_reference_orthogroup_inference',
+            Orthology_benchmark_family_weights='{"Src":0}')
+        result=audit_record(row,self.rules)
+        self.assertEqual(result['audit_family'],'Csk')
+        self.assertEqual(result['orthology_score_0_3'],3)
+        self.assertEqual(result['orthology_benchmark_weight_status'],'family_not_benchmarked_neutral_weight')
+
     def test_motif_context_sequence_and_conflict_scores(self):
         for row,expected in (({'MotifPrediction_context_supported_count':2},2),({'MotifPrediction_sequence_only_count':5},1),({'MotifPrediction_candidate_tiers':'context_conflict'},0)):
             self.assertEqual(motif_score(row),expected)

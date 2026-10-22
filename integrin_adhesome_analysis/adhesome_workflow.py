@@ -8,6 +8,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -406,6 +407,10 @@ def resume(args):
             compare=args.compare,phylogeny=getattr(args,'phylogeny',False),
             benchmark_refogs=getattr(args,'benchmark_refogs',None),benchmark_input_dir=getattr(args,'benchmark_input_dir',None),
             benchmark_protocol=getattr(args,'benchmark_protocol','open_orthobench'),
+            benchmark_scope=getattr(args,'benchmark_scope','all'),benchmark_selection=getattr(args,'benchmark_selection',None),
+            benchmark_level=getattr(args,'benchmark_level','root'),benchmark_quality_policy=getattr(args,'benchmark_quality_policy',None),
+            orthofinder_inflation=getattr(args,'orthofinder_inflation',None),orthofinder_search=getattr(args,'orthofinder_search',None),
+            orthofinder_method=getattr(args,'orthofinder_method',None),
             iqtree_threads=args.iqtree_threads,allow_partial_phylogeny=args.allow_partial_phylogeny,
             phylogeny_grouping=args.phylogeny_grouping,
             family_coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE)))
@@ -436,7 +441,7 @@ def downstream(args):
         state=json.loads(checkpoint.read_text())
         if state['annotation_sha256']!=digest(annotation/'workflow_manifest.json'):
             raise ValueError('Annotation changed since failed run; create a new run')
-        for key in ('threads','analysis_threads','iqtree_threads','phylogeny','phylogeny_grouping','benchmark_refogs','benchmark_input_dir','benchmark_protocol'):
+        for key in ('threads','analysis_threads','iqtree_threads','phylogeny','phylogeny_grouping','benchmark_refogs','benchmark_input_dir','benchmark_protocol','benchmark_scope','benchmark_selection','benchmark_level','benchmark_quality_policy'):
             if hasattr(args,key):
                 value=getattr(args,key)
                 state['settings'][key]=str(value) if isinstance(value,Path) else value
@@ -463,7 +468,7 @@ def downstream(args):
     else:
         state=dict(settings={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items() if k!='func'},
                    annotation_sha256=digest(annotation/'workflow_manifest.json'),stages={})
-        for key in ('annotation','out','reference_raw','compare','benchmark_refogs','benchmark_input_dir'):
+        for key in ('annotation','out','reference_raw','compare','benchmark_refogs','benchmark_input_dir','benchmark_selection','benchmark_quality_policy'):
             if state['settings'].get(key) is not None:
                 state['settings'][key]=str(Path(state['settings'][key]).resolve())
         dump(checkpoint,state)
@@ -479,8 +484,15 @@ def downstream(args):
             data=json.loads((folder/'summary.json').read_text())
             configuration=dict(reference_raw=str(args.reference_raw.resolve()),
                 refogs=str(args.benchmark_refogs.resolve()) if getattr(args,'benchmark_refogs',None) else None,
-                input_dir=str(args.benchmark_input_dir.resolve()) if getattr(args,'benchmark_input_dir',None) else None)
-            changed=data.get('configuration')!=configuration
+                input_dir=str(args.benchmark_input_dir.resolve()) if getattr(args,'benchmark_input_dir',None) else None,
+                scope=getattr(args,'benchmark_scope','all'),
+                selection=str(args.benchmark_selection.resolve()) if getattr(args,'benchmark_selection',None) else None,
+                level=getattr(args,'benchmark_level','root'),
+                quality_policy=str(args.benchmark_quality_policy.resolve()) if getattr(args,'benchmark_quality_policy',None) else None)
+            saved_configuration=dict(data.get('configuration',{}))
+            saved_configuration.setdefault('scope','all');saved_configuration.setdefault('selection',None)
+            saved_configuration.setdefault('level','root');saved_configuration.setdefault('quality_policy',None)
+            changed=saved_configuration!=configuration
             if data.get('protocol')!=getattr(args,'benchmark_protocol','open_orthobench'):changed=True
             if data.get('status')=='unavailable' and args.reference_raw.exists() and any(args.reference_raw.glob('**/RefOGs')):changed=True
             if data.get('status')=='invalid_benchmark_inputs' and not data.get('inputs'):changed=True
@@ -515,17 +527,23 @@ def downstream(args):
     stage('references',out/'references',lambda:execute(reference_command,out/'logs'))
     stage('panel',out/'panel',lambda:calibrate(argparse.Namespace(handoff=handoff,panel=out/'references/panel.auto.json',out=out/'panel')))
     stage('orthology',out/'orthology',lambda:orthology(argparse.Namespace(panel=out/'panel',out=out/'orthology',results=None,input_manifest=None,
-        threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare,recovering=recovering,inside_workflow=True)),preserve=True)
+        threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare,recovering=recovering,inside_workflow=True,
+        orthofinder_inflation=getattr(args,'orthofinder_inflation',None),orthofinder_search=getattr(args,'orthofinder_search',None),
+        orthofinder_method=getattr(args,'orthofinder_method',None))),preserve=True)
     optional_errors=[]
     benchmark_refreshed=state['stages'].get('benchmark',{}).get('status')!='complete'
     try:
         stage('benchmark',out/'benchmark',lambda:benchmark(argparse.Namespace(orthology=out/'orthology',out=out/'benchmark',
             reference_raw=args.reference_raw,refogs=getattr(args,'benchmark_refogs',None),input_dir=getattr(args,'benchmark_input_dir',None),
-            protocol=getattr(args,'benchmark_protocol','open_orthobench'))))
+            protocol=getattr(args,'benchmark_protocol','open_orthobench'),
+            scope=getattr(args,'benchmark_scope','all'),selection=getattr(args,'benchmark_selection',None),
+            level=getattr(args,'benchmark_level','root'),quality_policy=getattr(args,'benchmark_quality_policy',None))))
     except Exception as exc:
         optional_errors.append('benchmark: '+str(exc))
         dump(out/'benchmark_failure.json',dict(status='failed',validated_weight=None,error=str(exc)))
     summary_path=out/'benchmark/summary.json'
+    if summary_path.exists() and json.loads(summary_path.read_text()).get('status')=='quality_rejected':
+        optional_errors.append('benchmark_quality: measured orthology performance fails configured acceptance criteria')
     if state['stages'].get('audit',{}).get('status')=='complete':
         saved=json.loads((out/'final/workflow_manifest.json').read_text())
         if benchmark_refreshed or saved.get('benchmark_summary_sha256')!=(digest(summary_path) if summary_path.exists() else None):
@@ -643,12 +661,18 @@ def recover(args):
         raise ValueError('No recovery checkpoint found. For a run created before checkpoints were added, use --adopt-existing and --annotation with its completed annotation directory.')
     state=json.loads((run/'recovery.json').read_text())
     settings=state['settings']
-    for key in ('annotation','out','reference_raw','compare','benchmark_refogs','benchmark_input_dir'):
+    for key in ('annotation','out','reference_raw','compare','benchmark_refogs','benchmark_input_dir','benchmark_selection','benchmark_quality_policy'):
         if settings.get(key) is not None:
             settings[key]=Path(settings[key])
     settings['out']=run
     settings['phylogeny']=settings.get('phylogeny',False)
     settings['retry_benchmark']=getattr(args,'retry_benchmark',False)
+    for key in ('benchmark_scope','benchmark_protocol','benchmark_selection','benchmark_level','benchmark_quality_policy'):
+        if getattr(args,key,None) is not None:
+            value=getattr(args,key)
+            settings[key]=value.resolve() if isinstance(value,Path) else value
+    if getattr(args,'benchmark_scope',None)=='all' and getattr(args,'benchmark_selection',None) is None:
+        settings['benchmark_selection']=None
     if getattr(args,'phylogeny',None) is not None:settings['phylogeny']=args.phylogeny
     if getattr(args,'phylogeny_grouping',None) is not None:settings['phylogeny_grouping']=args.phylogeny_grouping
     for key in ('threads','analysis_threads','iqtree_threads'):
@@ -701,7 +725,26 @@ def calibrate(args):
     print(f'Panel ready: {out}. Rerun orthology for this panel; prior runs remain unchanged.')
 
 
+def orthofinder_configuration(args):
+    """Explicit inference controls; never retune completed assignments during recovery."""
+    settings={key:getattr(args,'orthofinder_'+key,None) for key in ('inflation','search','method')}
+    inflation=settings['inflation']
+    if inflation is not None and (isinstance(inflation,bool) or not math.isfinite(inflation) or not 1<=inflation<=10):
+        raise ValueError('OrthoFinder inflation must be finite and between 1 and 10')
+    if settings['search'] not in (None,'diamond','diamond_ultra_sens','blast','mmseqs'):
+        raise ValueError('Unsupported OrthoFinder search configuration')
+    if settings['method'] not in (None,'msa','dendroblast'):
+        raise ValueError('Unsupported OrthoFinder inference method')
+    options=[]
+    for name,flag in [('inflation','-I'),('search','-S'),('method','-M')]:
+        if settings[name] is not None:options.extend([flag,str(settings[name])])
+    return settings,options
+
+
 def orthology(args):
+    inference_settings,inference_options=orthofinder_configuration(args)
+    if args.results and inference_options:
+        raise ValueError('Inference tuning options cannot change imported results; run new inference instead')
     panel = args.panel.resolve()
     panel_meta = verify(panel, 'panel')
     out = args.out.resolve()
@@ -716,6 +759,8 @@ def orthology(args):
         receipt=out/'inference_complete.json'
         if recovering and receipt.exists():
             saved=json.loads(receipt.read_text())
+            if any(value is not None for value in inference_settings.values()) and saved.get('inference_settings')!=inference_settings:
+                raise ValueError('Completed inference settings cannot be recalibrated in place; use a new orthology output')
             if saved['panel_manifest']!=digest(panel/'workflow_manifest.json'):
                 raise ValueError('Panel changed since inference')
             for name,sha in saved.get('files',{}).items():
@@ -724,8 +769,10 @@ def orthology(args):
         else:
             if (out/'inference').exists():
                 archive_attempt(out/'inference')
-            execute(['orthofinder','-f',panel/'proteomes','-t',args.threads,'-a',args.analysis_threads,'-o',out/'inference'], out/'logs')
-            dump(receipt,dict(panel_manifest=digest(panel/'workflow_manifest.json'),
+            inference_command=['orthofinder','-f',panel/'proteomes','-t',args.threads,'-a',args.analysis_threads,'-o',out/'inference',*inference_options]
+            execute(inference_command, out/'logs')
+            dump(receipt,dict(panel_manifest=digest(panel/'workflow_manifest.json'),inference_settings=inference_settings,
+                inference_command=[str(item) for item in inference_command],
                 files={str(p.relative_to(out/'inference')):digest(p) for p in (out/'inference').rglob('*') if p.is_file()}))
         hits = list((out/'inference').glob('Results_*'))
         if len(hits)!=1:
@@ -758,16 +805,28 @@ def orthology(args):
               previous_review=old[r['candidate_id']]['calibration_review'], current_review=r['calibration_review']) for r in review])
     if not getattr(args,'inside_workflow',False):
         benchmark_command(results,panel,getattr(args,'reference_raw',ROOT/'inputs/reference_raw'),out/'benchmark',out/'logs',
-                          getattr(args,'benchmark_refogs',None),getattr(args,'benchmark_input_dir',None),getattr(args,'benchmark_protocol','open_orthobench'))
+                          getattr(args,'benchmark_refogs',None),getattr(args,'benchmark_input_dir',None),getattr(args,'benchmark_protocol','open_orthobench'),
+                          getattr(args,'benchmark_scope','all'),getattr(args,'benchmark_selection',None),
+                          getattr(args,'benchmark_level','root'),getattr(args,'benchmark_quality_policy',None))
     seal(out, 'orthology', panel=str(panel), panel_manifest=digest(panel/'workflow_manifest.json'), results=str(results))
     print(f'Orthology complete: {out}; inspect calibration_review.tsv before final audit.')
 
 
-def benchmark_command(results,panel,raw,out,logs,refogs=None,input_dir=None,protocol='open_orthobench'):
-    command=[sys.executable,ORTH/'benchmark.py','--workflow','--results',results,'--panel',panel,
-             '--reference-raw',raw,'--out',out,'--protocol',protocol]
+def benchmark_entrypoint(scope='all'):
+    if scope not in ('all','adhesome'):
+        raise ValueError('Unknown benchmark scope: '+str(scope))
+    return ORTH/('adhesome_benchmark_subset.py' if scope=='adhesome' else 'benchmark.py')
+
+
+def benchmark_command(results,panel,raw,out,logs,refogs=None,input_dir=None,protocol='open_orthobench',scope='all',selection=None,level='root',quality_policy=None):
+    command=[sys.executable,benchmark_entrypoint(scope)]
+    if scope=='all':command+=['--workflow']
+    command+=['--results',results,'--panel',panel,
+             '--reference-raw',raw,'--out',out,'--protocol',protocol,'--scope',scope,'--level',level]
     if refogs:command+=['--refogs',refogs]
     if input_dir:command+=['--input-dir',input_dir]
+    if selection:command+=['--selection',selection]
+    if quality_policy:command+=['--quality-policy',quality_policy]
     execute(command,logs)
 
 
@@ -780,10 +839,13 @@ def benchmark(args):
         raise ValueError('Benchmark orthology panel changed')
     out=args.out.resolve()
     benchmark_command(Path(meta['results']),panel,args.reference_raw.resolve(),out,out.parent/'logs',
-                      getattr(args,'refogs',None),getattr(args,'input_dir',None),getattr(args,'protocol','open_orthobench'))
+                      getattr(args,'refogs',None),getattr(args,'input_dir',None),getattr(args,'protocol','open_orthobench'),
+                      getattr(args,'scope','all'),getattr(args,'selection',None),getattr(args,'level','root'),getattr(args,'quality_policy',None))
     seal(out,'evolutionary_benchmark',orthology=str(orthology_dir),orthology_manifest=digest(orthology_dir/'workflow_manifest.json'),
          panel_manifest=digest(panel/'workflow_manifest.json'),benchmark_script_sha256=digest(ORTH/'benchmark.py'),
-         benchmark_adapter_sha256=digest(ORTH/'benchmark_workflow.py'))
+         benchmark_adapter_sha256=digest(ORTH/'benchmark_workflow.py'),
+         benchmark_entrypoint=benchmark_entrypoint(getattr(args,'scope','all')).name,
+         benchmark_entrypoint_sha256=digest(benchmark_entrypoint(getattr(args,'scope','all'))))
 
 
 def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
@@ -791,7 +853,8 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
     result=dict(Orthology_benchmark_status='unavailable',Orthology_benchmark_weight='',
                 Orthology_benchmark_source='',Orthology_benchmark_reason='No evolutionary benchmark report',
                 Orthology_benchmark_scope='reference_cohort_orthogroup_inference',Orthology_benchmark_f1='',
-                Orthology_benchmark_precision='',Orthology_benchmark_recall='',Orthology_benchmark_refogs='')
+                Orthology_benchmark_precision='',Orthology_benchmark_recall='',Orthology_benchmark_refogs='',
+                Orthology_benchmark_acceptance='not_assessed')
     if not folder or not (folder/'summary.json').exists():
         failure=folder.parent/'benchmark_failure.json' if folder else None
         if failure and failure.exists():
@@ -811,13 +874,13 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
             raise ValueError('Benchmark report lacks workflow provenance')
         data=json.loads(path.read_text())
         result.update(Orthology_benchmark_status=data['status'],Orthology_benchmark_source=str(path),
+                      Orthology_benchmark_scope=data.get('evaluated_scope','reference_cohort_orthogroup_inference'),
+                      Orthology_benchmark_acceptance=data.get('quality_acceptance',{}).get('status','not_assessed'),
                       Orthology_benchmark_reason='; '.join(data.get('diagnostics',[])))
-        if data['status']=='validated':
-            import math
-            weight=float(data['validated_weight'])
-            if not math.isfinite(weight) or not 0<=weight<=1:raise ValueError('Benchmark weight must be finite and between zero and one')
-            if not math.isfinite(float(data['metrics']['f1'])) or abs(float(data['metrics']['f1'])-weight)>1e-12:
-                raise ValueError('Benchmark weight differs from the measured reference-cohort F1')
+        if data.get('metrics'):
+            result.update(Orthology_benchmark_f1=data['metrics']['f1'],Orthology_benchmark_precision=data['metrics']['precision'],
+                          Orthology_benchmark_recall=data['metrics']['recall'],Orthology_benchmark_refogs=data['metrics']['evaluated_refogs'])
+        if data['status'] in ('validated','quality_rejected'):
             if data.get('panel_manifest_sha256')!=digest(panel/'workflow_manifest.json'):
                 raise ValueError('Benchmark panel differs from audit panel')
             prediction=Path(data['prediction_file'])
@@ -825,7 +888,23 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
                 raise ValueError('Benchmark used predictions outside the audited orthology results')
             for name,expected in data['inputs'].items():
                 if digest(Path(name))!=expected:raise ValueError('Benchmark input changed: '+name)
-            result['Orthology_benchmark_weight']=weight
+        if data['status']=='validated' and data.get('quality_acceptance',{}).get('status')!='accepted':
+            result.update(Orthology_benchmark_status='quality_not_assessed',Orthology_benchmark_weight='',
+                          Orthology_benchmark_reason='Legacy benchmark has no accepted performance assessment; rerun benchmarking with the current policy')
+        elif data['status']=='validated':
+            weight=float(data['validated_weight'])
+            if not math.isfinite(weight) or not 0<=weight<=1:raise ValueError('Benchmark weight must be finite and between zero and one')
+            if not math.isfinite(float(data['metrics']['f1'])) or abs(float(data['metrics']['f1'])-weight)>1e-12:
+                raise ValueError('Benchmark weight differs from the measured reference-cohort F1')
+            if data.get('scope','all')=='adhesome':
+                weights={family:float(metrics['f1']) for family,metrics in data['family_metrics'].items()}
+                if (not weights or not set(weights)<=set(data['selected_families'])
+                        or any(not math.isfinite(v) or not 0<=v<=1 for v in weights.values())):
+                    raise ValueError('Invalid family-scoped benchmark weights')
+                result['Orthology_benchmark_family_weights']=json.dumps(weights,sort_keys=True)
+                result['Orthology_benchmark_reason']=('; '.join(data.get('diagnostics',[]))+ '; ' if data.get('diagnostics') else '')+'Weights apply only to exact curated families; other families are unvalidated'
+            else:
+                result['Orthology_benchmark_weight']=weight
             result.update(Orthology_benchmark_f1=data['metrics']['f1'],Orthology_benchmark_precision=data['metrics']['precision'],
                           Orthology_benchmark_recall=data['metrics']['recall'],Orthology_benchmark_refogs=data['metrics']['evaluated_refogs'])
     except (ValueError,OSError,KeyError,TypeError) as exc:
@@ -936,6 +1015,10 @@ def main(argv=None):
         command.add_argument('--benchmark-refogs',type=Path,help='Override automatic RefOGs discovery under reference_raw')
         command.add_argument('--benchmark-input-dir',type=Path,help='Override automatic matching benchmark Input discovery')
         command.add_argument('--benchmark-protocol',choices=['open_orthobench','custom'],default='open_orthobench')
+        command.add_argument('--benchmark-scope',choices=['all','adhesome'],default='all')
+        command.add_argument('--benchmark-selection',type=Path,help='Curated adhesome RefOG/family TSV; used with --benchmark-scope adhesome')
+        command.add_argument('--benchmark-level',choices=['root','cohort-lca'],default='root')
+        command.add_argument('--benchmark-quality-policy',type=Path,help='Override bundled precision >=0.80 / F1 >=0.70 acceptance criteria')
         command.add_argument('--threads',type=int,default=8)
         command.add_argument('--analysis-threads',type=int,default=8)
         command.add_argument('--compare',type=Path,help='Previous orthology output for reference-panel comparison')
@@ -961,6 +1044,10 @@ def main(argv=None):
     s.add_argument('--benchmark-refogs',type=Path)
     s.add_argument('--benchmark-input-dir',type=Path)
     s.add_argument('--benchmark-protocol',choices=['open_orthobench','custom'],default='open_orthobench')
+    s.add_argument('--benchmark-scope',choices=['all','adhesome'],default='all')
+    s.add_argument('--benchmark-selection',type=Path)
+    s.add_argument('--benchmark-level',choices=['root','cohort-lca'],default='root')
+    s.add_argument('--benchmark-quality-policy',type=Path)
     s.set_defaults(func=orthology)
     s=sub.add_parser('benchmark',help='Evaluate completed orthology against supplied reference-proteome RefOGs')
     s.add_argument('--orthology',type=Path,required=True)
@@ -968,12 +1055,20 @@ def main(argv=None):
     s.add_argument('--refogs',type=Path)
     s.add_argument('--input-dir',type=Path)
     s.add_argument('--protocol',choices=['open_orthobench','custom'],default='open_orthobench')
+    s.add_argument('--scope',choices=['all','adhesome'],default='all')
+    s.add_argument('--selection',type=Path,help='Curated RefOG/family TSV; default: reference_raw/adhesome_refog_selection.tsv')
+    s.add_argument('--level',choices=['root','cohort-lca'],default='root')
+    s.add_argument('--quality-policy',type=Path)
     s.set_defaults(func=benchmark)
     s = sub.add_parser('audit', help='Join all evidence and run conservative family audit')
     s.add_argument('--annotation', type=Path, required=True)
     s.add_argument('--orthology', type=Path, required=True)
     s.add_argument('--benchmark',type=Path,help='Sealed benchmark output; standalone orthology uses its own benchmark subdirectory by default')
     s.set_defaults(func=audit)
+    for name in ('resume','continue','orthology'):
+        sub.choices[name].add_argument('--orthofinder-inflation',type=float,help='Explicit MCL inflation for new inference (1-10); unset preserves the installed OrthoFinder default')
+        sub.choices[name].add_argument('--orthofinder-search',choices=['diamond','diamond_ultra_sens','blast','mmseqs'])
+        sub.choices[name].add_argument('--orthofinder-method',choices=['msa','dendroblast'])
     for name in ('resume','continue','audit'):
         sub.choices[name].add_argument('--family-coverage',choices=['original','expanded'],default=DEFAULT_FAMILY_COVERAGE,
             help='Default: expanded (190 family configurations; 136 identity rules). Original is retained for comparison; Stage 1 is unchanged')
@@ -984,6 +1079,11 @@ def main(argv=None):
     s.add_argument('--adopt-existing',action='store_true',help='Validate and checkpoint an older failed run that predates recovery support')
     s.add_argument('--annotation',type=Path,help='Completed annotation directory for adoption of an older failed run')
     s.add_argument('--retry-benchmark',action='store_true',help='Explicitly recompute a benchmark and refresh dependent audit while reusing completed orthology')
+    s.add_argument('--benchmark-scope',choices=['all','adhesome'],default=None,help='Override saved benchmark scope when retrying the benchmark')
+    s.add_argument('--benchmark-selection',type=Path,help='Override the saved curated RefOG/family TSV')
+    s.add_argument('--benchmark-protocol',choices=['open_orthobench','custom'],default=None)
+    s.add_argument('--benchmark-level',choices=['root','cohort-lca'],default=None)
+    s.add_argument('--benchmark-quality-policy',type=Path)
     for name in ('threads','analysis-threads','iqtree-threads'):
         s.add_argument('--'+name,type=int,default=None)
     phylo=s.add_mutually_exclusive_group()
@@ -993,6 +1093,7 @@ def main(argv=None):
     s.set_defaults(func=recover)
     args = p.parse_args(argv)
     try:
+        if hasattr(args,'orthofinder_inflation'):orthofinder_configuration(args)
         for name in ('threads','analysis_threads','iqtree_threads'):
             if getattr(args,name,None) is not None and getattr(args,name)<1:
                 raise ValueError('Thread counts must be positive')
