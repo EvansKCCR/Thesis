@@ -81,8 +81,16 @@ def estimate(samples,query,minimum=20):
         upper_95=round(min(1,centre+delta),6),n=n,scope=scope)
 
 
-def annotate(rows,model_path=DEFAULT_MODEL,family_rules_sha256=None):
+def annotate(rows,model_path=DEFAULT_MODEL,family_rules_sha256=None,orthogroup_context_weight=None):
     """A matching training sequence is excluded in full before its probability is fit."""
+    if orthogroup_context_weight is not None:
+        from orthogroup_context import validate_weight
+        validate_weight(orthogroup_context_weight)
+        for row in rows:
+            for key in ('assignment_probability','assignment_probability_lower_95','assignment_probability_upper_95',
+                        'probability_calibration_n','probability_calibration_scope'):row.pop(key,None)
+            row['probability_method']='unavailable_for_heuristic_context_configuration'
+        return dict(status='probability_model_not_calibrated_for_heuristic_context_configuration',probability_interpretation=False)
     if not model_path.exists():return dict(status='no_labelled_probability_model')
     model=json.loads(model_path.read_text(encoding='utf-8'))
     if family_rules_sha256 and model['code_fingerprint'].get('01_detection/config/family_rules.json')!=family_rules_sha256:

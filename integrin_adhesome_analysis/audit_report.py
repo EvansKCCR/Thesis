@@ -8,6 +8,7 @@ FINAL_COLUMNS=['Specie','protein_id','putative_audited_family','protein_name','a
     'protein_name_scope','grade','family_decision','length','Pfam_architecture','NCBI_CDD_architecture',
     'architecture_evidence','naming_evidence','identity_rule','identity_competitors',
     'domain_score_0_4','orthology_raw_score_0_3','orthology_score_0_3','motif_score_0_2',
+    'orthogroup_context_weight','orthogroup_context_policy',
     'localization_score_0_1','total_score_0_10','family_specific_CDD_support',
     'Orthology_Orthogroup','Orthology_HOG','Orthology_HOG_status',
     'orthology_reference_species_count','Orthology_direct_reference_count','Orthology_reference_support',

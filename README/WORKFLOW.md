@@ -1,5 +1,10 @@
 # Default: continuous execution after resume
 
+For new validation/production runs, use the [isolated-mode entry point](../integrin_adhesome_analysis/ISOLATED_WORKFLOWS.md).
+It runs an independent calibration self-test alongside the selected mode and
+keeps all three query datasets out of each other's orthogroup inference.
+The staged commands below remain compatible with existing runs.
+
 Follow [the automated-run guide](ORTHOLOGY_PHYLOGENY_GUIDE.md). Put reference FASTAs and matching GFF/TSV files in inputs/reference_raw, with the original Open_Orthobench Input/RefOGs bundle for evolutionary benchmarking. Resume runs annotation, reference preparation, panel construction, OrthoFinder, benchmarking and final audit. Phylogeny is opt-in with --phylogeny and cannot block the audit. The modular commands remain available; --annotation-only deliberately stops after annotation.
 
 # Integrated adhesome workflow — version 1.0

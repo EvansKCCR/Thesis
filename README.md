@@ -4,6 +4,10 @@ A modular source distribution integrating detection, external topology/
 localization, motif annotation, whole-proteome orthology and conservative family
 assignment. Start with [WORKFLOW.md](README/WORKFLOW.md) for setup and all commands.
 
+New analyses use `run_pipeline.py --mode validation|target`, with a mandatory
+separate calibration self-test. See the [isolated-mode guide](integrin_adhesome_analysis/ISOLATED_WORKFLOWS.md)
+for input checks, two parallel handoffs, evidence return, resuming and reports.
+
 The [two-stage family audit](README/COMPUTATIONAL_AUDIT.md) refines the original
 general family hypotheses using mandatory architecture gates and a 4/3/2/1
 evidence score. Its nine-sheet stage 2 workbook follows the supplied template,

@@ -15,6 +15,7 @@ sys.path.insert(0,str(ROOT))
 from classification_contract import general_family,general_rules,write_sheet,schema
 from family_identity import combined_domains,scoped_refinement,cdd_text,annotate_name,model_counts,LIBRARY as IDENTITY_LIBRARY
 import family_identity
+from orthogroup_context import validate_weight,configuration as context_configuration
 from stage2_resolution import broad_architecture,annotate_resolution,common_broad_family,BROAD_LABELS
 
 VERSION='1.0'
@@ -188,7 +189,7 @@ def benchmark_weight(row,family=None):
     return (weight,'validated_reference_cohort_weight') if 0<=weight<=1 else (1.0,'invalid_weight_ignored')
 
 
-def orthology_score(row,policy,family=None):
+def orthology_score(row,policy,family=None,context_weight=None):
     references=set()
     for key,item in row.items():
         if key.startswith('Orthology_') and key.endswith('_HOG_copy_count') and num(item)>0:references.add(key[len('Orthology_'):-len('_HOG_copy_count')])
@@ -198,7 +199,8 @@ def orthology_score(row,policy,family=None):
     if count==0 and value(row,'Orthology_reference_support'):
         count=len({x.strip() for x in re.split('[;,]',value(row,'Orthology_reference_support')) if x.strip()})
     score=next((score for minimum,score in policy['orthology_reference_species_bands'] if count>=minimum),0)
-    weight,status=benchmark_weight(row,family)
+    context_weight=validate_weight(context_weight)
+    weight,status=benchmark_weight(row,family) if context_weight is None else (context_weight,'heuristic_orthogroup_context' if context_weight else 'orthogroup_context_disabled')
     return score,round(score*weight,6),count,weight,status
 
 
@@ -241,7 +243,8 @@ def unique_key(row,index=0):
 def audit_record(row,rules):
     policy=policy_for(rules);baseline=value(row,'family')
     result=architecture(row,baseline,rules)
-    raw,orth,ref_count,weight,weight_status=orthology_score(row,policy,result['family'])
+    context_weight=validate_weight(rules.get('_orthogroup_context_weight'))
+    raw,orth,ref_count,weight,weight_status=orthology_score(row,policy,result['family'],context_weight)
     motif=motif_score(row);loc,loc_note=localization(row,result['family'],rules)
     domain=result['score'];supported_orthology=orth>0
     grade='A' if domain==4 and supported_orthology else 'B' if domain==4 else 'C' if domain>0 and supported_orthology else 'D'
@@ -258,11 +261,14 @@ def audit_record(row,rules):
         localization_score_0_1=loc,total_score_0_10=round(domain+orth+motif+loc,6),grade=grade,family_decision=decision,
         assignment_status=assignment,classification_state='family_supported' if grade in ('A','B') else 'provisional_family' if grade=='C' else 'unresolved',
         domain_gate_passed=domain==4,family_specific_CDD_support=result['cdd'],localization_evidence=loc_note,
-        orthology_reference_species_count=ref_count,orthology_benchmark_weight_used=weight,orthology_benchmark_weight_status=weight_status,
+        orthology_reference_species_count=ref_count,
+        orthology_benchmark_weight_used=weight if context_weight is None else '',
+        orthology_benchmark_weight_status=weight_status if context_weight is None else 'not_applied_heuristic_context_override',
+        orthogroup_context_weight=weight,orthogroup_context_policy='baseline' if context_weight is None else 'disabled' if weight==0 else 'heuristic',
         restriction_scope='sampled target/reference panel' if decision=='target_panel_restricted' else '',
         discovery_rule=value(row,'discovery_rule') or 'stage1_hypothesis',pipeline_version=VERSION,
         rationale=result['note']+f'; reference species={ref_count}; orthology={orth:g}; motif={motif}; localization={loc}; '+decision)
-    if value(row,'Orthology_benchmark_scope')=='adhesome_subset_reference_orthogroup_inference':
+    if context_weight is None and value(row,'Orthology_benchmark_scope')=='adhesome_subset_reference_orthogroup_inference':
         out['Orthology_benchmark_weight']=weight if weight_status=='validated_adhesome_family_weight' else ''
         if weight_status=='family_not_benchmarked_neutral_weight':out['Orthology_benchmark_status']='family_not_benchmarked'
     if 'combined_hits' not in result:result['combined_hits']=combined_domains(row,domains(row))
@@ -353,7 +359,7 @@ def classify_rows(rows,rules):
                 row[key]=match[key]
     if {unique_key(row) for row in resolved}|set(exclusions)!=set(grouped):raise ValueError('Retained and excluded protein accounting is incomplete')
     from identity_probability import annotate as calibrate_probabilities
-    calibrate_probabilities(resolved,family_rules_sha256=rules.get('_sha256'))
+    calibrate_probabilities(resolved,family_rules_sha256=rules.get('_sha256'),orthogroup_context_weight=rules.get('_orthogroup_context_weight'))
     return audited,resolved
 
 
@@ -414,13 +420,14 @@ def _run_xlsx(source,dest,sheet_name,rules,supporting=None):
         writer=csv.DictWriter(handle,fieldnames=exclusion_fields,delimiter='\t',extrasaction='ignore')
         writer.writeheader();writer.writerows(exclusions)
     from identity_probability import annotate as probability_context
-    calibration=probability_context(resolved,family_rules_sha256=rules.get('_sha256'))
+    calibration=probability_context(resolved,family_rules_sha256=rules.get('_sha256'),orthogroup_context_weight=rules.get('_orthogroup_context_weight'))
     metrics=[('Pipeline version',VERSION),('Original stage 1 hypotheses',len(rows)),('Stage 2 recovery hypotheses',sum(r['row_origin']=='stage2_recovery' for r in audited)),
         ('Stage 1 species/protein pairs',len({unique_key(r) for r in rows})),('Final species/protein pairs',len(resolved)),
         ('Negative controls excluded',len(exclusions)),('All input proteins accounted for',len(resolved)+len(exclusions)==len({unique_key(r) for r in rows})),
         ('Collapsed hypothesis records',len(audited)-len(resolved)-len(exclusions)),
         *[(f'Grade {grade}',counts[grade]) for grade in 'ABCD'],('Domain score maximum',4),('Orthology score maximum',3),('Motif score maximum',2),('Localization score maximum',1),
         ('Family/protein probability status',calibration['status'])]
+    metrics.append(('Orthogroup context policy',json.dumps(context_configuration(rules.get('_orthogroup_context_weight')),sort_keys=True)))
     metrics.extend(('Benchmark '+key,value) for key,value in supporting.get('benchmark',{}).items() if not isinstance(value,(dict,list)))
     metrics.extend(('Identity calibration '+key,json.dumps(item,sort_keys=True) if isinstance(item,(dict,list)) else item) for key,item in calibration.items())
     tables['Pipeline_summary']=[dict(Metric=key,Value=item) for key,item in metrics]
@@ -444,6 +451,7 @@ def _run_xlsx(source,dest,sheet_name,rules,supporting=None):
         policy_sha256=rules.get('_policy_sha256'),output_sha256=checksum(dest),counts=dict(counts),
         identity_library_sha256=checksum(family_identity.LIBRARY),identity_library_path=str(family_identity.LIBRARY.resolve()),
         family_rules_path=rules.get('_source_path'),identity_probability_calibration=calibration,column_cleanup=cleanup,
+        orthogroup_context=context_configuration(rules.get('_orthogroup_context_weight')),
         input_hypotheses=len(rows),audited_hypotheses=len(audited),unique_proteins=len(resolved),
         input_unique_proteins=len({unique_key(r) for r in rows}),excluded_negative_controls=len(exclusions),
         protein_pool_preserved=not exclusions,protein_accounting_complete=True)
@@ -459,8 +467,10 @@ def main():
     parser.add_argument('--identity-rules',type=Path,default=Path(__file__).with_name('family_identity_rules_expanded.json'),
                         help='Identity rules paired with --rules; the workflow selects both together')
     parser.add_argument('--supporting-data',type=Path);parser.add_argument('--keep-all-audited',action='store_true')
+    parser.add_argument('--orthogroup-context-weight',type=float,default=None,help='Optional heuristic context coefficient (0-1); omitted preserves baseline; 0 disables context; never a correctness probability')
     parser.add_argument('--version',action='version',version='adhesome-audit '+VERSION)
     args=parser.parse_args();rules=json.loads(args.rules.read_text());rules['_sha256']=checksum(args.rules)
+    rules['_orthogroup_context_weight']=validate_weight(args.orthogroup_context_weight)
     rules['_source_path']=str(args.rules.resolve())
     from evaluate_family_expansion import validate_pair
     validate_pair(rules,json.loads(args.identity_rules.read_text()))

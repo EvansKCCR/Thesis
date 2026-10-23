@@ -31,7 +31,10 @@ def build(raw, handoff, out, benchmark_refogs=None, benchmark_input_dir=None):
         expected=meta['sources'].get(str(source.resolve()))
         if expected is None or digest(source)!=expected:
             raise ValueError(f'Target proteome changed or lacks handoff provenance: {source}')
-        entries.append(dict(species=sp,fasta=str(source.resolve()),gene_level=True,source='Handoff-verified complete target proteome'))
+        control_unit=meta.get('query_unit')=='control_protein'
+        entries.append(dict(species=sp,fasta=str(source.resolve()),gene_level=not control_unit,
+            unit_level='control_protein' if control_unit else 'gene',
+            source='Handoff-verified labelled protein units; not a complete proteome' if control_unit else 'Handoff-verified complete target proteome'))
     seen=set(targets)
     for source in files:
         code=re.sub(r'\.(fa|faa|fasta)(\.gz)?$','',source.name,flags=re.I)

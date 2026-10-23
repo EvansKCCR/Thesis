@@ -3,6 +3,7 @@
 import argparse
 from collections import Counter, defaultdict
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -120,6 +121,13 @@ def scan(args):
             raise ValueError(f'{kind} library checksum mismatch')
         if not Path(library).stat().st_size:
             continue
+        if os.environ.get('SCHISTO_ISOLATED_BRANCH'):
+            # hmmpress writes sidecar indexes. Each parallel gate needs its own
+            # writable runtime index, never concurrent writes to the frozen HMMs.
+            local_library=output/(kind+'.library.hmm')
+            if not local_library.exists() or digest(local_library)!=digest(library):
+                shutil.copyfile(library,local_library)
+            library=str(local_library)
         command = ['hmmpress', '-f', library]
         commands.append(command)
         run(command, output / (kind + '.hmmpress.log'))

@@ -9,6 +9,7 @@ import csv
 import hashlib
 import json
 import math
+import os
 import re
 import shutil
 import subprocess
@@ -17,6 +18,7 @@ from collections import defaultdict
 from pathlib import Path
 from identity_probability import resource_hashes as probability_resources
 from evaluate_validation import after_audit as evaluate_controls,resource_hashes as validation_resources
+from orthogroup_context import validate_weight,configuration as context_configuration
 
 ROOT = Path(__file__).resolve().parent
 VERSION = '1.0'
@@ -293,6 +295,7 @@ def start(args):
     if config_path:
         sources[str(config_path.resolve())] = digest(config_path)
     seal(out, 'handoff', detection=str(detection), sources=sources,
+         query_unit='control_protein' if os.environ.get('SCHISTO_ISOLATED_BRANCH') in ('calibration','validation') else 'gene',
          completed_stages=['detection'],deferred_stages=['topology','localization','phylogeny'],
          excluded_target_species=sorted(set(json.loads(batch_path.read_text()).get('excluded_targets',{}))|excluded) if batch_path.exists() else sorted(excluded),
          target_species=sorted(species), state='awaiting_external_context', hypotheses=len(hypotheses), proteins=len(sequences))
@@ -413,7 +416,8 @@ def resume(args):
             orthofinder_method=getattr(args,'orthofinder_method',None),
             iqtree_threads=args.iqtree_threads,allow_partial_phylogeny=args.allow_partial_phylogeny,
             phylogeny_grouping=args.phylogeny_grouping,
-            family_coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE)))
+            family_coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE),
+            orthogroup_context_weight=getattr(args,'orthogroup_context_weight',None)))
 
 
 def downstream(args):
@@ -457,6 +461,8 @@ def downstream(args):
                     or saved.get('identity_code_sha256')!=digest(IDENTITY_CODE)
                     or saved.get('identity_library_sha256')!=digest(selected_identity)
                     or saved.get('audit_report_sha256')!=digest(AUDIT_REPORT)
+                    or saved.get('orthogroup_context_weight')!=getattr(args,'orthogroup_context_weight',None)
+                    or saved.get('orthogroup_context_code_sha256')!=digest(ROOT/'orthogroup_context.py')
                     or saved.get('identity_probability_resources')!=probability_resources()
                     or ('validation_evaluation_resources' in saved and saved['validation_evaluation_resources']!=validation_resources())
                     or saved.get('motif_snapshot_sha256')!=digest(MOTIF/'Motif_library/adhesion_core.json')):
@@ -553,7 +559,8 @@ def downstream(args):
             dump(checkpoint,state)
     audit_refreshed=state['stages'].get('audit',{}).get('status')!='complete'
     stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final',benchmark=out/'benchmark',
-          family_coverage=getattr(args,'family_coverage',state['settings'].get('family_coverage',DEFAULT_FAMILY_COVERAGE)))))
+          family_coverage=getattr(args,'family_coverage',state['settings'].get('family_coverage',DEFAULT_FAMILY_COVERAGE)),
+          orthogroup_context_weight=getattr(args,'orthogroup_context_weight',state['settings'].get('orthogroup_context_weight')))))
     if audit_refreshed and getattr(args,'phylogeny_grouping','orthogroup')=='family':
         state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
         dump(checkpoint,state)
@@ -605,6 +612,9 @@ def downstream(args):
 
 def archive_attempt(folder):
     """Preserve incomplete outputs beside their stage; never delete previous evidence."""
+    if os.environ.get('SCHISTO_NO_ARCHIVES')=='1':
+        raise ValueError('Partial stage retained in place (no-backup policy): '+str(folder)+
+                         '. Resume the unfinished tool or use a separate recomputation run; no archive was created.')
     number=1
     while folder.with_name(folder.name+f'_attempt_{number:03d}').exists():
         number+=1
@@ -699,7 +709,8 @@ def calibrate(args):
         sp = entry['species']
         source = (args.panel.resolve().parent/entry['fasta']).resolve()
         benchmark_unit=entry.get('unit_level')=='benchmark_protein' and sp not in targets
-        if not entry.get('source') or (entry.get('gene_level') is not True and not benchmark_unit):
+        control_unit=entry.get('unit_level')=='control_protein' and sp in targets and handoff_meta.get('query_unit')=='control_protein'
+        if not entry.get('source') or (entry.get('gene_level') is not True and not benchmark_unit and not control_unit):
             raise ValueError(f'{sp}: declare gene_level=true and document the proteome source/release')
         seqs = fasta(source)
         if any(not re.fullmatch(re.escape(sp)+r'__[A-Za-z0-9_.-]+', k) for k in seqs):
@@ -707,8 +718,8 @@ def calibrate(args):
         allseqs.update(seqs)
         write_fasta(out/'proteomes'/f'{sp}.faa', seqs)
         sources[str(source)] = digest(source)
-        counts.append(dict(species=sp, genes=len(seqs) if not benchmark_unit else '',units=len(seqs),
-                           unit_level='benchmark_protein' if benchmark_unit else 'gene',source=entry['source']))
+        counts.append(dict(species=sp, genes=len(seqs) if not (benchmark_unit or control_unit) else '',units=len(seqs),
+                           unit_level='benchmark_protein' if benchmark_unit else 'control_protein' if control_unit else 'gene',source=entry['source']))
     candidates = fasta(handoff/'external_candidates.faa')
     mapping = []
     for pid, seq in candidates.items():
@@ -913,6 +924,7 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
 
 
 def audit(args):
+    context_weight=validate_weight(getattr(args,'orthogroup_context_weight',None))
     coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE)
     selected_rules,selected_identity=audit_configuration(coverage)
     annotation,orthology_dir=args.annotation.resolve(),args.orthology.resolve()
@@ -950,6 +962,7 @@ def audit(args):
         raise ValueError('Stage 2 evidence join changed the stage 1 protein pool')
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     configuration=out/'configuration';configuration.mkdir()
+    dump(configuration/'orthogroup_context.json',context_configuration(context_weight))
     rules=configuration/'family_rules.json';identities=configuration/'family_identity_rules.json'
     shutil.copyfile(selected_rules,rules);shutil.copyfile(selected_identity,identities)
     print(f"Audit family coverage: {coverage} ({len(json.loads(rules.read_text())['families'])} family configurations; "
@@ -963,12 +976,17 @@ def audit(args):
     fields=list(dict.fromkeys(key for row in rows for key in row if key!='NCBI_CDD_hits'));sheet.append(fields)
     for row in rows:sheet.append([row.get(key) for key in fields])
     book.save(out/'audit_input.xlsx')
-    execute([sys.executable,AUDIT,out/'audit_input.xlsx',out/'Stage_2_output.xlsx','--rules',rules,
-             '--identity-rules',identities,'--supporting-data',out/'supporting_data.json'],out/'logs')
-    validation=evaluate_controls(out,handoff)
+    audit_command=[sys.executable,AUDIT,out/'audit_input.xlsx',out/'Stage_2_output.xlsx','--rules',rules,
+             '--identity-rules',identities,'--supporting-data',out/'supporting_data.json']
+    if context_weight is not None:audit_command+=['--orthogroup-context-weight',context_weight]
+    execute(audit_command,out/'logs')
+    validation=(dict(status='isolated_branch_evaluation',branch=os.environ['SCHISTO_ISOLATED_BRANCH'])
+                if os.environ.get('SCHISTO_ISOLATED_BRANCH') else evaluate_controls(out,handoff))
     motif_snapshot=MOTIF/'Motif_library/adhesion_core.json'
     seal(out,'audit',annotation=str(annotation),orthology=str(orthology_dir),benchmark_summary_sha256=benchmark_sha,
         family_coverage=coverage,family_rules_source=str(selected_rules),identity_library_source=str(selected_identity),
+        orthogroup_context_weight=context_weight,orthogroup_context_configuration=context_configuration(context_weight),
+        orthogroup_context_code_sha256=digest(ROOT/'orthogroup_context.py'),
         motif_snapshot_sha256=digest(motif_snapshot),rules_sha256=digest(rules),audit_script_sha256=digest(AUDIT),
         audit_policy_sha256=digest(AUDIT_POLICY),audit_evidence_sha256=digest(AUDIT_EVIDENCE),
         classification_contract_sha256=digest(ROOT/'classification_contract.py'),output_schema_sha256=digest(ROOT/'templates/output_schema.json'),stage1_source_tables=source_tables,
@@ -1070,6 +1088,8 @@ def main(argv=None):
         sub.choices[name].add_argument('--orthofinder-search',choices=['diamond','diamond_ultra_sens','blast','mmseqs'])
         sub.choices[name].add_argument('--orthofinder-method',choices=['msa','dendroblast'])
     for name in ('resume','continue','audit'):
+        sub.choices[name].add_argument('--orthogroup-context-weight',type=float,default=None,
+            help='Optional non-probabilistic orthogroup-context coefficient (0-1); omitted preserves the expanded baseline; 0 disables context; proposed heuristic: 0.541')
         sub.choices[name].add_argument('--family-coverage',choices=['original','expanded'],default=DEFAULT_FAMILY_COVERAGE,
             help='Default: expanded (190 family configurations; 136 identity rules). Original is retained for comparison; Stage 1 is unchanged')
     for s in sub.choices.values():
@@ -1093,6 +1113,7 @@ def main(argv=None):
     s.set_defaults(func=recover)
     args = p.parse_args(argv)
     try:
+        validate_weight(getattr(args,'orthogroup_context_weight',None))
         if hasattr(args,'orthofinder_inflation'):orthofinder_configuration(args)
         for name in ('threads','analysis_threads','iqtree_threads'):
             if getattr(args,name,None) is not None and getattr(args,name)<1:
