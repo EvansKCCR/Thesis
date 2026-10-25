@@ -1,6 +1,6 @@
 # Default: continuous execution after resume
 
-For new validation/production runs, use the [isolated-mode entry point](../integrin_adhesome_analysis/ISOLATED_WORKFLOWS.md).
+For new validation/production runs, use the [isolated-mode entry point](../integrin_adhesome_analysis/docs/ISOLATED_WORKFLOWS.md).
 It runs an independent calibration self-test alongside the selected mode and
 keeps all three query datasets out of each other's orthogroup inference.
 The staged commands below remain compatible with existing runs.
@@ -182,7 +182,7 @@ correcting dependencies or input errors; already successful annotation is reused
 ## Tests
 
 ```bash
-python -B -m unittest discover -s workflow_tests -v
+python -B -m unittest discover -s tests -p 'test_*.py' -v
 cd 01_detection
 python -B -m unittest discover -s tests -v
 cd ../03_functional_motif_annotation

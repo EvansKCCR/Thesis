@@ -1,0 +1,82 @@
+[
+  {
+    "Source": "ADHESOME_BENCHMARK.md",
+    "Destination": "docs\\ADHESOME_BENCHMARK.md"
+  },
+  {
+    "Source": "05_conservative_adhesome_family_assignment_audit\\test_stage2_routing.py",
+    "Destination": "tests\\audit\\test_stage2_routing.py"
+  },
+  {
+    "Source": "05_conservative_adhesome_family_assignment_audit\\test_expansion_compatibility.py",
+    "Destination": "tests\\audit\\test_expansion_compatibility.py"
+  },
+  {
+    "Source": "ISOLATED_WORKFLOWS.md",
+    "Destination": "docs\\ISOLATED_WORKFLOWS.md"
+  },
+  {
+    "Source": "evaluate_orthogroup_ablation.py",
+    "Destination": "tools\\evaluate_orthogroup_ablation.py"
+  },
+  {
+    "Source": "stage2_optimization_report.py",
+    "Destination": "tools\\stage2_optimization_report.py"
+  },
+  {
+    "Source": "VALIDATION.md",
+    "Destination": "docs\\VALIDATION.md"
+  },
+  {
+    "Source": "audit_existing_workflow.py",
+    "Destination": "tools\\audit_existing_workflow.py"
+  },
+  {
+    "Source": "05_conservative_adhesome_family_assignment_audit\\test_control_exclusion.py",
+    "Destination": "tests\\audit\\test_control_exclusion.py"
+  },
+  {
+    "Source": "workflow_tests",
+    "Destination": "tests\\workflow"
+  },
+  {
+    "Source": "optimize_stage2.py",
+    "Destination": "tools\\optimize_stage2.py"
+  },
+  {
+    "Source": "05_conservative_adhesome_family_assignment_audit\\test_stage2_resolution.py",
+    "Destination": "tests\\audit\\test_stage2_resolution.py"
+  },
+  {
+    "Source": "recalibrate_orthogroup.py",
+    "Destination": "tools\\recalibrate_orthogroup.py"
+  },
+  {
+    "Source": "05_conservative_adhesome_family_assignment_audit\\test_identity_probability.py",
+    "Destination": "tests\\audit\\test_identity_probability.py"
+  },
+  {
+    "Source": "05_conservative_adhesome_family_assignment_audit\\test_validation_revision.py",
+    "Destination": "tests\\audit\\test_validation_revision.py"
+  },
+  {
+    "Source": "panel.example.json",
+    "Destination": "configs\\panel.example.json"
+  },
+  {
+    "Source": "validate_resources.py",
+    "Destination": "tools\\validate_resources.py"
+  },
+  {
+    "Source": "BENCHMARK_RECALIBRATION.md",
+    "Destination": "docs\\BENCHMARK_RECALIBRATION.md"
+  },
+  {
+    "Source": "05_conservative_adhesome_family_assignment_audit\\test_family_identity.py",
+    "Destination": "tests\\audit\\test_family_identity.py"
+  },
+  {
+    "Source": "05_conservative_adhesome_family_assignment_audit\\test_audit.py",
+    "Destination": "tests\\audit\\test_audit.py"
+  }
+]

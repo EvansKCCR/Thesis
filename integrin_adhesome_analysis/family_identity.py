@@ -12,6 +12,7 @@ import re
 
 ROOT=Path(__file__).resolve().parent
 LIBRARY=ROOT/'05_conservative_adhesome_family_assignment_audit/family_identity_rules.json'
+_CONFIGURATION=None
 
 
 def observed_text(value):
@@ -20,7 +21,18 @@ def observed_text(value):
 
 
 @lru_cache(maxsize=1)
-def library():return json.loads(LIBRARY.read_text(encoding='utf-8'))
+def library():return _CONFIGURATION if _CONFIGURATION is not None else json.loads(LIBRARY.read_text(encoding='utf-8'))
+
+
+@contextmanager
+def using_configuration(configuration):
+    """Temporary evidence-rule overlay; never rewrites the reference library."""
+    global _CONFIGURATION
+    previous=_CONFIGURATION
+    try:
+        _CONFIGURATION=configuration;library.cache_clear();yield
+    finally:
+        _CONFIGURATION=previous;library.cache_clear()
 
 
 @contextmanager
@@ -83,11 +95,17 @@ def combined_domains(row,pfam_hits):
     for hit in cdd_hits(row):
         name=hit['short_name']
         models=[model for model,pattern in {**config['pfam_cdd_aliases'],**config['additional_cdd_domains']}.items() if re.search(pattern,name,re.I)]
+        accession=re.fullmatch(r'(?:pfam|PF)(\d{5})(?:\.\d+)?',str(hit.get('accession') or ''),re.I)
+        verified_model='PF'+accession[1] if accession and config.get('import_observed_pfam_accessions') else None
+        if verified_model:models=list(dict.fromkeys([*models,verified_model]))
         for model in models:
             probe=dict(model=model,start=hit['start'],end=hit['end'],sources={'CDD'},cdd_models={name})
+            if model==verified_model:probe['cdd_pfam_accession']=True
             matches=[old for old in combined if old['model']==model and overlaps(old,probe)]
             if matches:
-                for old in matches:old['sources'].add('CDD');old['cdd_models'].add(name)
+                for old in matches:
+                    old['sources'].add('CDD');old['cdd_models'].add(name)
+                    if model==verified_model:old['cdd_pfam_accession']=True
             else:combined.append(probe)
     return sorted(combined,key=lambda hit:(hit['start'] is None,hit['start'] or 0,hit['model']))
 
@@ -163,7 +181,8 @@ def refinement_trace(row,parent,hits):
         parent_scope=parent in allowed or (parent=='fibronectin_like_candidate' and 'fibronectin_III_ligand' in allowed)
         core={model for group in rule['required_groups'] for model in group['models']}
         diagnostic=[name for name in names if re.search(rule['specific_cdd_pattern'],name,re.I)]
-        anchor=any(hit['model'] in core and 'Pfam' in hit['sources'] and hit['start'] is not None for hit in hits)
+        anchor=any(hit['model'] in core and hit['start'] is not None and (
+            'Pfam' in hit['sources'] or library().get('accept_cdd_pfam_anchor') and hit.get('cdd_pfam_accession')) for hit in hits)
         dispatched=bool(rule.get('allow_diagnostic_dispatch') and diagnostic and anchor)
         reached=parent_scope or dispatched
         groups=[dict(models=group['models'],required=group['count'],observed=len(distinct_footprints(hits,set(group['models'])))) for group in rule['required_groups']]

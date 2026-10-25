@@ -1,6 +1,7 @@
 """Terminal evaluation only: trusted labels cannot affect analysis decisions."""
 from collections import Counter, defaultdict
 import csv
+import hashlib
 import html
 import json
 from pathlib import Path
@@ -124,20 +125,51 @@ def evaluate_branch(branch, manifest, audit, overlap_hashes, reference_hashes, t
     return output
 
 
-def target_report(audit, folder):
-    folder.mkdir(parents=True,exist_ok=True)
-    rows = read(audit/'audited_family_assignments.tsv')
-    ids = [r['protein_id'] for r in rows]
+def target_report(audit, folder, exclude_species=()):
+    source_rows = read(audit/'audited_family_assignments.tsv')
+    ids = [r['protein_id'] for r in source_rows]
     if len(ids) != len(set(ids)):
         raise ValueError('Atlas export contains duplicate candidate IDs')
     if not (audit/'Stage_2_output.xlsx').is_file():
         raise ValueError('Missing Atlas-compatible Stage 2 workbook')
+    excluded=set(exclude_species)
+    rows=[r for r in source_rows if (r.get('Specie') or r['protein_id'].split('__',1)[0]) not in excluded]
+    if not rows:raise ValueError('No target candidates remain after the explicit species exclusion')
+    folder.mkdir(parents=True,exist_ok=True)
     counts = Counter((r.get('Specie'),r.get('putative_audited_family') or r.get('assigned_family'),r.get('grade')) for r in rows)
     grouped = [dict(species=s,family=f,grade=g,candidates=n) for (s,f,g),n in sorted(counts.items())]
     table(folder/'candidate_counts.tsv',grouped)
+    table(folder/'target_assignments.tsv',rows)
     table(folder/'ambiguous_unresolved.tsv',[r for r in rows if r.get('grade') not in ('A','B') or r.get('assignment_confidence')=='ambiguous'])
     summary = dict(kind='target',candidates=len(rows),atlas_integrity='passed',
+        source_candidate_rows=len(source_rows),excluded_species=sorted(excluded),excluded_candidate_rows=len(source_rows)-len(rows),
         atlas_workbook=str(audit/'Stage_2_output.xlsx'), atlas_tsv=str(audit/'audited_family_assignments.tsv'),
+        target_assignments_tsv=str(folder/'target_assignments.tsv'),
         grade_counts=dict(Counter(r.get('grade') for r in rows)))
     dump(folder/'summary.json',summary); render(folder/'report.html',summary,grouped)
     return summary
+
+
+def main(argv=None):
+    """Report an existing sealed target audit, without inference or fitting."""
+    import argparse
+    import sys
+    from adhesome_workflow import verify
+    parser=argparse.ArgumentParser(description='Generate a target summary from a completed audit; no analysis is run.')
+    parser.add_argument('--audit',type=Path,required=True)
+    parser.add_argument('--out',type=Path,required=True,help='New report directory outside the sealed audit')
+    parser.add_argument('--exclude-species',action='append',default=[],help='Exclude this exact stored Specie code from reporting only; repeat as needed')
+    args=parser.parse_args(argv)
+    audit=args.audit.resolve();out=args.out.resolve()
+    try:
+        if out==audit or audit in out.parents or out in audit.parents:raise ValueError('Keep reports separate from the sealed audit')
+        if out.exists():raise ValueError('Choose a new report output directory')
+        meta=verify(audit,'audit',required_files=['Stage_2_output.xlsx','audited_family_assignments.tsv'])
+        summary=target_report(audit,out,args.exclude_species)
+        dump(out/'report_provenance.json',dict(audit=str(audit),audit_manifest_sha256=hashlib.sha256((audit/'workflow_manifest.json').read_bytes()).hexdigest(),
+            stage2_profile=meta.get('stage2_profile','original'),excluded_species=args.exclude_species,analytical_pipeline_rerun=False))
+        print(json.dumps(dict(report=str(out/'report.html'),summary=summary),indent=2));return 0
+    except (OSError,ValueError,KeyError) as exc:print('ERROR: '+str(exc),file=sys.stderr);return 1
+
+
+if __name__=='__main__':raise SystemExit(main())

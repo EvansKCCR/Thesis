@@ -1,6 +1,7 @@
 {
   "version": "1.0",
   "family_coverage": "expanded",
+  "stage2_profile": "calibrated_v1",
   "orthogroup_context_weight": 1.0,
   "qc": {"min_length": 30, "max_ambiguous_fraction": 0.05, "max_ambiguous_run": 20},
   "benchmark_scope": "all"

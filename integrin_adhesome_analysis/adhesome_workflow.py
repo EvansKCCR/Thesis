@@ -19,6 +19,7 @@ from pathlib import Path
 from identity_probability import resource_hashes as probability_resources
 from evaluate_validation import after_audit as evaluate_controls,resource_hashes as validation_resources
 from orthogroup_context import validate_weight,configuration as context_configuration
+from stage2_evidence import default_profile
 
 ROOT = Path(__file__).resolve().parent
 VERSION = '1.0'
@@ -417,7 +418,8 @@ def resume(args):
             iqtree_threads=args.iqtree_threads,allow_partial_phylogeny=args.allow_partial_phylogeny,
             phylogeny_grouping=args.phylogeny_grouping,
             family_coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE),
-            orthogroup_context_weight=getattr(args,'orthogroup_context_weight',None)))
+            orthogroup_context_weight=getattr(args,'orthogroup_context_weight',None),
+            stage2_profile=getattr(args,'stage2_profile',default_profile())))
 
 
 def downstream(args):
@@ -459,6 +461,9 @@ def downstream(args):
                     or saved.get('classification_contract_sha256')!=digest(ROOT/'classification_contract.py')
                     or saved.get('output_schema_sha256')!=digest(ROOT/'templates/output_schema.json')
                     or saved.get('identity_code_sha256')!=digest(IDENTITY_CODE)
+                    or saved.get('stage2_profile','original')!=state['settings'].get('stage2_profile','original')
+                    or saved.get('stage2_evidence_code_sha256')!=digest(ROOT/'stage2_evidence.py')
+                    or saved.get('stage2_evidence_rules_sha256')!=digest(ROOT/'05_conservative_adhesome_family_assignment_audit/stage2_evidence_rules.json')
                     or saved.get('identity_library_sha256')!=digest(selected_identity)
                     or saved.get('audit_report_sha256')!=digest(AUDIT_REPORT)
                     or saved.get('orthogroup_context_weight')!=getattr(args,'orthogroup_context_weight',None)
@@ -474,6 +479,7 @@ def downstream(args):
     else:
         state=dict(settings={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items() if k!='func'},
                    annotation_sha256=digest(annotation/'workflow_manifest.json'),stages={})
+        state['settings'].setdefault('stage2_profile',default_profile())
         for key in ('annotation','out','reference_raw','compare','benchmark_refogs','benchmark_input_dir','benchmark_selection','benchmark_quality_policy'):
             if state['settings'].get(key) is not None:
                 state['settings'][key]=str(Path(state['settings'][key]).resolve())
@@ -560,7 +566,8 @@ def downstream(args):
     audit_refreshed=state['stages'].get('audit',{}).get('status')!='complete'
     stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final',benchmark=out/'benchmark',
           family_coverage=getattr(args,'family_coverage',state['settings'].get('family_coverage',DEFAULT_FAMILY_COVERAGE)),
-          orthogroup_context_weight=getattr(args,'orthogroup_context_weight',state['settings'].get('orthogroup_context_weight')))))
+          orthogroup_context_weight=getattr(args,'orthogroup_context_weight',state['settings'].get('orthogroup_context_weight')),
+          stage2_profile=getattr(args,'stage2_profile',state['settings'].get('stage2_profile','original')))))
     if audit_refreshed and getattr(args,'phylogeny_grouping','orthogroup')=='family':
         state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
         dump(checkpoint,state)
@@ -671,6 +678,7 @@ def recover(args):
         raise ValueError('No recovery checkpoint found. For a run created before checkpoints were added, use --adopt-existing and --annotation with its completed annotation directory.')
     state=json.loads((run/'recovery.json').read_text())
     settings=state['settings']
+    settings.setdefault('stage2_profile','original')  # Older checkpoints retain historical behavior.
     for key in ('annotation','out','reference_raw','compare','benchmark_refogs','benchmark_input_dir','benchmark_selection','benchmark_quality_policy'):
         if settings.get(key) is not None:
             settings[key]=Path(settings[key])
@@ -926,6 +934,9 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
 def audit(args):
     context_weight=validate_weight(getattr(args,'orthogroup_context_weight',None))
     coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE)
+    from stage2_evidence import CONFIG as stage2_config,configuration as stage2_configuration
+    stage2_profile=getattr(args,'stage2_profile',default_profile())
+    if stage2_profile not in stage2_configuration()['profiles']:raise ValueError('Unknown Stage 2 profile')
     selected_rules,selected_identity=audit_configuration(coverage)
     annotation,orthology_dir=args.annotation.resolve(),args.orthology.resolve()
     ann=verify(annotation,'annotation')
@@ -963,6 +974,7 @@ def audit(args):
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     configuration=out/'configuration';configuration.mkdir()
     dump(configuration/'orthogroup_context.json',context_configuration(context_weight))
+    shutil.copyfile(stage2_config,configuration/'stage2_evidence_rules.json')
     rules=configuration/'family_rules.json';identities=configuration/'family_identity_rules.json'
     shutil.copyfile(selected_rules,rules);shutil.copyfile(selected_identity,identities)
     print(f"Audit family coverage: {coverage} ({len(json.loads(rules.read_text())['families'])} family configurations; "
@@ -979,11 +991,14 @@ def audit(args):
     audit_command=[sys.executable,AUDIT,out/'audit_input.xlsx',out/'Stage_2_output.xlsx','--rules',rules,
              '--identity-rules',identities,'--supporting-data',out/'supporting_data.json']
     if context_weight is not None:audit_command+=['--orthogroup-context-weight',context_weight]
+    audit_command+=['--stage2-profile',stage2_profile]
     execute(audit_command,out/'logs')
     validation=(dict(status='isolated_branch_evaluation',branch=os.environ['SCHISTO_ISOLATED_BRANCH'])
                 if os.environ.get('SCHISTO_ISOLATED_BRANCH') else evaluate_controls(out,handoff))
     motif_snapshot=MOTIF/'Motif_library/adhesion_core.json'
     seal(out,'audit',annotation=str(annotation),orthology=str(orthology_dir),benchmark_summary_sha256=benchmark_sha,
+        stage2_profile=stage2_profile,stage2_evidence_code_sha256=digest(ROOT/'stage2_evidence.py'),
+        stage2_evidence_rules_sha256=digest(stage2_config),
         family_coverage=coverage,family_rules_source=str(selected_rules),identity_library_source=str(selected_identity),
         orthogroup_context_weight=context_weight,orthogroup_context_configuration=context_configuration(context_weight),
         orthogroup_context_code_sha256=digest(ROOT/'orthogroup_context.py'),
@@ -1088,6 +1103,9 @@ def main(argv=None):
         sub.choices[name].add_argument('--orthofinder-search',choices=['diamond','diamond_ultra_sens','blast','mmseqs'])
         sub.choices[name].add_argument('--orthofinder-method',choices=['msa','dendroblast'])
     for name in ('resume','continue','audit'):
+        from stage2_evidence import configuration as stage2_configuration
+        sub.choices[name].add_argument('--stage2-profile',choices=list(stage2_configuration()['profiles']),default=default_profile(),
+            help='Stage 2 profile; default calibrated_v1. Saved recovery checkpoints retain their recorded profile.')
         sub.choices[name].add_argument('--orthogroup-context-weight',type=float,default=None,
             help='Optional non-probabilistic orthogroup-context coefficient (0-1); omitted preserves the expanded baseline; 0 disables context; proposed heuristic: 0.541')
         sub.choices[name].add_argument('--family-coverage',choices=['original','expanded'],default=DEFAULT_FAMILY_COVERAGE,

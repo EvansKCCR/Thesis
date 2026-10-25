@@ -8,6 +8,7 @@ import sys
 from .datasets import ROOT, dump, sha, table
 from .workflows import verify_frozen
 from .reports import read, evaluate_branch, summarize_predictions, target_report
+from .validation_review import generate as generate_validation_review
 import adhesome_workflow as core
 
 
@@ -39,13 +40,23 @@ def reuse_detection(folder, config):
 
 
 def execute(args):
+    flags={'SCHISTO_NO_ARCHIVES':'1','SCHISTO_ISOLATED_BRANCH':args.kind}
+    previous={key:os.environ.get(key) for key in flags}
+    try:
+        os.environ.update(flags)
+        return _execute(args)
+    finally:
+        for key,value in previous.items():
+            if value is None:os.environ.pop(key,None)
+            else:os.environ[key]=value
+
+
+def _execute(args):
     run=args.run.resolve(); branch=run/args.kind
     contract=json.loads((run/'run_contract.json').read_text()); settings=contract['frozen_settings']
     verify_frozen(contract)
     # These flags prohibit the legacy helper from archiving partial outputs and
     # prevent its old single-target evaluator from scoring a branch against itself.
-    os.environ['SCHISTO_NO_ARCHIVES']='1'
-    os.environ['SCHISTO_ISOLATED_BRANCH']=args.kind
     status_file=branch/'branch_status.json'
     stages={}; state_path=branch/'stages.json'
     if state_path.exists():stages=json.loads(state_path.read_text())
@@ -90,6 +101,7 @@ def execute(args):
         cmd=['continue','--annotation',str(branch/'annotation'),'--out',str(downstream),
              '--reference-raw',contract['references']['root'],'--threads',str(args.threads),
              '--analysis-threads',str(args.threads),'--family-coverage',settings['family_coverage'],
+             '--stage2-profile',settings.get('stage2_profile','original'),
              '--benchmark-scope',settings.get('benchmark_scope','all')]
         for key in ('orthogroup_context_weight','orthofinder_search','orthofinder_method',
                     'orthofinder_inflation','benchmark_selection'):
@@ -128,9 +140,11 @@ def execute(args):
                         previous_report_sha256=sha(args.compare_report/'predictions.tsv')))
                 else:dump(reports/'drift_summary.json',dict(status='no_previous_report_supplied'))
                 table(reports/'assignment_drift.tsv',drift)
+        review=generate_validation_review(run) if args.kind=='validation' else None
         verify_frozen(contract)
-        result=dict(status='complete',report=str(reports/'report.html'),summary=summary,stages=stages,
+        result=dict(status='complete',report=review['report'] if review else str(reports/'report.html'),summary=summary,stages=stages,
                     reference_version=contract['references']['version'],automatic_recalibration=False)
+        if review:result['validation_review']=review
         dump(status_file,result);return 0
     except Exception as exc:
         dump(status_file,dict(status='failed',error=str(exc),stages=stages));raise

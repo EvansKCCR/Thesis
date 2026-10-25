@@ -22,7 +22,7 @@ expressions were removed. Current motif definitions come from stage 03's
 Validate resource consistency from the workflow root:
 
 ```bash
-python validate_resources.py
+python tools/validate_resources.py
 ```
 
 The audit uses `05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py`.

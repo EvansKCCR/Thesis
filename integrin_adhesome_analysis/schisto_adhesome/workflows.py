@@ -37,9 +37,13 @@ def verify_frozen(contract):
 def prepare(args):
     settings = json.loads(args.config.read_text())
     allowed = {'version','family_coverage','orthogroup_context_weight','qc','orthofinder_search',
-               'orthofinder_method','orthofinder_inflation','benchmark_scope','benchmark_selection'}
+               'orthofinder_method','orthofinder_inflation','benchmark_scope','benchmark_selection','stage2_profile'}
     if set(settings)-allowed or settings.get('version') != '1.0':
         raise ValueError('Unknown configuration fields or configuration version != 1.0')
+    from stage2_evidence import configuration as stage2_configuration
+    settings.setdefault('stage2_profile',stage2_configuration()['default_profile'])
+    if settings['stage2_profile'] not in stage2_configuration()['profiles']:
+        raise ValueError('Unknown frozen Stage 2 profile')
     from orthogroup_context import validate_weight
     if validate_weight(settings.get('orthogroup_context_weight')) is None:
         raise ValueError('Isolated routine runs require a fixed context coefficient; use 1.0 for neutral expanded-baseline context')
@@ -163,6 +167,17 @@ def run(args):
         status['log'] = str(log)
         return status
     gates = launch_branches(kinds,worker,workers)
+    if args.mode=='validation' and gates.get('validation',{}).get('status')=='complete':
+        # Calibration can finish after validation in parallel mode. Refresh only
+        # the terminal report after both workers return; never rerun either gate.
+        from .validation_review import generate
+        gate=gates['validation']
+        try:
+            review=generate(out)
+            gate.update(report=review['report'],validation_review=review)
+        except (OSError,ValueError,KeyError) as exc:
+            gate.update(status='failed',error='Validation reporting failed: '+str(exc))
+        dump(out/'validation/branch_status.json',gate)
     verify_frozen(contract)
     status = 'complete' if all(g.get('status')=='complete' for g in gates.values()) else (
         'failed' if any(g.get('status')=='failed' for g in gates.values()) else 'awaiting_external_evidence')
@@ -171,7 +186,9 @@ def run(args):
         frozen_contract_sha256=contract['contract_sha256'],weights=contract['frozen_settings'].get('orthogroup_context_weight'),
         automatic_recalibration=False,gates=gates)
     dump(out/'run_summary.json',summary)
-    links = '\n'.join(f'- {kind}: {gate.get("status")} — [{kind} report]({kind}/reports/report.html), [{kind} log]({kind}/branch.log)' for kind,gate in gates.items())
+    links = '\n'.join(f'- {kind}: {gate.get("status")} — [{kind} report]({kind}/reports/'+
+        ('validation_review.html' if kind=='validation' and gate.get('validation_review') else 'report.html')+
+        f'), [{kind} log]({kind}/branch.log)' for kind,gate in gates.items())
     (out/'README.md').write_text(f'# Workflow 1.0: {args.mode}\n\nStatus: {status}\n\n{links}\n\nCalibration is a frozen internal self-test. No fitting occurs.\n',encoding='utf-8')
     print(json.dumps(summary,indent=2))
     return 1 if status=='failed' else 2 if status!='complete' else 0

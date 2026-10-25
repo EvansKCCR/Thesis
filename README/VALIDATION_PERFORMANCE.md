@@ -170,7 +170,7 @@ stay unavailable until an explicitly requested local refit; calibration overlap
 is not an acceptance requirement. Resource-only checks may use:
 
 ```bash
-python validate_resources.py --allow-stale-calibration
+python tools/validate_resources.py --allow-stale-calibration
 ```
 
 To test the revised audit later using already completed annotation and orthology,

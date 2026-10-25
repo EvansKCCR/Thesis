@@ -45,5 +45,5 @@ jobs:
 
       - name: Run workflow tests
         run: |
-          python -m pytest workflow_tests/ -v
+          python -m pytest tests/ -v
  

@@ -40,7 +40,7 @@ absent from this source distribution; current entry points use canonical paths.
 From the test workflow root in your activated environment:
 
 ```bash
-python validate_resources.py
+python tools/validate_resources.py
 python adhesome_workflow.py --version
 ```
 

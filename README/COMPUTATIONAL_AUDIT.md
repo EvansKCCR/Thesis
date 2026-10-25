@@ -96,7 +96,7 @@ invalid benchmarking is explicitly unvalidated and uses neutral weight 1.
 From the directory containing `adhesome_workflow.py`, in the active environment:
 
 ```bash
-python validate_resources.py
+python tools/validate_resources.py
 python adhesome_workflow.py audit --annotation runs/annotation --orthology runs/annotation/downstream/orthology --benchmark runs/annotation/downstream/benchmark --out runs/final_two_stage
 ```
 

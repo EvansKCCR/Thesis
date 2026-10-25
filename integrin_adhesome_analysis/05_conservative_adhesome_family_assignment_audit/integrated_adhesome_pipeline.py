@@ -170,7 +170,8 @@ def _architecture(row,family,rules):
 
 
 def architecture(row,family,rules):
-    return broad_architecture(row,_architecture(row,family,rules))
+    from stage2_evidence import partial_confirmation
+    return partial_confirmation(row,family,broad_architecture(row,_architecture(row,family,rules)),rules)
 
 
 def benchmark_weight(row,family=None):
@@ -320,6 +321,11 @@ def collapse_rows(rows):
 
 
 def classify_rows(rows,rules):
+    from stage2_evidence import annotation_context
+    with annotation_context(rules):return _classify_rows(rows,rules)
+
+
+def _classify_rows(rows,rules):
     grouped=defaultdict(list);original=[]
     for index,raw in enumerate(rows,1):
         row=dict(raw,original_hypothesis_row=index,row_origin='original_stage1')
@@ -341,6 +347,8 @@ def classify_rows(rows,rules):
             row['NCBI_CDD_architecture']=cdd
             if structured:row['NCBI_CDD_hits']=json.dumps(list(structured.values()),sort_keys=True)
         existing={general_family(value(row,'family'),rules['families']) for row in group}
+        from stage2_evidence import candidate_hypotheses
+        recovered.extend(candidate_hypotheses(group[0],existing,rules,domains))
         for family in policy_for(rules)['recoveries']:
             if family in existing:continue
             probe=dict(group[0],family=family,assigned_family='',row_origin='stage2_recovery',
@@ -455,6 +463,9 @@ def _run_xlsx(source,dest,sheet_name,rules,supporting=None):
         input_hypotheses=len(rows),audited_hypotheses=len(audited),unique_proteins=len(resolved),
         input_unique_proteins=len({unique_key(r) for r in rows}),excluded_negative_controls=len(exclusions),
         protein_pool_preserved=not exclusions,protein_accounting_complete=True)
+    from stage2_evidence import profile,CONFIG
+    manifest['stage2_profile']=profile(rules)[0]
+    manifest['stage2_evidence_rules_sha256']=checksum(CONFIG)
     dest.with_suffix('.manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     return manifest
 
@@ -468,9 +479,13 @@ def main():
                         help='Identity rules paired with --rules; the workflow selects both together')
     parser.add_argument('--supporting-data',type=Path);parser.add_argument('--keep-all-audited',action='store_true')
     parser.add_argument('--orthogroup-context-weight',type=float,default=None,help='Optional heuristic context coefficient (0-1); omitted preserves baseline; 0 disables context; never a correctness probability')
+    from stage2_evidence import configuration,default_profile
+    parser.add_argument('--stage2-profile',choices=list(configuration()['profiles']),default=default_profile(),
+                        help='Explicit evidence recruitment/confirmation profile; no threshold fitting at runtime')
     parser.add_argument('--version',action='version',version='adhesome-audit '+VERSION)
     args=parser.parse_args();rules=json.loads(args.rules.read_text());rules['_sha256']=checksum(args.rules)
     rules['_orthogroup_context_weight']=validate_weight(args.orthogroup_context_weight)
+    rules['_stage2_profile']=args.stage2_profile
     rules['_source_path']=str(args.rules.resolve())
     from evaluate_family_expansion import validate_pair
     validate_pair(rules,json.loads(args.identity_rules.read_text()))

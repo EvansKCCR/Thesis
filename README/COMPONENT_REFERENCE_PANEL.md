@@ -101,4 +101,4 @@ Build a new panel without overwriting the active release:
 python 01_detection/expand_component_references.py --base 01_detection/references/adhesome_v1.0 --crosswalk 01_detection/config/adhesome_component_crosswalk.csv --out reference_panel_updated --repair-identity --workers 4
 ```
 
-Identity ambiguities stop publication; sequence replacement requires a unique reviewed human gene/taxon result and is recorded. `--offline --cache PATH` supports a previously populated UniProt cache. `python validate_resources.py` verifies the installed panel coverage, crosswalk/rule hashes, forward/reverse membership and sequence hashes together with HMM/motif resources. Pipeline version remains 1.0.
+Identity ambiguities stop publication; sequence replacement requires a unique reviewed human gene/taxon result and is recorded. `--offline --cache PATH` supports a previously populated UniProt cache. `python tools/validate_resources.py` verifies the installed panel coverage, crosswalk/rule hashes, forward/reverse membership and sequence hashes together with HMM/motif resources. Pipeline version remains 1.0.
