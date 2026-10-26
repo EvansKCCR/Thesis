@@ -16,3 +16,14 @@ Component-owned tests remain with detection and orthology components when they
 test internal component APIs. CI runs the central `tests/` collection. The
 default-profile regressions verify both improved new-run defaults and explicit
 historical/recovery compatibility.
+
+Component suites use their own working directories. From the bundle root:
+
+```bash
+(cd detection && python -B -m unittest discover -s tests -p 'test_*.py')
+(cd motif_annotation && python -B -m unittest discover -s test -p 'test_*.py')
+(cd orthology_phylogeny/scripts && python -B -m unittest discover -p 'test_*.py')
+```
+
+The layout regressions also check mixed-panel input discovery, historical model
+resource keys and coverage of relocated modules in the frozen-code inventory.

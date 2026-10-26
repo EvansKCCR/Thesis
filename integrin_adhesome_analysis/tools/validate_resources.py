@@ -1,5 +1,13 @@
 """Validate the current canonical rule, HMM and motif resources without inference."""
 
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
+
 # Resolve shared pipeline imports from the installed script, not the caller cwd.
 import sys
 from pathlib import Path
@@ -8,15 +16,16 @@ import argparse,hashlib,json,re,sys
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(ROOT/'01_detection'))
-sys.path.insert(0,str(ROOT/'03_functional_motif_annotation'))
+sys.path.insert(0,str(ROOT/'detection'))
+sys.path.insert(0,str(ROOT/'motif_annotation'))
 from adhesome_components import load_crosswalk
 from adhesome_core import digest, table, sequence_dict
 import master_library
+from pipeline_paths import recorded_resource
 
 
 def validate(allow_stale_calibration=False):
-    detection=ROOT/'01_detection'
+    detection=ROOT/'detection'
     rules=json.loads((detection/'config/family_rules.json').read_text())
     models=json.loads((detection/'databases/pfam/adhesome_v1.0.hmm.metadata.json').read_text())
     library=detection/'databases/pfam/adhesome_v1.0.hmm'
@@ -59,13 +68,13 @@ def validate(allow_stale_calibration=False):
     for row in forward:
         if row['reference_id'] not in reverse_by_id or any(row[k]!=reverse_by_id[row['reference_id']][k] for k in ('accession','family','sequence_sha256')):
             raise ValueError('Forward reference missing from reverse competition: '+row['reference_id'])
-    motif=ROOT/'03_functional_motif_annotation/Motif_library'
+    motif=ROOT/'motif_annotation/Motif_library'
     core=master_library.load(motif/'adhesion_core.json')
     full=master_library.load(motif/'motif_master.json','master')
     core_rules={r['rule_id']:r['regex_python'] for r in core['rules']}
     full_rules={r['rule_id']:r['regex_python'] for r in full['rules']}
     if any(full_rules.get(k)!=v for k,v in core_rules.items()):raise ValueError('Adhesion/master rule mismatch')
-    identity_dir=ROOT/'05_conservative_adhesome_family_assignment_audit'
+    identity_dir=ROOT/'annotation'
     identities=json.loads((identity_dir/'family_identity_rules.json').read_text())
     if identities['pipeline_version']!='1.0':raise ValueError('Identity library version differs')
     if digest(identity_dir/identities['source_document'])!=identities['source_example_sha256']:
@@ -94,7 +103,8 @@ def validate(allow_stale_calibration=False):
         stale=calibration['code_fingerprint']!=fingerprint()
         if stale and not allow_stale_calibration:raise ValueError('Refit identity probabilities after scoring code/policy changes; --allow-stale-calibration validates resources with numerical probabilities disabled')
         for name,expected in calibration['input_hashes'].items():
-            if digest(ROOT/name)!=expected:
+            path=recorded_resource(name)
+            if not path.is_file() or digest(path)!=expected:
                 if not allow_stale_calibration:raise ValueError('Identity calibration input changed: '+name)
                 stale=True
         calibration_status='stale_disabled_pending_local_refit' if stale else 'positive_control_only';training_controls=len(calibration['samples'])

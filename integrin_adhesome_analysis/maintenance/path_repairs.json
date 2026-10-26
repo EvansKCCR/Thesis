@@ -1,0 +1,92 @@
+{
+  "version": "1.0",
+  "path_only_config_repairs": [
+    {
+      "file": "detection/config/family_rules.json",
+      "old_path": "../../03_functional_motif_annotation/Motif_library/adhesion_core.json",
+      "new_path": "../../motif_annotation/Motif_library/adhesion_core.json",
+      "previous_sha256": "33b7022986a28262da684ea31bb60e7d77807f7a497f5e79fb152cc1070485c6",
+      "sha256": "d172031254e5522d8e2fc65cb0929f66f2d761cdfa57965607986ce093e84b6e",
+      "scientific_rule_fields_unchanged": true
+    },
+    {
+      "file": "annotation/family_rules_expanded.json",
+      "old_path": "../../03_functional_motif_annotation/Motif_library/adhesion_core.json",
+      "new_path": "../motif_annotation/Motif_library/adhesion_core.json",
+      "previous_sha256": "5583b06397cf6c03cbf5212b1343dc23e9af3dc7c6c7098dc0a8f00134ceb08c",
+      "sha256": "9f729efdc95bfca9343c72e176219e6551a2c3026dc1029fbd565c843eeaa88b",
+      "scientific_rule_fields_unchanged": true
+    },
+    {
+      "file": "motif_annotation/Motif_library/context_rules.json",
+      "old_path": "../../01_detection/config/family_rules.json",
+      "new_path": "../../detection/config/family_rules.json",
+      "previous_sha256": "5511be520202253b83511e4aea2f9fd930cdc235a09816d928fff2733c023da7",
+      "sha256": "1062a8eb408456cf3af292ac936b10c0db27b617ac0671eac207643d02541596",
+      "scientific_rule_fields_unchanged": true
+    },
+    {
+      "file": "annotation/audit_policy.json",
+      "old_path": "../02_calibration_set/identity_probability_model.json",
+      "new_path": "../validation/identity_probability_model.json",
+      "previous_sha256": "4dfe677f2486a79547361507fb309ad1337fdfa35cff8f3020e13b0edf29a613",
+      "sha256": "b705d3dff697e505bdaed07105c075cf1fdfe9cfb200b573c838f5dd22e54012",
+      "scientific_rule_fields_unchanged": true
+    }
+  ],
+  "reference_sequences_changed": false,
+  "models_refitted": false,
+  "date": "2026-10-25",
+  "scope": "Organized Integrin_analysis source bundle only",
+  "components": {
+    "01_detection": "detection",
+    "02_calibration_set": "validation",
+    "03_functional_motif_annotation": "motif_annotation",
+    "04_orthology_phylogenetic_classification": "orthology_phylogeny",
+    "05_conservative_adhesome_family_assignment_audit": "annotation"
+  },
+  "runtime_modules": "scripts/",
+  "bundle_root_helper": "pipeline_paths.py",
+  "calibration_inputs": [
+    "validation/calibration_set.xlsx",
+    "validation/calibration.faa"
+  ],
+  "calibration_discovery": "Named pair preferred; unrelated validation/auxiliary inputs excluded from calibration exclusion hashes",
+  "historical_resources": "Old relative model-input keys resolve through recorded_resource; original models and saved-run contracts remain unchanged",
+  "default_stage2_profile": "calibrated_v1",
+  "analysis_launched": false,
+  "backups_created": false,
+  "stored_outputs_modified": false,
+  "external_installation_modified": false,
+  "verification": {
+    "central_synthetic_suite": {
+      "tests": 199,
+      "status": "passed"
+    },
+    "post_change_path_exclusion_and_reporting_regressions": {
+      "tests": 24,
+      "status": "passed"
+    },
+    "detection_synthetic_suite": {
+      "tests": 90,
+      "status": "passed"
+    },
+    "motif_synthetic_suite": {
+      "tests": 21,
+      "status": "passed"
+    },
+    "orthology_synthetic_suite": {
+      "tests": 50,
+      "passed": 42,
+      "skipped": 8,
+      "status": "passed_with_dependency_skips"
+    },
+    "entrypoint_help_checks_from_other_cwd": 20,
+    "resource_paths_checked": 22,
+    "config_resource_links_checked": 4,
+    "markdown_file_links_checked": 36,
+    "python_files_syntax_checked": 115,
+    "resource_integrity": "passed",
+    "numerical_probability_model": "stale_disabled_pending_local_refit"
+  }
+}

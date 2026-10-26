@@ -4,8 +4,8 @@ runs/
 inputs/
 returned/
 results/
-01_detection/proteome_fasta_files/
-04_orthology_phylogenetic_classification/01_raw_proteomes/
-04_orthology_phylogenetic_classification/02_primary_proteomes/
-04_orthology_phylogenetic_classification/03_qc/
-04_orthology_phylogenetic_classification/04_results/
+detection/proteome_fasta_files/
+orthology_phylogeny/01_raw_proteomes/
+orthology_phylogeny/02_primary_proteomes/
+orthology_phylogeny/03_qc/
+orthology_phylogeny/04_results/

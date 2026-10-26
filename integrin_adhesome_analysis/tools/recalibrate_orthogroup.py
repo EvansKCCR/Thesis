@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """Explicit calibration-only exploration; never tune using independent validation."""
 
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
+
 # Resolve shared pipeline imports from the installed script, not the caller cwd.
 import sys
 from pathlib import Path
@@ -44,8 +52,8 @@ def run(args):
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     manifest=read(branch/'inputs/sequence_manifest.tsv')
     cal_hashes={r['sequence_sha256'] for r in manifest}
-    references={r['sequence_sha256'] for r in core.read(ROOT/'01_detection/references/adhesome_v1.0/search_catalogue.csv',',')}
-    model=json.loads((ROOT/'02_calibration_set/identity_probability_model.json').read_text())
+    references={r['sequence_sha256'] for r in core.read(ROOT/'detection/references/adhesome_v1.0/search_catalogue.csv',',')}
+    model=json.loads((ROOT/'validation/identity_probability_model.json').read_text())
     training={r['sequence_sha256'] for r in model.get('samples',[])}
     outputs=[]; evidence_invariant=None
     from tools.evaluate_orthogroup_ablation import invariants

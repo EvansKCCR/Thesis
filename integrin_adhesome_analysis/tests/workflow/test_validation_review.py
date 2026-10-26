@@ -1,4 +1,12 @@
 """Reporting-only fixtures: no biological pipeline/external tools are launched."""
+
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
 import argparse
 import csv
 import json
@@ -149,9 +157,9 @@ class ValidationReviewTests(unittest.TestCase):
             for kind in ('calibration','validation'):
                 p=run/kind/'inputs';p.mkdir(parents=True,exist_ok=True);table(p/'sequence_manifest.tsv',rows)
             table(run/'validation/reference_overlap.tsv',[])
-            resource_root=base/'resources';catalogue=resource_root/'01_detection/references/adhesome_v1.0';catalogue.mkdir(parents=True)
+            resource_root=base/'resources';catalogue=resource_root/'detection/references/adhesome_v1.0';catalogue.mkdir(parents=True)
             for name in ('search_catalogue.csv','metazoan_catalogue.csv'):(catalogue/name).write_text('sequence_sha256\n')
-            model=resource_root/'02_calibration_set';model.mkdir();dump(model/'identity_probability_model.json',dict(samples=[]))
+            model=resource_root/'validation';model.mkdir();dump(model/'identity_probability_model.json',dict(samples=[]))
             args=argparse.Namespace(kind='validation',run=run,threads=1,context_dir=None,allow_missing_context=False,
                                     reuse_detection=None,compare_report=None)
             with patch.object(branch,'ROOT',resource_root),patch.object(branch,'verify_frozen'),\

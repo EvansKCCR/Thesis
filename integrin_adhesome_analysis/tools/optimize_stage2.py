@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """Calibration-first cached Stage 2 ablation; validation cannot select a profile."""
 
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
+
 # Resolve shared pipeline imports from the installed script, not the caller cwd.
 import sys
 from pathlib import Path
@@ -36,7 +44,7 @@ def local(value):
 
 
 def load_module():
-    path=ROOT/'05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py'
+    path=ROOT/'annotation/integrated_adhesome_pipeline.py'
     spec=importlib.util.spec_from_file_location('stage2_experiment_classifier',path)
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     return module
@@ -99,7 +107,7 @@ def run_arm(module,run,kind,out,name,profile,weight):
     branch,audit,rows,manifest=cohort(run,kind)
     rules_path=audit/'configuration/family_rules.json';identity_path=audit/'configuration/family_identity_rules.json'
     rules=json.loads(rules_path.read_text());rules['_sha256']=sha(rules_path)
-    rules['_audit_policy']=json.loads((ROOT/'05_conservative_adhesome_family_assignment_audit/audit_policy.json').read_text())
+    rules['_audit_policy']=json.loads((ROOT/'annotation/audit_policy.json').read_text())
     rules['_orthogroup_context_weight']=weight;rules['_stage2_profile']=profile
     print(f'{kind}: {name} (cached evidence only)',flush=True)
     with family_identity.using_library(identity_path):audited,resolved=module.classify_rows(rows,rules)
@@ -110,9 +118,9 @@ def run_arm(module,run,kind,out,name,profile,weight):
     references={r['sequence_sha256'] for r in read(branch/'reference_overlap.tsv')}
     for filename in ('search_catalogue.csv','metazoan_catalogue.csv'):
         import csv
-        with (ROOT/'01_detection/references/adhesome_v1.0'/filename).open(encoding='utf-8-sig') as handle:
+        with (ROOT/'detection/references/adhesome_v1.0'/filename).open(encoding='utf-8-sig') as handle:
             references.update(r['sequence_sha256'] for r in csv.DictReader(handle))
-    model=json.loads((ROOT/'02_calibration_set/identity_probability_model.json').read_text())
+    model=json.loads((ROOT/'validation/identity_probability_model.json').read_text())
     def read_arm(unused,code):return tuple({pid:r for pid,r in group.items() if r.get('Specie')==code} for group in (before,final,excluded))
     with patch('evaluate_validation.read_audit',side_effect=read_arm):
         pred=evaluate_branch(branch,manifest,audit,{r['sequence_sha256'] for r in cal_manifest},references,
@@ -149,7 +157,7 @@ def freeze_selection(out,results,predictions):
         result['eligible_by_calibration']=okay;result['correct_family_regressions']=len(regressions)
         if okay:eligible.append(result)
     selected=max(eligible,key=lambda r:(r['family']['F1'] or 0,r['F1'] or 0,r['TP'])) if eligible else results[0]
-    files=[ROOT/'stage2_evidence.py',stage2_evidence.CONFIG,ROOT/'family_identity.py',ROOT/'05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py']
+    files=[ROOT/'scripts/stage2_evidence.py',stage2_evidence.CONFIG,ROOT/'scripts/family_identity.py',ROOT/'annotation/integrated_adhesome_pipeline.py']
     frozen=dict(version='1.0',selected_arm=selected['arm'],selected_profile=selected['profile'],context_weight=selected['context_weight'],
         selected_at_utc=datetime.now(timezone.utc).isoformat(),selection_dataset='calibration_only',validation_labels_used=False,
         code_files={str(p):sha(p) for p in files},calibration_results=results,
@@ -171,8 +179,8 @@ def finalize_freeze(module,run,out):
     for row in pred:
         if any(str(row[key])!=old[row['protein_id']][key] for key in ('supported','predicted_family','grade','provisional')):
             raise ValueError('Production integration changed selected calibration calls')
-    files=[ROOT/'stage2_evidence.py',stage2_evidence.CONFIG,ROOT/'family_identity.py',
-        ROOT/'05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py',
+    files=[ROOT/'scripts/stage2_evidence.py',stage2_evidence.CONFIG,ROOT/'scripts/family_identity.py',
+        ROOT/'annotation/integrated_adhesome_pipeline.py',
         ROOT/'adhesome_workflow.py',ROOT/'schisto_adhesome/branch.py',ROOT/'schisto_adhesome/workflows.py',
         ROOT/'configs/isolated_workflow.json']
     frozen.update(code_files={str(p):sha(p) for p in files},validation_frozen=True,

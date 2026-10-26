@@ -1,4 +1,12 @@
 """Process-isolated adapter to the existing detection/annotation/orthology core."""
+
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
 import argparse
 import json
 import os
@@ -28,14 +36,14 @@ def reuse_detection(folder, config):
             path=local_path(name)
             if sha(path)!=digest:
                 raise ValueError('Detection input changed: '+str(path))
-        for path in (ROOT/'01_detection/config/family_rules.json',
-                     ROOT/'01_detection/config/adhesome_pfam_manifest.csv',
-                     ROOT/'01_detection/config/adhesome_component_crosswalk.csv'):
+        for path in (ROOT/'detection/config/family_rules.json',
+                     ROOT/'detection/config/adhesome_pfam_manifest.csv',
+                     ROOT/'detection/config/adhesome_component_crosswalk.csv'):
             matches=[v for k,v in classification['checksums'].items() if Path(k).name==path.name]
             if matches!=[sha(path)]:
                 raise ValueError('Detection configuration is not current: '+str(path))
         scan=json.loads((base/'domains/scan.json').read_text())
-        if scan['metadata_sha256']!=sha(ROOT/'01_detection/databases/pfam/adhesome_v1.0.hmm.metadata.json'):
+        if scan['metadata_sha256']!=sha(ROOT/'detection/databases/pfam/adhesome_v1.0.hmm.metadata.json'):
             raise ValueError('Detection domain library changed')
 
 
@@ -118,10 +126,10 @@ def _execute(args):
             cal=read(run/'calibration/inputs/sequence_manifest.tsv')
             references=set()
             references.update(r['sequence_sha256'] for r in read(branch/'reference_overlap.tsv'))
-            for path in (ROOT/'01_detection/references/adhesome_v1.0/search_catalogue.csv',
-                         ROOT/'01_detection/references/adhesome_v1.0/metazoan_catalogue.csv'):
+            for path in (ROOT/'detection/references/adhesome_v1.0/search_catalogue.csv',
+                         ROOT/'detection/references/adhesome_v1.0/metazoan_catalogue.csv'):
                 references.update(r['sequence_sha256'] for r in core.read(path,','))
-            model=json.loads((ROOT/'02_calibration_set/identity_probability_model.json').read_text())
+            model=json.loads((ROOT/'validation/identity_probability_model.json').read_text())
             training={r['sequence_sha256'] for r in model.get('samples',[])}
             predictions=evaluate_branch(branch,manifest,audit,{r['sequence_sha256'] for r in cal},references,training)
             summary=summarize_predictions(predictions,reports,args.kind)

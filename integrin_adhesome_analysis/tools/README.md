@@ -16,6 +16,7 @@ their explicit inputs and a separate output location. Routine workflows do not
 launch these development tools automatically. Their resource paths resolve to
 the parent pipeline bundle, including when invoked from another directory.
 
-The runtime modules `evaluate_validation.py` and `evaluate_family_expansion.py`
-remain in the pipeline root because the maintained classifier, rule validator
-and reports import their shared contracts.
+The runtime modules `scripts/evaluate_validation.py` and
+`scripts/evaluate_family_expansion.py` expose shared contracts used by the
+classifier, rule validator and reports. The bundle path helper resolves their
+imports from root, component and tool entry points.

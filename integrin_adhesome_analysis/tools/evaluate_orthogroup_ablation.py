@@ -5,6 +5,14 @@ No recruitment, motif search, orthology inference, phylogeny, fitting or tuning.
 Gold labels are used only after each arm's classifier has finished.
 """
 
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
+
 # Resolve shared pipeline imports from the installed script, not the caller cwd.
 import sys
 from pathlib import Path
@@ -30,7 +38,7 @@ from orthogroup_context import HEURISTIC_WEIGHT,configuration,validate_weight
 from validation_reporting import reports,macro_family_metrics,populations,policy_expected_families,policy_prediction,yes
 
 ROOT=Path(__file__).resolve().parents[1]
-AUDIT=ROOT/'05_conservative_adhesome_family_assignment_audit'
+AUDIT=ROOT/'annotation'
 ARMS=[('baseline',None),('benchmark_weighted',HEURISTIC_WEIGHT),('orthogroup_ablation',0.0),
       ('sensitivity_025',.25),('sensitivity_040',.40),('sensitivity_070',.70),('sensitivity_100',1.0)]
 POLICIES=('dual_gate_supported','dual_gate_strong','audit_including_provisional')
@@ -305,16 +313,16 @@ def main(argv=None):
     validate_pair(json.loads(family_path.read_text()),json.loads(identity_path.read_text()))
     if source.get('rules_sha256')!=evaluation.sha(family_path) or source.get('identity_library_sha256')!=evaluation.sha(identity_path):
         raise ValueError('Frozen baseline uses a different family/identity pair; select the matching expanded baseline')
-    for name in ['tools/evaluate_orthogroup_ablation.py','evaluate_family_expansion.py','orthogroup_context.py','family_identity.py',
-        'stage2_resolution.py','identity_probability.py','control_exclusion.py','classification_contract.py','audit_report.py',
-        'evaluate_validation.py','validation_reporting.py','calibrate_identity.py','label_ontology.py',
-        '05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py',
-        '05_conservative_adhesome_family_assignment_audit/audit_policy.json']:
+    for name in ['tools/evaluate_orthogroup_ablation.py','scripts/evaluate_family_expansion.py','scripts/orthogroup_context.py','scripts/family_identity.py',
+        'scripts/stage2_resolution.py','scripts/identity_probability.py','scripts/control_exclusion.py','scripts/classification_contract.py','scripts/audit_report.py',
+        'scripts/evaluate_validation.py','scripts/validation_reporting.py','scripts/calibrate_identity.py','scripts/label_ontology.py',
+        'annotation/integrated_adhesome_pipeline.py',
+        'annotation/audit_policy.json']:
         path=ROOT/name;hashes[str(path.resolve())]=evaluation.sha(path)
     for path in (family_path,identity_path,evaluation.LABELS,evaluation.CONTROL_FASTA,identity_probability.DEFAULT_MODEL):
         hashes[str(path.resolve())]=evaluation.sha(path)
     for name in ('search_catalogue.csv','metazoan_catalogue.csv'):
-        path=ROOT/'01_detection/references/adhesome_v1.0'/name;hashes[str(path.resolve())]=evaluation.sha(path)
+        path=ROOT/'detection/references/adhesome_v1.0'/name;hashes[str(path.resolve())]=evaluation.sha(path)
     historical=evidence.parent/'audited_family_assignments.tsv';sealed_file(historical,hashes)
     gold_context=(*evaluation.load_gold(evaluation.LABELS,evaluation.CONTROL_FASTA,family_path,identity_path),
         {row['sequence_sha256'] for row in json.loads(identity_probability.DEFAULT_MODEL.read_text()).get('samples',[])})

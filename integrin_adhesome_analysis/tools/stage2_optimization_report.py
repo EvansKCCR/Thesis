@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """Describe a completed, calibration-selected Stage 2 experiment; no inference."""
 
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
+
 # Resolve shared pipeline imports from the installed script, not the caller cwd.
 import sys
 from pathlib import Path
@@ -257,8 +265,8 @@ def generate(run,out):
         'is not a guarantee of perfect specificity in novel sequences. Calibration retains its 23 pre-existing hard-negative false positives; none are hidden or removed from scoring.')
     implementation=[('stage2_evidence.py','Separate evidence-driven hypothesis routing and family confirmation; explicit profiles'),
         ('family_identity.py','Exact observed CDD Pfam accessions, provenance and overlap merge; scoped model anchors'),
-        ('05_conservative_adhesome_family_assignment_audit/stage2_evidence_rules.json','Family cores, diagnostic models, partial thresholds and calibration-selected profile'),
-        ('05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py','Profile dispatch and existing Atlas workbook/trace output'),
+        ('annotation/stage2_evidence_rules.json','Family cores, diagnostic models, partial thresholds and calibration-selected profile'),
+        ('annotation/integrated_adhesome_pipeline.py','Profile dispatch and existing Atlas workbook/trace output'),
         ('adhesome_workflow.py','Resume/continue/audit profile propagation, snapshots and recovery invalidation'),
         ('schisto_adhesome/branch.py; schisto_adhesome/workflows.py','Frozen isolated modes, calibration alongside selected branch, environment restoration'),
         ('configs/isolated_workflow.json','calibrated_v1 selected for future isolated runs; context coefficient 1.0'),

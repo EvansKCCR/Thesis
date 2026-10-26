@@ -1,9 +1,15 @@
 # Parallel workflow gates — version 1.0
 
-Run commands from the directory containing `run_pipeline.py`, in the existing
+Run commands from the bundle root containing `adhesome_workflow.py`, in the existing
 `adhesome-workflow-v1` Linux/WSL environment. The expanded family/identity pair,
 motif library, exclusion gates and Atlas workbook remain the shared analytical
 core. `adhesome_workflow.py` remains available for legacy staged runs.
+
+The current source layout uses `scripts/`, `detection/`, `validation/`,
+`motif_annotation/`, `orthology_phylogeny/` and `annotation/`. Examples below
+use new output folders relative to this bundle. For an existing run in the
+separate `pipeline_validation` installation, supply its absolute run/annotation/
+orthology paths; those stored outputs have not been moved or migrated.
 
 ## Stage 2 evidence profile
 
@@ -19,7 +25,7 @@ unresolved; a generic PH, LIM, FERM, kinase or FN3 domain cannot assign a
 specific protein. Stage 1 searches and global cutoffs are unchanged.
 
 Rules and family-specific partial thresholds are in
-`05_conservative_adhesome_family_assignment_audit/stage2_evidence_rules.json`.
+`annotation/stage2_evidence_rules.json`.
 The new LIMK rescue is disabled in the selected profile because calibration
 could not distinguish its positive and hard-negative controls. No evaluation
 labels or protein IDs are consulted by the new inference rules. Orthogroup
@@ -63,8 +69,8 @@ not a guarantee of perfect precision on unseen lineages.
 
 ```bash
 conda activate adhesome-workflow-v1
-cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/pipeline_validation/integrin_adhesome_analysis
-python run_pipeline.py --mode validation --select-labelled-validation \
+cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis
+python scripts/run_pipeline.py --mode validation --select-labelled-validation \
   --out runs/isolated_validation --threads 4
 ```
 
@@ -124,7 +130,7 @@ sequence IDs and sequences unchanged. Then repeat the original command with
 `--resume` and both context paths:
 
 ```bash
-python run_pipeline.py --mode validation --select-labelled-validation \
+python scripts/run_pipeline.py --mode validation --select-labelled-validation \
   --out runs/isolated_validation --threads 4 --resume \
   --calibration-context returned/isolated_calibration \
   --validation-context returned/isolated_validation
@@ -152,7 +158,7 @@ to three named proteomes. The configured QC must match the frozen mode config.
 The input folder may contain other files, but control files must never be selected.
 
 ```bash
-python run_pipeline.py --mode target --input-dir inputs/targets \
+python scripts/run_pipeline.py --mode target --input-dir inputs/targets \
   --targets-config targets.production.json --out runs/isolated_targets --threads 4
 ```
 
@@ -238,12 +244,12 @@ After rerunning only the calibration and validation audits, evaluate both with
 the original labelled populations and handoffs. Run from the pipeline root:
 
 ```bash
-python -B report_audits.py \
+python -B scripts/report_audits.py \
   --run runs/isolated_validation \
   --calibration-audit runs/audit_optimized_local/calibration \
   --validation-audit runs/audit_optimized_local/validation \
-  --calibration-labels 02_calibration_set/calibration_set.xlsx \
-  --validation-labels 02_calibration_set/validation_set.csv \
+  --calibration-labels validation/calibration_set.xlsx \
+  --validation-labels validation/validation_set.csv \
   --out runs/audit_optimized_local/performance_reports
 ```
 

@@ -7,7 +7,7 @@ benchmark's pairwise PPV, not the ranking metric called average precision (area
 under a precision-recall curve).
 
 The bundled policy is
-`04_orthology_phylogenetic_classification/config/benchmark_policy.json`.
+`orthology_phylogeny/config/benchmark_policy.json`.
 To use a separately specified policy, pass `--quality-policy PATH` to `benchmark`
 or `--benchmark-quality-policy PATH` to workflow commands. Policies and scoring
 code are hashed into the benchmark report and checked by the audit.
@@ -45,7 +45,7 @@ Run the following locally from the main validation installation. Use a new outpu
 directory; this leaves existing reports intact and creates no backup directories:
 
 ```bash
-cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/pipeline_validation/integrin_adhesome_analysis
+cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis
 conda activate adhesome-workflow-v1
 python adhesome_workflow.py benchmark \
   --orthology runs/annotation/downstream/orthology \

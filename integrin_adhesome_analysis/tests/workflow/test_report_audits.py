@@ -1,4 +1,12 @@
 """Standalone audit reports use saved calls and their own labelled populations."""
+
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
 import argparse
 import csv
 import json
@@ -65,10 +73,10 @@ class AuditReportTests(unittest.TestCase):
             data.table(audit/'negative_control_exclusions.tsv',[])
             core.seal(audit,'audit',annotation=str(annotation),annotation_manifest=data.sha(annotation/'workflow_manifest.json'),stage2_profile='calibrated_v1')
         data.dump(run/'run_contract.json',contract)
-        resources=base/'resources';folder=resources/'01_detection/references/adhesome_v1.0';folder.mkdir(parents=True)
+        resources=base/'resources';folder=resources/'detection/references/adhesome_v1.0';folder.mkdir(parents=True)
         for filename in ('search_catalogue.csv','metazoan_catalogue.csv'):(folder/filename).write_text('sequence_sha256\n')
-        folder=resources/'02_calibration_set';folder.mkdir();data.dump(folder/'identity_probability_model.json',dict(samples=[]))
-        for name in ('calibrate_identity.py','label_ontology.py','schisto_adhesome/reports.py'):
+        folder=resources/'validation';folder.mkdir();data.dump(folder/'identity_probability_model.json',dict(samples=[]))
+        for name in ('scripts/calibrate_identity.py','scripts/label_ontology.py','schisto_adhesome/reports.py'):
             path=resources/name;path.parent.mkdir(exist_ok=True);path.write_text('# fixture\n')
         args=argparse.Namespace(run=run,out=base/'reports',calibration_audit=audits['calibration'],validation_audit=audits['validation'],
                                 calibration_labels=None,validation_labels=None)

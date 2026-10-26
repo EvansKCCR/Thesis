@@ -4,6 +4,14 @@
 Python >=3.11. Commands write new directories and never overwrite completed runs.
 See WORKFLOW.md for the input contracts and examples.
 """
+
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
 import argparse
 import csv
 import hashlib
@@ -24,15 +32,15 @@ from stage2_evidence import default_profile
 ROOT = Path(__file__).resolve().parent
 VERSION = '1.0'
 DEFAULT_FAMILY_COVERAGE = 'expanded'
-DETECT = ROOT/'01_detection'
-MOTIF = ROOT/'03_functional_motif_annotation'
-ORTH = ROOT/'04_orthology_phylogenetic_classification/scripts'
-AUDIT = ROOT/'05_conservative_adhesome_family_assignment_audit/integrated_adhesome_pipeline.py'
+DETECT = ROOT/'detection'
+MOTIF = ROOT/'motif_annotation'
+ORTH = ROOT/'orthology_phylogeny/scripts'
+AUDIT = ROOT/'annotation/integrated_adhesome_pipeline.py'
 AUDIT_POLICY = AUDIT.with_name('audit_policy.json')
-AUDIT_EVIDENCE = ROOT/'audit_join.py'
-IDENTITY_CODE = ROOT/'family_identity.py'
+AUDIT_EVIDENCE = ROOT/'scripts/audit_join.py'
+IDENTITY_CODE = ROOT/'scripts/family_identity.py'
 IDENTITY_LIBRARY = AUDIT.with_name('family_identity_rules.json')
-AUDIT_REPORT = ROOT/'audit_report.py'
+AUDIT_REPORT = ROOT/'scripts/audit_report.py'
 FIBRONECTIN_FAMILIES = {'fibronectin_like', 'fibronectin_III_ligand', 'fibronectin_like_candidate'}
 IDENTITY_FIELDS = ('reference_subfamily','subfamily_support_method','reciprocal_reference_subfamily',
                   'phylogeny_concordant','subfamily_profile_calibrated','top_profile_subfamily',
@@ -458,16 +466,16 @@ def downstream(args):
             selected_rules,selected_identity=audit_configuration(state['settings'].get('family_coverage',DEFAULT_FAMILY_COVERAGE))
             if (saved.get('rules_sha256')!=digest(selected_rules) or saved.get('audit_script_sha256')!=digest(AUDIT)
                     or saved.get('audit_policy_sha256')!=digest(AUDIT_POLICY) or saved.get('audit_evidence_sha256')!=digest(AUDIT_EVIDENCE)
-                    or saved.get('classification_contract_sha256')!=digest(ROOT/'classification_contract.py')
+                    or saved.get('classification_contract_sha256')!=digest(ROOT/'scripts/classification_contract.py')
                     or saved.get('output_schema_sha256')!=digest(ROOT/'templates/output_schema.json')
                     or saved.get('identity_code_sha256')!=digest(IDENTITY_CODE)
                     or saved.get('stage2_profile','original')!=state['settings'].get('stage2_profile','original')
-                    or saved.get('stage2_evidence_code_sha256')!=digest(ROOT/'stage2_evidence.py')
-                    or saved.get('stage2_evidence_rules_sha256')!=digest(ROOT/'05_conservative_adhesome_family_assignment_audit/stage2_evidence_rules.json')
+                    or saved.get('stage2_evidence_code_sha256')!=digest(ROOT/'scripts/stage2_evidence.py')
+                    or saved.get('stage2_evidence_rules_sha256')!=digest(ROOT/'annotation/stage2_evidence_rules.json')
                     or saved.get('identity_library_sha256')!=digest(selected_identity)
                     or saved.get('audit_report_sha256')!=digest(AUDIT_REPORT)
                     or saved.get('orthogroup_context_weight')!=getattr(args,'orthogroup_context_weight',None)
-                    or saved.get('orthogroup_context_code_sha256')!=digest(ROOT/'orthogroup_context.py')
+                    or saved.get('orthogroup_context_code_sha256')!=digest(ROOT/'scripts/orthogroup_context.py')
                     or saved.get('identity_probability_resources')!=probability_resources()
                     or ('validation_evaluation_resources' in saved and saved['validation_evaluation_resources']!=validation_resources())
                     or saved.get('motif_snapshot_sha256')!=digest(MOTIF/'Motif_library/adhesion_core.json')):
@@ -997,14 +1005,14 @@ def audit(args):
                 if os.environ.get('SCHISTO_ISOLATED_BRANCH') else evaluate_controls(out,handoff))
     motif_snapshot=MOTIF/'Motif_library/adhesion_core.json'
     seal(out,'audit',annotation=str(annotation),orthology=str(orthology_dir),benchmark_summary_sha256=benchmark_sha,
-        stage2_profile=stage2_profile,stage2_evidence_code_sha256=digest(ROOT/'stage2_evidence.py'),
+        stage2_profile=stage2_profile,stage2_evidence_code_sha256=digest(ROOT/'scripts/stage2_evidence.py'),
         stage2_evidence_rules_sha256=digest(stage2_config),
         family_coverage=coverage,family_rules_source=str(selected_rules),identity_library_source=str(selected_identity),
         orthogroup_context_weight=context_weight,orthogroup_context_configuration=context_configuration(context_weight),
-        orthogroup_context_code_sha256=digest(ROOT/'orthogroup_context.py'),
+        orthogroup_context_code_sha256=digest(ROOT/'scripts/orthogroup_context.py'),
         motif_snapshot_sha256=digest(motif_snapshot),rules_sha256=digest(rules),audit_script_sha256=digest(AUDIT),
         audit_policy_sha256=digest(AUDIT_POLICY),audit_evidence_sha256=digest(AUDIT_EVIDENCE),
-        classification_contract_sha256=digest(ROOT/'classification_contract.py'),output_schema_sha256=digest(ROOT/'templates/output_schema.json'),stage1_source_tables=source_tables,
+        classification_contract_sha256=digest(ROOT/'scripts/classification_contract.py'),output_schema_sha256=digest(ROOT/'templates/output_schema.json'),stage1_source_tables=source_tables,
         identity_code_sha256=digest(IDENTITY_CODE),identity_library_sha256=digest(identities),audit_report_sha256=digest(AUDIT_REPORT),
         identity_probability_resources=probability_resources(),
         validation_evaluation=validation,validation_evaluation_resources=validation_resources(),

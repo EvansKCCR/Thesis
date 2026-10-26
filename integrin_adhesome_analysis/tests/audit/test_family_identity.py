@@ -1,9 +1,17 @@
 
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
+
 import sys as _sys
 from pathlib import Path as _Path
 _PIPELINE_ROOT=_Path(__file__).resolve().parents[2]
 _sys.path.insert(0,str(_PIPELINE_ROOT))
-_sys.path.insert(0,str(_PIPELINE_ROOT/"05_conservative_adhesome_family_assignment_audit"))
+_sys.path.insert(0,str(_PIPELINE_ROOT/"annotation"))
 import json
 from pathlib import Path
 import unittest
@@ -17,7 +25,7 @@ ROOT=Path(__file__).resolve().parents[2]
 
 class FamilyIdentityTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):cls.rules=json.loads((ROOT/'01_detection/config/family_rules.json').read_text())
+    def setUpClass(cls):cls.rules=json.loads((ROOT/'detection/config/family_rules.json').read_text())
 
     def row(self,**extra):
         row=dict(protein_id='Any__gene',Specie='Any',family='talin',length=2200,status='provisional',

@@ -63,7 +63,7 @@ control. Reference-overlapping validation is not independent held-out validation
 From this installation, with `adhesome-workflow-v1` active:
 
 ```bash
-python 04_orthology_phylogenetic_classification/scripts/phylogeny.py run \
+python orthology_phylogeny/scripts/phylogeny.py run \
   --project runs/annotation/downstream/phylogeny \
   --resume --threads 4 --iqtree-threads 2
 ```

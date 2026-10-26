@@ -8,7 +8,7 @@ for acceptance, tree-level comparison and inference tuning.
 Use `--scope adhesome` on the standalone benchmark command, or
 `--benchmark-scope adhesome` on `resume`, `continue` and `orthology`.
 The original `benchmark.py` remains the default (`all` scope). Explicitly selecting
-`adhesome` routes execution to the separate `04_orthology_phylogenetic_classification/scripts/adhesome_benchmark_subset.py`.
+`adhesome` routes execution to the separate `orthology_phylogeny/scripts/adhesome_benchmark_subset.py`.
 The subset script defaults to adhesome scope and shares the original scoring
 equations through the workflow adapter. An original-benchmark failure does not
 switch automatically to subset scoring; the user must select it. Scope selects
@@ -30,7 +30,7 @@ curated RefOG/family association per row, using these tab-separated columns:
 | Column | Required content |
 | --- | --- |
 | `refog` | Existing ground-truth filename stem, without `.txt`. |
-| `family` | Exact canonical family ID from `05_conservative_adhesome_family_assignment_audit/family_rules_expanded.json`. |
+| `family` | Exact canonical family ID from `annotation/family_rules_expanded.json`. |
 | `curation_source` | Traceable publication, curated record or curation-file reference supporting this RefOG/family association independently of the evaluated predictions. |
 | `curation_status` | `curated`. Proposed or provisional ground truth is not scored. |
 
@@ -63,7 +63,7 @@ the verified result/panel paths and invokes `adhesome_benchmark_subset.py`.
 From the main validation installation in WSL:
 
 ```bash
-cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/pipeline_validation/integrin_adhesome_analysis
+cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis
 conda activate adhesome-workflow-v1
 python adhesome_workflow.py benchmark \
   --orthology runs/annotation/downstream/orthology \

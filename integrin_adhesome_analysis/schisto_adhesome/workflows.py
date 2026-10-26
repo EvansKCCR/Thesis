@@ -1,4 +1,12 @@
 """Independent branch scheduling and sealed, dependency-aware execution."""
+
+# Resolve the organized bundle independently of the caller working directory.
+import sys as _bundle_sys
+from pathlib import Path as _BundlePath
+_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
+if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
+from pipeline_paths import activate as _activate_bundle_paths
+_activate_bundle_paths()
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 import hashlib
@@ -14,14 +22,14 @@ from .datasets import ROOT, sha, dump, table, load_dataset, overlaps, materializ
 
 def algorithm_inventory():
     """Only analytical code/libraries, excluding datasets and generated results."""
-    paths = set(ROOT.glob('*.py')) | set((ROOT/'schisto_adhesome').glob('*.py'))
-    for name in ('01_detection','03_functional_motif_annotation','04_orthology_phylogenetic_classification',
-                 '05_conservative_adhesome_family_assignment_audit','templates'):
+    paths = set(ROOT.glob('*.py')) | set((ROOT/'scripts').glob('*.py')) | set((ROOT/'schisto_adhesome').glob('*.py'))
+    for name in ('detection','motif_annotation','orthology_phylogeny',
+                 'annotation','templates'):
         for p in (ROOT/name).rglob('*'):
             if p.is_file() and not {'__pycache__','results','runs','tests'} & set(p.relative_to(ROOT).parts) and (
                     p.suffix in ('.py','.json','.csv','.hmm','.faa') or p.name.endswith('.hmm.metadata.json')):
                 paths.add(p)
-    paths.add(ROOT/'02_calibration_set/identity_probability_model.json')
+    paths.add(ROOT/'validation/identity_probability_model.json')
     return {p.relative_to(ROOT).as_posix():sha(p) for p in sorted(paths) if p.exists()}
 
 
@@ -61,7 +69,7 @@ def prepare(args):
         config = json.loads(args.targets_config.read_text())
         if config.get('qc') != settings['qc']:
             raise ValueError('Target sequence QC differs from frozen branch configuration')
-        sys.path.insert(0,str(ROOT/'01_detection'))
+        sys.path.insert(0,str(ROOT/'detection'))
         try:
             from adhesome_pipeline import check_inputs
             sources,ignored,summary = check_inputs(args.input_dir,config)
