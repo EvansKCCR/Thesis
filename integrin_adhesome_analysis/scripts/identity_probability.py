@@ -24,7 +24,7 @@ def sha(path):
 
 def fingerprint():
     from family_identity import LIBRARY
-    files=['scripts/identity_probability.py','scripts/family_identity.py','scripts/stage2_resolution.py','scripts/control_exclusion.py','scripts/calibrate_identity.py','scripts/label_ontology.py','detection/config/family_rules.json',
+    files=['scripts/cdd_evidence.py','scripts/family_catalogue.py','scripts/stage2_evidence.py','scripts/identity_probability.py','scripts/family_identity.py','scripts/stage2_resolution.py','scripts/control_exclusion.py','scripts/calibrate_identity.py','scripts/label_ontology.py','detection/config/family_rules.json',
         'annotation/integrated_adhesome_pipeline.py',
         'annotation/audit_policy.json',
         'annotation/family_identity_rules.json']
@@ -33,7 +33,7 @@ def fingerprint():
 
 def resource_hashes():
     # Negative exclusion gates must invalidate recovery even without a fitted model.
-    result={name:sha(ROOT/name) for name in ('scripts/identity_probability.py','scripts/stage2_resolution.py','scripts/control_exclusion.py')}
+    result={name:sha(ROOT/name) for name in ('scripts/identity_probability.py','scripts/stage2_resolution.py','scripts/control_exclusion.py','scripts/cdd_evidence.py','scripts/family_catalogue.py','scripts/phylogenetic_identity.py')}
     for name in ('calibration_set.xlsx','calibration.faa'):
         path=ROOT/'validation'/name
         result[path.relative_to(ROOT).as_posix()]=sha(path)
@@ -105,9 +105,11 @@ def annotate(rows,model_path=DEFAULT_MODEL,family_rules_sha256=None,orthogroup_c
     if family_rules_sha256 and model['code_fingerprint'].get('detection/config/family_rules.json')!=family_rules_sha256:
         return dict(status='probability_model_incompatible_with_selected_family_rules')
     if model['code_fingerprint']!=fingerprint():return dict(status='probability_model_stale_after_scoring_change')
+    if 'input_hashes' not in model:return dict(status='probability_model_incomplete')
     for name,expected in model['input_hashes'].items():
         path=recorded_resource(name)
         if not path.exists() or sha(path)!=expected:return dict(status='probability_model_inputs_changed')
+    if not {'samples','context','minimum_controls','cross_validation'}<=model.keys():return dict(status='probability_model_incomplete')
     samples=model['samples'];applied=0
     for row in rows:
         if row['assigned_family']=='unassigned':continue

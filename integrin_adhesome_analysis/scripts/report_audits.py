@@ -24,12 +24,13 @@ from schisto_adhesome.reports import read,evaluate_branch,summarize_predictions
 from schisto_adhesome.validation_review import Document,family_metrics,generate as validation_review,local
 
 
-def checked_cohort(run,kind,contract,labels_override=None):
+def checked_cohort(run,kind,contract,labels_override=None,allow_equivalent_calibration_label_bytes=False):
     """Recheck original truth and sequence hashes without preparing new inputs."""
     reference=contract['datasets'][kind]
     labels=local(labels_override or reference['labels_file']).resolve()
     protein_file=local(reference['protein_file']).resolve()
-    if sha(labels)!=reference['labels_sha256']:raise ValueError(kind+': reference labels differ from the saved run')
+    if sha(labels)!=reference['labels_sha256'] and not (kind=='calibration' and allow_equivalent_calibration_label_bytes):
+        raise ValueError(kind+': reference labels differ from the saved run')
     if sha(protein_file)!=reference['fasta_sha256']:raise ValueError(kind+': reference FASTA differs from the saved run')
     trusted,summary=load_dataset(kind,protein_file,labels,select_labelled=True)
     if (summary['counts']!=reference['counts'] or summary['labelled_records']!=reference['labelled_records']
@@ -72,12 +73,16 @@ def generate(args):
     audits={kind:getattr(args,kind+'_audit').resolve() for kind in ('calibration','validation')}
     check_output(out,run,list(audits.values()))
     contract_path=run/'run_contract.json';contract=json.loads(contract_path.read_text())
-    sources={str(contract_path):sha(contract_path)};cohorts={};audit_meta={}
+    sources={str(contract_path):sha(contract_path)};cohorts={};audit_meta={};label_checks={}
     def record(path):sources[str(path)]=sha(path)
     # All data/provenance checks precede creating reports. Do not validate the old
     # algorithm inventory: newer completed audits deliberately use newer rules.
     for kind in ('calibration','validation'):
-        manifest,labels,fasta,manifest_path=checked_cohort(run,kind,contract,getattr(args,kind+'_labels',None))
+        manifest,labels,fasta,manifest_path=checked_cohort(run,kind,contract,getattr(args,kind+'_labels',None),
+            getattr(args,'allow_equivalent_calibration_label_bytes',False))
+        label_checks[kind]=dict(frozen_labels_sha256=contract['datasets'][kind]['labels_sha256'],
+            current_labels_sha256=sha(labels),byte_identical=sha(labels)==contract['datasets'][kind]['labels_sha256'],
+            all_evaluation_fields_match_frozen_manifest=True,reference_fasta_byte_identical=True)
         audit_meta[kind]=checked_audit(run,kind,audits[kind]);cohorts[kind]=(manifest,labels)
         for path in (labels,fasta,manifest_path,audits[kind]/'workflow_manifest.json',
                      run/kind/'annotation/workflow_manifest.json',run/kind/'handoff/workflow_manifest.json',
@@ -98,7 +103,7 @@ def generate(args):
         rows=evaluate_branch(branch,manifest,audits[kind],overlap,ref_hashes,training)
         folder=out/kind;summary=summarize_predictions(rows,folder,kind)
         # Reports describe fixed saved audits; reporting does not select or fit.
-        summary.update(interpretation='Terminal evaluation of a completed audit using checksum-verified original reference labels; no fitting or inference.',
+        summary.update(interpretation='Terminal evaluation of a completed audit using reference labels verified against the frozen cohort; no fitting or inference.',
             audit=str(audits[kind]),reference_labels=str(labels),stage2_profile=audit_meta[kind].get('stage2_profile','original'),
             labels_sha256=sha(labels),excluded_unlabelled_records=len(contract['datasets'][kind].get('excluded_unlabelled_ids',[])))
         dump(folder/'summary.json',summary)
@@ -149,6 +154,7 @@ def generate(args):
     dump(out/'reporting_provenance.json',dict(version='1.0',created_at_utc=datetime.now(timezone.utc).isoformat(),
         original_run=str(run),audits={k:str(v) for k,v in audits.items()},
         source_hashes=sources,reference_labels={k:str(v[1]) for k,v in cohorts.items()},
+        reference_label_checks=label_checks,
         checks=dict(exact_label_manifest_join=True,reference_sequences_verified=True,completed_audits_verified=True,
                     same_branch_annotation_and_handoff=True,sources_unchanged=True),
         analytical_pipeline_rerun=False,automatic_recalibration=False,backups_created=False))
@@ -162,6 +168,8 @@ def main(argv=None):
         parser.add_argument('--'+kind+'-audit',type=Path,required=True,help='Completed standalone audit output')
         parser.add_argument('--'+kind+'-labels',type=Path,help='Optional matching label file; default is the original run contract')
     parser.add_argument('--out',type=Path,required=True,help='New report directory, separate from audits and original run')
+    parser.add_argument('--allow-equivalent-calibration-label-bytes',action='store_true',
+        help='Allow a repackaged calibration workbook only when all labels, cohort IDs, sequences and evaluation fields still match the frozen run exactly; validation label checks remain strict')
     try:print(json.dumps(generate(parser.parse_args(argv)),indent=2));return 0
     except (OSError,ValueError,KeyError) as exc:print('ERROR: '+str(exc),file=sys.stderr);return 1
 

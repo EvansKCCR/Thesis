@@ -14,6 +14,8 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 def general_family(name,families):
+    from family_catalogue import canonical_family
+    name=canonical_family(name)
     aliases={'actin_superfamily_screen':'actin','ADF_H_screen':'cofilin',
         'paxillin_family':'paxillin_like','zyxin_family':'zyxin_like',
         'Src_family':'Src','Csk_family':'Csk','SH3_SH2_TK_screen':'Src'}

@@ -103,14 +103,33 @@ def diagnostics(run,kind,out):
     return result
 
 
-def run_arm(module,run,kind,out,name,profile,weight):
+def run_arm(module,run,kind,out,name,profile,weight,family_pair=None,ablation=None):
     branch,audit,rows,manifest=cohort(run,kind)
     rules_path=audit/'configuration/family_rules.json';identity_path=audit/'configuration/family_identity_rules.json'
+    if family_pair:rules_path,identity_path=family_pair
     rules=json.loads(rules_path.read_text());rules['_sha256']=sha(rules_path)
     rules['_audit_policy']=json.loads((ROOT/'annotation/audit_policy.json').read_text())
     rules['_orthogroup_context_weight']=weight;rules['_stage2_profile']=profile
+    rules['_identity_ablations']=ablation or {}
     print(f'{kind}: {name} (cached evidence only)',flush=True)
-    with family_identity.using_library(identity_path):audited,resolved=module.classify_rows(rows,rules)
+    from contextlib import ExitStack
+    architecture=module.architecture
+    def diagnostic_only(row,family,rules):
+        result=architecture(row,family,rules)
+        structural={'MISSING_REQUIRED_DOMAIN','DOMAIN_ORDER_CONFLICT','DOMAIN_COORDINATES_UNCONFIRMED',
+            'PFAM_ANCHOR_MISSING','LENGTH_OUTSIDE_RULE_RANGE','EXCESS_DOMAIN_COPIES'}
+        eligible={trace['family'] for trace in result.get('rule_trace',[]) if trace.get('reached') and
+            trace.get('diagnostic_cdd_matched') and not set(trace['reason_codes'])-structural}
+        from family_catalogue import canonical_family
+        eligible={canonical_family(f) for f in eligible}
+        if len(eligible)==1:
+            result=dict(result,score=4,complete=True,family=next(iter(eligible)),cdd=True,
+                note='EXPERIMENTAL architecture ablation: reported diagnostic CDD and dispatch retained; full core/order/length/copy gates removed; not a production assignment')
+        return result
+    with ExitStack() as stack:
+        stack.enter_context(family_identity.using_library(identity_path))
+        if (ablation or {}).get('architecture') is False:stack.enter_context(patch.object(module,'architecture',side_effect=diagnostic_only))
+        audited,resolved=module.classify_rows(rows,rules)
     before={r['protein_id']:r for r in module.collapse_rows(audited)};final={r['protein_id']:r for r in resolved}
     excluded={pid:r for pid,r in before.items() if r.get('stage2_excluded')}
     if set(final)&set(excluded) or set(final)|set(excluded)!=set(before):raise ValueError('Candidate accounting incomplete')
@@ -127,9 +146,12 @@ def run_arm(module,run,kind,out,name,profile,weight):
                              {r['sequence_sha256'] for r in model.get('samples',[])})
     folder=out/kind/name;folder.mkdir(parents=True,exist_ok=False)
     summary=summarize_predictions(pred,folder,kind)
+    confusion=Counter((r['expected_families'] or r['control_class'],r['predicted_family'] if r['supported'] else 'abstained') for r in pred)
+    table(folder/'family_confusion_matrix.tsv',[dict(expected=a,predicted=b,count=n) for (a,b),n in sorted(confusion.items())])
+    table(folder/'identity_outcomes.tsv',[dict(identity_outcome=k,count=v) for k,v in Counter(r.get('identity_outcome','legacy') for r in resolved).items()])
     from audit_report import prepare_sheet
     exported,fields,removed=prepare_sheet('Audited_family_assignment',resolved)
-    table(folder/'candidate_assignments.tsv',exported)
+    table(folder/'candidate_assignments.tsv',[{key:row.get(key) for key in fields} for row in exported])
     recruitment=[dict(protein_id=r['protein_id'],family=r['family'],discovery_rule=r.get('discovery_rule'),
         recruitment_evidence=r.get('recruitment_evidence',''),domain_score=r['domain_score_0_4'],grade=r['grade'],
         assigned_family=r['assigned_family']) for r in audited if r.get('row_origin')=='stage2_recovery']

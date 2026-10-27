@@ -40,11 +40,11 @@ integrin_adhesome_analysis/
   inputs/ / returned/ / runs/   installation-specific data and saved outputs
 ```
 
-Shared runtime libraries now live in `scripts/`: evidence joins/exports, family
+Shared runtime libraries live in `scripts/`: evidence joins/exports, family
 rules, identity/ontology, exclusions, orthogroup context and terminal evaluation.
 `pipeline_paths.py` exposes the bundle root and these libraries to each entry
 point, independently of the caller's working directory. Resource lookups use
-the renamed stage directories shown above.
+the stage directories shown above.
 
 Calibration fitting and the exclusion gate explicitly read `validation/calibration_set.xlsx`
 and `validation/calibration.faa`; validation sequences and auxiliary workbooks

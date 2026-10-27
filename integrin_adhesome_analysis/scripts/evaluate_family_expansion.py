@@ -46,10 +46,12 @@ def validate_pair(families, identities):
     if str(families.get('version', families.get('pipeline_version', '1.0'))) != '1.0' or str(identities.get('pipeline_version')) != '1.0':
         raise ValueError('Both configurations must use workflow version 1.0')
     required = allowed - {'length_range', 'maximum_model_counts', 'allow_diagnostic_dispatch'}
+    from family_catalogue import METADATA_FIELDS,GATE_FIELDS
+    allowed |= METADATA_FIELDS | GATE_FIELDS | {'provisional_min_domain_fraction','confounders','evidence_source'}
     rules = identities['rules']
     if len({r['id'] for r in rules}) != len(rules):
         raise ValueError('Duplicate identity rule IDs')
-    scope = set(families['families']) | {r['family'] for r in rules}
+    scope = set(families['families']) | {r['family'] for r in rules} | {'component_reference_candidate','unassigned_domain_candidate'}
     from stage2_resolution import BROAD_LABELS
     scope |= set(BROAD_LABELS)
     scope |= set(json.loads((ROOT / 'motif_annotation/Motif_library/context_rules.json').read_text())['families'])
@@ -291,8 +293,8 @@ def main():
     p.add_argument('--evidence', type=Path, required=True, help='Sealed joined_evidence.tsv from a completed audit')
     p.add_argument('--out', type=Path, required=True, help='New development directory outside the source runs')
     p.add_argument('--target', default='validation')
-    p.add_argument('--family-rules', type=Path, default=AUDIT / 'family_rules_expanded.json')
-    p.add_argument('--identity-rules', type=Path, default=AUDIT / 'family_identity_rules_expanded.json')
+    p.add_argument('--family-rules', type=Path, default=AUDIT / 'family_rules.json')
+    p.add_argument('--identity-rules', type=Path, default=AUDIT / 'family_identity_rules.json')
     p.add_argument('--coverage-audit', type=Path, default=AUDIT / 'family_coverage_expansion_audit.tsv')
     args = p.parse_args(); out = args.out.resolve(); handoff = args.handoff.resolve(); evidence = args.evidence.resolve()
     if out.exists():

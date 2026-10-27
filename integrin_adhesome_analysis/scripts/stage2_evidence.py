@@ -39,6 +39,8 @@ def annotation_context(rules):
         yield;return
     library=copy.deepcopy(identity.library())
     library.update(import_observed_pfam_accessions=True,accept_cdd_pfam_anchor=True)
+    library['precision_safeguards']=options.get('precision_safeguards',False)
+    library['identity_ablation']=rules.get('_identity_ablations',{})
     existing={rule['id'] for rule in library['rules']}
     additions=[r for r in configuration()['family_rules'] if r['family'] not in options.get('excluded_new_rule_families',[])]
     if existing & {r['id'] for r in additions}:raise ValueError('Duplicate enhanced identity rule')
@@ -54,6 +56,7 @@ def candidate_hypotheses(row,existing,rules,domain_parser):
     """
     name,options=profile(rules)
     if not options['recruitment']:return []
+    if rules.get('_identity_ablations',{}).get('redispatch') is False:return []
     hits=identity.combined_domains(row,domain_parser(row));proposals=[]
     for rule in configuration()['family_rules']:
         family=rule['family']

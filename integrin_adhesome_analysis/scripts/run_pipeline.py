@@ -31,6 +31,9 @@ def main(argv=None):
         parser.add_argument('--'+kind+'-labels',type=Path,default=ROOT/('validation/calibration_set.xlsx' if kind=='calibration' else 'validation/validation_set.csv'))
     for kind in ('calibration','validation','target'):
         parser.add_argument('--'+kind+'-context',type=Path,help='External evidence directory for this branch only')
+    parser.add_argument('--phylogenetic-identity-resolution',action='store_true',help='Optional existing-tree concordance review; family audits complete without it')
+    for kind in ('calibration','validation','target'):
+        parser.add_argument('--'+kind+'-phylogenetic-evidence',type=Path,help='Branch-specific supported-clade TSV; never shared between evaluation branches')
     parser.add_argument('--select-labelled-validation',action='store_true',help='Select label-table IDs and report extra FASTA records as excluded; never alter source FASTA')
     parser.add_argument('--allow-missing-context',action='store_true',help='Explicitly continue with missing external context, recording that limitation')
     parser.add_argument('--threads',type=int,default=4,help='Total budget across both branches')

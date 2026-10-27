@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-26",
+  "pipeline_version": "1.0",
+  "main_algorithm": "calibrated_v1",
+  "strict_development_profile_main": false,
+  "family_rules": 222,
+  "identity_rules": 197,
+  "family_aliases": {
+    "src": "Src",
+    "Src": "Src",
+    "SRC": "Src"
+  },
+  "SCR_registered": false,
+  "active_inspection_or_no_auto_promotion_flags": 0,
+  "historical_registry_metadata_restricts_production": false,
+  "phylogenetic_identity_resolution_default": false,
+  "reports": "C:\\Users\\eaasa\\Desktop\\Evans_PHD_Thesis\\Integrin_analysis\\audit_reviews\\library_expansion_20261026",
+  "verification": {
+    "central_tests": {
+      "tests": 212,
+      "failures": 0
+    },
+    "detection_tests": {
+      "tests": 90,
+      "failures": 0
+    },
+    "motif_tests": {
+      "tests": 21,
+      "failures": 0
+    },
+    "orthology_tests": {
+      "tests": 50,
+      "failures": 0,
+      "skipped": 8
+    },
+    "cli_help_entrypoints": 23,
+    "python_syntax_files": 122,
+    "resource_paths": 24,
+    "config_resource_links": 4,
+    "markdown_file_links": 35
+  },
+  "resource_gaps": {
+    "unbundled_stage1_pfam_models": 38,
+    "component_reference_label_provenance_current": false
+  },
+  "stored_runs_modified": false,
+  "external_installation_modified": false,
+  "backups_created": false,
+  "cached_classification_comparisons": true,
+  "new_searches": false,
+  "orthology_inference": false,
+  "phylogenetic_inference": false,
+  "sha256": {
+    "annotation/family_rules.json": "f31e3b849d5955edc78dc441f49b70516b3b0b7fa29cb29e3a35c04a8897875a",
+    "annotation/family_identity_rules.json": "77ef1621f163febb81b66bbc45e6d6c03c0030e09bea7fb150fe2b5220037300",
+    "detection/config/family_rules.json": "9b259d5f04636c4c4fd8917ae8e02c356a9481cfb7bc14c2f2444cac035b912d",
+    "annotation/stage2_evidence_rules.json": "bccbf88914b14839c55cbc0829d81e2223d902f18f02ad6523d1344d4ba7abc2",
+    "configs/isolated_workflow.json": "f53dcade4dcc4ffec4055e1bc62e0e05b0a6a92d2338189dfdedc011ac54f7bd",
+    "adhesome_workflow.py": "391beea7e28030896484132443a28b3667a9eb3edeae9396a5fa66c4945d4a08",
+    "scripts/family_identity.py": "643bb1a0d9c7d653a6a606aceb5f2417eeefb8b82b1ff38ae953d2cb46e7be85",
+    "annotation/integrated_adhesome_pipeline.py": "ab94cc80d6b86db62f394a23e0c777d2afd458301cd135095d3b0195cf7a4ccb"
+  }
+}

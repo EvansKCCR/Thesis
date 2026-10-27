@@ -11,6 +11,7 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 ENTRYPOINTS=[
     'scripts/run_pipeline.py','adhesome_workflow.py','scripts/report_audits.py',
+    'tools/evaluate_precision_identity.py','tools/prepare_phylogenetic_identity.py','annotation/family_set_review_gate.py',
     'detection/adhesome_pipeline.py','detection/scripts/run_detection.py',
     'motif_annotation/family_motifs.py',
     'orthology_phylogeny/scripts/prepare_references.py',
@@ -25,6 +26,7 @@ ENTRYPOINTS=[
     'tools/stage2_optimization_report.py','tools/validate_resources.py']
 RESOURCES=[
     'pipeline_paths.py','validation/calibration_set.xlsx','validation/calibration.faa',
+    'annotation/family_set_registry.json','annotation/family_set_rule_coverage_summary.tsv',
     'validation/validation_set.csv','validation/validation.faa',
     'configs/isolated_workflow.json','configs/panel.example.json',
     'detection/config/family_rules.json','detection/config/adhesome_pfam_manifest.csv',
@@ -34,14 +36,14 @@ RESOURCES=[
     'detection/references/adhesome_v1.0/search_references.faa',
     'detection/references/adhesome_v1.0/metazoan_references.faa',
     'motif_annotation/Motif_library/adhesion_core.json',
-    'annotation/family_rules_expanded.json',
-    'annotation/family_identity_rules_expanded.json',
+    'annotation/family_rules.json',
+    'annotation/family_identity_rules.json',
     'annotation/stage2_evidence_rules.json',
     'annotation/audit_policy.json',
     'templates/output_schema.json','docs/ISOLATED_WORKFLOWS.md','README.md']
 CONFIG_PATHS={
     'detection/config/family_rules.json':'motif_library',
-    'annotation/family_rules_expanded.json':'motif_library',
+    'annotation/family_rules.json':'motif_library',
     'motif_annotation/Motif_library/context_rules.json':'domain_rule_source',
     'annotation/audit_policy.json':'identity_probability_model'}
 

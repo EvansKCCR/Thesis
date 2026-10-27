@@ -238,7 +238,7 @@ The main `audit`, `resume` and `continue` commands accept
 `--family-coverage expanded`, which is now the default. Original coverage
 (96 family configurations / 57 identity rules) remains an explicit comparison
 option. Expanded coverage selects the supplied
-190-family / 136-identity pair together; it does not change Stage 1 recruitment.
+222-family / 197-identity pair together; it does not change Stage 1 recruitment.
 
 For completed annotation and orthology, run from the installation directory:
 

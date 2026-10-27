@@ -45,9 +45,10 @@ def verify_frozen(contract):
 def prepare(args):
     settings = json.loads(args.config.read_text())
     allowed = {'version','family_coverage','orthogroup_context_weight','qc','orthofinder_search',
-               'orthofinder_method','orthofinder_inflation','benchmark_scope','benchmark_selection','stage2_profile'}
+               'orthofinder_method','orthofinder_inflation','benchmark_scope','benchmark_selection','stage2_profile','phylogenetic_identity_resolution'}
     if set(settings)-allowed or settings.get('version') != '1.0':
         raise ValueError('Unknown configuration fields or configuration version != 1.0')
+    settings['phylogenetic_identity_resolution']=bool(settings.get('phylogenetic_identity_resolution',False) or getattr(args,'phylogenetic_identity_resolution',False))
     from stage2_evidence import configuration as stage2_configuration
     settings.setdefault('stage2_profile',stage2_configuration()['default_profile'])
     if settings['stage2_profile'] not in stage2_configuration()['profiles']:
@@ -93,7 +94,12 @@ def prepare(args):
     for path in args.reference_raw.iterdir():
         if path.is_file() and path.suffix.lower() in ('.faa','.fa','.fasta') and control_ids & set(fasta(path)):
             raise ValueError('Evaluation query identifiers present in raw reference input: '+str(path))
-    contract = dict(version='1.0', mode=args.mode, frozen_settings=settings,
+    evolutionary_evidence={}
+    if settings['phylogenetic_identity_resolution']:
+        for kind in datasets:
+            path=getattr(args,kind+'_phylogenetic_evidence',None)
+            if path:evolutionary_evidence[kind]=dict(path=str(path.resolve()),sha256=sha(path) if path.is_file() else None)
+    contract = dict(evolutionary_evidence=evolutionary_evidence,version='1.0', mode=args.mode, frozen_settings=settings,
         algorithm_files=algorithm_inventory(),references=reference_inventory(args.reference_raw),
         datasets={kind:summary for kind,(_,summary) in datasets.items()},
         automatic_recalibration=False, orthology_isolation='independent inference per branch',

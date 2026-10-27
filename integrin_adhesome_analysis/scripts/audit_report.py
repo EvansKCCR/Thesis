@@ -10,6 +10,10 @@ _activate_bundle_paths()
 import re
 
 FINAL_COLUMNS=['Specie','protein_id','putative_audited_family','protein_name','assignment_confidence',
+    'identity_outcome','supported_identity_level','retained_stage1_family','orthology_paralogy_status',
+    'annotation_provenance_file','adjudication_summary','family_set_acceptance_status','family_set_review_flags','user_inspection_required',
+    'phylogenetic_identity_status','phylogenetic_identity_reason','phylogenetic_family','phylogenetic_clade_id',
+    'phylogenetic_tree_sha256','phylogenetic_branch_support','phylogenetic_duplication_status','phylogenetic_validation_scope',
     'family_support_level','annotation_resolution','specific_identity_status','unresolved_specific_families','identity_gate_trace',
     'assignment_probability','assignment_probability_lower_95','assignment_probability_upper_95',
     'probability_calibration_n','probability_method','probability_calibration_scope',
@@ -27,7 +31,7 @@ FINAL_COLUMNS=['Specie','protein_id','putative_audited_family','protein_name','a
     'stage1_family_hypothesis','alternative_family_hypotheses','equally_ranked_hypotheses',
     'collapsed_row_count','recovered_hypothesis_count','restriction_scope']
 
-UNUSED={'NCBI_CDD_hits','topology_check','phylogeny','probability_status',
+UNUSED={'NCBI_CDD_hits','family_adjudication','topology_check','phylogeny','probability_status',
     'reference_subfamily','subfamily_support_method','reciprocal_reference_subfamily',
     'subfamily_profile_calibrated','top_profile_subfamily','profile_margin_pass','profile_domain_gate_verified'}
 # Only known aliases are deduplicated. Equal zeros in different scores are meaningful.

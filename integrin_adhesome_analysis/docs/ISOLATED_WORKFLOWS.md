@@ -13,7 +13,7 @@ orthology paths; those stored outputs have not been moved or migrated.
 
 ## Stage 2 evidence profile
 
-All new isolated and staged runs default to `calibrated_v1`. The shared profile
+All new isolated and staged runs retain `calibrated_v1` with the updated libraries. See [identity safeguards and optional phylogenetic resolution](IDENTITY_PRECISION.md). `precision_v1` is a non-default development comparison and is not enabled in routine runs. The shared profile
 default is recorded in `stage2_evidence_rules.json`; new isolated contracts also
 record the selected profile in `configs/isolated_workflow.json`. This
 profile imports exact, coordinate-validated Pfam accessions returned by CDD,

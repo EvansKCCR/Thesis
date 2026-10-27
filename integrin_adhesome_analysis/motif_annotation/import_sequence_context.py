@@ -5,7 +5,7 @@ from collections import defaultdict
 from pathlib import Path
 
 
-def load(context_dir, families, topology_audit, regions):
+def load(context_dir, families, topology_audit, regions, include_all=False):
     root = Path(context_dir)
     exact = {r['sequence_id'] for r in topology_audit if r['status'] == 'exact_sequence_verified'}
     members = defaultdict(list)
@@ -60,25 +60,33 @@ def load(context_dir, families, topology_audit, regions):
         for line in handle:
             if not line.startswith('Q#'): continue
             cells = line.rstrip('\n').split('\t')
-            if len(cells) < 10 or cells[1] != 'specific': continue
+            if len(cells) < 10: continue
+            category=cells[1].strip().lower()
+            if category!='specific' and not include_all:continue
             match = re.search(r'>(\S+)', cells[0])
             if not match: raise ValueError('CDD hit without query ID')
             ident = match.group(1)
             if ident not in exact or ident not in members: continue
             a, b = int(cells[3]), int(cells[4])
             evalue = float(cells[5])
-            if evalue > 1e-3: continue
+            if evalue<0:raise ValueError('Invalid CDD E-value: '+ident)
+            if evalue>1e-3 and not include_all:continue
             accession, name = cells[7], cells[8]
             for family, record in members[ident]:
                 if not 1 <= a <= b <= len(record['sequence']):
                     raise ValueError('CDD coordinates outside sequence: ' + ident)
-                token = (family, ident, accession, a, b)
+                token = (family, ident, accession, a, b, category)
                 if token in seen: continue
                 seen.add(token)
                 row = dict(family=family, sequence_id=ident, accession=accession,
                     short_name=name, start=a, end=b, evalue=evalue, bitscore=cells[6],
-                    interpretation='CDD_specific_domain_prediction_not_family_or_motif_validation')
+                    hit_type=category,model_identifier=cells[2],incomplete=cells[9],
+                    superfamily=cells[10] if len(cells)>10 else '',
+                    model_coverage='',specific_bitscore_cutoff='',specific_evalue_cutoff='',
+                    category_source='NCBI_CD_Search_hitdata',
+                    interpretation='CDD_specific_domain_prediction_not_family_or_motif_validation' if category=='specific' else 'CDD_'+category+'_domain_prediction')
                 hits.append(row)
-                regions[family, ident].append(('CDD:'+accession, a, b))
-                context[family, ident]['cdd_specific_hits'] += 1
+                if category=='specific' and evalue<=1e-3:
+                    regions[family, ident].append(('CDD:'+accession, a, b))
+                    context[family, ident]['cdd_specific_hits'] += 1
     return context, hits

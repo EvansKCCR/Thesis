@@ -30,7 +30,7 @@ curated RefOG/family association per row, using these tab-separated columns:
 | Column | Required content |
 | --- | --- |
 | `refog` | Existing ground-truth filename stem, without `.txt`. |
-| `family` | Exact canonical family ID from `annotation/family_rules_expanded.json`. |
+| `family` | Exact canonical family ID from `annotation/family_rules.json`. |
 | `curation_source` | Traceable publication, curated record or curation-file reference supporting this RefOG/family association independently of the evaluated predictions. |
 | `curation_status` | `curated`. Proposed or provisional ground truth is not scored. |
 

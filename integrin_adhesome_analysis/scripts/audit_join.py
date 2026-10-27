@@ -119,5 +119,5 @@ def join(annotation,handoff,panel,orthology,rows,benchmark):
     topology=list({r['protein_id']:r for r in topology}.values())
     support=dict(reference_species=references,target_species=targets,benchmark=benchmark,tables=dict(
         Motif_annotations=updated_annotations,Orthology_candidate_report=report,Orthology_HOGs=hogs,
-        Direct_orthologues=read(orthology/'candidates/direct_orthologues.tsv'),NCBI_CDD_selected_hits=cdds,Topology_predictions=topology))
+        Direct_orthologues=read(orthology/'candidates/direct_orthologues.tsv'),NCBI_CDD_selected_hits=cdds,NCBI_CDD_all_hits=read(motifs/'CDD_hits.tsv') if (motifs/'CDD_hits.tsv').is_file() else cdds,Topology_predictions=topology))
     return joined,support

@@ -30,7 +30,7 @@ class ExpansionTests(unittest.TestCase):
 
     def test_supplied_pair_uses_only_supported_fields_and_routes(self):
         expansion.validate_pair(*(json.loads((expansion.AUDIT / n).read_text()) for n in
-            ('family_rules_expanded.json', 'family_identity_rules_expanded.json')))
+            ('family_rules.json', 'family_identity_rules.json')))
 
     def test_unknown_gate_cannot_be_silently_ignored(self):
         f, i = self.pair(); i['rules'][0]['forbidden_cdd_pattern'] = 'competing_family'

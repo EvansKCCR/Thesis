@@ -142,6 +142,9 @@ def observed_cdd_names(row):
 
 def diagnostic_cdd(row,pattern):
     """Match each observed model separately, including anchored model patterns."""
+    if library().get('precision_safeguards'):
+        from cdd_evidence import diagnostic
+        return any(diagnostic(hit,pattern) for hit in cdd_hits(row))
     return any(re.search(pattern,name,re.I) for name in observed_cdd_names(row))
 
 
@@ -183,15 +186,22 @@ def refinement_trace(row,parent,hits):
     Generic domains, gene names, and calibration labels cannot dispatch a rule.
     """
     counts=model_counts(hits);text=cdd_text(row);names=observed_cdd_names(row);traces=[]
+    all_cdd=cdd_hits(row)
     length=int(float(row.get('length') or row.get('Length') or 0))
     for rule in library()['rules']:
         allowed=rule['parents']
-        parent_scope=parent in allowed or (parent=='fibronectin_like_candidate' and 'fibronectin_III_ligand' in allowed)
+        from family_catalogue import canonical_family
+        parent_scope=canonical_family(parent) in {canonical_family(p) for p in allowed} or (parent=='fibronectin_like_candidate' and 'fibronectin_III_ligand' in allowed)
         core={model for group in rule['required_groups'] for model in group['models']}
         diagnostic=[name for name in names if re.search(rule['specific_cdd_pattern'],name,re.I)]
+        strict=library().get('precision_safeguards',False)
+        if strict:
+            from cdd_evidence import diagnostic as specific
+            diagnostic=[h['short_name'] for h in all_cdd if specific(h,rule['specific_cdd_pattern'],rule.get('require_ncbi_curated_specific_hit',False))]
         anchor=any(hit['model'] in core and hit['start'] is not None and (
             'Pfam' in hit['sources'] or library().get('accept_cdd_pfam_anchor') and hit.get('cdd_pfam_accession')) for hit in hits)
-        dispatched=bool(rule.get('allow_diagnostic_dispatch') and diagnostic and anchor)
+        dispatched=bool(rule.get('allow_diagnostic_dispatch') and diagnostic and anchor and
+            library().get('identity_ablation',{}).get('redispatch') is not False)
         reached=parent_scope or dispatched
         groups=[dict(models=group['models'],required=group['count'],observed=len(distinct_footprints(hits,set(group['models'])))) for group in rule['required_groups']]
         missing=[group for group in groups if group['observed']<group['required']]
@@ -210,6 +220,11 @@ def refinement_trace(row,parent,hits):
         if not length_ok:codes.append('LENGTH_OUTSIDE_RULE_RANGE')
         if not maximum:codes.append('EXCESS_DOMAIN_COPIES')
         if competitors:codes.append('COMPETING_FAMILY')
+        if strict and rule.get('required_cdd_repeat_indices') and not all(
+                any(specific(h,r'^'+re.escape(model)+r'(?:_|$)',True) for h in all_cdd)
+                for model in rule['required_cdd_repeat_indices']):codes.append('DIAGNOSTIC_REPEAT_MODELS_UNCONFIRMED')
+        if strict and (rule.get('no_auto_promotion') or rule.get('user_inspection_required') or rule.get('candidate_rescue_only')):
+            codes.append('RULE_PROPOSAL_REVIEW_REQUIRED')
         traces.append(dict(rule_id=rule['id'],family=rule['family'],parent=parent,parent_scope_passed=parent_scope,
             routing_scope='parent' if parent_scope else 'diagnostic_dispatch' if dispatched else 'out_of_scope',
             reached=reached,evaluated=reached,diagnostic_cdd_matched=bool(diagnostic),matched_cdd_models=diagnostic,
@@ -225,8 +240,27 @@ def scoped_refinement(row,parent,hits):
     matches=[rule for rule in library()['rules'] if rule['id'] in matched]
     # A named collagen subtype refines the broader fibrillar architecture.
     if any(rule['id']=='collagen_v' for rule in matches):matches=[r for r in matches if r['id']!='collagen_fibrillar']
-    families={rule['family'] for rule in matches}
-    return dict(rule=matches[0] if len(families)==1 else None,
+    # A declared family_set can connect legacy and current spelling (Src/SRC).
+    # Compare those as aliases, retaining the established biological family ID;
+    # parents remain dispatch eligibility, never an ancestry graph.
+    aliases={}
+    for rule in library()['rules']:
+        group=rule.get('family_set',rule['family'])
+        if group not in aliases:aliases[group]=rule['family']
+    from family_catalogue import canonical_family
+    canonical={rule['family']:canonical_family(aliases[rule.get('family_set',rule['family'])]) for rule in library()['rules']}
+    families={canonical[rule['family']] for rule in matches}
+    if library().get('precision_safeguards') and library().get('identity_ablation',{}).get('competition') is not False:
+        # Inspect complete diagnostic alternatives even when dispatch excludes
+        # promotion. Eligibility is not biological ancestry or disproof.
+        plausible={canonical[entry['family']] for entry in trace if entry['diagnostic_cdd_matched'] and
+            not set(entry['reason_codes'])-{'NO_IDENTITY_RULE_REACHED'}}
+        families|=plausible
+    # Same-family matches are equivalent evidence routes, not incompatible identities.
+    if library().get('precision_safeguards'):
+        matches=sorted(matches,key=lambda r:(bool(r.get('no_auto_promotion') or r.get('user_inspection_required')),r['id']))
+    chosen=dict(matches[0],family=canonical[matches[0]['family']]) if matches and len(families)==1 else None
+    return dict(rule=chosen,
         competing_families=sorted(families) if len(families)>1 else [],
         matches=matches,trace=trace)
 

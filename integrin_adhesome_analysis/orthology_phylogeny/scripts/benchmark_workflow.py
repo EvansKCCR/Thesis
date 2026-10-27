@@ -21,7 +21,7 @@ from benchmark_configuration import quality_policy, acceptance, prediction_sourc
 VERSION = '1.0'
 FASTA_PATTERN = re.compile(r'\.(?:fa|faa|fasta)(?:\.gz)?$', re.I)
 SOURCE = 'https://github.com/davidemms/Open_Orthobench'
-FAMILY_RULES = Path(__file__).resolve().parents[2]/'annotation/family_rules_expanded.json'
+FAMILY_RULES = Path(__file__).resolve().parents[2]/'annotation/family_rules.json'
 FIBRONECTIN_FAMILIES = {'fibronectin_like', 'fibronectin_III_ligand', 'fibronectin_like_candidate'}
 SELECTION_NAME = 'adhesome_refog_selection.tsv'
 

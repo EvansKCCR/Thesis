@@ -44,7 +44,7 @@ class Stage2RoutingTests(unittest.TestCase):
             ('cortactin','cortactin_HS1_like','PF02218:20-50;PF02218:80-110;PF14604:600-650','SH3_Cortactin:600-650'),
             ('ena_vasp','ENA_VASP_like','PF00568:5-110;PF08776:700-750','EVH1_Ena_VASP-like:5-110'),
             ('bcar_cas','BCAR_CAS_like','PF00018:4-60;PF12026:700-850','SH3_BCAR1:4-60'),
-            ('erm','ERM_like','PF00373:50-200;PF00769:700-800','FERM_C_ERM:220-300'),
+            ('erm','ERM_like','PF00373:50-200;PF00769:700-800','FERM_F1_ERM:220-300'),
         ]
         for rule_id,family,pfam,cdd in cases:
             with self.subTest(rule=rule_id):

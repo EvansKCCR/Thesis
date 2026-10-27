@@ -65,7 +65,7 @@ class LayoutPathsTests(unittest.TestCase):
     def test_validation_inputs_do_not_change_calibration_exclusion_hashes(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);(root/'scripts').mkdir();(root/'validation').mkdir()
-            for name in ('identity_probability.py','stage2_resolution.py','control_exclusion.py'):
+            for name in ('identity_probability.py','stage2_resolution.py','control_exclusion.py','cdd_evidence.py','family_catalogue.py','phylogenetic_identity.py'):
                 (root/'scripts'/name).write_text('synthetic source')
             for name in ('calibration_set.xlsx','calibration.faa','validation.faa','components_source.xlsx'):
                 (root/'validation'/name).write_text('original fixture')

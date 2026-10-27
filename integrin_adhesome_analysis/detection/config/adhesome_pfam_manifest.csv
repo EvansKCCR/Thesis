@@ -175,3 +175,41 @@ PF26060,TGFBR3_N,Reference signatures for ENG
 PF28321,Ig_MYOM1,Reference signatures for MYOM1
 PF00046,Homeobox,Negative-class architecture in current family rules
 PF03535,Paxillin,Current paxillin-family architecture gate
+PF00323,Defensin_1,Current family-rule coverage: defensin_like
+PF00350,Dynamin_N,Current family-rule coverage: dynamin_like
+PF00626,Gelsolin,Current family-rule coverage: supervillin_like
+PF00787,PX,Current family-rule coverage: PLD_like; nischarin_like
+PF00794,PI3K_rbd,Current family-rule coverage: PI3K_like
+PF00879,Defensin_propep,Current family-rule coverage: defensin_like
+PF00880,Nebulin,Current family-rule coverage: LASP_like
+PF01017,STAT_alpha,Current family-rule coverage: STAT_like
+PF01030,Recep_L_domain,Current family-rule coverage: INSR_like
+PF01031,Dynamin_M,Current family-rule coverage: dynamin_like
+PF01335,DED,Current family-rule coverage: caspase_like
+PF01471,PG_binding_1,Current family-rule coverage: MMP_like
+PF02174,IRS,Current family-rule coverage: IRS_like
+PF02187,GAS2,Current family-rule coverage: MACF1_spectraplakin_like
+PF02196,RBD,Current family-rule coverage: TIAM_like
+PF02209,VHP,Current family-rule coverage: supervillin_like
+PF02262,Cbl_N,Current family-rule coverage: CBL_like
+PF02761,Cbl_N2,Current family-rule coverage: CBL_like
+PF02762,Cbl_N3,Current family-rule coverage: CBL_like
+PF02864,STAT_bind,Current family-rule coverage: STAT_like
+PF03501,S10_plectin,Current family-rule coverage: plakin_like
+PF03915,AIP3,Current family-rule coverage: SRCIN1_like
+PF06297,PET,Current family-rule coverage: Testin_like
+PF07815,Abi_HHR,Current family-rule coverage: ABI_like
+PF08518,GIT_SHD,Current family-rule coverage: GIT_like
+PF08766,DEK_C,Current family-rule coverage: slingshot_like
+PF08776,VASP_tetra,Current family-rule coverage: ENA_VASP_like
+PF08912,Rho_Binding,Current family-rule coverage: ROCK_like
+PF08916,Phe_ZIP,Current family-rule coverage: SH2B_like
+PF08953,DUF1899,Current family-rule coverage: coronin_like
+PF10480,ICAP-1_inte_bdg,Current family-rule coverage: ICAP1_like
+PF11841,ELMO_ARM,Current family-rule coverage: ELMO_like
+PF13499,EF-hand_7,Current family-rule coverage: CIB_family
+PF13920,zf-C3HC4_3,Current family-rule coverage: RNF5_185_like
+PF14429,DOCK-C2,Current family-rule coverage: DOCK_like
+PF14593,PH_3,Current family-rule coverage: PDPK1_like
+PF14604,SH3_9,Current family-rule coverage: Grb2; LASP_like; OSTF1_like; SH3KBP1_like; cortactin_HS1_like
+PF16172,DOCK_N,Current family-rule coverage: DOCK_like

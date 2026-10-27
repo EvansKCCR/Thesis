@@ -108,6 +108,36 @@ class AuditReportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'reference labels differ'):reporter.generate(args)
             self.assertFalse(args.out.exists())
 
+    def test_equivalent_calibration_workbook_needs_explicit_option(self):
+        from openpyxl import load_workbook
+        with tempfile.TemporaryDirectory() as directory:
+            args,resources=self.fixture(Path(directory));contract=json.loads((args.run/'run_contract.json').read_text())
+            labels=Path(contract['datasets']['calibration']['labels_file'])
+            book=load_workbook(labels);book.properties.title='Workbook packaging updated';book.save(labels);book.close()
+            with self.assertRaisesRegex(ValueError,'reference labels differ'):
+                reporter.checked_cohort(args.run,'calibration',contract)
+            rows,*_=reporter.checked_cohort(args.run,'calibration',contract,allow_equivalent_calibration_label_bytes=True)
+            self.assertEqual(len(rows),3);self.assertFalse(args.out.exists())
+
+    def test_equivalence_option_cannot_accept_changed_calibration_truth(self):
+        from openpyxl import load_workbook
+        with tempfile.TemporaryDirectory() as directory:
+            args,resources=self.fixture(Path(directory));contract=json.loads((args.run/'run_contract.json').read_text())
+            labels=Path(contract['datasets']['calibration']['labels_file'])
+            book=load_workbook(labels);sheet=book['control_identity'];headings=[c.value for c in sheet[1]]
+            sheet.cell(2,headings.index('trusted_family')+1,'altered_truth');book.save(labels);book.close()
+            with self.assertRaisesRegex(ValueError,'metadata differ'):
+                reporter.checked_cohort(args.run,'calibration',contract,allow_equivalent_calibration_label_bytes=True)
+            self.assertFalse(args.out.exists())
+
+    def test_calibration_equivalence_option_never_relaxes_validation_hash(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args,resources=self.fixture(Path(directory));contract=json.loads((args.run/'run_contract.json').read_text())
+            labels=Path(contract['datasets']['validation']['labels_file']);labels.write_text(labels.read_text()+'\n')
+            with self.assertRaisesRegex(ValueError,'reference labels differ'):
+                reporter.checked_cohort(args.run,'validation',contract,allow_equivalent_calibration_label_bytes=True)
+            self.assertFalse(args.out.exists())
+
     def test_wrong_branch_audit_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             args,resources=self.fixture(Path(directory));args.validation_audit=args.calibration_audit

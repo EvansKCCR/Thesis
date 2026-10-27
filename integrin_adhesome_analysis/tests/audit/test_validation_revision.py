@@ -26,7 +26,7 @@ ROOT=Path(__file__).resolve().parents[2]
 
 class ValidationRevisionTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):cls.rules=json.loads((ROOT/'detection/config/family_rules.json').read_text())
+    def setUpClass(cls):cls.rules=json.loads((ROOT/'detection/config/family_rules.json').read_text());cls.rules['_stage2_profile']='calibrated_v1'
 
     def row(self,**values):
         row=dict(protein_id='Novel__g',Specie='Novel',family='PTP_PEST',length=800,status='provisional',
@@ -63,7 +63,7 @@ class ValidationRevisionTests(unittest.TestCase):
 
     def test_unseen_erm_and_fhl_can_be_called_without_experimental_or_training_metadata(self):
         erm=self.row(family='talin',length=650,architecture='PF00373:20-200;PF00769:500-600',
-                     NCBI_CDD_architecture='FERM_C_ERM:210-300')
+                     NCBI_CDD_architecture='FERM_F1_ERM:210-300')
         self.assertEqual(audit_record(erm,self.rules)['assigned_family'],'ERM_like')
         fhl=self.row(family='FHL_screen',length=300,
             architecture=';'.join(f'PF00412:{i*60+10}-{i*60+55}' for i in range(4)),NCBI_CDD_architecture='LIM1_FHL2:10-55')

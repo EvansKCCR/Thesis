@@ -23,7 +23,7 @@ ROOT=Path(__file__).resolve().parents[2]
 
 class TwoStageAuditTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):cls.rules=json.loads((ROOT/'detection/config/family_rules.json').read_text())
+    def setUpClass(cls):cls.rules=json.loads((ROOT/'detection/config/family_rules.json').read_text());cls.rules['_stage2_profile']='calibrated_v1'
 
     def row(self,**extra):
         row=dict(protein_id='AnyTarget__g',Specie='AnyTarget',family='profilin',length=150,status='supported_candidate',

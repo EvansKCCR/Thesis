@@ -24,7 +24,7 @@ import master_library
 from pipeline_paths import recorded_resource
 
 
-def validate(allow_stale_calibration=False):
+def validate(allow_stale_calibration=False,audit_resources_only=False):
     detection=ROOT/'detection'
     rules=json.loads((detection/'config/family_rules.json').read_text())
     models=json.loads((detection/'databases/pfam/adhesome_v1.0.hmm.metadata.json').read_text())
@@ -33,7 +33,8 @@ def validate(allow_stale_calibration=False):
     for kind in ('ga','fallback'):
         if digest(str(library)+'.'+kind+'.hmm')!=models['split_sha256'][kind]:raise ValueError('HMM split checksum mismatch')
     required=set(re.findall(r'PF\d{5}',json.dumps(rules['families'])))
-    if required-set(models['models']):raise ValueError('Family rules require unbundled Pfam models: '+str(sorted(required-set(models['models']))))
+    missing_models=sorted(required-set(models['models']))
+    if missing_models and not audit_resources_only:raise ValueError('Family rules require unbundled Pfam models: '+str(missing_models))
     for name,rule in rules['families'].items():
         if not rule.get('domain_alternatives'):raise ValueError('No architecture for '+name)
         if rule.get('parent_family') and rule['parent_family'] not in rules['families']:raise ValueError('Missing family parent for '+name)
@@ -55,7 +56,8 @@ def validate(allow_stale_calibration=False):
         raise ValueError('Reference panel does not cover every crosswalk component exactly once')
     if lock.get('crosswalk_sha256')!=digest(crosswalk_path):raise ValueError('Rebuild component references after crosswalk changes')
     expansion=json.loads((panel/'component_expansion.json').read_text())
-    if expansion.get('rules_sha256')!=digest(detection/'config/family_rules.json'):raise ValueError('Rebuild component family labels after rule changes')
+    reference_labels_current=expansion.get('rules_sha256')==digest(detection/'config/family_rules.json')
+    if not reference_labels_current and not audit_resources_only:raise ValueError('Rebuild component family labels after rule changes')
     forward=table(panel/'search_catalogue.csv');reverse=table(panel/'metazoan_catalogue.csv')
     for catalogue_rows,fasta_name in ((forward,'search_references.faa'),(reverse,'metazoan_references.faa')):
         sequences=sequence_dict(panel/fasta_name)
@@ -84,9 +86,10 @@ def validate(allow_stale_calibration=False):
     # A returned, observed CDD model may complement a domain absent from the
     # bundled detection HMM subset; this does not add an HMM or infer a region.
     allowed=set(models['models'])|set(identities['additional_cdd_domains'])|set(identities['pfam_cdd_aliases'])
+    allowed|={m for r in identities['rules'] for g in r['required_groups'] for m in g['models'] if re.fullmatch(r'PF\d{5}',m)}
     scopes=set(rules['families'])|set(json.loads((motif/'context_rules.json').read_text())['families'])
     from stage2_resolution import BROAD_LABELS
-    scopes|=set(BROAD_LABELS)|{rule['family'] for rule in identities['rules']}
+    scopes|=set(BROAD_LABELS)|{rule['family'] for rule in identities['rules']}|{'component_reference_candidate','unassigned_domain_candidate'}
     for rule in identities['rules']:
         if set(rule['parents'])-scopes:raise ValueError('Unknown parent scope: '+rule['id'])
         if not re.fullmatch(r'[A-Za-z0-9_.-]+',rule['family']):raise ValueError('Unsafe identity family name')
@@ -108,7 +111,10 @@ def validate(allow_stale_calibration=False):
                 if not allow_stale_calibration:raise ValueError('Identity calibration input changed: '+name)
                 stale=True
         calibration_status='stale_disabled_pending_local_refit' if stale else 'positive_control_only';training_controls=len(calibration['samples'])
-    return dict(pipeline_version='1.0',family_rules=len(rules['families']),pfam_models=len(models['models']),
+    return dict(pipeline_version='1.0',validation_scope='audit_resources_only' if audit_resources_only else 'full_resources',
+                stage1_ready=not missing_models and reference_labels_current,unbundled_stage1_pfam_models=missing_models,
+                reference_family_labels_current=reference_labels_current,
+                family_rules=len(rules['families']),pfam_models=len(models['models']),
                 components=len(crosswalk),component_references=len(component_refs),forward_references=len(forward),
                 reciprocal_references=len(reverse),adhesion_motifs=len(core_rules),master_motifs=len(full_rules),
                 scoped_identity_rules=len(identifiers),negative_exclusion_sequences=len(bank['negative_by_hash']),
@@ -119,7 +125,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version',action='version',version='adhesome-resource-validator 1.0')
     parser.add_argument('--allow-stale-calibration',action='store_true',help='Check resources without fitting; report stale numerical probability calibration as disabled')
-    args=parser.parse_args();print(json.dumps(validate(args.allow_stale_calibration),indent=2))
+    parser.add_argument('--audit-resources-only',action='store_true',help='Verify existing audit resources while explicitly reporting Stage 1 model/reference-label gaps')
+    args=parser.parse_args();print(json.dumps(validate(args.allow_stale_calibration,args.audit_resources_only),indent=2))
 
 
 if __name__=='__main__':main()

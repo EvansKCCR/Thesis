@@ -4,6 +4,8 @@ Run from the pipeline root. These tools are separate from routine analysis:
 
 | Command | Purpose |
 | --- | --- |
+| `python -B tools/evaluate_precision_identity.py --help` | Calibration-first cached precision/ablation comparisons |
+| `python -B tools/prepare_phylogenetic_identity.py --help` | Review existing trees using curated reference tip labels; no inference |
 | `python -B tools/validate_resources.py --allow-stale-calibration` | Read-only resource/library checks |
 | `python -B tools/audit_existing_workflow.py --help` | Saved-run reuse and provenance diagnostics |
 | `python -B tools/evaluate_orthogroup_ablation.py --help` | Explicit fixed-coefficient replay experiments |

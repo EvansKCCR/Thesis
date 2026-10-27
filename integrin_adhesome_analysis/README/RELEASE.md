@@ -1,3 +1,7 @@
+Latest user-directed configuration (2026-10-26): retain calibrated_v1 as the main algorithm and expand only the canonical family/identity libraries. The updated resources remove calibration-derived inspection and no-auto-promotion flags. Historical registry QC metadata is nonbinding to production calls. Phylogenetic identity resolution remains optional and disabled by default. Strict precision_v1 is development-only.
+
+Identity-precision integration (2026-10-26, version 1.0): current canonical 222-family/197-rule pair, explicit CDD hit categories, review-proposal gates, competing-family comparisons and separate identity outcomes. The new profile is precision_v1. Phylogenetic identity resolution is optional and off by default; tree inference remains separately optional. See ../docs/IDENTITY_PRECISION.md for safeguards, comparisons and resource limitations. Earlier entries below describe historical defaults.
+
 Organized-source path update (2026-10-25, version 1.0): runtime modules and main
 isolated/reporting commands now live in scripts/. Components use detection/,
 motif_annotation/, orthology_phylogeny/ and annotation/; both labelled panels

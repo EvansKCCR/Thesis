@@ -1057,7 +1057,313 @@
       "model_version": "PF28321.1",
       "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF28321/?annotation=hmm",
       "sha256": "64afe53df86fb9c2b4daeb342fa5323c6c5f3ff5a6103f8776d346c1d4be96dd"
+    },
+    {
+      "accession": "PF00323",
+      "model_version": "PF00323.25",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF00323/?annotation=hmm",
+      "sha256": "eb1adb276ca58112bde9950b1e37f131c60e2e478ad31a7d8e458bb3a6da338a",
+      "retrieved_utc": "2026-10-26T22:40:07.495170+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF00350",
+      "model_version": "PF00350.30",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF00350/?annotation=hmm",
+      "sha256": "d9ebd7d1420b6273938fe319c1e05e2d88380e13b2ec385b86b15d8daba8731f",
+      "retrieved_utc": "2026-10-26T22:40:07.584009+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF00626",
+      "model_version": "PF00626.28",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF00626/?annotation=hmm",
+      "sha256": "48510f21ff554b87e1823e3275a4bbf59bcc4554aabc0541f360d0df9d65cd7d",
+      "retrieved_utc": "2026-10-26T22:40:07.525006+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF00787",
+      "model_version": "PF00787.30",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF00787/?annotation=hmm",
+      "sha256": "3e1e4f2c5810ba2c111c463b032f307775ff96a9e133448a411e75230d5642db",
+      "retrieved_utc": "2026-10-26T22:40:07.537047+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF00794",
+      "model_version": "PF00794.25",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF00794/?annotation=hmm",
+      "sha256": "3ab9fdaddef221fd208771b2b40986a25c5a099b34608a45282421f313bfacff",
+      "retrieved_utc": "2026-10-26T22:40:08.061009+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF00879",
+      "model_version": "PF00879.24",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF00879/?annotation=hmm",
+      "sha256": "7f7b9dfde79efe01071112606408707b24359f0c41118cef41586fa092dd4d23",
+      "retrieved_utc": "2026-10-26T22:40:08.071073+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF00880",
+      "model_version": "PF00880.24",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF00880/?annotation=hmm",
+      "sha256": "fd2f3ed910a9b3a7414e88110f24ff24e0d346710e416d1ada18ab808407c358",
+      "retrieved_utc": "2026-10-26T22:40:08.077179+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF01017",
+      "model_version": "PF01017.27",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF01017/?annotation=hmm",
+      "sha256": "6790a44e6b3c2853215a91a02773967d08d57cd2b1b7c667cc524411eb0cc636",
+      "retrieved_utc": "2026-10-26T22:40:08.190975+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF01030",
+      "model_version": "PF01030.32",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF01030/?annotation=hmm",
+      "sha256": "08078f95333b6fe2a403fbadb2c4ae65b542d047d1025fe478bca27c0b162832",
+      "retrieved_utc": "2026-10-26T22:40:08.649049+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF01031",
+      "model_version": "PF01031.26",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF01031/?annotation=hmm",
+      "sha256": "7b38101b2ecd6ba1c15a23db699b18a95ea2f2d969498d2987827bceb134d7a4",
+      "retrieved_utc": "2026-10-26T22:40:08.815439+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF01335",
+      "model_version": "PF01335.28",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF01335/?annotation=hmm",
+      "sha256": "5760d56a4ac8789725f5ac4fbae72bfa9fd60d269ae5233e4089811ff1f7c400",
+      "retrieved_utc": "2026-10-26T22:40:08.661586+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF01471",
+      "model_version": "PF01471.24",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF01471/?annotation=hmm",
+      "sha256": "ac1a7b0c020be755130006b78941c05992647b6b2de5e2013d22734e8811dfd1",
+      "retrieved_utc": "2026-10-26T22:40:08.758327+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF02174",
+      "model_version": "PF02174.24",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02174/?annotation=hmm",
+      "sha256": "28eadf0a57f877478d5dabebb1577f55677e37ffe1b0efcea23dddb5b89f88ab",
+      "retrieved_utc": "2026-10-26T22:40:09.230159+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF02187",
+      "model_version": "PF02187.23",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02187/?annotation=hmm",
+      "sha256": "e23fb4314205c1052c784852922ab5b4628eeb375ddbfe1264fd9c9d0ac7d508",
+      "retrieved_utc": "2026-10-26T22:40:09.216405+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF02196",
+      "model_version": "PF02196.23",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02196/?annotation=hmm",
+      "sha256": "dd40d89d537724e3d18c90c36cf33714c20f293740d26d6a2db81a0ac1c5675f",
+      "retrieved_utc": "2026-10-26T22:40:09.306334+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF02209",
+      "model_version": "PF02209.25",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02209/?annotation=hmm",
+      "sha256": "09e53c80d1e5beedb5f31996f8c345a25240a82957aa5275609e531fd1bc0caa",
+      "retrieved_utc": "2026-10-26T22:40:09.362030+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF02262",
+      "model_version": "PF02262.22",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02262/?annotation=hmm",
+      "sha256": "96d9c71758d91b795934c5328dccfd9c307de47c15a3775259ade1ff5dda5d33",
+      "retrieved_utc": "2026-10-26T22:40:09.785240+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF02761",
+      "model_version": "PF02761.21",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02761/?annotation=hmm",
+      "sha256": "9864be95a3dbf9d19a35aee7ffc3a6909ca60c41c5de24bceae765456925e7c8",
+      "retrieved_utc": "2026-10-26T22:40:09.788813+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF02762",
+      "model_version": "PF02762.21",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02762/?annotation=hmm",
+      "sha256": "97f19f237453b125a27cc458c630e7220f599e90a3388f44f1c7752a0e38de44",
+      "retrieved_utc": "2026-10-26T22:40:09.866916+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF02864",
+      "model_version": "PF02864.21",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02864/?annotation=hmm",
+      "sha256": "4dda072d88d74f3371be7966ae03ebae724deb53e514e567f994eb43657bcc8f",
+      "retrieved_utc": "2026-10-26T22:40:09.955183+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF03501",
+      "model_version": "PF03501.22",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF03501/?annotation=hmm",
+      "sha256": "afaf7fb36cdb13301ef3f35ea70f28523becfe08d0ca8df2e3263aab9da8a14d",
+      "retrieved_utc": "2026-10-26T22:40:10.360882+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF03915",
+      "model_version": "PF03915.19",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF03915/?annotation=hmm",
+      "sha256": "220e48a8cba815b1b049e97e97d7e48f0dfda5b9c5836a8c62998ff64c345fe9",
+      "retrieved_utc": "2026-10-26T22:40:10.563950+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF06297",
+      "model_version": "PF06297.20",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF06297/?annotation=hmm",
+      "sha256": "2cd26bcd4b268512ad81dc14dd9b02ab5e9b28af065a7aec29e59650bec79086",
+      "retrieved_utc": "2026-10-26T22:40:10.432972+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF07815",
+      "model_version": "PF07815.20",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF07815/?annotation=hmm",
+      "sha256": "b6ec7fe7f4b48699a1698024774054e987c49ac7322bc00fff9b5c4cd4a53a1a",
+      "retrieved_utc": "2026-10-26T22:40:10.506029+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF08518",
+      "model_version": "PF08518.17",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF08518/?annotation=hmm",
+      "sha256": "fa5727ca40c77854fe9296a8df40c188657a3186a02096e86c3031a702c2a688",
+      "retrieved_utc": "2026-10-26T22:40:10.915758+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF08766",
+      "model_version": "PF08766.17",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF08766/?annotation=hmm",
+      "sha256": "5cf00fe72490ea5add336a40c7b01db8f47608838e204e64e466289d1733cd59",
+      "retrieved_utc": "2026-10-26T22:40:11.001791+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF08776",
+      "model_version": "PF08776.17",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF08776/?annotation=hmm",
+      "sha256": "6ab68811eceddb11bdab49d28b515b7db1d4554767dbfdd143f1d14a80378e72",
+      "retrieved_utc": "2026-10-26T22:40:11.052163+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF08912",
+      "model_version": "PF08912.17",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF08912/?annotation=hmm",
+      "sha256": "d2fd00aaa320019efd58772e1e9c078b8d3b7e62eac1333f2f1dca7f456b3adc",
+      "retrieved_utc": "2026-10-26T22:40:11.130397+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF08916",
+      "model_version": "PF08916.17",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF08916/?annotation=hmm",
+      "sha256": "47cdd6020edf217d1d2498a10652bf1578cfbe146c3a07b604f338f095f8403d",
+      "retrieved_utc": "2026-10-26T22:40:11.497279+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF08953",
+      "model_version": "PF08953.18",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF08953/?annotation=hmm",
+      "sha256": "f5b7a1c59a628c83d064598f462933f3eab12f409878c1291a4ed4c9ca162676",
+      "retrieved_utc": "2026-10-26T22:40:11.579884+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF10480",
+      "model_version": "PF10480.15",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF10480/?annotation=hmm",
+      "sha256": "eb843010f463886961876cb75dd3ba04d2739f85e2b169693579eb161e658caa",
+      "retrieved_utc": "2026-10-26T22:40:11.614166+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF11841",
+      "model_version": "PF11841.15",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF11841/?annotation=hmm",
+      "sha256": "8485f0ebaed658cafc9204349a7e78baac260e056a8d03222ede70324a891661",
+      "retrieved_utc": "2026-10-26T22:40:11.727450+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF13499",
+      "model_version": "PF13499.13",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF13499/?annotation=hmm",
+      "sha256": "84b475ddcf49bdd010d0ab8760422b92c6b13f5f0d71b4d827645ae69baf32cf",
+      "retrieved_utc": "2026-10-26T22:40:12.078136+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF13920",
+      "model_version": "PF13920.13",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF13920/?annotation=hmm",
+      "sha256": "ba7eb848dfe960c51392f47ad59a0fa2ab4f3e57e19983f1158b9a6404683499",
+      "retrieved_utc": "2026-10-26T22:40:12.131971+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF14429",
+      "model_version": "PF14429.13",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF14429/?annotation=hmm",
+      "sha256": "f3a8c5a782bf8194471864d60a9dc0e1d534e38b5e29e2d442e095661e0058fd",
+      "retrieved_utc": "2026-10-26T22:40:12.313542+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF14593",
+      "model_version": "PF14593.13",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF14593/?annotation=hmm",
+      "sha256": "ff06e67a7e1e3f110c7b40cd3e03cd0b9730960883dc917c4202c34307398362",
+      "retrieved_utc": "2026-10-26T22:40:12.326936+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF14604",
+      "model_version": "PF14604.13",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF14604/?annotation=hmm",
+      "sha256": "2da7b17fcabe4868202e086dbc5f8585d3ed9f9695ad368eca21cd394eb1a06f",
+      "retrieved_utc": "2026-10-26T22:40:12.681960+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
+    },
+    {
+      "accession": "PF16172",
+      "model_version": "PF16172.11",
+      "url": "https://www.ebi.ac.uk/interpro/api/entry/pfam/PF16172/?annotation=hmm",
+      "sha256": "de75d2750eb115bc088dbca40b8665b636c494692b5ae799e6f667fee909e97d",
+      "retrieved_utc": "2026-10-26T22:40:12.865764+00:00",
+      "retrieval": "EMBL_EBI_InterPro_Pfam_API"
     }
   ],
-  "manifest_sha256": "bc7c962ac280c1cac17fc9007ea24066943cbcebe5b85b190141da60e05f6c5b"
+  "manifest_sha256": "ea2c696b03d898508616109600f343b944ea2607c58540a49642bf565e4ba655",
+  "updated_utc": "2026-10-26T22:40:19.498048+00:00",
+  "expansion_note": "Only missing models retrieved; existing model versions, payloads and prior retrieval provenance preserved"
 }

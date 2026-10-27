@@ -61,8 +61,8 @@ def audit_configuration(coverage=DEFAULT_FAMILY_COVERAGE):
     if coverage not in ('original','expanded'):
         raise ValueError('Unknown audit family coverage: '+str(coverage))
     if coverage=='expanded':
-        rules=AUDIT.with_name('family_rules_expanded.json')
-        identities=AUDIT.with_name('family_identity_rules_expanded.json')
+        from family_catalogue import pair
+        rules,identities=pair()
     else:
         rules=DETECT/'config/family_rules.json';identities=IDENTITY_LIBRARY
     from evaluate_family_expansion import validate_pair
@@ -427,6 +427,8 @@ def resume(args):
             phylogeny_grouping=args.phylogeny_grouping,
             family_coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE),
             orthogroup_context_weight=getattr(args,'orthogroup_context_weight',None),
+            phylogenetic_identity_resolution=getattr(args,'phylogenetic_identity_resolution',False),
+            phylogenetic_identity_evidence=getattr(args,'phylogenetic_identity_evidence',None),
             stage2_profile=getattr(args,'stage2_profile',default_profile())))
 
 
@@ -455,7 +457,7 @@ def downstream(args):
         state=json.loads(checkpoint.read_text())
         if state['annotation_sha256']!=digest(annotation/'workflow_manifest.json'):
             raise ValueError('Annotation changed since failed run; create a new run')
-        for key in ('threads','analysis_threads','iqtree_threads','phylogeny','phylogeny_grouping','benchmark_refogs','benchmark_input_dir','benchmark_protocol','benchmark_scope','benchmark_selection','benchmark_level','benchmark_quality_policy'):
+        for key in ('threads','analysis_threads','iqtree_threads','phylogeny','phylogeny_grouping','phylogenetic_identity_resolution','phylogenetic_identity_evidence','benchmark_refogs','benchmark_input_dir','benchmark_protocol','benchmark_scope','benchmark_selection','benchmark_level','benchmark_quality_policy'):
             if hasattr(args,key):
                 value=getattr(args,key)
                 state['settings'][key]=str(value) if isinstance(value,Path) else value
@@ -470,6 +472,8 @@ def downstream(args):
                     or saved.get('output_schema_sha256')!=digest(ROOT/'templates/output_schema.json')
                     or saved.get('identity_code_sha256')!=digest(IDENTITY_CODE)
                     or saved.get('stage2_profile','original')!=state['settings'].get('stage2_profile','original')
+                    or saved.get('phylogenetic_identity_resolution',False)!=bool(getattr(args,'phylogenetic_identity_resolution',False))
+                    or saved.get('phylogenetic_identity_evidence_sha256')!=(digest(args.phylogenetic_identity_evidence) if getattr(args,'phylogenetic_identity_resolution',False) and getattr(args,'phylogenetic_identity_evidence',None) and args.phylogenetic_identity_evidence.is_file() else None)
                     or saved.get('stage2_evidence_code_sha256')!=digest(ROOT/'scripts/stage2_evidence.py')
                     or saved.get('stage2_evidence_rules_sha256')!=digest(ROOT/'annotation/stage2_evidence_rules.json')
                     or saved.get('identity_library_sha256')!=digest(selected_identity)
@@ -575,6 +579,8 @@ def downstream(args):
     stage('audit',out/'final',lambda:audit(argparse.Namespace(annotation=annotation,orthology=out/'orthology',out=out/'final',benchmark=out/'benchmark',
           family_coverage=getattr(args,'family_coverage',state['settings'].get('family_coverage',DEFAULT_FAMILY_COVERAGE)),
           orthogroup_context_weight=getattr(args,'orthogroup_context_weight',state['settings'].get('orthogroup_context_weight')),
+          phylogenetic_identity_resolution=getattr(args,'phylogenetic_identity_resolution',False),
+          phylogenetic_identity_evidence=getattr(args,'phylogenetic_identity_evidence',None),
           stage2_profile=getattr(args,'stage2_profile',state['settings'].get('stage2_profile','original')))))
     if audit_refreshed and getattr(args,'phylogeny_grouping','orthogroup')=='family':
         state['stages'].pop('phylogeny_prepare',None);state['stages'].pop('phylogeny_run',None)
@@ -692,6 +698,8 @@ def recover(args):
             settings[key]=Path(settings[key])
     settings['out']=run
     settings['phylogeny']=settings.get('phylogeny',False)
+    settings.setdefault('phylogenetic_identity_resolution',False)
+    if settings.get('phylogenetic_identity_evidence'):settings['phylogenetic_identity_evidence']=Path(settings['phylogenetic_identity_evidence'])
     settings['retry_benchmark']=getattr(args,'retry_benchmark',False)
     for key in ('benchmark_scope','benchmark_protocol','benchmark_selection','benchmark_level','benchmark_quality_policy'):
         if getattr(args,key,None) is not None:
@@ -704,6 +712,8 @@ def recover(args):
     for key in ('threads','analysis_threads','iqtree_threads'):
         if getattr(args,key) is not None:
             settings[key]=getattr(args,key)
+    if getattr(args,'phylogenetic_identity_resolution',None) is not None:settings['phylogenetic_identity_resolution']=args.phylogenetic_identity_resolution
+    if getattr(args,'phylogenetic_identity_evidence',None) is not None:settings['phylogenetic_identity_evidence']=args.phylogenetic_identity_evidence
     settings['recovering']=True
     downstream(argparse.Namespace(**settings))
 
@@ -1000,11 +1010,16 @@ def audit(args):
              '--identity-rules',identities,'--supporting-data',out/'supporting_data.json']
     if context_weight is not None:audit_command+=['--orthogroup-context-weight',context_weight]
     audit_command+=['--stage2-profile',stage2_profile]
+    if getattr(args,'phylogenetic_identity_resolution',False):
+        audit_command+=['--phylogenetic-identity-resolution']
+        if getattr(args,'phylogenetic_identity_evidence',None):audit_command+=['--phylogenetic-identity-evidence',args.phylogenetic_identity_evidence]
     execute(audit_command,out/'logs')
     validation=(dict(status='isolated_branch_evaluation',branch=os.environ['SCHISTO_ISOLATED_BRANCH'])
                 if os.environ.get('SCHISTO_ISOLATED_BRANCH') else evaluate_controls(out,handoff))
     motif_snapshot=MOTIF/'Motif_library/adhesion_core.json'
     seal(out,'audit',annotation=str(annotation),orthology=str(orthology_dir),benchmark_summary_sha256=benchmark_sha,
+        phylogenetic_identity_resolution=bool(getattr(args,'phylogenetic_identity_resolution',False)),
+        phylogenetic_identity_evidence_sha256=(digest(args.phylogenetic_identity_evidence) if getattr(args,'phylogenetic_identity_resolution',False) and getattr(args,'phylogenetic_identity_evidence',None) and args.phylogenetic_identity_evidence.is_file() else None),
         stage2_profile=stage2_profile,stage2_evidence_code_sha256=digest(ROOT/'scripts/stage2_evidence.py'),
         stage2_evidence_rules_sha256=digest(stage2_config),
         family_coverage=coverage,family_rules_source=str(selected_rules),identity_library_source=str(selected_identity),
@@ -1111,17 +1126,23 @@ def main(argv=None):
         sub.choices[name].add_argument('--orthofinder-search',choices=['diamond','diamond_ultra_sens','blast','mmseqs'])
         sub.choices[name].add_argument('--orthofinder-method',choices=['msa','dendroblast'])
     for name in ('resume','continue','audit'):
+        sub.choices[name].add_argument('--phylogenetic-identity-resolution',action='store_true',help='Optional review using existing tree placements; independent of --phylogeny inference')
+        sub.choices[name].add_argument('--phylogenetic-identity-evidence',type=Path,help='Supported-clade TSV; ignored unless identity resolution is enabled')
         from stage2_evidence import configuration as stage2_configuration
         sub.choices[name].add_argument('--stage2-profile',choices=list(stage2_configuration()['profiles']),default=default_profile(),
-            help='Stage 2 profile; default calibrated_v1. Saved recovery checkpoints retain their recorded profile.')
+            help='Stage 2 profile; default calibrated_v1; precision_v1 is development-only. Saved recovery checkpoints retain their recorded profile.')
         sub.choices[name].add_argument('--orthogroup-context-weight',type=float,default=None,
             help='Optional non-probabilistic orthogroup-context coefficient (0-1); omitted preserves the expanded baseline; 0 disables context; proposed heuristic: 0.541')
         sub.choices[name].add_argument('--family-coverage',choices=['original','expanded'],default=DEFAULT_FAMILY_COVERAGE,
-            help='Default: expanded (190 family configurations; 136 identity rules). Original is retained for comparison; Stage 1 is unchanged')
+            help='Default: current canonical family/identity pair; original uses the detection family catalogue')
     for s in sub.choices.values():
         s.add_argument('--out', type=Path, required=True, help='New output directory')
     s=sub.add_parser('recover',help='Resume a checkpointed failed downstream run in place')
     s.add_argument('--run',type=Path,required=True,help='Failed downstream directory or its parent annotation directory')
+    identity_switch=s.add_mutually_exclusive_group()
+    identity_switch.add_argument('--phylogenetic-identity-resolution',action='store_true',default=None,help='Optional existing-tree identity review; family audit remains independent')
+    identity_switch.add_argument('--skip-phylogenetic-identity-resolution',dest='phylogenetic_identity_resolution',action='store_false',default=None)
+    s.add_argument('--phylogenetic-identity-evidence',type=Path)
     s.add_argument('--adopt-existing',action='store_true',help='Validate and checkpoint an older failed run that predates recovery support')
     s.add_argument('--annotation',type=Path,help='Completed annotation directory for adoption of an older failed run')
     s.add_argument('--retry-benchmark',action='store_true',help='Explicitly recompute a benchmark and refresh dependent audit while reusing completed orthology')

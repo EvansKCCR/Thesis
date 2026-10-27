@@ -1,0 +1,582 @@
+control_class	accession	primary_gene	protein_name	protein_length	family_set	stage1_rule_exists	stage2_rule_exists	stage1_architecture_compatible	stage2_architecture_compatible	stage2_cdd_pattern_match	stage2_named_curated_cd_match
+Positive control	P12814	ACTN1	Alpha-actinin-1	892	alpha_actinin	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P23528	CFL	Cofilin-1	166	ADF_cofilin	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9BR76	CORO1B	Coronin-1B	489	coronin_like	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	Q14247	CTTN	Src substrate cortactin	550	cortactin_HS1_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P21333	FLN	Filamin-A	2647	filamin	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	Q14145	INRF2	Kelch-like ECH-associated protein 1	624	KEAP1_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q14847	LASP1	LIM and SH3 domain protein 1	261	LASP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q8N8S7	ENAH	Protein enabled homolog	591	ENA_VASP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q0ZGT2	NEXN	Nexilin	675	nexilin_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	O95425	SVIL	Supervillin	2214	supervillin_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P50552	VASP	Vasodilator-stimulated phosphoprotein	380	ENA_VASP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q92828	CORO2A	Coronin-2A	525	coronin_like	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P60709	ACTB	"Actin, cytoplasmic 1"	375	actin_conventional	TRUE	TRUE	TRUE	TRUE	FALSE	TRUE
+Positive control	Q96IF1	AJUBA	LIM domain-containing protein ajuba	538	AJUBA	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O94875	ARGBP2	Sorbin and SH3 domain-containing protein 2	1100	SORBS_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P56945	BCAR1	Breast cancer anti-estrogen resistance protein 1	870	BCAR_CAS_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q03135	CAV	Caveolin-1	178	caveolin_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q9UHP9	SMPX	Small muscular protein	88	SMPX_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q96B97	CIN85	SH3 domain-containing kinase-binding protein 1	665	SH3KBP1_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P46108	CRK	Adapter molecule crk	304	Crk	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P46109	CRKL	Crk-like protein	303	Crk	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P15311	EZR	Ezrin	586	ERM_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q14192	DRAL	Four and a half LIM domains protein 2	279	FHL_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13480	GAB1	GRB2-associated-binding protein 1	694	GAB_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P62993	ASH	Growth factor receptor-bound protein 2	217	Grb2	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q14451	GRB7	Growth factor receptor-bound protein 7	532	GRB7_family	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q14511	CASL	Enhancer of filamentation 1	834	BCAR_CAS_like	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	Q9NQ75	C20orf32	Cas scaffolding protein family member 4	786	BCAR_CAS_like	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	O43294	ARA55	Transforming growth factor beta-1-induced transcript 1 protein	461	TGFB1I1	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	O14713	ICAP1	Integrin beta-1-binding protein 1	200	ICAP1_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9BQL6	C20orf42	Fermitin family homolog 1	677	kindlin	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q96AC1	FERMT2	Fermitin family homolog 2	680	kindlin	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q86UX7	FERMT3	Fermitin family homolog 3	667	kindlin	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O60711	LDLP	Leupaxin	386	LPXN	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13136	LIP1	Liprin-alpha-1	1202	liprin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q93052	LPP	Lipoma-preferred partner	612	LPP	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P35240	NF2	Merlin	595	NF2_merlin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q8WUP2	FBLIM1	Filamin-binding LIM protein 1	373	migfilin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P26038	MSN	Moesin	577	ERM_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O43639	GRB4	Cytoplasmic protein NCK2	380	Nck	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q8WX93	CGI-151	Palladin	1383	palladin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9NVD7	MXRA2	Alpha-parvin	372	parvin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9HBI1	CGI-56	Beta-parvin	364	parvin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P49023	PXN	Paxillin	591	PXN	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P48059	LIMS1	LIM and senescent cell antigen-like-containing domain protein 1	325	PINCH_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q7Z4I7	LIMS2	LIM and senescent cell antigen-like-containing domain protein 2	341	PINCH_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P63244	GNB2L1	Small ribosomal subunit protein RACK1	317	RACK1_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P35241	RDX	Radixin	583	ERM_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q92882	OSTF1	Osteoclast-stimulating factor 1	214	OSTF1_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O15061	DMN	Synemin	1565	intermediate_filament_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	O00560	MDA9	Syntenin-1	298	syntenin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9Y490	KIAA1027	Talin-1	2541	talin	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9HBL0	TNS	Tensin-1	1839	tensin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9UGI8	TES	Testin	421	Testin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q15654	OIP1	Thyroid receptor-interacting protein 6	476	TRIP6	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P18206	VCL	Vinculin	1134	vinculin	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	O60504	SCAM1	Vinexin	671	SORBS_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O75112	KIAA0613	LIM domain-binding protein 3	727	PDLIM_family	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q15942	ZYX	Zyxin	572	ZYX	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9GZM8	EOPA	Nuclear distribution protein nudE-like 1	345	NDEL1_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q9NRF2	KIAA1299	SH2B adapter protein 1	756	SH2B_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q63HR2	KIAA1075	Tensin-2	1409	tensin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9BQ24	ZFYVE21	Zinc finger FYVE domain-containing protein 21	234	ZFYVE21_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P08195	MDU1	Amino acid transporter heavy chain SLC3A2	529	SLC3_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q86UP2	CG1	Kinectin	1357	kinectin_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q07954	A2MR	Prolow-density lipoprotein receptor-related protein 1	4544	LDLR_related_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P15151	PVR	Poliovirus receptor	417	nectin_PVR_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P31431	SDC4	Syndecan-4	198	syndecan_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P34741	HSPG1	Syndecan-2	201	syndecan_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P56199	ITGA1	Integrin alpha-1	1179	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P17301	CD49B	Integrin alpha-2	1181	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P26006	ITGA3	Integrin alpha-3	1051	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P13612	CD49D	Integrin alpha-4	1032	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P08648	FNRA	Integrin alpha-5	1049	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P23229	ITGA6	Integrin alpha-6	1130	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	Q4LE35	ITGA7 variant protein	Integrin alpha-7	1200	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P53708	ITGA8	Integrin alpha-8	1063	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	Q13797	ITGA9	Integrin alpha-9	1035	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	O75578	ITGA10	Integrin alpha-10	1167	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9UKX5	ITGA11	Integrin alpha-11	1188	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13349	ITGAD	Integrin alpha-D	1161	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P38570	ITGAE	Integrin alpha-E	1179	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P20701	CD11A	Integrin alpha-L	1170	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P11215	CD11B	Integrin alpha-M	1152	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P06756	ITGAV	Integrin alpha-V	1048	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P20702	CD11C	Integrin alpha-X	1163	integrin_alpha	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P05556	FNRB	Integrin beta-1	798	integrin_beta	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P05107	CD18	Integrin beta-2	769	integrin_beta	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P05106	GP3A	Integrin beta-3	788	integrin_beta	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P16144	ITGB4	Integrin beta-4	1822	integrin_beta	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P18084	ITGB5	Integrin beta-5	799	integrin_beta	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P18564	ITGB6	Integrin beta-6	788	integrin_beta	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P26010	ITGB7	Integrin beta-7	798	integrin_beta	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	P26012	ITGB8	Integrin beta-8	769	integrin_beta	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	O14786	NRP	Neuropilin-1	923	neuropilin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O60462	NRP2	Neuropilin-2	931	neuropilin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P48509	CD151	CD151 antigen	253	tetraspanin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q08499	DPDE3	"3',5'-cyclic-AMP phosphodiesterase 4D"	809	PDE4_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P98161	PKD1	Polycystin-1	4303	polycystin_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q96QT4	CHAK1	Transient receptor potential cation channel subfamily M member 7	1865	TRPM_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P27797	CALR	Calreticulin	417	calreticulin_like	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE
+Positive control	Q9ULH1	ASAP1	"Arf-GAP with SH3 domain, ANK repeat and PH domain-containing protein 1"	1129	ASAP_AGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q8TDY4	ASAP3	"Arf-GAP with SH3 domain, ANK repeat and PH domain-containing protein 3"	903	ASAP_AGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9Y2X7	GIT1	ARF GTPase-activating protein GIT1	761	GIT_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q14161	GIT2	ARF GTPase-activating protein GIT2	759	GIT_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9UNA1	ARHGAP26	Rho GTPase-activating protein 26	814	RhoGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9NRY4	ARHGAP35	Rho GTPase-activating protein 35	1499	RhoGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O43150	ASAP2	"Arf-GAP with SH3 domain, ANK repeat and PH domain-containing protein 2"	1006	ASAP_AGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q8N264	ARHGAP24	Rho GTPase-activating protein 24	748	RhoGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q96QB1	ARHGAP7	Rho GTPase-activating protein 7	1528	RhoGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q99490	AGAP2	"Arf-GAP with GTPase, ANK repeat and PH domain-containing protein 2"	1192	ASAP_AGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9Y3M8	DLC2	StAR-related lipid transfer protein 13	1113	RhoGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P20936	GAP	Ras GTPase-activating protein 1	1047	RasGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q01524	DEF6	Defensin-6	100	defensin_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q14185	DOCK1	Dedicator of cytokinesis protein 1	1865	DOCK_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q92556	ELMO1	Engulfment and cell motility protein 1	727	ELMO_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q15052	ARHGEF6	Rho guanine nucleotide exchange factor 6	776	RhoGEF_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q14155	ARHGEF7	Rho guanine nucleotide exchange factor 7	803	RhoGEF_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P50570	DNM2	Dynamin-2	870	dynamin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q7L0Q8	ARHU	Rho-related GTP-binding protein RhoU	258	Rho_GTPase_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P19174	PLC1	"1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase gamma-1"	1290	PLCG_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q92835	INPP5D	"Phosphatidylinositol 3,4,5-trisphosphate 5-phosphatase 1"	1189	INPP5_SHIP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O15357	INPPL1	"Phosphatidylinositol 3,4,5-trisphosphate 5-phosphatase 2"	1258	INPP5_SHIP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13352	CENPR	Centromere protein R	177	ITGB3BP_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q8IY67	KIAA1978	Ribonucleoprotein PTB-binding 1	606	RAVER1_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P40763	APRF	Signal transducer and activator of transcription 3	770	STAT_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O15269	LCB1	Serine palmitoyltransferase 1	473	SPTLC_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q13418	ILK	Scaffold protein ILK	452	ILK	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13153	PAK1	Serine/threonine-protein kinase PAK 1	545	PAK_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O15530	PDK1	3-phosphoinositide-dependent protein kinase 1	556	PDPK1_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P17252	PKCA	Protein kinase C alpha type	672	PKC_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q05655	PKCD	Protein kinase C delta type	676	PKC_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q15139	PKD	Serine/threonine-protein kinase D1	912	PRKD_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q02156	PKCE	Protein kinase C epsilon type	737	PKC_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q04759	PRKCQ	Protein kinase C theta type	706	PKC_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q96MI6	PPM1E	Protein phosphatase 1M	459	PPM_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P49593	KIAA0015	Protein phosphatase 1F	454	PPM_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P67775	PPP2CA	Serine/threonine-protein phosphatase 2A catalytic subunit alpha isoform	309	PPP2_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P00519	ABL	Tyrosine-protein kinase ABL1	1130	ABL1	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P41240	CSK	Tyrosine-protein kinase CSK	450	CSK	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q05397	FAK	Focal adhesion kinase 1	1052	FAK	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q14289	FAK2	Protein-tyrosine kinase 2-beta	1009	FAK	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P12931	SRC	Proto-oncogene tyrosine-protein kinase Src	536	SRC	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9H792	KIAA2002	Inactive tyrosine-protein kinase PEAK1	1746	PEAK1_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P10586	LAR	Receptor-type tyrosine-protein phosphatase F	1907	LAR_RPTP	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q05209	PTPN12	Tyrosine-protein phosphatase non-receptor type 12	780	PTP_PEST	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P18433	PTPA	Receptor-type tyrosine-protein phosphatase alpha	802	RPTP_alpha_epsilon	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P29350	HCP	Tyrosine-protein phosphatase non-receptor type 6	595	SHP_PTPN6_11_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q06124	PTP2C	Tyrosine-protein phosphatase non-receptor type 11	593	SHP_PTPN6_11_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P04156	ALTPRP	Major prion protein	253	prion_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P35579	MYH9	Myosin-9	1960	myosin_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q9UPN3	ABP620	"Microtubule-actin cross-linking factor 1, isoforms 1/2/3/4/5"	7388	MACF1_spectraplakin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O15144	ARC34	Actin-related protein 2/3 complex subunit 2	300	ARPC2_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P29966	MACS	Myristoylated alanine-rich C-kinase substrate	332	MARCKS_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P07737	PFN1	Profilin-1	140	profilin	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q8IZP0	ABI1	Abl interactor 1	508	ABI_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9NYB9	ABI2	Abl interactor 2	513	ABI_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9P2A4	ABI3	ABI gene family member 3	366	ABI_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O15084	ANKRD28	Serine/threonine-protein phosphatase 6 regulatory ankyrin repeat subunit A	1053	ANKRD28_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P21291	CSRP	Cysteine and glycine-rich protein 1	193	CSRP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P35568	IRS1	Insulin receptor substrate 1	1242	IRS_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9UPT6	JIP3	C-Jun-amino-terminal kinase-interacting protein 3	1336	MAPK8IP_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q15149	PLEC	Plectin	4684	plakin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9BX66	KIAA0894	Sorbin and SH3 domain-containing protein 1	1292	SORBS_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P29353	SHC	SHC-transforming protein 1	583	Shc	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P52179	MYOM1	Myomesin-1	1685	myomesin_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	O60635	TSPAN1	Tetraspanin-1	241	tetraspanin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P68363	TUBA1B	Tubulin alpha-1B chain	451	tubulin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P68366	TUBA1	Tubulin alpha-4A chain	448	tubulin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9NY65	TUBA8	Tubulin alpha-8 chain	449	tubulin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q71U36	TUBA1A	Tubulin alpha-1A chain	451	tubulin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P08670	VIM	Vimentin	466	intermediate_filament_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q9H0F6	PSEC0216	Sharpin	387	SHARPIN_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P05413	FABP11	"Fatty acid-binding protein, heart"	133	FABP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9Y2I1	IRAS	Nischarin	1504	nischarin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q99828	CIB	Calcium and integrin-binding protein 1	191	CIB_family	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	O75838	CIB2	Calcium and integrin-binding family member 2	187	CIB_family	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q9C0H9	KIAA1684	SRC kinase signaling inhibitor 1	1183	SRCIN1_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	O43184	ADAM12	Disintegrin and metalloproteinase domain-containing protein 12	909	ADAM_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P13688	BGP	Cell adhesion molecule CEACAM1	526	CEACAM_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q6UX15	LAYN	Layilin	382	layilin_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P78324	BIT	Tyrosine-protein phosphatase non-receptor type substrate 1	504	SIRP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P04216	THY1	Thy-1 membrane glycoprotein	161	THY1_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	Q03405	MO3	Urokinase plasminogen activator surface receptor	335	PLAUR_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q12809	ERG	Voltage-gated inwardly rectifying potassium channel KCNH2	1159	KCNH_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O15427	MCT3	Monocarboxylate transporter 4	465	SLC16_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P19634	APNH1	Sodium/hydrogen exchanger 1	815	SLC9_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P04792	HSP27	Heat shock protein beta-1	205	small_HSP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P54652	HSPA2	Heat shock-related 70 kDa protein 2	639	HSP70_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P22681	CBL	E3 ubiquitin-protein ligase CBL	906	CBL_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q99942	G16	E3 ubiquitin-protein ligase RNF5	180	RNF5_185_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q96GF1	RNF185	E3 ubiquitin-protein ligase RNF185	192	RNF5_185_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13017	ARHGAP5	Rho GTPase-activating protein 5	1502	RhoGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	A7KAX9	ARHGAP32	Rho GTPase-activating protein 32	2087	RhoGAP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O75815	BCAR3	Breast cancer anti-estrogen resistance protein 3	825	BCAR3_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13905	GRF2	Rap guanine nucleotide exchange factor 1	1077	RAPGEF_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q07889	SOS1	Son of sevenless homolog 1	1333	SOS_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13009	TIAM1	Rho guanine nucleotide exchange factor TIAM1	1591	TIAM_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O75962	TRIO	Triple functional domain protein	3097	RhoGEF_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P15498	VAV	Proto-oncogene vav	845	RhoGEF_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P52735	VAV2	Guanine nucleotide exchange factor VAV2	878	RhoGEF_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9UKW4	VAV3	Guanine nucleotide exchange factor VAV3	847	RhoGEF_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9NZN5	ARHGEF12	Rho guanine nucleotide exchange factor 12	1544	RhoGEF_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q92974	ARHGEF2	Rho guanine nucleotide exchange factor 2	986	RhoGEF_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q99418	ARNO	Cytohesin-2	400	cytohesin_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P84077	ARF1	ADP-ribosylation factor 1	181	ARF_GTPase_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P01112	HRAS	GTPase HRas	189	Ras_GTPase_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P61586	ARH12	Transforming protein RhoA	193	Rho_GTPase_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13393	PLD1	Phospholipase D1	1074	PLD_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P07384	CANPL1	Calpain-1 catalytic subunit	714	calpain_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P17655	CANPL2	Calpain-2 catalytic subunit	700	calpain_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q14790	CASP8	Caspase-8	479	caspase_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P50281	MMP14	Matrix metalloproteinase-14	582	MMP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P42336	PIK3CA	"Phosphatidylinositol 4,5-bisphosphate 3-kinase catalytic subunit alpha isoform"	1068	PI3K_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	O60331	KIAA0589	Phosphatidylinositol 4-phosphate 5-kinase type-1 gamma	668	PIP5K_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P60484	MMAC1	"Phosphatidylinositol 3,4,5-trisphosphate 3-phosphatase and dual-specificity protein phosphatase PTEN"	403	PTEN_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P11940	PAB1	Polyadenylate-binding protein 1	636	PABP_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q8WYL5	KIAA1298	Protein phosphatase Slingshot homolog 1	1049	slingshot_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P31749	AKT1	RAC-alpha serine/threonine-protein kinase	480	AKT_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P28482	ERK2	Mitogen-activated protein kinase 1	360	MAPK_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P45983	JNK1	Mitogen-activated protein kinase 8	427	MAPK_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P53667	LIMK	LIM domain kinase 1	647	LIMK_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P17612	PKACA	cAMP-dependent protein kinase catalytic subunit alpha	351	PKA_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q13464	ROCK1	Rho-associated protein kinase 1	1354	ROCK_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9H0C8	ILKAP	Integrin-linked kinase-associated serine/threonine phosphatase 2C	392	ILKAP_PPM_like	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE
+Positive control	P06213	INSR	Insulin receptor	1382	INSR_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P06241	FYN	Tyrosine-protein kinase Fyn	537	FYN	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P07948	JTK8	Tyrosine-protein kinase Lyn	512	LYN	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P43405	SYK	Tyrosine-protein kinase SYK	635	SYK	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q15569	TESK1	Dual specificity testis-specific protein kinase 1	626	TESK_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P18031	PTP1B	Tyrosine-protein phosphatase non-receptor type 1	435	PTPN1_PTP1B_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q16827	GLEPP1	Receptor-type tyrosine-protein phosphatase O	1216	PTPRO_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	Q9HD43	PTPRH	Receptor-type tyrosine-protein phosphatase H	1115	PTPRH_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+Positive control	P17706	PTPN2	Tyrosine-protein phosphatase non-receptor type 2	415	PTPN2_like	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+hard_negative control	O00291	HIP1	Huntingtin-interacting protein 1	1037	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O75146	HIP12	Huntingtin-interacting protein 1-related protein	1068	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P11171	E41P	Protein 4.1	864	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9H4G0	EPB41L1	Band 4.1-like protein 1	881	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O43491	EPB41L2	Band 4.1-like protein 2	1005	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9Y2J2	DAL1	Band 4.1-like protein 3	1087	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9HCS5	EPB41L4	Band 4.1-like protein 4A	686	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9H329	EHM2	Band 4.1-like protein 4B	900	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9HCM4	EPB41L5	Band 4.1-like protein 5	733	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	A2A2Y4	EPB41L4O	FERM domain-containing protein 3	597	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9P2Q2	FRMD4	FERM domain-containing protein 4A	1039	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9Y2L6	FRMD4B	FERM domain-containing protein 4B	1034	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q7Z6J6	FRMD5	FERM domain-containing protein 5	570	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q96NE9	C14orf31	FERM domain-containing protein 6	622	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q6ZUT3	FRMD7	FERM domain-containing protein 7	714	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9BZ67	FKSG44	FERM domain-containing protein 8	464	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P02549	SPTA	"Spectrin alpha chain, erythrocytic 1"	2419	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q13813	NEAS	"Spectrin alpha chain, non-erythrocytic 1"	2472	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P11277	SPTB	"Spectrin beta chain, erythrocytic"	2137	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q01082	SPTB2	"Spectrin beta chain, non-erythrocytic 1"	2364	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O15020	KIAA0302	"Spectrin beta chain, non-erythrocytic 2"	2390	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9H254	KIAA1642	"Spectrin beta chain, non-erythrocytic 4"	2564	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9NRC6	BSPECV	"Spectrin beta chain, non-erythrocytic 5"	3674	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P11532	DMD	Dystrophin	3685	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P46939	DMDL	Utrophin	3433	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q13474	DRP2	Dystrophin-related protein 2	957	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q03001	BP230	Dystonin	7570	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O75369	FLN1L	Filamin-B	2602	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q14315	ABPL	Filamin-C	2725	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P51911	CNN1	Calponin-1	297	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q99439	CNN2	Calponin-2	309	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q15417	CNN3	Calponin-3	329	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q01995	SM22	Transgelin	201	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P37802	CDABP0035	Transgelin-2	199	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9UI15	NP25	Transgelin-3	199	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P46940	IQGAP1	Ras GTPase-activating-like protein IQGAP1	1657	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q13576	IQGAP2	Ras GTPase-activating-like protein IQGAP2	1575	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q86VI3	IQGAP3	Ras GTPase-activating-like protein IQGAP3	1631	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q5M775	CYTSB	Cytospin-B	1068	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q69YQ0	CYTSA	Cytospin-A	1117	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O43903	GAS2	Growth arrest-specific protein 2	313	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q99501	GAR22	GAS2-like protein 1	681	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q8NHY3	GAR17	GAS2-like protein 2	880	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q86XJ1	GAS2L3	GAS2-like protein 3	694	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P35221	CTNNA1	Catenin alpha-1	906	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P26232	CAPR	Catenin alpha-2	953	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9UI47	CTNNA3	Catenin alpha-3	895	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P35222	CTNNB	Catenin beta-1	781	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O60716	CTNND1	Catenin delta-1	968	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9UQB3	CTNND2	Catenin delta-2	1225	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P14923	CTNNG	Junction plakoglobin	745	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P25054	APC	Adenomatous polyposis coli protein	2843	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9NVT9	ARCP	Armadillo repeat-containing protein 1	282	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q5W041	ARMC3	Armadillo repeat-containing protein 3	872	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q5T2S8	ARMC4	Outer dynein arm-docking complex subunit 2	1044	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9H6L4	ARMC7	Armadillo repeat-containing protein 7	198	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q8N2F6	ARMC10	Armadillo repeat-containing protein 10	343	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q5T9G4	ARMC12	Armadillo repeat-containing protein 12	340	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9P291	AD032	Armadillo repeat-containing X-linked protein 1	453	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q7L311	ALEX2	Armadillo repeat-containing X-linked protein 2	632	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9UH62	ALEX3	Armadillo repeat-containing X-linked protein 3	379	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q5H9R4	ARMCX4	Armadillo repeat-containing X-linked protein 4	2290	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q6P1M9	ARMCX5	Armadillo repeat-containing X-linked protein 5	558	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q7L4S7	ARMCX6	Protein ARMCX6	300	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q8WYA6	C20orf33	Beta-catenin-like protein 1	563	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P52294	KPNA1	Importin subunit alpha-5	538	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P52292	KPNA2	Importin subunit alpha-1	529	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O00505	KPNA3	Importin subunit alpha-4	521	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O00629	KPNA4	Importin subunit alpha-3	521	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O15131	KPNA5	Importin subunit alpha-6	539	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O60684	IPOA7	Importin subunit alpha-7	536	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	A9QM74	KPNA7	Importin subunit alpha-8	516	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q14974	KPNB1	Importin subunit beta-1	876	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q8TEX9	IMP4B	Importin-4	1081	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O00410	IPO5	Importin-5	1097	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O95373	IPO7	Importin-7	1038	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O15397	IPO8	Importin-8	1037	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q96P70	HSPC273	Importin-9	1041	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9UI26	IPO11	Importin-11	975	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O94829	IPO13	Importin-13	963	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O14980	CRM1	Exportin-1	1071	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9HAV4	KIAA1291	Exportin-5	1204	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q96QU8	KIAA0370	Exportin-6	1125	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9UIA9	KIAA0745	Exportin-7	1087	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P55060	CAS	Exportin-2	971	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q92973	KPNB2	Transportin-1	898	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O14787	TNPO2	Transportin-2	897	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9Y5L0	IPO12	Transportin-3	923	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P48742	LHX1	LIM/homeobox protein Lhx1	406	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P50458	LH2	LIM/homeobox protein Lhx2	406	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9UBR4	LHX3	LIM/homeobox protein Lhx3	397	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q969G2	LHX4	LIM/homeobox protein Lhx4	390	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9H2C1	LHX5	LIM/homeobox protein Lhx5	402	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9UPM6	LHX6	LIM/homeobox protein Lhx6	363	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q68G74	LHX8	LIM/homeobox protein Lhx8	356	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9NQ69	LHX9	LIM/homeobox protein Lhx9	397	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P61371	ISL1	Insulin gene enhancer protein ISL-1	349	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q96A47	ISL2	Insulin gene enhancer protein ISL-2	359	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P25800	LMO1	Rhombotin-1	156	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P25791	LMO2	Rhombotin-2	158	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q8TAP4	LMO3	LIM domain only protein 3	145	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P61968	LMO4	LIM domain transcription factor LMO4	165	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	O00151	CLIM1	PDZ and LIM domain protein 1	329	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q96JY6	PDLIM2	PDZ and LIM domain protein 2	352	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q53GG5	ALP	PDZ and LIM domain protein 3	364	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P50479	PDLIM4	PDZ and LIM domain protein 4	330	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q96HC4	ENH	PDZ and LIM domain protein 5	596	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9NR12	ENIGMA	PDZ and LIM domain protein 7	457	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P53671	LIMK2	LIM domain kinase 2	638	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q8WWI1	FBX20	LIM domain only protein 7	1683	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q16527	CSRP2	Cysteine and glycine-rich protein 2	193	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P50461	CLP	Cysteine and glycine-rich protein 3	194	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P50238	CRIP	Cysteine-rich protein 1	77	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	P52943	CRIP2	Cysteine-rich protein 2	208	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q13642	FHL1	Four and a half LIM domains protein 1	323	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q13643	FHL3	Four and a half LIM domains protein 3	280	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q5TD97	ACT	Four and a half LIM domains protein 5	284	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	Q9UGP4	LIMD1	LIM domain-containing protein 1	676	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+hard_negative control	A6NIX2	WTIP	Wilms tumor protein 1-interacting protein	430	HARD_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	A6NCW0	USP17B	Ubiquitin carboxyl-terminal hydrolase 17-like protein 3	530	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8IX06	GOR	Putative exonuclease GOR	675	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9H773	CDA03	dCTP pyrophosphatase 1	170	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q01814	ATP2B2	Plasma membrane calcium-transporting ATPase 2	1243	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8WXF7	ATL1	Atlastin-1	558	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9NVV4	MTPAP	"Poly(A) RNA polymerase, mitochondrial"	582	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P46736	BRCC3	Lys-63-specific deubiquitinase BRCC36	316	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9NUL7	DDX28	Probable ATP-dependent RNA helicase DDX28	540	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96RP9	EFG	"Elongation factor G, mitochondrial"	751	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UKV0	HDAC7	Histone deacetylase 9	1011	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6IPT4	CYB5RL	NADH-cytochrome b5 reductase-like	315	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q7Z2T5	C1orf25	tRNA (guanine(27)-N(2))-dimethyltransferase	733	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9Y5K1	SPO11	Meiotic recombination protein SPO11	396	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q5T013	HT036	Putative hydroxypyruvate isomerase	277	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P21695	GPD1	"Glycerol-3-phosphate dehydrogenase [NAD(+)], cytoplasmic"	349	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q15631	TSN	Translin	228	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O75884	BOG	Serine hydrolase RBBP9	186	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6ZMB0	B3GNT6	"Acetylgalactosaminyl-O-glycosyl-glycoprotein beta-1,3-N-acetylglucosaminyltransferase"	384	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9BW92	TARS2	"Threonine--tRNA ligase, mitochondrial"	718	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q92794	KAT6A	Histone acetyltransferase KAT6A	2004	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q5SQI0	ATAT1	Alpha-tubulin N-acetyltransferase 1	421	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P50583	APAH1	Bis(5'-nucleosyl)-tetraphosphatase [asymmetrical]	147	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P0DTE5	UGT2A2	UDP-glucuronosyltransferase 2A2	536	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8IV08	PLD3	5'-3' exonuclease PLD3	490	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	A5YM72	ATPGD1	Carnosine synthase 1	827	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9H649	MSTP077	"tRNA (cytosine(34)-C(5))-methyltransferase, mitochondrial"	340	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UKN8	GTF3C4	General transcription factor 3C polypeptide 4	822	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8WV22	HSPC333	Non-structural maintenance of chromosomes element 1 homolog	266	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UBQ7	GLXR	Glyoxylate reductase/hydroxypyruvate reductase	328	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P35670	ATP7B	Copper-transporting ATPase 2	1465	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P19087	GNAT2	Guanine nucleotide-binding protein G(t) subunit alpha-2	354	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P29728	OAS2	2'-5'-oligoadenylate synthase 2	719	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P54132	BLM	RecQ-like DNA helicase BLM	1417	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9Y662	3OST3B1	Heparan sulfate glucosamine 3-O-sulfotransferase 3B1	390	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8N3Y3	GYLTL1B	Xylosyl- and glucuronyltransferase LARGE2	721	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P60842	DDX2A	Eukaryotic initiation factor 4A-I	406	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6ZXV5	TMTC3	Protein O-mannosyl-transferase TMTC3	915	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q5VZV1	C13orf39	Protein-lysine methyltransferase METTL21C	264	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UJA3	C20orf154	DNA helicase MCM8	840	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O94808	GFPT2	Glutamine--fructose-6-phosphate aminotransferase [isomerizing] 2	682	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UKU7	ACAD8	"Isobutyryl-CoA dehydrogenase, mitochondrial"	415	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P14618	OIP3	Pyruvate kinase PKM	531	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9Y3D8	AD-004	Adenylate kinase isoenzyme 6	172	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O60832	DKC1	H/ACA ribonucleoprotein complex subunit DKC1	514	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9P0G3	KLK14	Kallikrein-14	251	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P08519	LPA	Apolipoprotein(a)	2040	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q3L8U1	AD-013	ATP-dependent chromatin remodeler CHD9	2897	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8IWV7	UBR1	E3 ubiquitin-protein ligase UBR1	1749	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UKG9	COT	Peroxisomal carnitine O-octanoyltransferase	612	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96A73	KIAA1191	Putative monooxygenase p33MONOX	305	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	A0AVT1	MOP4	Ubiquitin-like modifier-activating enzyme 6	1052	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9NV66	RSAFD1	S-adenosyl-L-methionine-dependent tRNA 4-demethylwyosine synthase TYW1	732	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q68CP4	HGSNAT	Heparan-alpha-glucosaminide N-acetyltransferase	663	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9Y6A2	CYP46	Cholesterol 24-hydroxylase	500	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P60891	PRPS1	Ribose-phosphate pyrophosphokinase 1	318	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9BYE2	MSP	Transmembrane protease serine 13	586	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q5TA31	RNF187	E3 ubiquitin-protein ligase RNF187	235	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	C9JVI0	USP17L11	Ubiquitin carboxyl-terminal hydrolase 17-like protein 11	530	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q16635	EFE2	Tafazzin	262	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q03468	CSB	DNA excision repair protein ERCC-6	1493	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P48735	IDH2	"Isocitrate dehydrogenase [NADP], mitochondrial"	452	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9Y600	CSAD	Cysteine sulfinic acid decarboxylase	493	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8NFM4	ADCY4	Adenylate cyclase type 4	1077	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9NS91	RAD18	E3 ubiquitin-protein ligase RAD18	495	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8NFT2	PCANAP1	Metalloreductase STEAP2	490	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P40926	MDH2	"Malate dehydrogenase, mitochondrial"	338	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q66K79	CPZ	Carboxypeptidase Z	652	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UHG3	KIAA0908	Prenylcysteine oxidase 1	505	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9Y6F7	CDY2	Testis-specific chromodomain protein Y 2	541	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9NQ88	C12orf5	"Fructose-2,6-bisphosphatase TIGAR"	270	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q01415	GALK2	N-acetylgalactosamine kinase	458	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P34949	MPI	Mannose-6-phosphate isomerase	423	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9H0D6	XRN2	5'-3' exoribonuclease 2	950	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96NR8	RDH12	Retinol dehydrogenase 12	316	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8TEB7	RNF128	E3 ubiquitin-protein ligase RNF128	428	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UNA3	A4GNT	"Alpha-1,4-N-acetylglucosaminyltransferase"	340	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9BQB6	MSTP134	Vitamin K epoxide reductase complex subunit 1	163	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8IVQ6	ZDHHC21	Palmitoyltransferase ZDHHC21	265	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9H2U2	HSPC124	"Inorganic pyrophosphatase 2, mitochondrial"	334	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O15523	DBY	ATP-dependent RNA helicase DDX3Y	660	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8N139	ABCA6	ATP-binding cassette sub-family A member 6	1617	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8N335	GPD1L	Glycerol-3-phosphate dehydrogenase 1-like protein	351	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P18405	SRD5A1	3-oxo-5-alpha-steroid 4-dehydrogenase 1	259	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q687X5	STAMP2	Metalloreductase STEAP4	459	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8NHH1	C9orf20	Tubulin polyglutamylase TTLL11	710	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UQL6	HDAC5	Histone deacetylase 5	1122	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q7L8W6	ATPBD4	Diphthine--ammonia ligase	267	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q16790	CA9	Carbonic anhydrase 9	459	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P41091	EIF2G	Eukaryotic translation initiation factor 2 subunit 3	472	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8TCG5	CATL1	Palmitoyl thioesterase CPT1C	803	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P20815	CYP3A5	Cytochrome P450 3A5	502	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P02794	FTH	Ferritin heavy chain	183	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9BW62	KATNAL1	Katanin p60 ATPase-containing subunit A-like 1	490	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	A0A1B0GTW7	CIROP	Ciliated left-right organizer metallopeptidase	788	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q5VT66	Mar-01	Mitochondrial amidoxime-reducing component 1	337	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P08861	CELA3B	Chymotrypsin-like elastase family member 3B	270	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96P20	C1orf7	"NACHT, LRR and PYD domains-containing protein 3"	1036	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96IV0	NGLY1	Peptide-N(4)-(N-acetyl-beta-glucosaminyl)asparagine amidase	654	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9H5U6	ZCCHC4	rRNA N(6)-adenosine-methyltransferase ZCCHC4	513	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O00391	QSCN6	Sulfhydryl oxidase 1	747	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96DP5	FMT	"Methionyl-tRNA formyltransferase, mitochondrial"	389	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	A0A1W2PPD8	KDM4F	Probable lysine-specific demethylase 4F	638	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9HBD1	MNAB	Roquin-2	1191	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P09093	CELA3A	Chymotrypsin-like elastase family member 3A	270	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P00797	REN	Renin	406	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8NA58	PNLDC1	Poly(A)-specific ribonuclease PNLDC1	520	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q92698	RAD54A	DNA repair and recombination protein RAD54-like	747	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9HC16	APOBEC3G	DNA dC->dU-editing enzyme APOBEC-3G	384	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9BZJ3	TPSD1	Tryptase delta	242	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8N1G1	ELOABP1	RNA exonuclease 1 homolog	1221	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9BVS5	TRMT61B	"tRNA (adenine(58)-N(1))-methyltransferase, mitochondrial"	477	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9GZR7	DDX24	ATP-dependent RNA helicase DDX24	859	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UNK4	PLA2G2D	Group IID secretory phospholipase A2	145	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P29401	TKT	Transketolase	623	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9Y4K0	LOXL2	Lysyl oxidase homolog 2	774	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q04828	AKR1C1	Aldo-keto reductase family 1 member C1	323	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6IN84	MRM1	"rRNA methyltransferase 1, mitochondrial"	353	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q53H96	PYCR3	Pyrroline-5-carboxylate reductase 3	274	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O75343	GUCY1B2	Putative guanylate cyclase soluble subunit beta-2	617	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q58HT5	AWAT1	Acyl-CoA wax alcohol acyltransferase 1	328	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P28062	LMP7	Proteasome subunit beta type-8	276	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9NYR8	PRRDH	Retinol dehydrogenase 8	311	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8NCI6	GLB1L3	Beta-galactosidase-1-like protein 3	653	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UHH9	IHPK2	Inositol hexakisphosphate kinase 2	426	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9NPZ5	B3GAT2	Galactosylgalactosylxylosylprotein 3-beta-glucuronosyltransferase 2	323	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P41238	APOBEC1	C->U-editing enzyme APOBEC-1	236	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96AK3	APOBEC3D	DNA dC->dU-editing enzyme APOBEC-3D	386	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q13526	PIN1	Peptidyl-prolyl cis-trans isomerase NIMA-interacting 1	163	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96K76	USP47	Ubiquitin carboxyl-terminal hydrolase 47	1375	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9H816	DCLRE1B	5' exonuclease Apollo	532	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8N8A6	DDX51	ATP-dependent RNA helicase DDX51	666	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P21912	SDH	"Succinate dehydrogenase [ubiquinone] iron-sulfur subunit, mitochondrial"	280	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P61599	NAA20	N-alpha-acetyltransferase 20	178	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q13867	BLMH	Bleomycin hydrolase	455	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P11217	PYGM	"Glycogen phosphorylase, muscle form"	842	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6IQ20	C7orf18	N-acyl-phosphatidylethanolamine-hydrolyzing phospholipase D	393	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q70CQ1	USP49	Ubiquitin carboxyl-terminal hydrolase 49	688	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P53396	ACLY	ATP-citrate synthase	1101	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P62256	UBE2H	Ubiquitin-conjugating enzyme E2 H	183	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9BUM1	G6PC3	Glucose-6-phosphatase 3	346	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q5T6V5	C9orf64	Queuosine 5'-phosphate N-glycosylase/hydrolase	341	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6ZT12	KIAA2024	E3 ubiquitin-protein ligase UBR3	1888	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P00558	MIG10	Phosphoglycerate kinase 1	417	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O95544	NADK	NAD kinase	446	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96T52	IMMP2L	Mitochondrial inner membrane protease subunit 2	175	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P27144	AK3	"Adenylate kinase 4, mitochondrial"	223	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P35575	G6PC	Glucose-6-phosphatase catalytic subunit 1	357	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P06276	BCHE	Cholinesterase	602	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96RP7	GAL3ST4	Galactose-3-O-sulfotransferase 4	486	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O77932	DOM3L	Decapping and exoribonuclease protein	396	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q92874	DHP1	Deoxyribonuclease-1-like 2	299	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6PFW1	HISPPD2A	Inositol hexakisphosphate and diphosphoinositol-pentakisphosphate kinase 1	1433	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P78317	RES4-26	E3 ubiquitin-protein ligase RNF4	190	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q70CQ4	KIAA1203	Ubiquitin carboxyl-terminal hydrolase 31	1352	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6NUM6	RSAFD2	S-adenosyl-L-methionine-dependent tRNA 4-demethylwyosine synthase TYW1B	668	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8TB40	ABHD4	(Lyso)-N-acylphosphatidylethanolamine lipase	342	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q12797	ASPH	Aspartyl/asparaginyl beta-hydroxylase	758	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9NPC4	A14GALT	Lactosylceramide 4-alpha-galactosyltransferase	353	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9H5I1	KMT1B	Histone-lysine N-methyltransferase SUV39H2	410	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O75414	NME6	"Nucleoside diphosphate kinase 6, mitochondrial"	186	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UP65	PLA2G4C	Cytosolic phospholipase A2 gamma	541	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	A6NNE9	Mar-11	E3 ubiquitin-protein ligase MARCHF11	402	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O00762	UBCH10	Ubiquitin-conjugating enzyme E2 C	179	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P03950	ANG	Angiogenin	147	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q16762	TST	Thiosulfate sulfurtransferase	297	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P36537	UGT2B10	UDP-glucuronosyltransferase 2B10	528	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P07339	CPSD	Cathepsin D	412	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P16083	NMOR2	Ribosyldihydronicotinamide dehydrogenase [quinone]	231	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8N465	D2HGD	"D-2-hydroxyglutarate dehydrogenase, mitochondrial"	521	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q99424	ACOX2	Peroxisomal acyl-coenzyme A oxidase 2	681	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P26440	IVD	"Isovaleryl-CoA dehydrogenase, mitochondrial"	426	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q86YJ5	Mar-09	E3 ubiquitin-protein ligase MARCHF9	346	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96BW5	PTER	N-acetyltaurine hydrolase	349	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q5GLZ8	HERC4	Probable E3 ubiquitin-protein ligase HERC4	1057	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q99436	PSMB7	Proteasome subunit beta type-7	277	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9P2J5	KIAA1352	"Leucine--tRNA ligase, cytoplasmic"	1176	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O00148	DDX39	ATP-dependent RNA helicase DDX39A	427	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6E213	AWAT2	Acyl-CoA wax alcohol acyltransferase 2	333	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P04054	PLA2	Phospholipase A2	148	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P21673	SAT	Diamine acetyltransferase 1	171	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q93084	ATP2A3	Sarcoplasmic/endoplasmic reticulum calcium ATPase 3	999	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P08217	CELA2A	Chymotrypsin-like elastase family member 2A	269	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P35914	HMGCL	"Hydroxymethylglutaryl-CoA lyase, mitochondrial"	325	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q15652	JHDM2C	Jumonji domain-containing protein 1C	2540	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96NN9	AIFL	Apoptosis-inducing factor 3	605	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6NVY1	HIBCH	"3-hydroxyisobutyryl-CoA hydrolase, mitochondrial"	386	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	A4D126	CRPPA	D-ribitol-5-phosphate cytidylyltransferase	451	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P0CG30	GSTT2	Glutathione S-transferase theta-2B	244	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O94953	JHDM3B	Lysine-specific demethylase 4B	1096	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P55072	HEL-220	Transitional endoplasmic reticulum ATPase	806	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8N2K1	NCUBE2	Ubiquitin-conjugating enzyme E2 J2	259	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P28340	POLD	DNA polymerase delta catalytic subunit	1107	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9NQC7	CYLD	Ubiquitin carboxyl-terminal hydrolase CYLD	956	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q70EK9	USP51	Ubiquitin carboxyl-terminal hydrolase 51	711	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O14772	FPGT	Fucose-1-phosphate guanylyltransferase	607	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q16667	CDI1	Cyclin-dependent kinase inhibitor 3	212	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P13010	G22P2	DNA repair protein Ku80	732	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P07738	BPGM	Bisphosphoglycerate mutase	259	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O95363	FARS1	"Phenylalanine--tRNA ligase, mitochondrial"	451	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	E5RG02	PRSS46	Putative serine protease 46	174	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UHP3	USP21	Ubiquitin carboxyl-terminal hydrolase 25	1055	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P20231	TPS2	Tryptase beta-2	275	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P11413	G6PD	Glucose-6-phosphate 1-dehydrogenase	515	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P48147	PEP	Prolyl endopeptidase	710	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P49916	LIG3	DNA ligase 3	1009	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9HCE1	KIAA1631	RNA helicase MOV-10	1003	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q86UY6	NAA40	N-alpha-acetyltransferase 40	237	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q16873	LTC4S	Leukotriene C4 synthase	150	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q6GTS8	PM20D1	N-fatty-acyl-amino acid synthase/hydrolase PM20D1	502	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	A0A1W2PR19	GSTT4	Glutathione S-transferase theta-4	241	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9Y2G3	ATP11B	Phospholipid-transporting ATPase IF	1177	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O00411	POLRMT	"DNA-directed RNA polymerase, mitochondrial"	1230	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q149N8	KIAA2023	E3 ubiquitin-protein ligase SHPRH	1683	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q04609	FOLH	Glutamate carboxypeptidase 2	750	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9BZE2	FKSG32	tRNA pseudouridine(38/39) synthase	481	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q96CB9	NSUN4	5-cytosine rRNA methyltransferase NSUN4	384	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9H9L3	HSD-38	Interferon-stimulated 20 kDa exonuclease-like 2	353	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q8TE49	C15orf16	OTU domain-containing protein 7A	926	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	P49591	SARS	"Serine--tRNA ligase, cytoplasmic"	514	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	A6NHQ2	FBLL1	RNA 2'-O-methyltransferase FBLL1	334	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UPY3	DICER	Endoribonuclease Dicer	1922	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9UIJ7	AK3	"GTP:AMP phosphotransferase AK3, mitochondrial"	227	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q04656	ATP7A	Copper-transporting ATPase 1	1500	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q9P2W7	B3GAT1	Galactosylgalactosylxylosylprotein 3-beta-glucuronosyltransferase 1	334	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q13733	ATP1A4	Sodium/potassium-transporting ATPase subunit alpha-4	1029	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	O43314	HISPPD1	Inositol hexakisphosphate and diphosphoinositol-pentakisphosphate kinase 2	1243	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q16880	CGT	2-hydroxyacylsphingosine 1-beta-galactosyltransferase	541	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+background_negative control	Q92871	PMM1	Phosphomannomutase 1	262	BACKGROUND_NEGATIVE_CONTROL	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE

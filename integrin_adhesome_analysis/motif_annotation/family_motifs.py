@@ -370,7 +370,7 @@ def main(argv=None):
     if args.context_dir and not topology_paths:
         topology_paths.append(args.context_dir/'deeptmhmm_predicted_topologies.3line')
     topology_audit=curated.import_topology(topology_paths,families,regions)
-    sequence_context,cdd_hits=import_sequence_context.load(args.context_dir,families,topology_audit,regions) if args.context_dir else ({},[])
+    sequence_context,cdd_hits=import_sequence_context.load(args.context_dir,families,topology_audit,regions,include_all=True) if args.context_dir else ({},[])
     evidence=master_library.load_evidence(args.evidence,families,snapshot)
     if args.known_meme:
         check_meme(args.known_meme)
@@ -379,8 +379,9 @@ def main(argv=None):
     out.mkdir(parents=True)
     write_tsv(out/'sequence_context.tsv',sequence_context.values(),
               'family sequence_id verification deeploc_localizations deeploc_cytoplasm deeploc_extracellular signalp_prediction signalp_cleavage_after cdd_specific_hits'.split())
-    write_tsv(out/'CDD_specific_hits.tsv',cdd_hits,
-              'family sequence_id accession short_name start end evalue bitscore interpretation'.split())
+    cdd_fields='family sequence_id accession short_name start end evalue bitscore hit_type model_identifier incomplete superfamily model_coverage specific_bitscore_cutoff specific_evalue_cutoff category_source interpretation'.split()
+    write_tsv(out/'CDD_hits.tsv',cdd_hits,cdd_fields)
+    write_tsv(out/'CDD_specific_hits.tsv',[h for h in cdd_hits if h['hit_type']=='specific' and float(h['evalue'])<=1e-3],cdd_fields)
     identity_rows=family_identity_review.review(families,regions)
     write_tsv(out/"PINCH_Parvin_identity_review.tsv",identity_rows,"family sequence_id length sequence_sha256 LIM_domains CH_domains actin_domains spectrin_domains hypothesis review_priority identity_status missing_evidence interpretation".split())
     domain_rows=inspect_domains(families,rules,regions)
@@ -435,7 +436,7 @@ def main(argv=None):
         master_result['warning'],
         *master_result['summary_discrepancies'],
         'PINCH_Parvin_identity_review.tsv retains original labels and lists architecture triage and missing identity evidence.',
-        f'Sequence context: {sum(r["verification"]=="exact_topology_sequence" for r in sequence_context.values())} family records have exact topology sequences; {len(cdd_hits)} CDD specific domain hits are mapped.',
+        f'Sequence context: {sum(r["verification"]=="exact_topology_sequence" for r in sequence_context.values())} family records have exact topology sequences; {len(cdd_hits)} CDD domain predictions are retained; the scoring export preserves the previous specific-hit selection.',
         'DeepLoc, SignalP and CDD are predictions. Their joins and coordinates are in sequence_context.tsv and CDD_specific_hits.tsv; they do not establish orthology or motif function.',
         'motif_annotations.tsv contains current definition matches; adhesion_motif_annotations.tsv is the adhesion subset. All hits remain sequence candidates; context requirements and external evidence are recorded without assigning functional confidence.',
         'Pathway links are class-reference associations, not candidate pathway assignments. Disabled legacy records are retained in legacy_review_catalogue.tsv and never scanned.',

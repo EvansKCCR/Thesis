@@ -89,6 +89,9 @@ def position_order(hits,groups):
 
 
 def cdd_support(row,family,policy):
+    if family_identity.library().get('precision_safeguards'):
+        pattern=policy['specific_cdd_patterns'].get(family)
+        return bool(pattern and family_identity.diagnostic_cdd(row,pattern))
     text=re.sub(r'[_:/;(),-]+',' ',cdd_text(row).upper())
     pattern=policy['specific_cdd_patterns'].get(family)
     if not pattern:return False
@@ -146,11 +149,17 @@ def _architecture(row,family,rules):
     if general=='alpha_actinin' and (counts['PF00435']>4 or length>1500):complete=False
     cdd=cdd_support(row,general,policy)
     score=4 if complete and ordered and valid_coordinates and length_ok and (not specific or cdd) else 3 if complete else 2 if fraction>=.5 else 1
+    strict=family_identity.library().get('precision_safeguards',False)
+    proposal=strict and (rule.get('no_auto_promotion') or rule.get('user_inspection_required'))
+    shared_only=strict and not cdd and all(p in {'PF00069','PF07714','PF00373','PF00412','PF00041','PF00169','PF00018','PF00017'} for group in requirements for p in group)
+    if proposal or shared_only:score=min(score,3)
     notes=[f'family domain recovery={fraction:.2f}']
     if not ordered:notes.append('required domain order unconfirmed')
     if not valid_coordinates:notes.append('required domain coordinates unavailable or invalid')
     if not length_ok:notes.append('outside configured family length range')
     if specific:notes.append('family-specific CDD present' if cdd else 'required family-specific CDD absent')
+    if proposal:notes.append('supplied family proposal requires review; no automatic supported promotion')
+    if shared_only:notes.append('shared domain core alone cannot establish this specific family')
     if refinement['competing_families']:
         score=min(score,3);notes.append('Competing diagnostic CDD identities: '+', '.join(refinement['competing_families']))
     call=general
@@ -169,6 +178,11 @@ def _architecture(row,family,rules):
     if not valid_coordinates:reasons.append('DOMAIN_COORDINATES_UNCONFIRMED')
     if not length_ok:reasons.append('LENGTH_OUTSIDE_RULE_RANGE')
     if specific and not cdd:reasons.append('DIAGNOSTIC_CDD_UNCONFIRMED')
+    if proposal:reasons.append('RULE_PROPOSAL_REVIEW_REQUIRED')
+    if shared_only:reasons.append('SHARED_CORE_NOT_FAMILY_DIAGNOSTIC')
+    if not complete and (str(row.get('sequence_completeness','')).lower() in ('partial','fragment','fragmented') or
+            any(str(h.get('incomplete','')).upper() in ('N','C','NC') for h in family_identity.cdd_hits(row))):
+        reasons.append('MISSING_REGION_UNASSESSABLE_PARTIAL_SEQUENCE')
     if refinement['competing_families']:reasons.append('COMPETING_FAMILY')
     return dict(score=score,fraction=fraction,family=call,note='; '.join(notes),cdd=cdd,complete=score==4,
         combined_hits=combined,cdd_concordant=cdd or concordant,identity_competitors=refinement['competing_families'],
@@ -264,7 +278,11 @@ def audit_record(row,rules):
     else:decision='architecture_gate_failed' if domain==0 else 'partial_architecture_without_orthology';assignment='unassigned'
     assigned=result['family'] if grade in ('A','B','C') else 'unassigned'
     out=dict(row)
+    out['_precision_safeguards']=family_identity.library().get('precision_safeguards',False)
+    out['_competition_review']=family_identity.library().get('identity_ablation',{}).get('competition') is not False
     out.update(preaudit_family=baseline,audit_family=result['family'],assigned_family=assigned,
+        score_interpretation='Evidence summary; not an identity probability or proof of physical adhesome membership',
+        functional_association_status='computational_family_and_context_candidate',
         stage1_assigned_family=value(row,'assigned_family'),Specie=row_species(row),architecture_evidence=result['note'],
         domain_score_0_4=domain,orthology_raw_score_0_3=raw,orthology_score_0_3=orth,motif_score_0_2=motif,
         localization_score_0_1=loc,total_score_0_10=round(domain+orth+motif+loc,6),grade=grade,family_decision=decision,
@@ -305,6 +323,8 @@ def collapse_rows(rows):
             collapsed_row_count=len(group),original_row_count=len(initial),recovered_hypothesis_count=len(group)-len(initial),
             equally_ranked_hypotheses='; '.join(sorted({r['audit_family'] for r in ordered if rank(r)==rank(ordered[0])})))
         tied={r['assigned_family'] for r in ordered if rank(r)==rank(ordered[0])}-{'unassigned'}
+        if any(r.get('_precision_safeguards') and r.get('_competition_review',True) for r in ordered):
+            tied|={r['assigned_family'] for r in ordered if r.get('domain_gate_passed') and r.get('family_specific_CDD_support') and r['assigned_family']!='unassigned'}
         if len(tied)>1:
             broad=common_broad_family(tied) if all(r['domain_score_0_4']==4 for r in ordered if rank(r)==rank(ordered[0])) else None
             if broad:
@@ -324,6 +344,7 @@ def collapse_rows(rows):
                 trace=json.loads(chosen.get('identity_gate_trace') or '{}')
                 trace['reason_codes']=sorted(set(trace.get('reason_codes',[]))|{'COMPETING_FAMILY'})
                 chosen['identity_gate_trace']=json.dumps(trace,sort_keys=True)
+        if chosen.get('family_confidence')=='ambiguous':chosen['identity_outcome']='conflicting_identity'
         resolved.append(chosen)
     return sorted(resolved,key=unique_key)
 
@@ -402,6 +423,42 @@ def _run_xlsx(source,dest,sheet_name,rules,supporting=None):
     for row in rows:
         if row['protein_id'] in cdd_by_id:row['NCBI_CDD_hits']=list(cdd_by_id[row['protein_id']].values())
     audited,resolved=classify_rows(rows,rules)
+    from phylogenetic_identity import apply as phylogenetic_resolution
+    phylogenetic_status=phylogenetic_resolution(resolved,rules.get('_phylogenetic_identity_evidence'),
+        rules.get('_phylogenetic_identity_resolution',False))
+    from family_catalogue import registry_path,report as catalogue_report
+    from family_set_review_gate import gate as family_review
+    from cdd_evidence import interpretation as cdd_interpretation
+    registry=json.loads(registry_path().read_text());review=[];cdd_audit=[]
+    for row in resolved:
+        hits=family_identity.cdd_hits(row)
+        specifics=[h for h in hits if cdd_interpretation(h)['specific']]
+        for hit in hits:cdd_audit.append({**hit,**cdd_interpretation(hit),'protein_id':row['protein_id'],'Specie':row['Specie']})
+        matches=[r for r in family_identity.library()['rules'] if r['id']==row.get('identity_rule')]
+        family_set=matches[0].get('family_set',row['assigned_family']) if matches else row['assigned_family']
+        assessment=family_review(dict(row,family_set=family_set,
+            stage2_architecture_compatible=row['domain_gate_passed'],stage2_cdd_pattern_match=row.get('family_specific_CDD_support',False),
+            stage2_named_curated_cd_match=any(cdd_interpretation(h)['curated_model'] for h in specifics),
+            ncbi_cdd_specific_hit_threshold_met=bool(specifics)),registry,
+            rules.get('_phylogenetic_identity_resolution',False))
+        assessment['registry_policy']='Coverage/QC metadata only; historical calibration inspection flags do not restrict the main calibrated_v1 classifier'
+        from stage2_evidence import profile as selected_profile
+        if selected_profile(rules)[1].get('precision_safeguards'):
+            for key in ('family_set_acceptance_status','family_set_review_flags','user_inspection_required'):
+                row[key]=assessment[key]
+        review.append(assessment)
+    def sidecar(name,records,empty=('protein_id','status')):
+        fields=list(dict.fromkeys(k for r in records for k in r if not k.startswith('_'))) or list(empty)
+        with (dest.parent/name).open('w',encoding='utf-8',newline='') as h:
+            writer=csv.DictWriter(h,fieldnames=fields,delimiter='\t',extrasaction='ignore');writer.writeheader()
+            writer.writerows({k:json.dumps(v,sort_keys=True) if isinstance(v,(dict,list)) else v for k,v in r.items() if not k.startswith('_')} for r in records)
+    sidecar('family_set_review.tsv',review)
+    sidecar('cdd_specificity_audit.tsv',cdd_audit)
+    decision_fields=('Specie','protein_id','preaudit_family','assigned_family','protein_name','identity_outcome',
+        'supported_identity_level','family_support_level','annotation_resolution','grade','family_adjudication',
+        'identity_gate_trace','phylogenetic_identity_status','phylogenetic_identity_reason')
+    sidecar('annotation_decisions.tsv',[{k:r.get(k,'') for k in decision_fields} for r in resolved])
+    (dest.parent/'family_configuration_reconciliation.json').write_text(json.dumps(catalogue_report(),indent=2)+'\n')
     # Detailed rule explanations remain in TSV, never in an Excel cell whose
     # 32767-character limit could truncate the structured evidence.
     trace_fields=['Specie','protein_id','stage1_family','rule_id','family','reached','routing_scope',
@@ -474,6 +531,7 @@ def _run_xlsx(source,dest,sheet_name,rules,supporting=None):
     from stage2_evidence import profile,CONFIG
     manifest['stage2_profile']=profile(rules)[0]
     manifest['stage2_evidence_rules_sha256']=checksum(CONFIG)
+    manifest['phylogenetic_identity_resolution']=phylogenetic_status
     dest.with_suffix('.manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     return manifest
 
@@ -481,11 +539,13 @@ def _run_xlsx(source,dest,sheet_name,rules,supporting=None):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('input',type=Path);parser.add_argument('output',type=Path);parser.add_argument('--sheet',default='candidates')
-    parser.add_argument('--rules',type=Path,default=Path(__file__).with_name('family_rules_expanded.json'))
+    parser.add_argument('--rules',type=Path,default=Path(__file__).with_name('family_rules.json'))
     parser.add_argument('--policy',type=Path,default=Path(__file__).with_name('audit_policy.json'))
-    parser.add_argument('--identity-rules',type=Path,default=Path(__file__).with_name('family_identity_rules_expanded.json'),
+    parser.add_argument('--identity-rules',type=Path,default=Path(__file__).with_name('family_identity_rules.json'),
                         help='Identity rules paired with --rules; the workflow selects both together')
     parser.add_argument('--supporting-data',type=Path);parser.add_argument('--keep-all-audited',action='store_true')
+    parser.add_argument('--phylogenetic-identity-resolution',action='store_true',help='Optional tree concordance review; missing/failed evidence never blocks the family audit')
+    parser.add_argument('--phylogenetic-identity-evidence',type=Path,help='Supported-clade TSV; read only when optional resolution is explicitly enabled')
     parser.add_argument('--orthogroup-context-weight',type=float,default=None,help='Optional heuristic context coefficient (0-1); omitted preserves baseline; 0 disables context; never a correctness probability')
     from stage2_evidence import configuration,default_profile
     parser.add_argument('--stage2-profile',choices=list(configuration()['profiles']),default=default_profile(),
@@ -494,6 +554,8 @@ def main():
     args=parser.parse_args();rules=json.loads(args.rules.read_text());rules['_sha256']=checksum(args.rules)
     rules['_orthogroup_context_weight']=validate_weight(args.orthogroup_context_weight)
     rules['_stage2_profile']=args.stage2_profile
+    rules['_phylogenetic_identity_resolution']=args.phylogenetic_identity_resolution
+    rules['_phylogenetic_identity_evidence']=args.phylogenetic_identity_evidence
     rules['_source_path']=str(args.rules.resolve())
     from evaluate_family_expansion import validate_pair
     validate_pair(rules,json.loads(args.identity_rules.read_text()))

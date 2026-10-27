@@ -309,7 +309,7 @@ def main(argv=None):
     context=source_context(handoff,evidence,args.validation_target);hashes.update(context[-1])
     csv.field_size_limit(100_000_000)
     rows=evaluation.read_table(evidence)
-    family_path=AUDIT/'family_rules_expanded.json';identity_path=AUDIT/'family_identity_rules_expanded.json'
+    family_path=AUDIT/'family_rules.json';identity_path=AUDIT/'family_identity_rules.json'
     validate_pair(json.loads(family_path.read_text()),json.loads(identity_path.read_text()))
     if source.get('rules_sha256')!=evaluation.sha(family_path) or source.get('identity_library_sha256')!=evaluation.sha(identity_path):
         raise ValueError('Frozen baseline uses a different family/identity pair; select the matching expanded baseline')

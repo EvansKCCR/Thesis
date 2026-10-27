@@ -12,7 +12,7 @@ C:\Users\eaasa\Desktop\Evans_PHD_Thesis\pipeline_validation\integrin_adhesome_an
 ```
 
 Expanded Stage 2 coverage is the default for `resume`, `continue` and `audit`:
-190 family configurations and 136 identity rules. Both files are selected as
+222 family configurations and 197 identity rules. Both files are selected as
 one pair. `--family-coverage original` is retained for explicit regression
 comparisons; it is not the main validation configuration.
 
@@ -50,8 +50,8 @@ python adhesome_workflow.py audit \
   --out runs/final_expanded_refresh
 ```
 
-Choose an unused output path. Expect `Audit family coverage: expanded (190 family
-configurations; 136 identity rules).` This command reuses completed upstream
+Choose an unused output path. Expect `Audit family coverage: expanded (222 family
+configurations; 197 identity rules).` This command reuses completed upstream
 evidence. It does not rerun Stage 1, OrthoFinder or optional phylogeny.
 
 Stage 1 recruitment and its scan library are unchanged. Expanded family coverage

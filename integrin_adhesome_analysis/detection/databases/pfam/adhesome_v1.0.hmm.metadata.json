@@ -1,13 +1,13 @@
 {
   "pipeline_version": "1.0",
-  "source": "C:\\Users\\eaasa\\Desktop\\Evans_PHD_Thesis\\Integrin_analysis\\Thesis\\integrin_adhesome_analysis\\01_detection\\databases\\pfam\\source_v1.0\\combined_source.hmm",
-  "source_sha256": "0e952d3e3d5e9dcd109eb14b799c1382e78a0e40559ff5c4911cb5e489e3b173",
-  "manifest_sha256": "bc7c962ac280c1cac17fc9007ea24066943cbcebe5b85b190141da60e05f6c5b",
-  "library_sha256": "0e952d3e3d5e9dcd109eb14b799c1382e78a0e40559ff5c4911cb5e489e3b173",
+  "source": "source_v1.0/combined_source.hmm",
+  "source_sha256": "3ce97cacd75618febb7706038e27d34132529ffeaf9ddebd855e972d983a3c06",
+  "manifest_sha256": "ea2c696b03d898508616109600f343b944ea2607c58540a49642bf565e4ba655",
+  "library_sha256": "a3c81be36b8baff654020ab384352b9cb9eb143d5ec18366a98042151c6db748",
   "full_pfam": false,
   "crosswalk_sha256": "3894d1eb49c465db590939645e18e22c3f1ffe2d836bf11eb36079b0212fc215",
   "split_sha256": {
-    "ga": "0e952d3e3d5e9dcd109eb14b799c1382e78a0e40559ff5c4911cb5e489e3b173",
+    "ga": "a3c81be36b8baff654020ab384352b9cb9eb143d5ec18366a98042151c6db748",
     "fallback": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "models": {
@@ -1594,6 +1594,404 @@
         27.0,
         27.0
       ]
+    },
+    "PF00323": {
+      "name": "Defensin_1",
+      "accession": "PF00323.25",
+      "length": 29,
+      "ga": [
+        21.4,
+        21.4
+      ]
+    },
+    "PF00350": {
+      "name": "Dynamin_N",
+      "accession": "PF00350.30",
+      "length": 168,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF00626": {
+      "name": "Gelsolin",
+      "accession": "PF00626.28",
+      "length": 76,
+      "ga": [
+        21.0,
+        21.0
+      ]
+    },
+    "PF00787": {
+      "name": "PX",
+      "accession": "PF00787.30",
+      "length": 84,
+      "ga": [
+        21.6,
+        21.6
+      ]
+    },
+    "PF00794": {
+      "name": "PI3K_rbd",
+      "accession": "PF00794.25",
+      "length": 106,
+      "ga": [
+        22.0,
+        22.0
+      ]
+    },
+    "PF00879": {
+      "name": "Defensin_propep",
+      "accession": "PF00879.24",
+      "length": 51,
+      "ga": [
+        23.6,
+        23.6
+      ]
+    },
+    "PF00880": {
+      "name": "Nebulin",
+      "accession": "PF00880.24",
+      "length": 28,
+      "ga": [
+        20.1,
+        20.1
+      ]
+    },
+    "PF01017": {
+      "name": "STAT_alpha",
+      "accession": "PF01017.27",
+      "length": 167,
+      "ga": [
+        27.5,
+        27.5
+      ]
+    },
+    "PF01030": {
+      "name": "Recep_L_domain",
+      "accession": "PF01030.32",
+      "length": 112,
+      "ga": [
+        22.1,
+        22.1
+      ]
+    },
+    "PF01031": {
+      "name": "Dynamin_M",
+      "accession": "PF01031.26",
+      "length": 287,
+      "ga": [
+        28.5,
+        28.5
+      ]
+    },
+    "PF01335": {
+      "name": "DED",
+      "accession": "PF01335.28",
+      "length": 82,
+      "ga": [
+        35.9,
+        35.9
+      ]
+    },
+    "PF01471": {
+      "name": "PG_binding_1",
+      "accession": "PF01471.24",
+      "length": 57,
+      "ga": [
+        23.0,
+        23.0
+      ]
+    },
+    "PF02174": {
+      "name": "IRS",
+      "accession": "PF02174.24",
+      "length": 92,
+      "ga": [
+        22.0,
+        22.0
+      ]
+    },
+    "PF02187": {
+      "name": "GAS2",
+      "accession": "PF02187.23",
+      "length": 69,
+      "ga": [
+        21.3,
+        21.3
+      ]
+    },
+    "PF02196": {
+      "name": "RBD",
+      "accession": "PF02196.23",
+      "length": 71,
+      "ga": [
+        25.7,
+        25.7
+      ]
+    },
+    "PF02209": {
+      "name": "VHP",
+      "accession": "PF02209.25",
+      "length": 36,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF02262": {
+      "name": "Cbl_N",
+      "accession": "PF02262.22",
+      "length": 125,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF02761": {
+      "name": "Cbl_N2",
+      "accession": "PF02761.21",
+      "length": 84,
+      "ga": [
+        22.0,
+        22.0
+      ]
+    },
+    "PF02762": {
+      "name": "Cbl_N3",
+      "accession": "PF02762.21",
+      "length": 86,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF02864": {
+      "name": "STAT_bind",
+      "accession": "PF02864.21",
+      "length": 133,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF03501": {
+      "name": "S10_plectin",
+      "accession": "PF03501.22",
+      "length": 93,
+      "ga": [
+        26.9,
+        26.9
+      ]
+    },
+    "PF03915": {
+      "name": "AIP3",
+      "accession": "PF03915.19",
+      "length": 407,
+      "ga": [
+        31.6,
+        31.6
+      ]
+    },
+    "PF06297": {
+      "name": "PET",
+      "accession": "PF06297.20",
+      "length": 102,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF07815": {
+      "name": "Abi_HHR",
+      "accession": "PF07815.20",
+      "length": 77,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF08518": {
+      "name": "GIT_SHD",
+      "accession": "PF08518.17",
+      "length": 29,
+      "ga": [
+        21.1,
+        21.1
+      ]
+    },
+    "PF08766": {
+      "name": "DEK_C",
+      "accession": "PF08766.17",
+      "length": 54,
+      "ga": [
+        24.8,
+        24.8
+      ]
+    },
+    "PF08776": {
+      "name": "VASP_tetra",
+      "accession": "PF08776.17",
+      "length": 36,
+      "ga": [
+        25.8,
+        25.8
+      ]
+    },
+    "PF08912": {
+      "name": "Rho_Binding",
+      "accession": "PF08912.17",
+      "length": 69,
+      "ga": [
+        23.0,
+        23.0
+      ]
+    },
+    "PF08916": {
+      "name": "Phe_ZIP",
+      "accession": "PF08916.17",
+      "length": 57,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF08953": {
+      "name": "DUF1899",
+      "accession": "PF08953.18",
+      "length": 66,
+      "ga": [
+        20.7,
+        20.7
+      ]
+    },
+    "PF10480": {
+      "name": "ICAP-1_inte_bdg",
+      "accession": "PF10480.15",
+      "length": 200,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF11841": {
+      "name": "ELMO_ARM",
+      "accession": "PF11841.15",
+      "length": 154,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF13499": {
+      "name": "EF-hand_7",
+      "accession": "PF13499.13",
+      "length": 67,
+      "ga": [
+        30.0,
+        30.0
+      ]
+    },
+    "PF13920": {
+      "name": "zf-C3HC4_3",
+      "accession": "PF13920.13",
+      "length": 49,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF14429": {
+      "name": "DOCK-C2",
+      "accession": "PF14429.13",
+      "length": 187,
+      "ga": [
+        33.6,
+        33.6
+      ]
+    },
+    "PF14593": {
+      "name": "PH_3",
+      "accession": "PF14593.13",
+      "length": 104,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF14604": {
+      "name": "SH3_9",
+      "accession": "PF14604.13",
+      "length": 49,
+      "ga": [
+        30.0,
+        30.0
+      ]
+    },
+    "PF16172": {
+      "name": "DOCK_N",
+      "accession": "PF16172.11",
+      "length": 390,
+      "ga": [
+        27.0,
+        27.0
+      ]
     }
+  },
+  "source_path_base": "metadata_directory",
+  "manifest": "../../config/adhesome_pfam_manifest.csv",
+  "manifest_path_base": "metadata_directory",
+  "family_rules_sha256": "9b259d5f04636c4c4fd8917ae8e02c356a9481cfb7bc14c2f2444cac035b912d",
+  "model_count": 214,
+  "expansion": {
+    "date": "2026-10-26",
+    "existing_models": 176,
+    "additional_models": 38,
+    "final_models": 214,
+    "added_accessions": [
+      "PF00323",
+      "PF00350",
+      "PF00626",
+      "PF00787",
+      "PF00794",
+      "PF00879",
+      "PF00880",
+      "PF01017",
+      "PF01030",
+      "PF01031",
+      "PF01335",
+      "PF01471",
+      "PF02174",
+      "PF02187",
+      "PF02196",
+      "PF02209",
+      "PF02262",
+      "PF02761",
+      "PF02762",
+      "PF02864",
+      "PF03501",
+      "PF03915",
+      "PF06297",
+      "PF07815",
+      "PF08518",
+      "PF08766",
+      "PF08776",
+      "PF08912",
+      "PF08916",
+      "PF08953",
+      "PF10480",
+      "PF11841",
+      "PF13499",
+      "PF13920",
+      "PF14429",
+      "PF14593",
+      "PF14604",
+      "PF16172"
+    ],
+    "original_model_records_and_ga_unchanged": true,
+    "main_profile": "calibrated_v1",
+    "previous_library_sha256": "0e952d3e3d5e9dcd109eb14b799c1382e78a0e40559ff5c4911cb5e489e3b173",
+    "analysis_run": false,
+    "backups_created": false
   }
 }

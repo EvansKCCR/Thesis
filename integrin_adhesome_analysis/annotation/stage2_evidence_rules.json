@@ -2,11 +2,41 @@
   "pipeline_version": "1.0",
   "default_profile": "calibrated_v1",
   "profiles": {
-    "original": {"recruitment": false, "annotation": false},
-    "recruitment_only": {"recruitment": true, "annotation": false},
-    "annotation_only": {"recruitment": false, "annotation": true},
-    "evidence_v1": {"recruitment": true, "annotation": true},
-    "calibrated_v1": {"recruitment": true, "annotation": true, "excluded_new_rule_families": ["LIMK_like"], "exclusion_reason": "Calibration labels include a positive and hard-negative within the LIMK family. The new family-level rescue does not distinguish their adhesome membership; do not introduce it into the precision-preserving profile. No protein IDs or truth labels are consulted at inference."}
+    "original": {
+      "recruitment": false,
+      "annotation": false
+    },
+    "recruitment_only": {
+      "recruitment": true,
+      "annotation": false
+    },
+    "annotation_only": {
+      "recruitment": false,
+      "annotation": true
+    },
+    "evidence_v1": {
+      "recruitment": true,
+      "annotation": true
+    },
+    "calibrated_v1": {
+      "recruitment": true,
+      "annotation": true,
+      "excluded_new_rule_families": [
+        "LIMK_like"
+      ],
+      "exclusion_reason": "Calibration labels include a positive and hard-negative within the LIMK family. The new family-level rescue does not distinguish their adhesome membership; do not introduce it into the precision-preserving profile. No protein IDs or truth labels are consulted at inference."
+    },
+    "precision_v1": {
+      "recruitment": true,
+      "annotation": true,
+      "excluded_new_rule_families": [
+        "LIMK_like"
+      ],
+      "exclusion_reason": "Calibration labels include a positive and hard-negative within the LIMK family. The new family-level rescue does not distinguish their adhesome membership; do not introduce it into the precision-preserving profile. No protein IDs or truth labels are consulted at inference.",
+      "precision_safeguards": true,
+      "description": "Optional development-only strict comparison; not the main algorithm. Routine runs preserve calibrated_v1.",
+      "development_only": true
+    }
   },
   "selection_policy": "Select using calibration only; freeze before validation. Preserve supported-call precision and correct-family assignments. Orthogroup coefficients are not probabilities.",
   "domain_import": "An observed CDD hit with an exact pfamNNNNN accession supplies that model and its measured coordinates, retaining CDD provenance. It is not an extra independent Pfam vote, an inferred domain, or a replacement accession.",
@@ -17,16 +47,329 @@
     "https://www.ncbi.nlm.nih.gov/Structure/cdd/pfam00045"
   ],
   "family_rules": [
-    {"id":"evidence_caveolin","parents":["caveolin_like"],"family":"caveolin_like","protein_name":"Caveolin-family protein","required_groups":[{"models":["PF01146"],"count":1}],"specific_cdd_pattern":"^Caveolin$","ordered_groups":[],"length_range":[106,100000],"provisional_min_domain_fraction":1,"confounders":["generic membrane proteins"],"evidence_source":"Observed Pfam PF01146 and matching CDD Caveolin; existing family minimum length retained"},
-    {"id":"evidence_smpx","parents":["SMPX_like"],"family":"SMPX_like","protein_name":"SMPX/Chisel-family protein","required_groups":[{"models":["PF15355"],"count":1}],"specific_cdd_pattern":"^Chisel$","ordered_groups":[],"length_range":[52,100000],"provisional_min_domain_fraction":1,"confounders":["short low-complexity proteins"],"evidence_source":"Observed Pfam PF15355 and CDD Chisel; existing family minimum retained"},
-    {"id":"evidence_arpc2","parents":["ARPC2_like"],"family":"ARPC2_like","protein_name":"ARP2/3 complex subunit 2-family protein","required_groups":[{"models":["PF04045"],"count":1}],"specific_cdd_pattern":"^P34[-_]Arc$","ordered_groups":[],"length_range":[180,100000],"provisional_min_domain_fraction":1,"confounders":["actin-related ATPases"],"evidence_source":"Observed Pfam PF04045/P34-Arc, not generic actin; existing minimum retained"},
-    {"id":"evidence_marcks","parents":["MARCKS_like"],"family":"MARCKS_like","protein_name":"MARCKS-family protein","required_groups":[{"models":["PF02063"],"count":1}],"specific_cdd_pattern":"^MARCKS$","ordered_groups":[],"provisional_min_domain_fraction":1,"confounders":["generic basic low-complexity proteins"],"evidence_source":"Observed family-specific Pfam PF02063 and CDD MARCKS"},
-    {"id":"evidence_syndecan","parents":["syndecan_like"],"family":"syndecan_like","protein_name":"Syndecan-family protein","required_groups":[{"models":["PF01034"],"count":1}],"specific_cdd_pattern":"^Syndecan$","ordered_groups":[],"length_range":[118,100000],"provisional_min_domain_fraction":1,"confounders":["unrelated single-pass membrane proteins"],"evidence_source":"Observed Pfam PF01034 and CDD Syndecan; existing minimum retained"},
-    {"id":"evidence_pde4","parents":["PDE4_like"],"family":"PDE4_like","protein_name":"PDE4-family phosphodiesterase","required_groups":[{"models":["PF18100"],"count":1},{"models":["PF00233"],"count":1}],"specific_cdd_pattern":"^PDE4_UCR$","ordered_groups":[0,1],"provisional_min_domain_fraction":0.5,"confounders":["other cyclic-nucleotide phosphodiesterases"],"evidence_source":"PDE4-specific UCR precedes catalytic PDEase_I; no generic PDE-only assignment"},
-    {"id":"evidence_raver","parents":["RAVER_like"],"family":"RAVER_like","protein_name":"RAVER-family RNA-binding protein","required_groups":[{"models":["PF00076"],"count":3}],"specific_cdd_pattern":"^RRM[123]_RAVER[12]$","ordered_groups":[0],"provisional_min_domain_fraction":0.5,"confounders":["other RRM-containing proteins"],"evidence_source":"Three distinct RRM footprints plus RAVER-specific CDD model"},
-    {"id":"evidence_myosin","parents":["myosin_like"],"family":"myosin_like","protein_name":"Myosin-family motor protein","required_groups":[{"models":["PF02736"],"count":1},{"models":["PF00063"],"count":1},{"models":["PF01576"],"count":1}],"specific_cdd_pattern":"^Myosin_head$|^MYSc$","ordered_groups":[0,1,2],"provisional_min_domain_fraction":0.6666666666666666,"confounders":["unrelated ATPases and coiled-coil proteins"],"evidence_source":"Ordered myosin N-terminal, motor and tail core; no generic ATPase assignment"},
-    {"id":"evidence_filament","parents":["intermediate_filament_like"],"family":"intermediate_filament_like","protein_name":"Intermediate filament-family protein","required_groups":[{"models":["PF04732"],"count":1},{"models":["PF00038"],"count":1}],"specific_cdd_pattern":"^Filament$","ordered_groups":[0,1],"provisional_min_domain_fraction":0.5,"confounders":["generic coiled-coil proteins"],"evidence_source":"Filament head and rod core; broad intermediate-filament scope, not a specific VIM gene call"},
-    {"id":"evidence_limk","parents":["LIMK_like"],"family":"LIMK_like","protein_name":"LIM kinase-family protein","required_groups":[{"models":["PF00412"],"count":2},{"models":["PF00595"],"count":1},{"models":["PF00069","PF07714"],"count":1}],"specific_cdd_pattern":"^(?:LIM[12]_LIMK|PDZ_LIMK|STKc_LIMK)","ordered_groups":[0,1,2],"provisional_min_domain_fraction":0.5,"confounders":["PDZ-LIM scaffolds","other protein kinases"],"evidence_source":"Two LIM domains followed by PDZ and kinase with LIMK-specific CDD diagnosis"},
-    {"id":"evidence_tesk","parents":["TESK_like"],"family":"TESK_like","protein_name":"TESK-family kinase","required_groups":[{"models":["PF00069","PF07714"],"count":1}],"specific_cdd_pattern":"^PKc_TESK$","ordered_groups":[],"provisional_min_domain_fraction":1,"confounders":["ILK and other protein kinases"],"evidence_source":"Observed kinase core plus the specific PKc_TESK CDD model; kinase alone cannot assign TESK"}
+    {
+      "id": "evidence_caveolin",
+      "parents": [
+        "caveolin_like"
+      ],
+      "family": "caveolin_like",
+      "protein_name": "Caveolin-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF01146"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^Caveolin$",
+      "ordered_groups": [],
+      "length_range": [
+        106,
+        100000
+      ],
+      "provisional_min_domain_fraction": 1,
+      "confounders": [
+        "generic membrane proteins"
+      ],
+      "evidence_source": "Observed Pfam PF01146 and matching CDD Caveolin; existing family minimum length retained"
+    },
+    {
+      "id": "evidence_smpx",
+      "parents": [
+        "SMPX_like"
+      ],
+      "family": "SMPX_like",
+      "protein_name": "SMPX/Chisel-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF15355"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^Chisel$",
+      "ordered_groups": [],
+      "length_range": [
+        52,
+        100000
+      ],
+      "provisional_min_domain_fraction": 1,
+      "confounders": [
+        "short low-complexity proteins"
+      ],
+      "evidence_source": "Observed Pfam PF15355 and CDD Chisel; existing family minimum retained"
+    },
+    {
+      "id": "evidence_arpc2",
+      "parents": [
+        "ARPC2_like"
+      ],
+      "family": "ARPC2_like",
+      "protein_name": "ARP2/3 complex subunit 2-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF04045"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^P34[-_]Arc$",
+      "ordered_groups": [],
+      "length_range": [
+        180,
+        100000
+      ],
+      "provisional_min_domain_fraction": 1,
+      "confounders": [
+        "actin-related ATPases"
+      ],
+      "evidence_source": "Observed Pfam PF04045/P34-Arc, not generic actin; existing minimum retained"
+    },
+    {
+      "id": "evidence_marcks",
+      "parents": [
+        "MARCKS_like"
+      ],
+      "family": "MARCKS_like",
+      "protein_name": "MARCKS-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF02063"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^MARCKS$",
+      "ordered_groups": [],
+      "provisional_min_domain_fraction": 1,
+      "confounders": [
+        "generic basic low-complexity proteins"
+      ],
+      "evidence_source": "Observed family-specific Pfam PF02063 and CDD MARCKS"
+    },
+    {
+      "id": "evidence_syndecan",
+      "parents": [
+        "syndecan_like"
+      ],
+      "family": "syndecan_like",
+      "protein_name": "Syndecan-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF01034"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^Syndecan$",
+      "ordered_groups": [],
+      "length_range": [
+        118,
+        100000
+      ],
+      "provisional_min_domain_fraction": 1,
+      "confounders": [
+        "unrelated single-pass membrane proteins"
+      ],
+      "evidence_source": "Observed Pfam PF01034 and CDD Syndecan; existing minimum retained"
+    },
+    {
+      "id": "evidence_pde4",
+      "parents": [
+        "PDE4_like"
+      ],
+      "family": "PDE4_like",
+      "protein_name": "PDE4-family phosphodiesterase",
+      "required_groups": [
+        {
+          "models": [
+            "PF18100"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00233"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^PDE4_UCR$",
+      "ordered_groups": [
+        0,
+        1
+      ],
+      "provisional_min_domain_fraction": 0.5,
+      "confounders": [
+        "other cyclic-nucleotide phosphodiesterases"
+      ],
+      "evidence_source": "PDE4-specific UCR precedes catalytic PDEase_I; no generic PDE-only assignment"
+    },
+    {
+      "id": "evidence_raver",
+      "parents": [
+        "RAVER_like"
+      ],
+      "family": "RAVER_like",
+      "protein_name": "RAVER-family RNA-binding protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00076"
+          ],
+          "count": 3
+        }
+      ],
+      "specific_cdd_pattern": "^RRM[123]_RAVER[12]$",
+      "ordered_groups": [
+        0
+      ],
+      "provisional_min_domain_fraction": 0.5,
+      "confounders": [
+        "other RRM-containing proteins"
+      ],
+      "evidence_source": "Three distinct RRM footprints plus RAVER-specific CDD model"
+    },
+    {
+      "id": "evidence_myosin",
+      "parents": [
+        "myosin_like"
+      ],
+      "family": "myosin_like",
+      "protein_name": "Myosin-family motor protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF02736"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00063"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF01576"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^Myosin_head$|^MYSc$",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ],
+      "provisional_min_domain_fraction": 0.6666666666666666,
+      "confounders": [
+        "unrelated ATPases and coiled-coil proteins"
+      ],
+      "evidence_source": "Ordered myosin N-terminal, motor and tail core; no generic ATPase assignment"
+    },
+    {
+      "id": "evidence_filament",
+      "parents": [
+        "intermediate_filament_like"
+      ],
+      "family": "intermediate_filament_like",
+      "protein_name": "Intermediate filament-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF04732"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00038"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^Filament$",
+      "ordered_groups": [
+        0,
+        1
+      ],
+      "provisional_min_domain_fraction": 0.5,
+      "confounders": [
+        "generic coiled-coil proteins"
+      ],
+      "evidence_source": "Filament head and rod core; broad intermediate-filament scope, not a specific VIM gene call"
+    },
+    {
+      "id": "evidence_limk",
+      "parents": [
+        "LIMK_like"
+      ],
+      "family": "LIMK_like",
+      "protein_name": "LIM kinase-family protein",
+      "required_groups": [
+        {
+          "models": [
+            "PF00412"
+          ],
+          "count": 2
+        },
+        {
+          "models": [
+            "PF00595"
+          ],
+          "count": 1
+        },
+        {
+          "models": [
+            "PF00069",
+            "PF07714"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^(?:LIM[12]_LIMK|PDZ_LIMK|STKc_LIMK)",
+      "ordered_groups": [
+        0,
+        1,
+        2
+      ],
+      "provisional_min_domain_fraction": 0.5,
+      "confounders": [
+        "PDZ-LIM scaffolds",
+        "other protein kinases"
+      ],
+      "evidence_source": "Two LIM domains followed by PDZ and kinase with LIMK-specific CDD diagnosis"
+    },
+    {
+      "id": "evidence_tesk",
+      "parents": [
+        "TESK_like"
+      ],
+      "family": "TESK_like",
+      "protein_name": "TESK-family kinase",
+      "required_groups": [
+        {
+          "models": [
+            "PF00069",
+            "PF07714"
+          ],
+          "count": 1
+        }
+      ],
+      "specific_cdd_pattern": "^PKc_TESK$",
+      "ordered_groups": [],
+      "provisional_min_domain_fraction": 1,
+      "confounders": [
+        "ILK and other protein kinases"
+      ],
+      "evidence_source": "Observed kinase core plus the specific PKc_TESK CDD model; kinase alone cannot assign TESK"
+    }
   ]
 }

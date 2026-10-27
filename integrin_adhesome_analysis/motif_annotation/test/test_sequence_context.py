@@ -29,6 +29,7 @@ class SequenceContextTests(unittest.TestCase):
             (base/'NCBI_CDD_adhesome_hitdata.txt').write_text(
                 'Query\tHit type\tPSSM-ID\tFrom\tTo\tE-Value\tBitscore\tAccession\tShort name\tIncomplete\tSuperfamily\n'
                 + hit + hit + hit.replace('specific','non-specific')
+                + hit.replace('cd123','cd789').replace('1e-9','2e-3')
                 + 'Q#2 - >b\tspecific\t1\t2\t4\t1e-9\t40\tcd456\tWrong\t - \tcl1\n')
             families={'first':[dict(id='a',sequence='ABCDEFGHIJ')],
                       'second':[dict(id='a',sequence='ABCDEFGHIJ'),dict(id='b',sequence='ABCDEFGHIJ')]}
@@ -42,6 +43,11 @@ class SequenceContextTests(unittest.TestCase):
             self.assertIn(('CDD:cd123',5,8),regions['second','a'])
             self.assertEqual(context['second','b']['verification'],'no_exact_topology_sequence')
             self.assertEqual(context['second','b']['cdd_specific_hits'],0)
+            all_regions=defaultdict(list)
+            all_context,all_hits=sc.load(base,families,audit,all_regions,include_all=True)
+            self.assertEqual(len(all_hits),6)
+            self.assertEqual(all_context['first','a']['cdd_specific_hits'],1)
+            self.assertNotIn(('CDD:cd789',5,8),all_regions['first','a'])
 
     def test_new_family_order_screen(self):
         rules={'families':{'Shc':{'domain_alternatives':[{'PF00640':1,'PF00017':1}],

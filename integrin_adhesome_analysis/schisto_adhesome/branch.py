@@ -117,6 +117,15 @@ def _execute(args):
         if (downstream/'recovery.json').exists():
             # Recovery restores the original frozen settings. Never adjust weights.
             cmd=['recover','--run',str(downstream),'--threads',str(args.threads),'--analysis-threads',str(args.threads)]
+        if settings.get('phylogenetic_identity_resolution',False):
+            cmd+=['--phylogenetic-identity-resolution']
+            phylo=contract.get('evolutionary_evidence',{}).get(args.kind)
+            if phylo:
+                source=Path(phylo['path'])
+                if source.is_file() and sha(source)==phylo['sha256']:
+                    cmd+=['--phylogenetic-identity-evidence',phylo['path']]
+                else:
+                    dump(branch/'optional_phylogenetic_evidence_warning.json',dict(status='unavailable',reason='Frozen optional phylogenetic evidence missing or changed; family audit will complete without it'))
         stage('orthology_audit',downstream,lambda:invoke(cmd),'completed_workflow')
         audit=downstream/'final';reports=branch/'reports'
         if args.kind=='target':

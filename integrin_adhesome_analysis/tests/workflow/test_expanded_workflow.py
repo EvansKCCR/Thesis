@@ -42,7 +42,7 @@ class ExpandedWorkflowTests(unittest.TestCase):
                 self.assertEqual(run.call_args.args[0].family_coverage,'expanded')
         self.assertEqual(w.audit_configuration(),w.audit_configuration('expanded'))
 
-    def test_new_rule_is_reached_and_default_library_is_restored(self):
+    def test_expanded_library_preserves_previous_name_evidence_algorithm_and_restores_library(self):
         spec=importlib.util.spec_from_file_location('expanded_test_audit',w.AUDIT)
         module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
         from classification_contract import stage_one_workbook
@@ -52,13 +52,14 @@ class ExpandedWorkflowTests(unittest.TestCase):
             stage_one_workbook([dict(Specie='AnyTarget',protein_id='AnyTarget__test',family='component_reference_candidate',
                 length=500,architecture='PF07679:100-180',NCBI_CDD_architecture='IgI_1_Palladin_C:100-180',
                 Orthology_HOG_reference_species_count=1)],source)
-            for mode,expected in [('original','unassigned'),('expanded','palladin_like')]:
+            for mode,expected in [('original','palladin_like'),('expanded','palladin_like')]:
                 rules_path,identity_path=w.audit_configuration(mode)
                 rules=json.loads(rules_path.read_text());rules['_sha256']=w.digest(rules_path)
                 rules['_source_path']=str(rules_path.resolve())
                 output=root/mode;output.mkdir()
                 meta=module.run_xlsx(source,output/'Stage_2_output.xlsx','candidates',rules,identity_library=identity_path)
                 rows=w.read(output/'audited_family_assignments.tsv')
+                self.assertNotIn('user_inspection_required',rows[0])
                 self.assertEqual(rows[0]['putative_audited_family'],expected)
                 self.assertEqual(meta['identity_library_sha256'],w.digest(identity_path))
                 self.assertEqual(ev.audit_rule_paths(output),(rules_path.resolve(),identity_path.resolve()))
@@ -68,7 +69,7 @@ class ExpandedWorkflowTests(unittest.TestCase):
     def test_old_probability_fit_is_not_transferred_to_expanded_rules(self):
         with tempfile.TemporaryDirectory() as folder:
             model=Path(folder)/'model.json'
-            model.write_text(json.dumps(dict(code_fingerprint=identity_probability.fingerprint())))
+            model.write_text(json.dumps(dict(code_fingerprint={'obsolete_rules':'old'})))
             _,expanded=w.audit_configuration('expanded')
             with family_identity.using_library(expanded):
                 row=dict(assigned_family='palladin_like')

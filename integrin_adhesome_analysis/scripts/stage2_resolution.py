@@ -100,4 +100,20 @@ def annotate_resolution(row,result):
     if level=='broad_supported':
         row.update(protein_name='Putative '+BROAD_LABELS[row['assigned_family']],protein_name_scope='broad_family',
                    protein_identity_confidence='supported_at_broad_family_scope')
+    row.update(identity_outcome='conflicting_identity' if ambiguous or result.get('identity_competitors') else
+        'family_supported_subfamily_unresolved' if complete and (broad or not result.get('identity_rule')) else
+        'identity_supported' if complete and row.get('grade') in ('A','B') else 'identity_unresolved',
+        retained_stage1_family=row.get('preaudit_family') or row.get('family',''),
+        supported_identity_level='broad_family' if level=='broad_supported' else
+            'family' if complete else 'hypothesis',
+        orthology_paralogy_status='orthogroup_context_only' if row.get('orthology_reference_species_count',0) else 'not_resolved',
+        annotation_provenance_file='annotation_decisions.tsv',
+        adjudication_summary='Competing complete diagnostic identities require review' if result.get('identity_competitors') else
+            'Family gate supported; exact paralog not inferred' if complete else 'Stage 1 hypothesis retained; refinement unresolved',
+        family_adjudication=json.dumps(dict(
+            tested_family=result['family'],competing_families=result.get('identity_competitors',[]),
+            evidence=[{k:r.get(k) for k in ('rule_id','family','matched_cdd_models','domain_groups','reason_codes','matched')}
+                for r in result.get('rule_trace',[]) if r.get('reached') or r.get('diagnostic_cdd_matched')],
+            decision_policy='Any incompatible complete diagnostic alternative requires review; raw cross-model scores are not compared',
+            decision_margin=None),sort_keys=True))
     return row

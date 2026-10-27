@@ -1,9 +1,9 @@
-# Detection module — version 1.0
+# Detection module â€” version 1.0
 
 Run from `Thesis/integrin_adhesome_analysis`:
 
 ```bash
-python adhesome_workflow.py start --targets-config targets.json --input-dir input/targets --out runs/handoff --threads 4
+python adhesome_workflow.py start --targets-config targets.json --input-dir inputs/targets --out runs/handoff --threads 4
 ```
 
 Detection prepares gene-level target proteomes, scans Pfam domains, searches the
@@ -14,13 +14,14 @@ instruction. External predictor results are imported through `resume`; predictor
 services remain external.
 
 The active runner is `scripts/run_detection.py`. The active library is
-`databases/pfam/adhesome_v1.0.hmm`, containing all 176 accessions in the updated
+`databases/pfam/adhesome_v1.0.hmm`, containing all 214 accessions in the updated
 `config/adhesome_pfam_manifest.csv`. The 230-row
 `config/adhesome_component_crosswalk.csv` is validated against that manifest.
-The canonical `config/family_rules.json` contains the 96 Stage 1 hierarchical
+The canonical `config/family_rules.json` contains the 222 Stage 1 hierarchical
 entries. Stage 2 defaults to the expanded family and identity rules in
-`annotation/`; the original pair remains
-available for comparison. References are in
+`annotation/` (222 family configurations / 197 identity rules). The main
+`calibrated_v1` algorithm, scoring gates and cutoffs are unchanged. Historical
+library comparisons use saved run configurations. References are in
 `references/adhesome_v1.0`, now covering all 230 crosswalk components with 354
 forward and 425 reciprocal reference records. See
 [the expanded panel guide](../README/COMPONENT_REFERENCE_PANEL.md) to refresh
@@ -52,13 +53,32 @@ unassigned, and resume accepts their external evidence. These heterogeneous reco
 are excluded from pooled family motif discovery. `crosswalk_reciprocal_components`
 and `reference_reciprocal` retain panel-relative component reciprocity separately.
 
-The bundled library is ready for detection. To reproduce its extraction:
+The library expansion on 26 October 2026 adds the 38 models required by the
+current family catalogue, taking the library from 176 to **214 models**. All
+214 have GA thresholds; the fallback split is empty. Every original model record,
+version and GA threshold is preserved. The manifest, combined source, GA/fallback
+splits, checksums and per-model download provenance have been refreshed. This
+resource update did not run `hmmpress`, detection, annotation, orthology or trees.
+
+The [expansion receipt](../maintenance/pfam_expansion_20261026.json) lists all 38
+added accessions, model versions, source URLs and hashes. Existing scans/results
+retain their original coverage; new models are available to subsequent scans.
+Component-reference label provenance remains a separate outstanding refresh and
+was not rewritten by this HMM-only update.
+
+Check HMM rule coverage without a scan:
+
+```bash
+python -B maintenance/expand_detection_pfam_library.py --check-only
+```
+
+To reproduce extraction from the supplied source:
 
 ```bash
 python detection/build_adhesome_pfam_library.py --pfam-hmm detection/databases/pfam/source_v1.0/combined_source.hmm
 ```
 
-To retrieve models after a future manifest expansion:
+To retrieve models after a future manual manifest expansion:
 
 ```bash
 python detection/build_adhesome_pfam_library.py --download
@@ -74,3 +94,13 @@ See [WORKFLOW.md](../README/WORKFLOW.md) for setup and resume instructions.
 The Conda environment name remains `adhesome-workflow-v1` for existing installations;
 all pipeline release/version reports are 1.0. Run detection fixture tests from
 this directory with `python -B -m unittest discover -s tests`.
+
+For a future rule-driven expansion while preserving cached model versions:
+
+```bash
+python -B maintenance/expand_detection_pfam_library.py
+```
+
+This maintenance command prepares library resources only, preserves the existing
+analytical files, and creates no backups. Detection creates any HMMER indexes
+when the user later starts a scan.

@@ -54,7 +54,9 @@ def apply(rows):
         exact=bank['negative_by_hash'].get(str(row.get('sequence_sha256') or ''),[]);diagnostic=[]
         if str(row.get('sequence_sha256') or '') not in bank.get('positive_hashes',set()) and row.get('domain_score_0_4')==4 and row.get('family_specific_CDD_support'):
             from family_identity import cdd_hits
-            observed={hit['short_name'] for hit in cdd_hits(row)}
+            from family_identity import library
+            from cdd_evidence import interpretation
+            observed={hit['short_name'] for hit in cdd_hits(row) if not library().get('precision_safeguards') or interpretation(hit)['specific']}
             diagnostic=[m for m in bank['negative_families'].get(row['assigned_family'],[]) if observed&m['negative_specific_models']]
         matches=exact or diagnostic
         gates=(['exact_negative_control_sequence'] if exact else [])+(['diagnostic_negative_subfamily_and_complete_architecture'] if diagnostic else [])

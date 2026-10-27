@@ -1,32 +1,32 @@
-# Canonical family rules — workflow version 1.0
+# Canonical family resources — workflow version 1.0
 
-`family_rules.json` is the single active 96-entry catalogue for detection and the
-final reference-gated audit. It contains every family from the supplied older
-catalogues; the newest complete entry takes precedence for duplicate names.
-The resource retains schema 5.0 as a format identifier. Pipeline release/version
-reports remain 1.0. `resource_resolution.json` records source filenames, hashes
-and consolidation policy. Superseded JSONs and their legacy builder were removed.
+`family_rules.json` is the current 222-entry discovery catalogue. The matching
+Stage 2 resources are `annotation/family_rules.json` and
+`annotation/family_identity_rules.json`, with 197 identity rules. The main
+`calibrated_v1` calling algorithm and thresholds remain unchanged. Resource
+schema numbers are separate from pipeline version 1.0.
 
-Entries distinguish broad screens, families and subfamilies. Shared domains,
-HOG membership, motifs and topology cannot establish a resolving paralog identity.
-Specific assignments requiring identity evidence use one independently supported
-route: curated reference accession, concordant phylogeny, concordant reciprocal
-reference identity or a calibrated competing-profile winner. Without that evidence,
-architecture-compatible candidates remain provisional detection hypotheses.
+`adhesome_pfam_manifest.csv` contains 214 unique Pfam accessions. The 38 accessions
+missing from the updated family-rule coverage were appended on 26 October 2026;
+the original manifest rows were retained. The active HMM library has 214 GA models
+and an empty fallback split. Existing model versions and GA thresholds are
+unchanged. Crosswalk content and its 230 component records were not modified.
 
-The updated Pfam library contains 176 models: the 174 manifest entries plus
-PF00046 and PF03535 required by the current rules. Obsolete inherited motif
-expressions were removed. Current motif definitions come from stage 03's
-`Motif_library/adhesion_core.json`; full motif annotation occurs during resume.
+[The library expansion receipt](../../maintenance/pfam_expansion_20261026.json)
+records added model versions/URLs/hashes and the protected analytical-file hashes.
+Download provenance is in `../databases/pfam/source_v1.0/download_provenance.json`.
+Current motif definitions are in `motif_annotation/Motif_library/adhesion_core.json`;
+full motif annotation occurs during resume.
 
-Validate resource consistency from the workflow root:
+Read-only checks from the workflow root:
 
 ```bash
-python tools/validate_resources.py
+python -B maintenance/expand_detection_pfam_library.py --check-only
+python -B tools/validate_resources.py --allow-stale-calibration --audit-resources-only
 ```
 
-The audit uses `annotation/integrated_adhesome_pipeline.py`.
-Its default rule path is this canonical file, and the integrated wrapper passes
-that path explicitly. See the audit module README for output states and benchmarks.
-The supplied rule thresholds remain uncalibrated proposals; fixture tests verify
-software behavior, not empirical classification accuracy.
+The second command also reports the separate, older component-reference label
+provenance and the stale numerical probability model. It does not relabel
+references, fit models or run analysis. HMM model coverage is now complete for
+the configured discovery rules; empirical recruitment performance requires a
+future user-run scan. Existing scan/audit outputs are unchanged.
