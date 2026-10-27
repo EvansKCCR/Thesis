@@ -83,7 +83,6 @@ this reorganization does not migrate them or rerun completed stages.
 Optional scripts moved under `tools/`; their imports and resource roots resolve
 from the script location. Their new command paths are listed in
 [tools/README.md](tools/README.md). Tests and CI use the central `tests/` tree.
-The move inventory is [maintenance/workspace_organization.json](maintenance/workspace_organization.json).
 
 Check the organized bundle without analysis:
 
