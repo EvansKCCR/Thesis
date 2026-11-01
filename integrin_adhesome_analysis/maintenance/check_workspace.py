@@ -40,7 +40,7 @@ RESOURCES=[
     'annotation/family_identity_rules.json',
     'annotation/stage2_evidence_rules.json',
     'annotation/audit_policy.json',
-    'templates/output_schema.json','docs/ISOLATED_WORKFLOWS.md','README.md']
+    'templates/output_schema.json','docs/MANUAL.md','docs/WORKFLOW.md','docs/MAINTENANCE.md','README.md']
 CONFIG_PATHS={
     'detection/config/family_rules.json':'motif_library',
     'annotation/family_rules.json':'motif_library',
@@ -49,9 +49,9 @@ CONFIG_PATHS={
 
 
 def guide_links():
-    guides={ROOT/'README.md',*(ROOT/'README').glob('*.md'),*(ROOT/'docs').glob('*.md')}
-    guides.update(ROOT/name for name in ('tools/README.md','tests/README.md','detection/README.md',
-        'annotation/README.md','orthology_phylogeny/README.md','orthology_phylogeny/PHYLOGENY.md'))
+    # Operational documentation is consolidated here. Historical run reports and
+    # resource-curation reports are evidence, not alternate operating guides.
+    guides={ROOT/'README.md',*(ROOT/'docs').glob('*.md')}
     count=0
     for guide in sorted(guides):
         for target in re.findall(r'\]\(([^)]+)\)',guide.read_text(encoding='utf-8')):
