@@ -1,29 +1,33 @@
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 
 import sys as _sys
 from pathlib import Path as _Path
-_PIPELINE_ROOT=_Path(__file__).resolve().parents[2]
+_PIPELINE_ROOT=_layout_resource(_Path(__file__)).resolve().parents[2]
 _sys.path.insert(0,str(_PIPELINE_ROOT))
-_sys.path.insert(0,str(_PIPELINE_ROOT/"annotation"))
+_sys.path.insert(0,str(_layout_resource(_PIPELINE_ROOT/"annotation")))
 import json
 from pathlib import Path
 import tempfile
 import unittest
 from integrated_adhesome_pipeline import audit_record,classify_rows,run_xlsx,checksum,architecture,motif_score
 
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=_LAYOUT_BUNDLE_ROOT
 
 
 class TwoStageAuditTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):cls.rules=json.loads((ROOT/'detection/config/family_rules.json').read_text());cls.rules['_stage2_profile']='calibrated_v1'
+    def setUpClass(cls):cls.rules=json.loads((_layout_resource(ROOT/'detection/config/family_rules.json')).read_text());cls.rules['_stage2_profile']='calibrated_v1'
 
     def row(self,**extra):
         row=dict(protein_id='AnyTarget__g',Specie='AnyTarget',family='profilin',length=150,status='supported_candidate',
@@ -166,7 +170,7 @@ class TwoStageAuditTests(unittest.TestCase):
     def test_workbook_matches_user_sheet_contract_and_dynamic_reference_columns(self):
         from openpyxl import Workbook,load_workbook
         with tempfile.TemporaryDirectory() as td:
-            source=Path(td)/'input.xlsx';dest=Path(td)/'Stage_2_output.xlsx'
+            source=_layout_resource(Path(td)/'input.xlsx');dest=_layout_resource(Path(td)/'Stage_2_output.xlsx')
             book=Workbook();sheet=book.active;sheet.title='candidates';row=self.row()
             sheet.append(list(row));sheet.append(list(row.values()));book.save(source);before=checksum(source)
             support=dict(reference_species=['NewRef'],target_species=['AnyTarget'],benchmark={'Orthology_benchmark_status':'validated'},tables={})

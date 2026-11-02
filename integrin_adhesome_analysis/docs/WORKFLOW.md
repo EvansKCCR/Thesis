@@ -10,17 +10,17 @@ absolute stored-run paths when reusing the separate installation.
 
 ```bash
 conda activate adhesome-workflow-v1
-cd root/Thesis/integrin_adhesome_analysis
+cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis
 ```
 
-For a genuinely new environment only, first use `conda env create -f environment.yml`.
+For a genuinely new environment only, first use `conda env create -f config/environment.yml`.
 Existing inference checkpoints require their original environment/tool versions;
 do not replace OrthoFinder 3.1.5 during recovery. All commands in this guide run
 from the root, not from individual stage/script directories.
 
 ## 2. Prepare targets and raw references
 
-Create your own `targets.json` from `configs/targets.example.json` and put the
+Create your own `config/targets.json` from `config/targets.example.json` and put the
 configured complete protein FASTAs under `inputs/targets/`. Each entry has an
 explicit gene-ID mapping; codes and species are user-defined. Do not select
 validation/calibration controls for an isolated production target analysis.
@@ -40,7 +40,7 @@ sidecar and is not substituted for a complete proteome without declaring scope.
 Start the two isolated branches:
 
 ```bash
-python -B scripts/run_pipeline.py --mode validation \
+python -B main/run_pipeline.py --mode validation \
   --select-labelled-validation --out runs/isolated_validation --threads 4
 ```
 
@@ -77,8 +77,8 @@ and join returned results by a gene name or human accession.
 ### Production targets and calibration self-test
 
 ```bash
-python -B scripts/run_pipeline.py --mode target \
-  --input-dir inputs/targets --targets-config targets.json \
+python -B main/run_pipeline.py --mode target \
+  --input-dir inputs/targets --targets-config config/targets.json \
   --out runs/isolated_targets --threads 4
 ```
 
@@ -105,7 +105,7 @@ Supported filename alternatives remain accepted by the importer. Preserve exact
 candidate IDs and full-sequence correspondence before transferring coordinates.
 
 ```bash
-python -B scripts/run_pipeline.py --mode validation \
+python -B main/run_pipeline.py --mode validation \
   --select-labelled-validation --out runs/isolated_validation --threads 4 \
   --resume --calibration-context returned/isolated_calibration \
   --validation-context returned/isolated_validation
@@ -113,7 +113,7 @@ python -B scripts/run_pipeline.py --mode validation \
 
 For target mode repeat its original command with `--resume`,
 `--target-context returned/isolated_targets` and the appropriate
-`--calibration-context`. Completed detection/calibration/orthology checkpoints
+`--calibration-context`. Completed resource_library/detection/calibration/orthology checkpoints
 are verified and reused. Missing evidence is an external handoff state, not a
 reason to silently invent topology. `--allow-missing-context` is an explicit
 alternative study policy, not the chosen returned-evidence policy.
@@ -139,7 +139,7 @@ python -B -m schisto_adhesome.validation_review --run runs/isolated_validation
 ### Input preflight and recruitment
 
 ```bash
-python -B adhesome_workflow.py start --targets-config targets.json \
+python -B main/adhesome_workflow.py start --targets-config config/targets.json \
   --input-dir inputs/targets --out runs/handoff --threads 4 --check-inputs
 ```
 
@@ -157,7 +157,7 @@ these exported sequence IDs.
 ### Resume through annotation and downstream stages
 
 ```bash
-python -B adhesome_workflow.py resume --handoff runs/handoff \
+python -B main/adhesome_workflow.py resume --handoff runs/handoff \
   --context-dir returned/context --reference-raw inputs/reference_raw \
   --out runs/annotation --threads 4
 ```
@@ -172,7 +172,7 @@ for a topology-only return. `--motif-scope master` explicitly selects the full
 If annotation is already complete, use its actual sealed directory:
 
 ```bash
-python -B adhesome_workflow.py continue --annotation runs/annotation \
+python -B main/adhesome_workflow.py continue --annotation runs/annotation \
   --reference-raw inputs/reference_raw --out runs/downstream_new --threads 4
 ```
 
@@ -199,7 +199,7 @@ a new `continue` output. The `calibrate` and `orthology` subcommands also expose
 modular panel/inference controls; inspect their `--help` before choosing an
 explicit manual route. `--compare /absolute/path/to/previous/orthology` records
 panel comparisons where supported. Existing panels/results remain fixed.
-The hand-written panel format in `configs/panel.example.json` is an optional
+The hand-written panel format in `config/panel.example.json` is an optional
 advanced route, not a required step in the automatic workflow.
 
 ## 6. Audit replay without repeating searches or inference
@@ -208,7 +208,7 @@ Use current `calibrated_v1` and the canonical paired rules with already complete
 matching annotation and orthology:
 
 ```bash
-python -B adhesome_workflow.py audit \
+python -B main/adhesome_workflow.py audit \
   --annotation /absolute/path/to/stored/annotation \
   --orthology /absolute/path/to/stored/orthology \
   --benchmark /absolute/path/to/stored/benchmark \
@@ -233,7 +233,7 @@ its reference labels. For the saved installation:
 ```bash
 INSTALL=/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/pipeline_validation/integrin_adhesome_analysis
 
-python -B scripts/report_audits.py \
+python -B main/report_audits.py \
   --run "$INSTALL/runs/isolated_validation" \
   --calibration-audit runs/audits_current/calibration \
   --validation-audit runs/audits_current/validation \
@@ -269,7 +269,7 @@ The inference panel must already contain the matching original benchmark
 proteomes. Adding them afterward needs new inference.
 
 ```bash
-python -B adhesome_workflow.py benchmark \
+python -B main/adhesome_workflow.py benchmark \
   --orthology /absolute/path/to/stored/orthology \
   --reference-raw inputs/reference_raw --level root --out runs/benchmark_review
 ```
@@ -286,7 +286,7 @@ Explicit alternatives:
 Select only options appropriate to your declared evaluation. The workflow forms
 are `--benchmark-level`, `--benchmark-scope`, `--benchmark-selection`,
 `--benchmark-protocol`, `--benchmark-quality-policy`. Subset curation uses the
-header-only template in `templates/adhesome_refog_selection.tsv`. Keep full
+header-only template in `resource_library/templates/adhesome_refog_selection.tsv`. Keep full
 predicted groups and preserve root/cohort-level distinctions. A failed full
 benchmark does not trigger subset fallback. Use the resulting sealed report
 explicitly in a new audit. Benchmark input status and precision/F1 acceptance
@@ -296,7 +296,7 @@ remain separate in `summary.json` and `acceptance_checks.tsv`.
 
 Add `--phylogeny` to staged resume/continue to request inference **after** audit.
 For family trees also add `--phylogeny-grouping family`. Grouping alone does not
-launch trees. Missing tools, bad alignments or tree failures preserve the audit.
+launch trees. Missing maintenance, bad alignments or tree failures preserve the audit.
 Integrated IQ-TREE threads default independently to two; use
 `--iqtree-threads 2` explicitly when reproducing that choice.
 
@@ -304,7 +304,7 @@ To prepare audited A/B/C family trees from existing evidence without repeating
 orthology:
 
 ```bash
-python -B orthology_phylogeny/scripts/phylogeny.py prepare \
+python -B resource_library/orthology_phylogeny/scripts/phylogeny.py prepare \
   --hogs /absolute/path/to/orthology/candidates/candidate_HOGs.tsv \
   --orthologues /absolute/path/to/orthology/candidates/direct_orthologues.tsv \
   --duplications /absolute/path/to/orthology/candidates/candidate_duplications.tsv \
@@ -323,7 +323,7 @@ audit family names. Inspect `groups.tsv`, `family_candidate_coverage.tsv`,
 before inference. Target members without source orthogroups remain traceable.
 
 ```bash
-python -B orthology_phylogeny/scripts/phylogeny.py run \
+python -B resource_library/orthology_phylogeny/scripts/phylogeny.py run \
   --project runs/family_phylogeny --threads 2 --iqtree-threads 2
 ```
 
@@ -335,7 +335,7 @@ family-phylogeny runner described in that bundle's own docs.
 Existing-tree identity review is a separate optional operation:
 
 ```bash
-python -B tools/prepare_phylogenetic_identity.py \
+python -B maintenance/prepare_phylogenetic_identity.py \
   --project /absolute/path/to/stored/phylogeny \
   --reference-labels /absolute/path/to/curated_reference_tip_labels.tsv \
   --out runs/identity_tree_review
@@ -351,21 +351,21 @@ See the manual for identity scope and rooting/reconciliation requirements.
 
 ## 9. Resume an existing failed run
 
-For unfinished detection/handoff, `start --resume` verifies and preserves
+For unfinished resource_library/detection/handoff, `start --resume` verifies and preserves
 completed target evidence. A known invalid transcript target can be explicitly
 excluded with `--exclude-target Sguin`; do not silently omit successful targets.
 This is different from the `resume --handoff` external-return command.
 
 ```bash
-python -B adhesome_workflow.py start --resume --exclude-target Sguin \
-  --input-dir inputs/targets --targets-config targets.json \
+python -B main/adhesome_workflow.py start --resume --exclude-target Sguin \
+  --input-dir inputs/targets --targets-config config/targets.json \
   --out runs/handoff --threads 4
 ```
 
 For a saved automatic downstream recovery checkpoint:
 
 ```bash
-python -B adhesome_workflow.py recover \
+python -B main/adhesome_workflow.py recover \
   --run /absolute/path/to/existing/downstream --threads 2 --iqtree-threads 2
 ```
 

@@ -1,17 +1,21 @@
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 
 import sys as _sys
 from pathlib import Path as _Path
-_PIPELINE_ROOT=_Path(__file__).resolve().parents[2]
+_PIPELINE_ROOT=_layout_resource(_Path(__file__)).resolve().parents[2]
 _sys.path.insert(0,str(_PIPELINE_ROOT))
-_sys.path.insert(0,str(_PIPELINE_ROOT/"annotation"))
+_sys.path.insert(0,str(_layout_resource(_PIPELINE_ROOT/"annotation")))
 import json
 from pathlib import Path
 import unittest
@@ -20,12 +24,12 @@ from integrated_adhesome_pipeline import audit_record,classify_rows,architecture
 from family_identity import combined_domains
 from audit_report import prepare_sheet
 
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=_LAYOUT_BUNDLE_ROOT
 
 
 class FamilyIdentityTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):cls.rules=json.loads((ROOT/'detection/config/family_rules.json').read_text())
+    def setUpClass(cls):cls.rules=json.loads((_layout_resource(ROOT/'detection/config/family_rules.json')).read_text())
 
     def row(self,**extra):
         row=dict(protein_id='Any__gene',Specie='Any',family='talin',length=2200,status='provisional',
@@ -140,7 +144,7 @@ class FamilyIdentityTests(unittest.TestCase):
         from openpyxl import Workbook,load_workbook
         from integrated_adhesome_pipeline import run_xlsx
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);source=root/'input.xlsx';dest=root/'result.xlsx'
+            root=_layout_resource(Path(td));source=_layout_resource(root/'input.xlsx');dest=_layout_resource(root/'result.xlsx')
             row=self.row(NCBI_CDD_hits='[{"truncated":')
             book=Workbook();sheet=book.active;sheet.title='candidates'
             sheet.append(list(row));sheet.append(list(row.values()));book.save(source)
@@ -151,8 +155,8 @@ class FamilyIdentityTests(unittest.TestCase):
             book=load_workbook(dest,read_only=True);sheet=book['Audited_family_assignment']
             fields=next(sheet.values);record=dict(zip(fields,next(sheet.iter_rows(min_row=2,max_row=2,values_only=True))))
             self.assertEqual(record['putative_audited_family'],'talin');book.close()
-            self.assertTrue((root/'audited_family_assignments.tsv').exists())
-            with self.assertRaisesRegex(ValueError,'supporting-data'):run_xlsx(source,root/'no_sidecar.xlsx','candidates',self.rules)
+            self.assertTrue((_layout_resource(root/'audited_family_assignments.tsv')).exists())
+            with self.assertRaisesRegex(ValueError,'supporting-data'):run_xlsx(source,_layout_resource(root/'no_sidecar.xlsx'),'candidates',self.rules)
 
 
 if __name__=='__main__':unittest.main()

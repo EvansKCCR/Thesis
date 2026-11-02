@@ -1,17 +1,21 @@
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 
 import sys as _sys
 from pathlib import Path as _Path
-_PIPELINE_ROOT=_Path(__file__).resolve().parents[2]
+_PIPELINE_ROOT=_layout_resource(_Path(__file__)).resolve().parents[2]
 _sys.path.insert(0,str(_PIPELINE_ROOT))
-_sys.path.insert(0,str(_PIPELINE_ROOT/"annotation"))
+_sys.path.insert(0,str(_layout_resource(_PIPELINE_ROOT/"annotation")))
 import csv
 import hashlib
 import json
@@ -60,9 +64,9 @@ class ControlExclusionTests(unittest.TestCase):
     def test_final_export_drops_negatives_and_preserves_accounting(self):
         from openpyxl import Workbook,load_workbook
         from integrated_adhesome_pipeline import run_xlsx,ROOT
-        rules=json.loads((ROOT/'detection/config/family_rules.json').read_text())
+        rules=json.loads((_layout_resource(ROOT/'detection/config/family_rules.json')).read_text())
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);source=root/'input.xlsx';output=root/'output.xlsx'
+            root=_layout_resource(Path(td));source=_layout_resource(root/'input.xlsx');output=_layout_resource(root/'output.xlsx')
             rows=[dict(Specie='test',protein_id=pid,family='actin',length=400,
                 architecture='PF00022:10-390',sequence_sha256=digest)
                 for pid,digest in [('positive','POS_HASH'),('negative','NEG_HASH')]]
@@ -77,7 +81,7 @@ class ControlExclusionTests(unittest.TestCase):
             book=load_workbook(output,read_only=True);values=iter(book['Audited_family_assignment'].values)
             headings=next(values);final=[dict(zip(headings,r)) for r in values];book.close()
             self.assertEqual([r['protein_id'] for r in final],['positive'])
-            with (root/'negative_control_exclusions.tsv').open(newline='') as handle:
+            with (_layout_resource(root/'negative_control_exclusions.tsv')).open(newline='') as handle:
                 excluded=list(csv.DictReader(handle,delimiter='\t'))
             self.assertEqual([r['protein_id'] for r in excluded],['negative'])
 
@@ -86,23 +90,23 @@ class ControlExclusionTests(unittest.TestCase):
         from identity_probability import ROOT
         # fit records provenance relative to the installed package.
         with tempfile.TemporaryDirectory(dir=ROOT) as td:
-            root=Path(td);data=root/'controls';data.mkdir();feature_path=root/'features.tsv'
+            root=_layout_resource(Path(td));data=_layout_resource(root/'controls');data.mkdir();feature_path=_layout_resource(root/'features.tsv')
             labels=[('Positive control','P1','MAAA'),('Positive control','P2','MCCC'),
                 ('hard_negative control','N1','MDDD'),('background_negative control','N2','MEEE')]
             book=Workbook();sheet=book.active;sheet.title='control_identity'
             sheet.append(['class','accession','genes','protein_name'])
             for category,accession,seq in labels:sheet.append([category,accession,'TLN1','Talin-1'])
-            book.save(data/'controls.xlsx')
-            (data/'controls.faa').write_text(''.join(f'>{acc}\n{seq}\n' for cat,acc,seq in labels))
-            with feature_path.open('w',newline='') as handle:
+            book.save(_layout_resource(data/'controls.xlsx'))
+            (_layout_resource(data/'controls.faa')).write_text(''.join(f'>{acc}\n{seq}\n' for cat,acc,seq in labels))
+            with _layout_resource(feature_path).open('w',newline='') as handle:
                 writer=csv.DictWriter(handle,delimiter='\t',fieldnames=['sequence_sha256','assigned_family',
                     'total_score_0_10','family_confidence','protein_name_scope','orthology_panel_sha256'])
                 writer.writeheader()
                 for cat,acc,seq in labels:writer.writerow(dict(sequence_sha256=hashlib.sha256(seq.encode()).hexdigest(),
                     assigned_family='talin',total_score_0_10=7,family_confidence='strong',protein_name_scope='family',
                     orthology_panel_sha256='panel'))
-            result=fit(data,feature_path,root/'model.json',root/'review',minimum=2)
-            model=json.loads((root/'model.json').read_text())
+            result=fit(data,feature_path,_layout_resource(root/'model.json'),_layout_resource(root/'review'),minimum=2)
+            model=json.loads((_layout_resource(root/'model.json')).read_text())
             self.assertEqual({s['accession'] for s in model['samples']},{'P1','P2'})
             self.assertTrue(result['context']['positive_control_only'])
             self.assertEqual(result['context']['excluded']['negative_exclusion_control_not_identity_training'],2)

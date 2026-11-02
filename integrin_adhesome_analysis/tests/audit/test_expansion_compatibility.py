@@ -1,23 +1,27 @@
 """Observed Pfam accessions remain usable beside their architecture aliases."""
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 
 import sys as _sys
 from pathlib import Path as _Path
-_PIPELINE_ROOT=_Path(__file__).resolve().parents[2]
+_PIPELINE_ROOT=_layout_resource(_Path(__file__)).resolve().parents[2]
 _sys.path.insert(0,str(_PIPELINE_ROOT))
-_sys.path.insert(0,str(_PIPELINE_ROOT/"annotation"))
+_sys.path.insert(0,str(_layout_resource(_PIPELINE_ROOT/"annotation")))
 import sys
 from pathlib import Path
 import unittest
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0,str(_layout_resource(Path(__file__)).resolve().parents[2]))
 from family_identity import combined_domains,distinct_footprints,ordered_core
 
 

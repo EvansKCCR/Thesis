@@ -1,12 +1,16 @@
 """Synthetic checks of heuristic context scaling and paired-ablation accounting."""
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 import argparse
 import importlib.util
 import json
@@ -15,19 +19,19 @@ import sys
 import unittest
 from unittest.mock import patch
 
-ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
+ROOT=_LAYOUT_BUNDLE_ROOT;sys.path.insert(0,str(ROOT))
 import adhesome_workflow as workflow
 import identity_probability
 from orthogroup_context import validate_weight,configuration
-from tools.evaluate_orthogroup_ablation import invariants,changes_summary
+from maintenance.evaluate_orthogroup_ablation import invariants,changes_summary
 
-spec=importlib.util.spec_from_file_location('context_test_audit',ROOT/'annotation/integrated_adhesome_pipeline.py')
+spec=importlib.util.spec_from_file_location('context_test_audit',_layout_resource(ROOT/'annotation/integrated_adhesome_pipeline.py'))
 audit=importlib.util.module_from_spec(spec);spec.loader.exec_module(audit)
 
 
 class OrthogroupContextTests(unittest.TestCase):
     def setUp(self):
-        self.rules=json.loads((ROOT/'detection/config/family_rules.json').read_text())
+        self.rules=json.loads((_layout_resource(ROOT/'detection/config/family_rules.json')).read_text())
         self.row=dict(protein_id='Target__p',Specie='Target',family='profilin',length=150,
             architecture='PF00235:10-130',Orthology_HOG_reference_species_count=3,Orthology_HOG_status='shared HOG',
             MotifPrediction_context_supported_count=1,**{'DeepLoc_2.1':'Cytoplasm'})

@@ -1,12 +1,16 @@
 """Synthetic saved-output tests; no biological inference or calibration fitting."""
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 import importlib
 import json
 from pathlib import Path
@@ -14,7 +18,7 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0,str(_layout_resource(Path(__file__)).resolve().parents[2]))
 import evaluate_validation as ev
 import validation_reporting as vr
 
@@ -106,7 +110,7 @@ class Stage2DiagnosticTests(unittest.TestCase):
     def test_saved_output_integration_exports_trace_and_unknown_legacy_resolution(self):
         fixture=importlib.import_module('tests.workflow.test_validation_evaluation').ValidationEvaluationTests()
         with tempfile.TemporaryDirectory() as td:
-            args=fixture.fixture(Path(td));path=args['audit_dir']/'audited_family_assignments.tsv'
+            args=fixture.fixture(_layout_resource(Path(td)));path=_layout_resource(args['audit_dir']/'audited_family_assignments.tsv')
             rows=ev.read_table(path)
             for row in rows:
                 row.update(identity_gate_trace='',family_support_level='',annotation_resolution='')
@@ -115,16 +119,16 @@ class Stage2DiagnosticTests(unittest.TestCase):
                         identity_gate_trace=json.dumps({'rules':[{'reason_codes':['ORTHOLOGY_UNRESOLVED']}]}))
             fixture.write(path,rows);original=ev.sha(path)
             ev.evaluate(**args)
-            predictions={r['accession']:r for r in ev.read_table(args['out']/'control_predictions.tsv')}
+            predictions={r['accession']:r for r in ev.read_table(_layout_resource(args['out']/'control_predictions.tsv'))}
             self.assertEqual(predictions['P1']['specific_family_supported'],'True')
             self.assertEqual(predictions['P2']['specific_family_supported'],'')
             self.assertEqual(predictions['P4']['provisional_annotation'],'True')
-            diagnostics={r['accession']:r for r in ev.read_table(args['out']/'stage2_gate_diagnostics.tsv')}
+            diagnostics={r['accession']:r for r in ev.read_table(_layout_resource(args['out']/'stage2_gate_diagnostics.tsv'))}
             self.assertEqual(diagnostics['P1']['reason_codes'],'ORTHOLOGY_UNRESOLVED')
             self.assertEqual(diagnostics['N1']['reason_codes'],'NEGATIVE_EXCLUSION')
             self.assertEqual(diagnostics['P3']['reason_codes'],'NO_STAGE1_HYPOTHESIS')
-            self.assertTrue((args['out']/'family_macro_metrics.tsv').exists())
-            self.assertTrue((args['out']/'family_label_coverage_summary.tsv').exists())
+            self.assertTrue((_layout_resource(args['out']/'family_macro_metrics.tsv')).exists())
+            self.assertTrue((_layout_resource(args['out']/'family_label_coverage_summary.tsv')).exists())
             self.assertEqual(ev.sha(path),original)
 
     def test_sequence_deduplication_does_not_mix_unknown_and_known_specificity(self):
@@ -136,7 +140,7 @@ class Stage2DiagnosticTests(unittest.TestCase):
     def test_broad_only_gold_does_not_establish_specific_family_correctness(self):
         from openpyxl import Workbook
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);labels=root/'labels.xlsx';fasta=root/'control.faa'
+            root=_layout_resource(Path(td));labels=_layout_resource(root/'labels.xlsx');fasta=_layout_resource(root/'control.faa')
             book=Workbook();sheet=book.active;sheet.title='control_identity'
             sheet.append(['class','accession','genes','protein_name','trusted_family'])
             sheet.append(['Positive control','BROAD','','Actin-family protein','actin']);book.save(labels)

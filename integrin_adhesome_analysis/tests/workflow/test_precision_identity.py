@@ -1,4 +1,15 @@
 """Discriminating CDD evidence and optional evolutionary identity review."""
+
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
 from pathlib import Path
 import csv
 import json
@@ -64,9 +75,9 @@ class PrecisionIdentityTests(unittest.TestCase):
     def test_lar_merlin_and_trio_boundaries_with_reported_specific_hits(self):
         import sys
         from pipeline_paths import ROOT
-        sys.path.insert(0,str(ROOT/'annotation'))
+        sys.path.insert(0,str(_layout_resource(ROOT/'annotation')))
         from integrated_adhesome_pipeline import classify_rows
-        rules=json.loads((ROOT/'annotation/family_rules.json').read_text())
+        rules=json.loads((_layout_resource(ROOT/'annotation/family_rules.json')).read_text())
         rules['_stage2_profile']='precision_v1'
         cases=[('lar','LAR_RPTP','PF07679:10-90;PF00041:110-180;PF00102:250-450','PTPc_LAR',250,450),
             ('merlin','NF2_merlin_like','PF00373:10-200;PF00769:500-600','FERM_F1_Merlin',10,100),
@@ -82,7 +93,7 @@ class PrecisionIdentityTests(unittest.TestCase):
     def test_missing_phylogeny_does_not_turn_supported_family_review_into_failure(self):
         import sys
         from pipeline_paths import ROOT
-        sys.path.insert(0,str(ROOT/'annotation'))
+        sys.path.insert(0,str(_layout_resource(ROOT/'annotation')))
         from family_set_review_gate import gate
         registry=dict(family_sets={'test':dict(review_flags=[],user_inspection_required=False)})
         row=dict(family='test',stage2_architecture_compatible=True,stage2_cdd_pattern_match=True,
@@ -92,23 +103,23 @@ class PrecisionIdentityTests(unittest.TestCase):
 
     def test_phylogenetic_identity_disabled_does_not_read_missing_evidence(self):
         row=dict(protein_id='target',assigned_family='FAK',grade='A',identity_outcome='identity_supported')
-        status=apply([row],Path('does_not_exist.tsv'),False)
+        status=apply([row],_layout_resource(Path('does_not_exist.tsv')),False)
         self.assertEqual(status['status'],'not_requested');self.assertEqual(row['grade'],'A')
         self.assertEqual(row['phylogenetic_identity_status'],'not_requested')
 
     def test_optional_failure_cannot_block_family_call(self):
         row=dict(protein_id='target',assigned_family='FAK',grade='A')
-        self.assertEqual(apply([row],Path('absent.tsv'),True)['status'],'unavailable')
+        self.assertEqual(apply([row],_layout_resource(Path('absent.tsv')),True)['status'],'unavailable')
         self.assertEqual(row['assigned_family'],'FAK');self.assertEqual(row['grade'],'A')
 
     def test_conflicting_tree_triggers_review_without_relabelling(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);tree=root/'tree.nwk';tree.write_text('(target,ref1,ref2);')
+            root=_layout_resource(Path(td));tree=_layout_resource(root/'tree.nwk');tree.write_text('(target,ref1,ref2);')
             hit=dict(protein_id='target',sequence_sha256='sequence',tree_file=str(tree),tree_sha256=sha(tree),
                 family='Src',ufboot=99,sh_alrt=95,reference_count=2,reference_taxa_count=2,
                 reference_label_source='curated reference labels',clade_id='clade1',placement_status='pure_supported_clade')
-            evidence=root/'placements.tsv'
-            with evidence.open('w',newline='') as h:
+            evidence=_layout_resource(root/'placements.tsv')
+            with _layout_resource(evidence).open('w',newline='') as h:
                 w=csv.DictWriter(h,fieldnames=list(hit),delimiter='\t');w.writeheader();w.writerow(hit)
             row=dict(protein_id='target',sequence_sha256='sequence',assigned_family='FAK',grade='A')
             apply([row],evidence,True)

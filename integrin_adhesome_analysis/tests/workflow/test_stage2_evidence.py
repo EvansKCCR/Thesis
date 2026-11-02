@@ -1,12 +1,16 @@
 """Synthetic tests of observed evidence, hierarchical gates and experiment freeze."""
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 import copy
 import json
 from pathlib import Path
@@ -15,10 +19,10 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
+ROOT=_LAYOUT_BUNDLE_ROOT;sys.path.insert(0,str(ROOT))
 import family_identity as identity
 import stage2_evidence as evidence
-from tools import optimize_stage2 as experiment
+from maintenance import optimize_stage2 as experiment
 
 
 class EvidenceTests(unittest.TestCase):
@@ -95,9 +99,9 @@ class EvidenceTests(unittest.TestCase):
 
     def test_validation_start_blocks_calibration_extension_even_if_incomplete(self):
         with tempfile.TemporaryDirectory() as directory:
-            folder=Path(directory)
+            folder=_layout_resource(Path(directory))
             self.assertFalse(experiment.validation_started(folder))
-            (folder/'validation_started.json').write_text('{}')
+            (_layout_resource(folder/'validation_started.json')).write_text('{}')
             self.assertTrue(experiment.validation_started(folder))
             with self.assertRaisesRegex(ValueError,'after validation'):
                 experiment.finalize_freeze(None,None,folder)
@@ -111,7 +115,7 @@ class EvidenceTests(unittest.TestCase):
         unsafe=dict(baseline,arm='unsafe',profile='evidence_v1',FP=1,hard_negative_FP=1)
         safe=dict(baseline,arm='safe',profile='calibrated_v1')
         with tempfile.TemporaryDirectory() as directory:
-            selected=experiment.freeze_selection(Path(directory),[baseline,unsafe,safe],
+            selected=experiment.freeze_selection(_layout_resource(Path(directory)),[baseline,unsafe,safe],
                 dict(original=rows,unsafe=[rows[0],pred('N',False,True)],safe=rows))
         self.assertEqual(selected['selected_arm'],'safe')
         self.assertFalse(unsafe['eligible_by_calibration'])

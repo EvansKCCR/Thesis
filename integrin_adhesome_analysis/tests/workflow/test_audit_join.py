@@ -1,12 +1,16 @@
 """Evidence joins preserve the stage 1 pool and measured motif context."""
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 import csv
 import json
 from pathlib import Path
@@ -14,26 +18,26 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0,str(_layout_resource(Path(__file__)).resolve().parents[2]))
 from audit_join import join
 
 
 class EvidenceJoinTests(unittest.TestCase):
     def write(self,path,rows):
         path.parent.mkdir(parents=True,exist_ok=True)
-        with path.open('w',newline='') as handle:
+        with _layout_resource(path).open('w',newline='') as handle:
             writer=csv.DictWriter(handle,fieldnames=list(rows[0]),delimiter='\t')
             writer.writeheader();writer.writerows(rows)
 
     def test_hog_references_and_motif_context_without_replacing_hypotheses(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);ann=root/'annotation';panel=root/'panel';ort=root/'orthology'
-            panel.mkdir();(panel/'targets.json').write_text(json.dumps(['Target']))
-            (panel/'species.json').write_text(json.dumps(['Target','RefA','RefB']))
-            self.write(ort/'candidates/candidate_report.tsv',[dict(candidate_id='Target__p',HOG='H1',HOG_status='shared HOG',mapping_status='mapped')])
-            self.write(ort/'candidates/candidate_HOGs.tsv',[dict(HOG='H1',Target='Target__p',RefA='RefA__a, RefA__b',RefB='RefB__a')])
-            self.write(ann/'motifs/current_motif_rules.tsv',[dict(rule_id='CURRENT')])
-            self.write(ann/'motifs/motif_annotations.tsv',[
+            root=_layout_resource(Path(td));ann=_layout_resource(root/'annotation');panel=_layout_resource(root/'panel');ort=_layout_resource(root/'orthology')
+            panel.mkdir();(_layout_resource(panel/'targets.json')).write_text(json.dumps(['Target']))
+            (_layout_resource(panel/'species.json')).write_text(json.dumps(['Target','RefA','RefB']))
+            self.write(_layout_resource(ort/'candidates/candidate_report.tsv'),[dict(candidate_id='Target__p',HOG='H1',HOG_status='shared HOG',mapping_status='mapped')])
+            self.write(_layout_resource(ort/'candidates/candidate_HOGs.tsv'),[dict(HOG='H1',Target='Target__p',RefA='RefA__a, RefA__b',RefB='RefB__a')])
+            self.write(_layout_resource(ann/'motifs/current_motif_rules.tsv'),[dict(rule_id='CURRENT')])
+            self.write(_layout_resource(ann/'motifs/motif_annotations.tsv'),[
                 dict(sequence_id='Target__p',motif_id='CURRENT',start=1,end=3,peptide='AAA',candidate_tier='context_supported_candidate'),
                 dict(sequence_id='Target__p',motif_id='CURRENT',start=4,end=6,peptide='AAA',candidate_tier='sequence_only_candidate'),
                 dict(sequence_id='Target__p',motif_id='CURRENT',start=7,end=9,peptide='AAA',candidate_tier='context_conflict'),

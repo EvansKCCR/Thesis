@@ -16,17 +16,17 @@ demonstrate physical complex membership, interaction or biological function.
 
 | Location | Purpose |
 | --- | --- |
-| `adhesome_workflow.py` | Staged start, resume, continue, reference calibration, orthology, benchmark, audit and recovery |
-| `scripts/run_pipeline.py` | Isolated validation or production target branch alongside a calibration self-test |
-| `scripts/report_audits.py` | Reports from completed standalone calibration/validation audits |
-| `scripts/`, `schisto_adhesome/`, `pipeline_paths.py` | Shared runtime modules and path resolution |
-| `detection/` | Protein preparation, Pfam scans, paired reference search and recruitment |
-| `motif_annotation/` | Returned external context and motif annotation |
-| `orthology_phylogeny/` | Reference preparation, OrthoFinder, benchmark and optional integrated trees |
-| `annotation/` | Family/identity rules and final audit |
+| `main/adhesome_workflow.py` | Staged start, resume, continue, reference calibration, orthology, benchmark, audit and recovery |
+| `main/run_pipeline.py` | Isolated validation or production target branch alongside a calibration self-test |
+| `main/report_audits.py` | Reports from completed standalone calibration/validation audits |
+| `resource_library/scripts/`, `resource_library/schisto_adhesome/`, `main/pipeline_paths.py` | Shared runtime modules and path resolution |
+| `resource_library/detection/` | Protein preparation, Pfam scans, paired reference search and recruitment |
+| `resource_library/motif_annotation/` | Returned external context and motif annotation |
+| `resource_library/orthology_phylogeny/` | Reference preparation, OrthoFinder, benchmark and optional integrated trees |
+| `resource_library/annotation/` | Final audit implementation and curation evidence |
 | `validation/` | Labelled calibration and validation inputs and numerical calibration resources |
-| `configs/`, `templates/` | User configuration examples and evidence/output schemas |
-| `tools/`, `maintenance/`, `tests/` | Explicit experiments, maintenance utilities and synthetic tests |
+| `config/`, `resource_library/templates/` | All editable settings/rules; evidence templates remain resources |
+| `maintenance/`, `tests/` | Explicit experiments, maintenance utilities and synthetic tests |
 | `inputs/`, `runs/` | User inputs and generated analysis products; not documentation cleanup targets |
 
 The maintained source root is
@@ -43,25 +43,53 @@ The independent 15-family research phylogeny is a separate sibling bundle,
 Its full-orthogroup selection is different from integrated audited-candidate
 family preparation. Neither bundle launches the other automatically.
 
+## Organized source layout (2 November 2026)
+
+`main/` contains `adhesome_workflow.py`, `run_pipeline.py`, `report_audits.py`
+and the canonical `pipeline_paths.py`. Maintenance and resource-update utilities
+are in `maintenance/`. Component code, shared runtime packages, curated reference
+FASTA/HMM banks and evidence templates are in `resource_library/`.
+
+All editable configuration lives in `config/`: the target/panel examples and
+isolated workflow settings at its top level; detection manifests/crosswalk/rules
+in `config/detection/`; family identity, registry and audit profiles in
+`config/annotation/`; motif rules in `config/motif_annotation/`; benchmark policy
+and optional tree environment in `config/orthology_phylogeny/`; output schema in
+`config/templates/`. The main environment and requirements are also in `config/`.
+
+Scientific inputs, saved results, numerical calibration models and provenance
+are not editable workflow configuration and retain their dataset/resource
+locations. The standalone family phylogeny and external validation installation
+were not reorganized. Run commands from the bundle root, without changing into
+`main/` or a component directory.
+
+The explicit `config/layout_paths.json` map resolves old source paths. Small root
+loaders retain the historical `python adhesome_workflow.py` command and
+`pipeline_paths` imports. No full duplicate source tree is retained. Saved run
+contracts are not rewritten: exact old hashes may match only the corresponding
+recorded layout-only transition in `maintenance/layout_migration.json`; an unknown
+hash, altered rule or later code edit still fails the frozen check. This does not
+repair previously stale contracts or refit an identity-probability model.
+
 ## Environment and protein inputs
 
 Full analysis uses Linux/WSL/HPC and the `adhesome-workflow-v1` Conda environment.
 The specification pins Python 3.12, HMMER 3.4, BLAST+ 2.16.0, OrthoFinder 3.1.5,
 MAFFT 7.526, trimAl 1.5.0, IQ-TREE 2.4.0, Biopython 1.85 and openpyxl 3.1.5.
-`requirements.txt` supplies Python packages, not the external executables.
+`config/requirements.txt` supplies Python packages, not the external executables.
 MEME is optional; external topology/localization services are not bundled.
 Resume saved inference with its original tool versions and environment.
 
 Target configuration uses a `proteomes` list with `code`, `species`, `assembly`,
 FASTA `path`, `source_url` and an explicit `gene_regex` whose first capture group
-extracts the gene ID. See [targets.example.json](../configs/targets.example.json).
+extracts the gene ID. See [targets.example.json](../config/targets.example.json).
 There is no fixed species set or target count. Use complete protein proteomes,
 unique safe species codes without `__`, and explicit gene mappings. Preparation
 selects the longest isoform per gene and exports `Code__gene_id` identifiers.
 Do not infer genes by stripping arbitrary accession suffixes or relabel mRNA as
 protein. Input preflight checks headers, duplicate IDs, mappings and residue QC.
 
-[targets.validation.corrected.json](../configs/targets.validation.corrected.json)
+[targets.validation.corrected.json](../config/targets.validation.corrected.json)
 is retained only as a historical staged mixed-target example. It contains a
 validation species and must not be used as an isolated production target config.
 
@@ -69,18 +97,18 @@ validation species and must not be used as an isolated production target config.
 
 | Resource | Current role |
 | --- | --- |
-| `detection/config/family_rules.json` | 222 discovery family entries |
-| `annotation/family_rules.json` | Canonical 222-family Stage 2 configuration |
-| `annotation/family_identity_rules.json` | Canonical 197-rule identity library |
-| `annotation/family_set_registry.json` | 159-set coverage/QC registry; not a production confidence cap |
-| `annotation/stage2_evidence_rules.json`, `annotation/audit_policy.json` | Executable evidence profiles and audit policy |
-| `detection/config/adhesome_pfam_manifest.csv` | 214 unique Pfam models |
-| `detection/databases/pfam/adhesome_v1.0.hmm` | All 214 GA-thresholded models; fallback split empty |
-| `detection/config/adhesome_component_crosswalk.csv` | 230 component records |
-| `detection/references/adhesome_v1.0/` | Paired curated search/competition panel, 354 forward and 425 reciprocal records |
-| `motif_annotation/Motif_library/adhesion_core.json` | Default 53 adhesion-associated scan rules |
-| Motif master resources in the same directory | Optional 347-rule master scope |
-| `configs/isolated_workflow.json` | `expanded`, `calibrated_v1`, fixed orthogroup context coefficient 1.0, full benchmark, optional identity resolution disabled |
+| `config/detection/family_rules.json` | 222 discovery family entries |
+| `config/annotation/family_rules.json` | Canonical 222-family Stage 2 configuration |
+| `config/annotation/family_identity_rules.json` | Canonical 197-rule identity library |
+| `config/annotation/family_set_registry.json` | 159-set coverage/QC registry; not a production confidence cap |
+| `config/annotation/stage2_evidence_rules.json`, `config/annotation/audit_policy.json` | Executable evidence profiles and audit policy |
+| `config/detection/adhesome_pfam_manifest.csv` | 214 unique Pfam models |
+| `resource_library/detection/databases/pfam/adhesome_v1.0.hmm` | All 214 GA-thresholded models; fallback split empty |
+| `config/detection/adhesome_component_crosswalk.csv` | 230 component records |
+| `resource_library/detection/references/adhesome_v1.0/` | Paired curated search/competition panel, 354 forward and 425 reciprocal records |
+| `config/motif_annotation/adhesion_core.json` | Default 53 adhesion-associated scan rules |
+| Motif master JSON in `config/motif_annotation/`; source workbooks in `resource_library/motif_annotation/Motif_library/` | Optional 347-rule master scope |
+| `config/isolated_workflow.json` | `expanded`, `calibrated_v1`, fixed orthogroup context coefficient 1.0, full benchmark, optional identity resolution disabled |
 
 The main algorithm remains **`calibrated_v1`**. Library expansion did not enable
 stricter global thresholds. Calibration-derived inspection/no-auto-promotion
@@ -231,9 +259,9 @@ prepared copies, with positions/hashes in `sequence_qc.tsv`; raw inputs stay
 unchanged and scoring verifies the same declared processed sequence scope.
 
 The explicit alternative `adhesome` scope invokes
-`orthology_phylogeny/scripts/adhesome_benchmark_subset.py`. It needs a curated
+`resource_library/orthology_phylogeny/scripts/adhesome_benchmark_subset.py`. It needs a curated
 selection TSV with `refog`, `family`, `curation_source`, `curation_status=curated`.
-Use [adhesome_refog_selection.tsv](../templates/adhesome_refog_selection.tsv).
+Use [adhesome_refog_selection.tsv](../resource_library/templates/adhesome_refog_selection.tsv).
 Several reference groups may map to one family, but truth groups are never
 merged. Fibronectin-like scopes are eligible where curated associations exist;
 FN3 domains alone do not create ground truth. Missing, empty or invalid selection
@@ -250,7 +278,7 @@ aware. Optional `cohort-lca` chooses the smallest species-tree node containing
 the full benchmark cohort by taxonomy, never by the most favorable score.
 
 Acceptance requires unrounded **pairwise precision >=0.80 and F1 >=0.70** under
-`orthology_phylogeny/config/benchmark_policy.json`. No extra recall or exact-group
+`config/orthology_phylogeny/benchmark_policy.json`. No extra recall or exact-group
 threshold is implied. Here precision means PPV, not area under a precision-recall
 curve. Input validity and quality acceptance are separate. A historical result
 (precision 0.4003824, recall 0.8345527, F1 0.5411462, 20/70 exact groups) is a
@@ -277,7 +305,7 @@ metrics from different cohorts are not interchangeable.
 Calibration and validation/target branches share a frozen algorithm/configuration
 contract but have separate inputs, candidate IDs, returned evidence and orthology
 inference. A branch cannot mutate another branch's orthogroups. Production target
-configs reject evaluation-control codes/IDs. Exact calibration/reference/training
+config reject evaluation-control codes/IDs. Exact calibration/reference/training
 overlap and prior rule-development inspection limit independence claims, even
 when exact matches are absent. Preserve overlap-free strata and label coverage.
 

@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "pipeline_version": "1.0",
+  "domain_rule_source": "../detection/family_rules.json",
+  "confidence_policy": "Current evidence-based definitions; all regex hits remain sequence candidates. Context filters are not implemented.",
+  "families": {
+    "unassigned_domain_candidate": {
+      "classification_level": "screening_hypothesis",
+      "domain_alternatives": [],
+      "classification_note": "Retained domain-only alternative for an already selected protein; no family or shared architecture assigned."
+    },
+    "component_reference_candidate": {
+      "classification_level": "component_hypothesis",
+      "domain_alternatives": [],
+      "classification_note": "Crosswalk-reference follow-up bucket; no family or shared architecture assigned."
+    }
+  },
+  "motifs": {},
+  "motif_rule_source": "adhesion_core.json",
+  "context_filters_implemented": false,
+  "family_aliases": {
+    "fibronectin_like_candidate": "fibronectin_like",
+    "PINCH_like_candidates": "PINCH_like"
+  }
+}

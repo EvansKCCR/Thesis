@@ -1,17 +1,21 @@
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 
 import sys as _sys
 from pathlib import Path as _Path
-_PIPELINE_ROOT=_Path(__file__).resolve().parents[2]
+_PIPELINE_ROOT=_layout_resource(_Path(__file__)).resolve().parents[2]
 _sys.path.insert(0,str(_PIPELINE_ROOT))
-_sys.path.insert(0,str(_PIPELINE_ROOT/"annotation"))
+_sys.path.insert(0,str(_layout_resource(_PIPELINE_ROOT/"annotation")))
 import json
 from pathlib import Path
 import tempfile
@@ -33,7 +37,7 @@ class IdentityProbabilityTests(unittest.TestCase):
 
     def test_query_sequence_labels_are_excluded_in_full_and_do_not_set_names(self):
         with tempfile.TemporaryDirectory() as td:
-            path=Path(td)/'model.json'
+            path=_layout_resource(Path(td)/'model.json')
             samples=[dict(score=7,correct=0,stratum='strong|family',sequence_sha256=str(i)) for i in range(20)]
             samples.extend([dict(score=7,correct=1,stratum='strong|family',sequence_sha256='SELF')]*2)
             path.write_text(json.dumps(dict(code_fingerprint=fingerprint(),input_hashes={},minimum_controls=20,
@@ -59,14 +63,14 @@ class IdentityProbabilityTests(unittest.TestCase):
 
     def test_stale_probability_model_does_not_supply_a_number(self):
         with tempfile.TemporaryDirectory() as td:
-            path=Path(td)/'model.json';path.write_text(json.dumps(dict(code_fingerprint={})))
+            path=_layout_resource(Path(td)/'model.json');path.write_text(json.dumps(dict(code_fingerprint={})))
             row=dict(assigned_family='talin')
             self.assertEqual(annotate([row],path)['status'],'probability_model_stale_after_scoring_change')
             self.assertNotIn('assignment_probability',row)
 
     def test_experimental_metadata_never_changes_calibrated_assignment_probability(self):
         with tempfile.TemporaryDirectory() as td:
-            path=Path(td)/'model.json'
+            path=_layout_resource(Path(td)/'model.json')
             samples=[dict(score=7,correct=int(i<15),stratum='strong|family',sequence_sha256=str(i)) for i in range(20)]
             path.write_text(json.dumps(dict(code_fingerprint=fingerprint(),input_hashes={},minimum_controls=20,
                 context={'positive_family_scope':['talin'],'positive_control_only':True},samples=samples,cross_validation={})))

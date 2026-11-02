@@ -1,18 +1,22 @@
 """Synthetic tests of full broad gates, specific uncertainty and trace export."""
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 
 import sys as _sys
 from pathlib import Path as _Path
-_PIPELINE_ROOT=_Path(__file__).resolve().parents[2]
+_PIPELINE_ROOT=_layout_resource(_Path(__file__)).resolve().parents[2]
 _sys.path.insert(0,str(_PIPELINE_ROOT))
-_sys.path.insert(0,str(_PIPELINE_ROOT/"annotation"))
+_sys.path.insert(0,str(_layout_resource(_PIPELINE_ROOT/"annotation")))
 import csv
 import hashlib
 import json
@@ -21,12 +25,12 @@ import tempfile
 import unittest
 from integrated_adhesome_pipeline import audit_record,run_xlsx
 
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=_LAYOUT_BUNDLE_ROOT
 
 
 class Stage2ResolutionTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):cls.rules=json.loads((ROOT/'detection/config/family_rules.json').read_text());cls.rules['_stage2_profile']='calibrated_v1'
+    def setUpClass(cls):cls.rules=json.loads((_layout_resource(ROOT/'detection/config/family_rules.json')).read_text());cls.rules['_stage2_profile']='calibrated_v1'
 
     def row(self,**values):
         row=dict(protein_id='Novel__g',Specie='Novel',family='actin',length=400,
@@ -70,16 +74,16 @@ class Stage2ResolutionTests(unittest.TestCase):
     def test_export_keeps_rule_trace_outside_excel_and_emits_compact_candidate_trace(self):
         from openpyxl import Workbook,load_workbook
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);source=root/'input.xlsx';dest=root/'Stage_2_output.xlsx'
+            root=_layout_resource(Path(td));source=_layout_resource(root/'input.xlsx');dest=_layout_resource(root/'Stage_2_output.xlsx')
             row=self.row(family='generic_kinase_screen',length=500,architecture='PF08953:10-60;PF00400:100-150',
                          NCBI_CDD_architecture='DUF1899:10-60')
             book=Workbook();sheet=book.active;sheet.title='candidates';sheet.append(list(row));sheet.append(list(row.values()));book.save(source)
             run_xlsx(source,dest,'candidates',self.rules)
             book=load_workbook(dest,read_only=True);headers=next(book['Screening_hypothesis'].values)
             self.assertNotIn('_rule_gate_trace',headers);self.assertIn('identity_gate_trace',headers);book.close()
-            with (root/'stage2_rule_gate_trace.tsv').open() as handle:trace=list(csv.DictReader(handle,delimiter='\t'))
+            with (_layout_resource(root/'stage2_rule_gate_trace.tsv')).open() as handle:trace=list(csv.DictReader(handle,delimiter='\t'))
             self.assertTrue(any(r['rule_id']=='coronin' and r['matched']=='True' for r in trace))
-            with (root/'stage2_candidate_gate_trace.tsv').open() as handle:candidates=list(csv.DictReader(handle,delimiter='\t'))
+            with (_layout_resource(root/'stage2_candidate_gate_trace.tsv')).open() as handle:candidates=list(csv.DictReader(handle,delimiter='\t'))
             self.assertEqual(len(candidates),1);self.assertEqual(candidates[0]['assigned_family'],'coronin_like')
             self.assertLess(len(candidates[0]['identity_gate_trace']),32767)
 
@@ -87,19 +91,19 @@ class Stage2ResolutionTests(unittest.TestCase):
         from openpyxl import Workbook
         from calibrate_identity import fit
         with tempfile.TemporaryDirectory(dir=ROOT) as td:
-            root=Path(td);controls=root/'controls';controls.mkdir()
+            root=_layout_resource(Path(td));controls=_layout_resource(root/'controls');controls.mkdir()
             book=Workbook();sheet=book.active;sheet.title='control_identity'
             sheet.append(['class','accession','genes','protein_name'])
             for key,subtype in [('A',4),('B',6)]:sheet.append(['Positive control',key,'ACTR'+str(subtype),'Actin-related protein '+str(subtype)])
-            book.save(controls/'labels.xlsx');(controls/'controls.faa').write_text('>A\nMAAA\n>B\nMCCC\n')
-            features=root/'features.tsv'
-            with features.open('w',newline='') as handle:
+            book.save(_layout_resource(controls/'labels.xlsx'));(_layout_resource(controls/'controls.faa')).write_text('>A\nMAAA\n>B\nMCCC\n')
+            features=_layout_resource(root/'features.tsv')
+            with _layout_resource(features).open('w',newline='') as handle:
                 fields=['sequence_sha256','assigned_family','total_score_0_10','family_confidence','protein_name_scope','orthology_panel_sha256']
                 writer=csv.DictWriter(handle,fieldnames=fields,delimiter='\t');writer.writeheader()
                 for sequence in ('MAAA','MCCC'):writer.writerow(dict(sequence_sha256=hashlib.sha256(sequence.encode()).hexdigest(),
                     assigned_family='actin',total_score_0_10=7,family_confidence='strong',protein_name_scope='broad_family',orthology_panel_sha256='fixture'))
-            fit(controls,features,root/'model.json',root/'report',minimum=2)
-            model=json.loads((root/'model.json').read_text())
+            fit(controls,features,_layout_resource(root/'model.json'),_layout_resource(root/'report'),minimum=2)
+            model=json.loads((_layout_resource(root/'model.json')).read_text())
             self.assertEqual([r['correct'] for r in model['samples']],[1,1])
             self.assertIn('actin',model['context']['positive_family_scope'])
 

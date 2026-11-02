@@ -4,6 +4,17 @@
 Existing model records/thresholds and analytical code/configuration are preserved.
 Temporary build files are validated then replaced; no backups are created.
 """
+
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -21,8 +32,8 @@ import time
 from urllib.request import Request, urlopen
 from uuid import uuid4
 
-ROOT=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(ROOT/'detection'))
+ROOT=_LAYOUT_BUNDLE_ROOT
+sys.path.insert(0,str(_layout_resource(ROOT/'detection')))
 from adhesome_core import digest,hmm_records,pf
 from build_adhesome_pfam_library import build
 
@@ -44,35 +55,35 @@ def records(path):
 
 
 def expand(root=ROOT,check_only=False):
-    root=Path(root).resolve();base=root/'detection/databases/pfam';cache=base/'source_v1.0'
-    library=base/'adhesome_v1.0.hmm';metadata=Path(str(library)+'.metadata.json')
-    manifest=root/'detection/config/adhesome_pfam_manifest.csv';rules_path=root/'detection/config/family_rules.json'
-    crosswalk=root/'detection/config/adhesome_component_crosswalk.csv'
-    source=cache/'combined_source.hmm';provenance=cache/'download_provenance.json'
-    old_meta=json.loads(metadata.read_text());old_records=records(library)
+    root=_layout_resource(Path(root)).resolve();base=_layout_resource(root/'detection/databases/pfam');cache=_layout_resource(base/'source_v1.0')
+    library=_layout_resource(base/'adhesome_v1.0.hmm');metadata=_layout_resource(Path(str(library)+'.metadata.json'))
+    manifest=_layout_resource(root/'detection/config/adhesome_pfam_manifest.csv');rules_path=_layout_resource(root/'detection/config/family_rules.json')
+    crosswalk=_layout_resource(root/'detection/config/adhesome_component_crosswalk.csv')
+    source=_layout_resource(cache/'combined_source.hmm');provenance=_layout_resource(cache/'download_provenance.json')
+    old_meta=json.loads(_layout_resource(metadata).read_text());old_records=records(library)
     if digest(library)!=old_meta['library_sha256']:raise ValueError('Existing library hash mismatch')
     if digest(manifest)!=old_meta['manifest_sha256']:raise ValueError('Existing manifest hash mismatch')
     if set(old_records)!=set(old_meta['models']):raise ValueError('Existing model metadata mismatch')
-    with manifest.open(encoding='utf-8-sig',newline='') as h:
+    with _layout_resource(manifest).open(encoding='utf-8-sig',newline='') as h:
         reader=csv.DictReader(h);fields=reader.fieldnames;rows=list(reader)
     listed={a for row in rows for a in re.findall(r'PF\d{5}',row['Pfam accession'])}
     if listed!=set(old_records):raise ValueError('Manifest/model membership mismatch')
-    rules=json.loads(rules_path.read_text());required=set(re.findall(r'PF\d{5}',json.dumps(rules['families'])))
+    rules=json.loads(_layout_resource(rules_path).read_text());required=set(re.findall(r'PF\d{5}',json.dumps(rules['families'])))
     missing=sorted(required-set(old_records))
     plan=dict(pipeline_version='1.0',existing_models=len(old_records),additional_models=len(missing),
         final_models=len(old_records)+len(missing),added_accessions=missing)
     if check_only or not missing:return plan
     # Changes to any analytical input during retrieval must abort before publication.
-    protected=[p for p in root.rglob('*.py') if not {'inputs','runs','returned','results','__pycache__','maintenance'}&set(p.relative_to(root).parts)]
-    protected += [rules_path,root/'annotation/family_rules.json',root/'annotation/family_identity_rules.json',
-        root/'annotation/stage2_evidence_rules.json',root/'annotation/audit_policy.json',root/'configs/isolated_workflow.json',crosswalk]
+    protected=[p for p in _layout_resource(root).rglob('*.py') if not {'inputs','runs','returned','results','__pycache__','maintenance'}&set(p.relative_to(root).parts)]
+    protected += [rules_path,_layout_resource(root/'annotation/family_rules.json'),_layout_resource(root/'annotation/family_identity_rules.json'),
+        _layout_resource(root/'annotation/stage2_evidence_rules.json'),_layout_resource(root/'annotation/audit_policy.json'),_layout_resource(root/'configs/isolated_workflow.json'),crosswalk]
     fingerprints={p:digest(p) for p in protected}
     initial={p:digest(p) for p in (library,metadata,manifest,source,provenance)}
-    old_provenance=json.loads(provenance.read_text());prior_entries={r['accession']:r for r in old_provenance['models']}
+    old_provenance=json.loads(_layout_resource(provenance).read_text());prior_entries={r['accession']:r for r in old_provenance['models']}
     if set(prior_entries)!=set(old_records):raise ValueError('Incomplete existing download provenance')
     def fetch(accession):
         path=cache/(accession+'.hmm');url=f'https://www.ebi.ac.uk/interpro/api/entry/pfam/{accession}/?annotation=hmm'
-        reused=path.is_file()
+        reused=_layout_resource(path).is_file()
         if not reused:
             for attempt in range(3):
                 try:
@@ -92,29 +103,29 @@ def expand(root=ROOT,check_only=False):
             retrieval='existing_download_cache' if reused else 'EMBL_EBI_InterPro_Pfam_API')
     with ThreadPoolExecutor(max_workers=4) as pool:additions=dict((a,(b,p)) for a,b,p in pool.map(fetch,missing))
     # Preserve every original manifest byte; append only the newly required entries.
-    text=io.StringIO(newline='');writer=csv.DictWriter(text,fieldnames=fields,lineterminator='\r\n' if b'\r\n' in manifest.read_bytes() else '\n')
+    text=io.StringIO(newline='');writer=csv.DictWriter(text,fieldnames=fields,lineterminator='\r\n' if b'\r\n' in _layout_resource(manifest).read_bytes() else '\n')
     for accession in missing:
         users=[name for name,rule in rules['families'].items() if accession in json.dumps(rule)]
         writer.writerow({'Pfam accession':accession,'Domain or family':records(cache/(accession+'.hmm'))[accession][0]['NAME'][0],
             'Adhesome role':'Current family-rule coverage: '+'; '.join(sorted(users))})
-    prefix=manifest.read_bytes()
+    prefix=_layout_resource(manifest).read_bytes()
     if not prefix.endswith(b'\n'):prefix+=b'\n'
     expanded_manifest=prefix+text.getvalue().encode('utf-8')
     combined=''.join(block for meta,block in old_records.values())+''.join(additions[a][0] for a in missing)
     with tempfile.TemporaryDirectory(prefix='.pfam_build_',dir=base) as temp:
-        temp=Path(temp);staged_manifest=temp/'manifest.csv';staged_source=temp/'source.hmm';staged_library=temp/library.name
+        temp=_layout_resource(Path(temp));staged_manifest=_layout_resource(temp/'manifest.csv');staged_source=_layout_resource(temp/'source.hmm');staged_library=temp/library.name
         staged_manifest.write_bytes(expanded_manifest);staged_source.write_bytes(combined.encode('utf-8'))
         found=build(staged_manifest,staged_source,staged_library,crosswalk=crosswalk)
         new_records=records(staged_library)
         if set(new_records)!=set(old_records)|set(missing):raise ValueError('Expanded model membership differs')
         if any(new_records[a]!=old_records[a] or found[a]!=old_meta['models'][a] for a in old_records):
             raise ValueError('An existing HMM or threshold changed')
-        split={kind:records(Path(str(staged_library)+'.'+kind+'.hmm')) for kind in ('ga','fallback')}
+        split={kind:records(_layout_resource(Path(str(staged_library)+'.'+kind+'.hmm'))) for kind in ('ga','fallback')}
         if set(split['ga'])&set(split['fallback']) or set(split['ga'])|set(split['fallback'])!=set(new_records):
             raise ValueError('GA/fallback split is inconsistent')
         if any(digest(p)!=expected for p,expected in {**fingerprints,**initial}.items()):
             raise ValueError('An analytical input or library changed during retrieval')
-        staged_meta=Path(str(staged_library)+'.metadata.json');new_meta=json.loads(staged_meta.read_text())
+        staged_meta=_layout_resource(Path(str(staged_library)+'.metadata.json'));new_meta=json.loads(_layout_resource(staged_meta).read_text())
         receipt=dict(**plan,date='2026-10-26',completed_utc=datetime.now(timezone.utc).isoformat(),
             original_model_records_and_ga_unchanged=True,analytical_files_unchanged=True,main_profile='calibrated_v1',
             previous_library_sha256=initial[library],previous_manifest_sha256=initial[manifest],
@@ -134,22 +145,22 @@ def expand(root=ROOT,check_only=False):
         new_provenance.update(updated_utc=receipt['completed_utc'],manifest_sha256=digest(staged_manifest),
             models=[*old_provenance['models'],*(additions[a][1] for a in missing)],
             expansion_note='Only missing models retrieved; existing model versions, payloads and prior retrieval provenance preserved')
-        staged_provenance=temp/'download_provenance.json';staged_provenance.write_text(json.dumps(new_provenance,indent=2)+'\n')
+        staged_provenance=_layout_resource(temp/'download_provenance.json');staged_provenance.write_text(json.dumps(new_provenance,indent=2)+'\n')
         for staged,target in [(staged_manifest,manifest),(staged_source,source),(staged_library,library),
-            *( (Path(str(staged_library)+'.'+k+'.hmm'),Path(str(library)+'.'+k+'.hmm')) for k in ('ga','fallback')),
+            *( (_layout_resource(Path(str(staged_library)+'.'+k+'.hmm')),_layout_resource(Path(str(library)+'.'+k+'.hmm'))) for k in ('ga','fallback')),
             (staged_meta,metadata),(staged_provenance,provenance)]:
             # A Windows TemporaryDirectory has a private ACL. Publish through a
             # normal adjacent file so the final resource inherits its own folder's
             # read permissions instead of the private build directory's ACL.
-            publication=target.with_name(target.name+'.publishing-'+uuid4().hex)
+            publication=_layout_resource(target.with_name(target.name+'.publishing-'+uuid4().hex))
             try:
-                with publication.open('xb') as h:h.write(staged.read_bytes())
+                with _layout_resource(publication).open('xb') as h:h.write(_layout_resource(staged).read_bytes())
                 publication.replace(target)
             finally:
-                if publication.exists():publication.unlink()
+                if _layout_resource(publication).exists():publication.unlink()
     for p,expected in fingerprints.items():
         if digest(p)!=expected:raise ValueError('Protected analytical file changed: '+str(p))
-    (root/'maintenance/pfam_expansion_20261026.json').write_text(json.dumps(receipt,indent=2)+'\n')
+    (_layout_resource(root/'maintenance/pfam_expansion_20261026.json')).write_text(json.dumps(receipt,indent=2)+'\n')
     return {k:v for k,v in receipt.items() if k not in ('additions','protected_files_sha256','preserved_model_records_sha256')}
 
 

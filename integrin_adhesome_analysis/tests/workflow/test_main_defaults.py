@@ -1,12 +1,16 @@
 """Improved defaults for new runs; saved checkpoints keep their own profile."""
 
-# Resolve the organized bundle independently of the caller working directory.
-import sys as _bundle_sys
-from pathlib import Path as _BundlePath
-_BUNDLE_ROOT=next(p for p in _BundlePath(__file__).resolve().parents if (p/'pipeline_paths.py').is_file())
-if str(_BUNDLE_ROOT) not in _bundle_sys.path:_bundle_sys.path.insert(0,str(_BUNDLE_ROOT))
-from pipeline_paths import activate as _activate_bundle_paths
-_activate_bundle_paths()
+# Resolve source resources independently of the caller working directory.
+import sys as _layout_sys
+from pathlib import Path as _LayoutPath
+_LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
+                          if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+_layout_activate()
+
+
 import argparse
 import json
 from pathlib import Path
@@ -15,7 +19,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
+ROOT=_LAYOUT_BUNDLE_ROOT;sys.path.insert(0,str(ROOT))
 import adhesome_workflow as core
 from stage2_evidence import default_profile,profile
 
@@ -41,11 +45,11 @@ class MainDefaultTests(unittest.TestCase):
     def test_recovery_keeps_explicit_and_historical_profiles(self):
         for saved,expected in [(None,'original'),('original','original'),('calibrated_v1','calibrated_v1')]:
             with tempfile.TemporaryDirectory() as directory:
-                settings={'annotation':str(Path(directory)/'annotation')}
+                settings={'annotation':str(_layout_resource(Path(directory)/'annotation'))}
                 if saved:settings['stage2_profile']=saved
-                Path(directory,'recovery.json').write_text(json.dumps(dict(settings=settings,stages={})))
+                _layout_resource(Path(directory,'recovery.json')).write_text(json.dumps(dict(settings=settings,stages={})))
                 with patch.object(core,'downstream') as called:
-                    core.recover(argparse.Namespace(run=Path(directory),threads=None,analysis_threads=None,iqtree_threads=None))
+                    core.recover(argparse.Namespace(run=_layout_resource(Path(directory)),threads=None,analysis_threads=None,iqtree_threads=None))
                 self.assertEqual(called.call_args.args[0].stage2_profile,expected)
 
 

@@ -34,7 +34,7 @@ every recovery mode is archive-free.
 python -B maintenance/check_workspace.py --syntax-only
 python -B maintenance/check_workspace.py
 python -B maintenance/expand_detection_pfam_library.py --check-only
-python -B tools/validate_resources.py --allow-stale-calibration --audit-resources-only
+python -B maintenance/validate_resources.py --allow-stale-calibration --audit-resources-only
 ```
 
 The first command checks resource/config/documentation paths, syntax and defaults
@@ -47,9 +47,9 @@ Synthetic tests are separate from real runs:
 
 ```bash
 python -B -m unittest discover -s tests -p 'test_*.py'
-(cd detection && python -B -m unittest discover -s tests -p 'test_*.py')
-(cd motif_annotation && python -B -m unittest discover -s test -p 'test_*.py')
-(cd orthology_phylogeny/scripts && python -B -m unittest discover -p 'test_*.py')
+(cd resource_library/detection && python -B -m unittest discover -s tests -p 'test_*.py')
+(cd resource_library/motif_annotation && python -B -m unittest discover -s test -p 'test_*.py')
+(cd resource_library/orthology_phylogeny/scripts && python -B -m unittest discover -p 'test_*.py')
 ```
 
 Central workflow/audit tests use temporary fixtures and simulated inference.
@@ -87,7 +87,7 @@ The current 214-model library includes the 38 accessions previously absent from
 the expanded family catalogue. The original 176 records/versions/GA thresholds
 were preserved and the fallback split is empty. Inspect
 [pfam_expansion_20261026.json](../maintenance/pfam_expansion_20261026.json),
-`detection/databases/pfam/adhesome_v1.0.hmm.metadata.json` and the
+`resource_library/detection/databases/pfam/adhesome_v1.0.hmm.metadata.json` and the
 `source_v1.0/download_provenance.json` record. Model source/version labels identify
 provenance and do not change pipeline release version 1.0.
 
@@ -107,8 +107,8 @@ there is no project backup. Detection later creates its HMMER indexes when a sca
 is deliberately launched. To rebuild from an already supplied complete source:
 
 ```bash
-python -B detection/build_adhesome_pfam_library.py \
-  --pfam-hmm detection/databases/pfam/source_v1.0/combined_source.hmm
+python -B resource_library/detection/build_adhesome_pfam_library.py \
+  --pfam-hmm resource_library/detection/databases/pfam/source_v1.0/combined_source.hmm
 ```
 
 Component reference coverage is distinct from family coverage. The active paired
@@ -121,9 +121,9 @@ families. Current provenance needs a verified label refresh, not an edited hash.
 For a reviewed future crosswalk update, publish a separate panel:
 
 ```bash
-python -B detection/expand_component_references.py \
-  --base detection/references/adhesome_v1.0 \
-  --crosswalk detection/config/adhesome_component_crosswalk.csv \
+python -B resource_library/detection/expand_component_references.py \
+  --base resource_library/detection/references/adhesome_v1.0 \
+  --crosswalk config/detection/adhesome_component_crosswalk.csv \
   --out reference_panel_updated --repair-identity --workers 4
 ```
 
@@ -138,7 +138,7 @@ The base-seed builder cannot overwrite an already expanded component panel.
 Reclassification from unchanged caches, with new outputs:
 
 ```bash
-python -B detection/scripts/refresh_detection_evidence.py \
+python -B resource_library/detection/scripts/refresh_detection_evidence.py \
   --detection /absolute/path/to/completed/detection \
   --out runs/detection_reclassified
 ```
@@ -149,10 +149,10 @@ space for the new result, and is not a no-copy operation. To deliberately refres
 forward/reciprocal BLAST while reusing domain scans, add:
 
 ```text
---reference-set detection/references/adhesome_v1.0 --cpu 4
+--reference-set resource_library/detection/references/adhesome_v1.0 --cpu 4
 ```
 
-Export that new detection through `adhesome_workflow.py start --detection ...`
+Export that new detection through `main/adhesome_workflow.py start --detection ...`
 to a new handoff before external return. The original batch/handoff remains
 fixed. Newly added Pfam models require actual new scans for new domain evidence;
 BLAST-only or audit-only refresh does not provide it.
@@ -210,19 +210,19 @@ no improvement is established until measured. Imported or completed inference
 cannot be relabelled with new settings. Tuning on the 70 RefOGs is not independent
 testing of the chosen parameters.
 
-Optional tools, all separate from routine inference:
+Optional maintenance, all separate from routine inference:
 
 | Entry point | Purpose |
 | --- | --- |
-| `tools/evaluate_precision_identity.py` | Calibration-first library comparison; same `calibrated_v1` by default, explicit `--comparison-set development` for stricter experiments |
-| `scripts/evaluate_family_expansion.py` | Paired cached-evidence family-library comparison with regression accounting |
-| `scripts/evaluate_validation.py` | Labelled membership/family evaluation contracts |
-| `tools/optimize_stage2.py` | Calibration selection, freeze, then fixed validation ablations |
-| `tools/stage2_optimization_report.py` | Reporting from completed optimization outputs |
-| `tools/evaluate_orthogroup_ablation.py` | Explicit fixed-coefficient replay comparisons |
-| `tools/recalibrate_orthogroup.py` | Calibration-only orthogroup-context exploration |
-| `tools/audit_existing_workflow.py` | Historical provenance and reuse diagnostics |
-| `tools/prepare_phylogenetic_identity.py` | Existing-tree inventory/concordance using independently curated labels |
+| `maintenance/evaluate_precision_identity.py` | Calibration-first library comparison; same `calibrated_v1` by default, explicit `--comparison-set development` for stricter experiments |
+| `resource_library/scripts/evaluate_family_expansion.py` | Paired cached-evidence family-library comparison with regression accounting |
+| `resource_library/scripts/evaluate_validation.py` | Labelled membership/family evaluation contracts |
+| `maintenance/optimize_stage2.py` | Calibration selection, freeze, then fixed validation ablations |
+| `maintenance/stage2_optimization_report.py` | Reporting from completed optimization outputs |
+| `maintenance/evaluate_orthogroup_ablation.py` | Explicit fixed-coefficient replay comparisons |
+| `maintenance/recalibrate_orthogroup.py` | Calibration-only orthogroup-context exploration |
+| `maintenance/audit_existing_workflow.py` | Historical provenance and reuse diagnostics |
+| `maintenance/prepare_phylogenetic_identity.py` | Existing-tree inventory/concordance using independently curated labels |
 
 Use `--help` to inspect exact required inputs without launching an experiment.
 An actual experiment/replay does perform classification or scoring and needs its
@@ -245,13 +245,13 @@ unrecruited Defensin-6 needs a separate recruitment-stage change.
 The only operational guides are `docs/MANUAL.md`, `docs/WORKFLOW.md` and this file.
 The root README is a navigation index. Stage READMEs and duplicate `README/` guides
 were merged and removed. The two JSON target examples were moved unchanged into
-`configs/`, and their test/reference paths updated. `maintenance/check_workspace.py`
+`config/`, and their test/reference paths updated. `maintenance/check_workspace.py`
 checks the new guide locations and recursively validates current Markdown links
 while excluding historical inputs/results. The workspace-level README points to
 the consolidated guides. Historical path-repair/organization receipts retain
 their original recorded filenames as provenance, not as current commands.
 
-`annotation/family_coverage_expansion_report.md` remains a historical curation
+`resource_library/annotation/family_coverage_expansion_report.md` remains a historical curation
 report accompanying its manifest/resource bundle, not an alternate operating
 manual. Its old 96/57/190/136 counts describe that proposal, not the active 222/197
 pair. Generated run READMEs/reports and raw resource documentation captured as
@@ -270,3 +270,36 @@ It records superseded source-document hashes, relocated configurations and
 verification results without preserving duplicate document bodies or creating
 backups. After future edits rerun the workspace checker, keep relative guide
 links current and update the receipt only as a new documented maintenance event.
+
+## Source-layout maintenance
+
+Edit settings and rules in `config/`, entry points in `main/`, explicit maintenance
+utilities in `maintenance/`, and component/shared code or library assets in
+`resource_library/`. Do not put editable policy beside a component implementation.
+Do not move `inputs/`, `validation/`, returned evidence or `runs/` when tidying
+source code. A learned model or saved run manifest is data/provenance, not a
+replacement for a central workflow configuration.
+
+`config/layout_paths.json` is the source-path compatibility map.
+`maintenance/layout_migration.json` records the old and new source hashes and the
+unchanged data inventory for this layout migration. Do not edit a migration
+receipt to accept subsequent algorithm or scientific-rule changes. Start a new
+frozen run for those changes. Existing numerical calibration is not silently
+re-certified by a path migration.
+
+Check physical guide/config links, imports, syntax and CLI help without analysis:
+
+```bash
+python -B maintenance/check_workspace.py
+```
+
+The checker launches only `--help` commands. It does not run detection, annotation,
+orthology, phylogeny, audits, model fitting or performance-report generation.
+
+Historical control-panel construction scripts are retained in
+`resource_library/build_calibration_set/build_calibration_set.py` and
+`resource_library/build_validation_set/retrieve_orthologues.py`. Their original
+input tables/caches remain under `validation/build_calibration_set/` and
+`validation/build_validation_set/`. Supply explicit input/output paths when using
+these separate resource-construction utilities; they are not launched by the
+main workflow or the read-only workspace checker.

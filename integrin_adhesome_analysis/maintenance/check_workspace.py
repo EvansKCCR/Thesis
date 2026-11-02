@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only bundle checks: paths, Python syntax, defaults and CLI --help only."""
+"""Read-only bundle checks: physical links, syntax, defaults and CLI --help only."""
 import argparse
 import ast
 import json
@@ -8,49 +8,17 @@ import re
 import subprocess
 import sys
 
-ROOT=Path(__file__).resolve().parents[1]
-ENTRYPOINTS=[
-    'scripts/run_pipeline.py','adhesome_workflow.py','scripts/report_audits.py',
-    'tools/evaluate_precision_identity.py','tools/prepare_phylogenetic_identity.py','annotation/family_set_review_gate.py',
-    'detection/adhesome_pipeline.py','detection/scripts/run_detection.py',
-    'motif_annotation/family_motifs.py',
-    'orthology_phylogeny/scripts/prepare_references.py',
-    'orthology_phylogeny/scripts/pipeline.py',
-    'orthology_phylogeny/scripts/phylogeny.py',
-    'orthology_phylogeny/scripts/benchmark.py',
-    'orthology_phylogeny/scripts/adhesome_benchmark_subset.py',
-    'annotation/integrated_adhesome_pipeline.py',
-    'scripts/evaluate_validation.py','scripts/evaluate_family_expansion.py',
-    'tools/audit_existing_workflow.py','tools/evaluate_orthogroup_ablation.py',
-    'tools/recalibrate_orthogroup.py','tools/optimize_stage2.py',
-    'tools/stage2_optimization_report.py','tools/validate_resources.py']
-RESOURCES=[
-    'pipeline_paths.py','validation/calibration_set.xlsx','validation/calibration.faa',
-    'annotation/family_set_registry.json','annotation/family_set_rule_coverage_summary.tsv',
-    'validation/validation_set.csv','validation/validation.faa',
-    'configs/isolated_workflow.json','configs/panel.example.json',
-    'detection/config/family_rules.json','detection/config/adhesome_pfam_manifest.csv',
-    'detection/config/adhesome_component_crosswalk.csv',
-    'detection/databases/pfam/adhesome_v1.0.hmm',
-    'detection/databases/pfam/adhesome_v1.0.hmm.metadata.json',
-    'detection/references/adhesome_v1.0/search_references.faa',
-    'detection/references/adhesome_v1.0/metazoan_references.faa',
-    'motif_annotation/Motif_library/adhesion_core.json',
-    'annotation/family_rules.json',
-    'annotation/family_identity_rules.json',
-    'annotation/stage2_evidence_rules.json',
-    'annotation/audit_policy.json',
-    'templates/output_schema.json','docs/MANUAL.md','docs/WORKFLOW.md','docs/MAINTENANCE.md','README.md']
-CONFIG_PATHS={
-    'detection/config/family_rules.json':'motif_library',
-    'annotation/family_rules.json':'motif_library',
-    'motif_annotation/Motif_library/context_rules.json':'domain_rule_source',
-    'annotation/audit_policy.json':'identity_probability_model'}
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from pipeline_paths import activate
+activate()
+
+ENTRYPOINTS = ['main/run_pipeline.py', 'main/adhesome_workflow.py', 'main/report_audits.py', 'maintenance/evaluate_precision_identity.py', 'maintenance/prepare_phylogenetic_identity.py', 'resource_library/annotation/family_set_review_gate.py', 'resource_library/detection/adhesome_pipeline.py', 'resource_library/detection/scripts/run_detection.py', 'resource_library/motif_annotation/family_motifs.py', 'resource_library/orthology_phylogeny/scripts/prepare_references.py', 'resource_library/orthology_phylogeny/scripts/pipeline.py', 'resource_library/orthology_phylogeny/scripts/phylogeny.py', 'resource_library/orthology_phylogeny/scripts/benchmark.py', 'resource_library/orthology_phylogeny/scripts/adhesome_benchmark_subset.py', 'resource_library/annotation/integrated_adhesome_pipeline.py', 'resource_library/scripts/evaluate_validation.py', 'resource_library/scripts/evaluate_family_expansion.py', 'maintenance/audit_existing_workflow.py', 'maintenance/evaluate_orthogroup_ablation.py', 'maintenance/recalibrate_orthogroup.py', 'maintenance/optimize_stage2.py', 'maintenance/stage2_optimization_report.py', 'maintenance/validate_resources.py', 'adhesome_workflow.py']
+RESOURCES = ['main/pipeline_paths.py', 'validation/calibration_set.xlsx', 'validation/calibration.faa', 'config/annotation/family_set_registry.json', 'resource_library/annotation/family_set_rule_coverage_summary.tsv', 'validation/validation_set.csv', 'validation/validation.faa', 'config/isolated_workflow.json', 'config/panel.example.json', 'config/detection/family_rules.json', 'config/detection/adhesome_pfam_manifest.csv', 'config/detection/adhesome_component_crosswalk.csv', 'resource_library/detection/databases/pfam/adhesome_v1.0.hmm', 'resource_library/detection/databases/pfam/adhesome_v1.0.hmm.metadata.json', 'resource_library/detection/references/adhesome_v1.0/search_references.faa', 'resource_library/detection/references/adhesome_v1.0/metazoan_references.faa', 'config/motif_annotation/adhesion_core.json', 'config/annotation/family_rules.json', 'config/annotation/family_identity_rules.json', 'config/annotation/stage2_evidence_rules.json', 'config/annotation/audit_policy.json', 'config/templates/output_schema.json', 'docs/MANUAL.md', 'docs/WORKFLOW.md', 'docs/MAINTENANCE.md', 'README.md', 'pipeline_paths.py', 'config/layout_paths.json', 'config/environment.yml', 'config/requirements.txt']
+CONFIG_PATHS = {'config/detection/family_rules.json': 'motif_library', 'config/annotation/family_rules.json': 'motif_library', 'config/motif_annotation/context_rules.json': 'domain_rule_source', 'config/annotation/audit_policy.json': 'identity_probability_model'}
 
 
 def guide_links():
-    # Operational documentation is consolidated here. Historical run reports and
-    # resource-curation reports are evidence, not alternate operating guides.
     guides={ROOT/'README.md',*(ROOT/'docs').glob('*.md')}
     count=0
     for guide in sorted(guides):
@@ -74,14 +42,13 @@ def check(help_checks=True):
     for path in ROOT.rglob('*.py'):
         if {'runs','inputs','returned','results','__pycache__','.venv'}&set(path.relative_to(ROOT).parts):continue
         ast.parse(path.read_text(encoding='utf-8-sig'),filename=str(path));syntax+=1
-    config=json.loads((ROOT/'configs/isolated_workflow.json').read_text())
-    rules=json.loads((ROOT/'annotation/stage2_evidence_rules.json').read_text())
+    config=json.loads((ROOT/'config/isolated_workflow.json').read_text())
+    rules=json.loads((ROOT/'config/annotation/stage2_evidence_rules.json').read_text())
     if config['stage2_profile']!=rules['default_profile'] or rules['default_profile']!='calibrated_v1':
         raise ValueError('Main workflow and Stage 2 defaults do not select calibrated_v1')
     checked=[]
     if help_checks:
         for name in ENTRYPOINTS:
-            # A different working directory detects accidental reliance on cwd.
             result=subprocess.run([sys.executable,'-B',str(ROOT/name),'--help'],cwd=ROOT.parent,
                 capture_output=True,text=True,timeout=30)
             if result.returncode:raise ValueError(name+' --help failed: '+result.stderr.strip())
