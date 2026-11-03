@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "unidentified_input": {"optional_missing": "skip", "mandatory_missing": "stop"},
+  "datasets": {
+    "reference_raw": {"path": "input/reference_raw", "kind": "protein_directory", "aliases": ["reference_proteomes", "reference_proteome"]},
+    "target_raw": {"path": "input/target_raw", "kind": "protein_directory", "aliases": ["target_proteomes"]},
+    "target_configuration": {"path": "config/targets.json", "kind": "file", "aliases": ["targets_config"]},
+    "curated_references": {"path": "../homology_retrieval/reference_fasta", "kind": "protein_directory", "aliases": ["reference_fasta", "refrence_fasta"]},
+    "calibration_fasta": {"path": "validation/calibration.faa", "kind": "protein_file", "aliases": []},
+    "calibration_labels": {"path": "validation/calibration_set.xlsx", "kind": "file", "aliases": []},
+    "negative_exclusion_fasta": {"path": "validation/calibration.faa", "kind": "protein_file", "aliases": []},
+    "negative_exclusion_labels": {"path": "validation/calibration_set.xlsx", "kind": "file", "aliases": []},
+    "validation_fasta": {"path": "validation/validation.faa", "kind": "protein_file", "aliases": []},
+    "validation_labels": {"path": "validation/validation_set.csv", "kind": "file", "aliases": []},
+    "identity_model": {"path": "validation/identity_probability_model.json", "kind": "file", "aliases": []},
+    "benchmark_refogs": {"path": "input/reference_raw/RefOGs", "kind": "directory", "aliases": []},
+    "benchmark_input": {"path": "input/reference_raw/Input", "kind": "protein_directory", "aliases": []},
+    "phylogeny_library": {"path": "../independent_family_phylogeny/library/library_manifest.json", "kind": "file", "aliases": []}
+  },
+  "reference_panels": {}
+}

@@ -22,6 +22,7 @@ import subprocess
 import sys
 
 from .datasets import ROOT, sha, dump, table, load_dataset, overlaps, materialize, reference_inventory, reference_matches, fasta
+from input_dependencies import InputRegistry
 
 
 def algorithm_inventory():
@@ -47,7 +48,9 @@ def verify_frozen(contract):
         relocated = ROOT == _LAYOUT_BUNDLE_ROOT and recorded_digest_matches(name, digest)
         if not exact and not relocated:
             raise ValueError('Frozen algorithm/library changed: '+name)
-    reference = reference_inventory(_layout_resource(Path(contract['references']['root'])))
+    raw=_layout_resource(Path(contract['references']['root']))
+    selected=[raw/name for name in contract['references']['selection']] if 'selection' in contract['references'] else None
+    reference = reference_inventory(raw,selected)
     if reference != contract['references']:
         raise ValueError('Frozen reference composition changed; use a new run')
 
@@ -55,10 +58,12 @@ def verify_frozen(contract):
 def prepare(args):
     settings = json.loads(_layout_resource(args.config).read_text())
     allowed = {'version','family_coverage','orthogroup_context_weight','qc','orthofinder_search',
-               'orthofinder_method','orthofinder_inflation','benchmark_scope','benchmark_selection','stage2_profile','phylogenetic_identity_resolution'}
+               'orthofinder_method','orthofinder_inflation','benchmark_scope','benchmark_selection','stage2_profile','phylogenetic_identity_resolution','reference_files','reference_panel'}
     if set(settings)-allowed or settings.get('version') != '1.0':
         raise ValueError('Unknown configuration fields or configuration version != 1.0')
     settings['phylogenetic_identity_resolution']=bool(settings.get('phylogenetic_identity_resolution',False) or getattr(args,'phylogenetic_identity_resolution',False))
+    for key in ('reference_files','reference_panel'):
+        if getattr(args,key,None):settings[key]=getattr(args,key)
     from stage2_evidence import configuration as stage2_configuration
     settings.setdefault('stage2_profile',stage2_configuration()['default_profile'])
     if settings['stage2_profile'] not in stage2_configuration()['profiles']:
@@ -68,18 +73,37 @@ def prepare(args):
         raise ValueError('Isolated routine runs require a fixed context coefficient; use 1.0 for neutral expanded-baseline context')
     if settings.get('family_coverage') not in ('expanded','original') or 'qc' not in settings:
         raise ValueError('Select paired family coverage and explicit sequence QC')
-    calibration, cal_summary = load_dataset('calibration',args.calibration_fasta,args.calibration_labels)
-    datasets = {'calibration':(calibration,cal_summary)}
+    registry=InputRegistry(ROOT)
+    decisions=[registry.assess('calibration_'+kind,'calibration.inputs',mandatory=False,
+                              override=getattr(args,'calibration_'+kind),execution=True) for kind in ('fasta','labels')]
+    calibration=[]
+    datasets={}
+    if all(event['available'] for event in decisions):
+        calibration,cal_summary=load_dataset('calibration',args.calibration_fasta,args.calibration_labels)
+        datasets['calibration']=(calibration,cal_summary)
     if args.mode == 'validation':
+        for kind in ('fasta','labels'):
+            registry.require('validation_'+kind,'validation.inputs',getattr(args,'validation_'+kind))
         validation,val_summary = load_dataset('validation',args.validation_fasta,args.validation_labels,
                                                select_labelled=args.select_labelled_validation)
         datasets['validation'] = (validation,val_summary)
     else:
         if not args.targets_config or not args.input_dir:
             raise ValueError('Target mode requires --input-dir and --targets-config')
+        registry.require('target_configuration','target.configuration',args.targets_config)
         config = json.loads(_layout_resource(args.targets_config).read_text())
         if config.get('qc') != settings['qc']:
             raise ValueError('Target sequence QC differs from frozen branch configuration')
+        registry.require('target_raw','target.inputs',args.input_dir)
+        target_root=Path(args.input_dir).resolve()
+        controls_paths=[getattr(args,name,None) or registry.path_for(name) for name in
+                        ('calibration_fasta','calibration_labels','validation_fasta','validation_labels')]
+        controls_paths += [registry.path_for(name) for name in ('negative_exclusion_fasta','negative_exclusion_labels')]
+        for control_path in controls_paths:
+            if target_root in Path(control_path).resolve().parents:
+                raise ValueError('Evaluation controls must be outside the target-analysis input root')
+        if Path(args.reference_raw).resolve()==target_root:
+            raise ValueError('Reference and target input roots must be separate')
         sys.path.insert(0,str(_layout_resource(ROOT/'detection')))
         try:
             from adhesome_pipeline import check_inputs
@@ -89,9 +113,10 @@ def prepare(args):
         reserved = re.compile(r'^(?:Cal_|Val_|validation$|calibration$)',re.I)
         controls = {r['original_id'] for r in calibration}
         # Inspect the validation IDs solely for a production leakage gate, never run it.
-        if _layout_resource(args.validation_labels).exists():
+        for label_path in (args.calibration_labels,args.validation_labels):
+            if not _layout_resource(label_path).exists():continue
             from .datasets import label_rows
-            controls |= {str(r.get('fasta_id')) for r in label_rows(args.validation_labels)}
+            controls |= {str(r.get('fasta_id') or r.get('accession')) for r in label_rows(label_path) if r.get('fasta_id') or r.get('accession')}
         for code, path in sources.items():
             if reserved.search(code) or controls & set(fasta(path)):
                 raise ValueError('Evaluation control input cannot enter production target panel: '+code)
@@ -100,8 +125,13 @@ def prepare(args):
             files={str(p):sha(p) for p in sources.values()}, species=summary,ignored_fastas=ignored)
         datasets['target'] = (config,target_manifest)
     control_ids={r['original_id'] for r in calibration}
+    if not calibration and Path(args.calibration_labels).is_file():
+        from .datasets import label_rows
+        control_ids.update(str(r.get('fasta_id') or r.get('accession')) for r in label_rows(args.calibration_labels) if r.get('fasta_id') or r.get('accession'))
     if 'validation' in datasets:control_ids.update(r['original_id'] for r in datasets['validation'][0])
-    for path in args.reference_raw.iterdir():
+    registry.require('reference_raw','orthology.references',args.reference_raw)
+    selected=registry.select_references(panel=settings.get('reference_panel'),files=settings.get('reference_files'),raw=args.reference_raw)
+    for path in selected if selected is not None else args.reference_raw.iterdir():
         if _layout_resource(path).is_file() and path.suffix.lower() in ('.faa','.fa','.fasta') and control_ids & set(fasta(path)):
             raise ValueError('Evaluation query identifiers present in raw reference input: '+str(path))
     evolutionary_evidence={}
@@ -110,10 +140,12 @@ def prepare(args):
             path=getattr(args,kind+'_phylogenetic_evidence',None)
             if path:evolutionary_evidence[kind]=dict(path=str(_layout_resource(path).resolve()),sha256=sha(path) if _layout_resource(path).is_file() else None)
     contract = dict(evolutionary_evidence=evolutionary_evidence,version='1.0', mode=args.mode, frozen_settings=settings,
-        algorithm_files=algorithm_inventory(),references=reference_inventory(args.reference_raw),
+        algorithm_files=algorithm_inventory(),references=reference_inventory(args.reference_raw,selected),
         datasets={kind:summary for kind,(_,summary) in datasets.items()},
         automatic_recalibration=False, orthology_isolation='independent inference per branch',
-        shared_reference_queries_modify_production=False)
+        shared_reference_queries_modify_production=False,
+        input_decisions=decisions, skipped_gates={} if 'calibration' in datasets else {
+            'calibration':dict(status='skipped',reason='Optional calibration FASTA/labels unavailable',input_decisions=decisions)})
     encoded = json.dumps(contract,sort_keys=True).encode()
     contract['contract_sha256'] = hashlib.sha256(encoded).hexdigest()
     out = _layout_resource(args.out).resolve()
@@ -136,12 +168,12 @@ def prepare(args):
         if kind != 'target':
             materialize(kind,data,_layout_resource(branch/'inputs'),settings['qc'])
             table(_layout_resource(branch/'excluded_unlabelled.tsv'),[dict(original_id=i,reason='not_in_label_table') for i in summary['excluded_unlabelled_ids']])
-            matches=reference_matches(data,args.reference_raw)
+            matches=reference_matches(data,args.reference_raw,selected)
             table(_layout_resource(branch/'reference_overlap.tsv'),matches)
             preflight.setdefault('reference_overlap',{})[kind]=len({r['original_id'] for r in matches})
         else:
             dump(_layout_resource(branch/'targets.json'),data)
-    if args.mode == 'validation':
+    if args.mode == 'validation' and 'calibration' in datasets:
         overlap = overlaps(calibration,datasets['validation'][0])
         table(_layout_resource(out/'calibration_validation_overlap.tsv'),overlap)
         preflight['overlap_warning'] = dict(exact_sequence_overlaps=len(overlap),
@@ -168,9 +200,9 @@ def run(args):
     contract = prepare(args); out=_layout_resource(args.out).resolve()
     if args.preflight_only:
         print('Preflight passed: '+str(_layout_resource(out/'preflight.json'))); return 0
-    workers = 2 if args.schedule=='parallel' and args.threads>=2 else 1
+    kinds = [kind for kind in ('calibration',args.mode) if kind in contract['datasets']]
+    workers = 2 if len(kinds)>1 and args.schedule=='parallel' and args.threads>=2 else 1
     per_branch = max(1,args.threads//workers)
-    kinds = ['calibration',args.mode]
     started = datetime.now(timezone.utc).isoformat()
     def worker(kind):
         cmd = [sys.executable,'-B','-m','schisto_adhesome.branch','--kind',kind,'--run',str(out),
@@ -184,7 +216,9 @@ def run(args):
             cmd += ['--reuse-detection',str(_layout_resource(args.reuse_target_detection).resolve())]
         log = _layout_resource(out/kind/'branch.log')
         with _layout_resource(log).open('a',encoding='utf-8') as handle:
-            proc = subprocess.run(cmd,cwd=ROOT,stdout=handle,stderr=subprocess.STDOUT)
+            env=os.environ.copy()
+            env['PYTHONPATH']=os.pathsep.join([str(ROOT/'resource_library'),str(ROOT),str(ROOT/'resource_library/scripts'),env.get('PYTHONPATH','')])
+            proc = subprocess.run(cmd,cwd=ROOT,stdout=handle,stderr=subprocess.STDOUT,env=env)
         status_file = _layout_resource(out/kind/'branch_status.json')
         status = json.loads(_layout_resource(status_file).read_text()) if _layout_resource(status_file).exists() else dict(status='failed',exit_code=proc.returncode)
         if proc.returncode not in (0,2):status=dict(status='failed',exit_code=proc.returncode,error=status.get('error','Branch failed before completion'))
@@ -208,11 +242,12 @@ def run(args):
     summary = dict(version='1.0',selected_mode=args.mode,status=status,timestamp=started,
         completed_at=datetime.now(timezone.utc).isoformat(),scheduler=dict(workers=workers,threads_per_branch=per_branch),
         frozen_contract_sha256=contract['contract_sha256'],weights=contract['frozen_settings'].get('orthogroup_context_weight'),
-        automatic_recalibration=False,gates=gates)
+        automatic_recalibration=False,gates=gates,skipped_gates=contract.get('skipped_gates',{}))
     dump(_layout_resource(out/'run_summary.json'),summary)
     links = '\n'.join(f'- {kind}: {gate.get("status")} — [{kind} report]({kind}/reports/'+
         ('validation_review.html' if kind=='validation' and gate.get('validation_review') else 'report.html')+
         f'), [{kind} log]({kind}/branch.log)' for kind,gate in gates.items())
+    links += ''.join(f"\n- {kind}: skipped — {gate['reason']}" for kind,gate in contract.get('skipped_gates',{}).items())
     (_layout_resource(out/'README.md')).write_text(f'# Workflow 1.0: {args.mode}\n\nStatus: {status}\n\n{links}\n\nCalibration is a frozen internal self-test. No fitting occurs.\n',encoding='utf-8')
     print(json.dumps(summary,indent=2))
     return 1 if status=='failed' else 2 if status!='complete' else 0

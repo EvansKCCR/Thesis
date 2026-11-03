@@ -30,7 +30,7 @@ _RECEIPT_CACHE = None
 
 def activate():
     """Make canonical CLI, shared modules and maintenance packages importable."""
-    for folder in (ROOT, MAIN, SCRIPTS, MAINTENANCE, RESOURCE_LIBRARY):
+    for folder in (ROOT, MAIN, SCRIPTS, MAINTENANCE, RESOURCE_LIBRARY, DETECTION, MOTIFS, ANNOTATION):
         if str(folder) not in sys.path:
             sys.path.insert(0, str(folder))
     return ROOT

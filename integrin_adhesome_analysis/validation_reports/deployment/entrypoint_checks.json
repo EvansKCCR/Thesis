@@ -1,0 +1,33 @@
+[
+  {
+    "entrypoint": "Thesis\\integrin_adhesome_analysis\\main\\run_pipeline.py",
+    "exit_code": 0,
+    "structural_readiness": "pass",
+    "error": ""
+  },
+  {
+    "entrypoint": "Thesis\\homology_retrieval\\reciprocal_blast.py",
+    "exit_code": 0,
+    "structural_readiness": "pass",
+    "error": ""
+  },
+  {
+    "entrypoint": "Thesis\\reconciliation\\reconcile_candidates.py",
+    "exit_code": 0,
+    "structural_readiness": "pass",
+    "error": ""
+  },
+  {
+    "entrypoint": "Thesis\\independent_family_phylogeny\\run_phylogeny.py",
+    "exit_code": 0,
+    "structural_readiness": "pass",
+    "error": ""
+  },
+  {
+    "entrypoint": "actual target input preflight with missing mandatory inputs",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "output_created": false,
+    "diagnostic": "ERROR: unidentified_input: stage=target.configuration, input=target_configuration, decision=stop_stage: path_missing. Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+  }
+]

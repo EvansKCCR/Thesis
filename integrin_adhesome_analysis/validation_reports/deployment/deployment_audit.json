@@ -1,0 +1,1092 @@
+{
+  "version": "1.0",
+  "created_utc": "2026-11-03T13:59:34.282863+00:00",
+  "workflow": "all",
+  "clean_state": true,
+  "analysis_launched": false,
+  "biological_results_generated": false,
+  "structural_readiness": "pass",
+  "data_execution_readiness": false,
+  "deployment_readiness": "warning",
+  "execution_ready": false,
+  "execution_prerequisites_present": false,
+  "data_readiness_scope": "Presence/type/extension assessment only; sequence contents, gene mappings, tool versions and returned external evidence require real input validation.",
+  "invoking_environment": {
+    "platform": "linux",
+    "python": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/python"
+  },
+  "checks": [
+    {
+      "check": "Workflow configuration JSON",
+      "status": "pass",
+      "detail": "19 configuration files parsed"
+    },
+    {
+      "check": "Workflow configuration",
+      "status": "pass",
+      "detail": "Isolated settings, Stage 2 profile and paired family coverage"
+    },
+    {
+      "check": "Family and identity rule initialization",
+      "status": "pass",
+      "detail": {
+        "identity_rules": 197,
+        "stage2_additions": 11,
+        "family_rules": 222
+      }
+    },
+    {
+      "check": "Configuration resource: config/annotation/family_rules.json",
+      "status": "pass",
+      "detail": "Required static library configuration"
+    },
+    {
+      "check": "Configuration resource: config/annotation/family_identity_rules.json",
+      "status": "pass",
+      "detail": "Required static library configuration"
+    },
+    {
+      "check": "Configuration resource: config/annotation/family_set_registry.json",
+      "status": "pass",
+      "detail": "Required static library configuration"
+    },
+    {
+      "check": "Configuration resource: config/motif_annotation/adhesion_core.json",
+      "status": "pass",
+      "detail": "Required static library configuration"
+    },
+    {
+      "check": "Configuration resource: config/motif_annotation/motif_master.json",
+      "status": "pass",
+      "detail": "Required static library configuration"
+    },
+    {
+      "check": "Configuration resource: config/orthology_phylogeny/benchmark_policy.json",
+      "status": "pass",
+      "detail": "Required static library configuration"
+    },
+    {
+      "check": "Source-layout paths",
+      "status": "pass",
+      "detail": "589 required source paths resolve; historical provenance caches are optional"
+    },
+    {
+      "check": "Deployment source inventory",
+      "status": "pass",
+      "detail": "Source-only release checksums resolve; user inputs and results excluded"
+    },
+    {
+      "check": "Scientific asset checkout integrity",
+      "status": "pass",
+      "detail": "Git preserves hashed scientific library/config bytes; release code-text checks normalize LF without changing biological fingerprints"
+    },
+    {
+      "check": "Script syntax",
+      "status": "pass",
+      "detail": "110 Python files parsed without importing scientific datasets"
+    },
+    {
+      "check": "Stage entry point: detection",
+      "status": "pass",
+      "detail": "integrin_adhesome_analysis/resource_library/detection/scripts/run_detection.py"
+    },
+    {
+      "check": "Stage entry point: motifs",
+      "status": "pass",
+      "detail": "integrin_adhesome_analysis/resource_library/motif_annotation/family_motifs.py"
+    },
+    {
+      "check": "Stage entry point: references",
+      "status": "pass",
+      "detail": "integrin_adhesome_analysis/resource_library/orthology_phylogeny/scripts/prepare_references.py"
+    },
+    {
+      "check": "Stage entry point: orthology",
+      "status": "pass",
+      "detail": "integrin_adhesome_analysis/resource_library/orthology_phylogeny/scripts/pipeline.py"
+    },
+    {
+      "check": "Stage entry point: audit",
+      "status": "pass",
+      "detail": "integrin_adhesome_analysis/resource_library/annotation/integrated_adhesome_pipeline.py"
+    },
+    {
+      "check": "Stage entry point: isolated_branches",
+      "status": "pass",
+      "detail": "integrin_adhesome_analysis/main/run_pipeline.py"
+    },
+    {
+      "check": "Stage entry point: homology",
+      "status": "pass",
+      "detail": "homology_retrieval/reciprocal_blast.py"
+    },
+    {
+      "check": "Stage entry point: reconciliation",
+      "status": "pass",
+      "detail": "reconciliation/reconcile_candidates.py"
+    },
+    {
+      "check": "Stage entry point: independent_phylogeny",
+      "status": "pass",
+      "detail": "independent_family_phylogeny/run_phylogeny.py"
+    },
+    {
+      "check": "Detection model library",
+      "status": "pass",
+      "detail": {
+        "required": 214,
+        "available": 214,
+        "missing": []
+      }
+    },
+    {
+      "check": "Current detection-rule model coverage",
+      "status": "pass",
+      "detail": {
+        "required": 172,
+        "missing": []
+      }
+    },
+    {
+      "check": "Deployed HMM checksums",
+      "status": "pass",
+      "detail": "Combined, manifest and split-library checksums; no library rebuild performed"
+    },
+    {
+      "check": "Output destinations",
+      "status": "pass",
+      "detail": "Separate gate/downstream namespaces and independent bundle outputs; no directories created"
+    },
+    {
+      "check": "Stage dependency graph",
+      "status": "pass",
+      "detail": "32 conditional stages topologically ordered; benchmark is a soft audit dependency; phylogeny follows audit"
+    },
+    {
+      "check": "Raw-input paths",
+      "status": "pass",
+      "detail": "Homology aliases resolve to main-project raw roots"
+    },
+    {
+      "check": "Missing input handling",
+      "status": "pass",
+      "detail": "unidentified_input decisions recorded per requesting stage; mandatory stops cannot be disabled"
+    },
+    {
+      "check": "Analysis-gate isolation",
+      "status": "pass",
+      "detail": "Separate gate namespaces, raw roots, branch contracts, reserved identifiers and existing overlap checks"
+    },
+    {
+      "check": "Stale output dependencies",
+      "status": "pass",
+      "detail": "All generated dependencies are planned outputs; no saved audit, result, panel or inference checkpoint is opened"
+    },
+    {
+      "check": "Selective reference loading",
+      "status": "pass",
+      "detail": "Homology resolves source species before loading sequences; explicit reference-set/proteome/panel selections are supported"
+    },
+    {
+      "check": "Software dependencies",
+      "status": "pass",
+      "detail": [
+        {
+          "name": "hmmsearch",
+          "available": true,
+          "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/hmmsearch",
+          "version_verified": false,
+          "required": true
+        },
+        {
+          "name": "hmmpress",
+          "available": true,
+          "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/hmmpress",
+          "version_verified": false,
+          "required": true
+        },
+        {
+          "name": "blastp",
+          "available": true,
+          "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/blastp",
+          "version_verified": false,
+          "required": true
+        },
+        {
+          "name": "makeblastdb",
+          "available": true,
+          "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/makeblastdb",
+          "version_verified": false,
+          "required": true
+        },
+        {
+          "name": "orthofinder",
+          "available": true,
+          "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/orthofinder",
+          "version_verified": false,
+          "required": true
+        },
+        {
+          "name": "mafft",
+          "available": true,
+          "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/mafft",
+          "version_verified": false,
+          "required": true
+        },
+        {
+          "name": "trimal",
+          "available": true,
+          "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/trimal",
+          "version_verified": false,
+          "required": true
+        },
+        {
+          "name": "iqtree",
+          "available": true,
+          "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/iqtree",
+          "version_verified": false,
+          "required": true
+        },
+        {
+          "name": "openpyxl",
+          "available": true,
+          "version": "3.1.5",
+          "required": true
+        },
+        {
+          "name": "biopython",
+          "available": true,
+          "version": "1.85",
+          "required": true
+        }
+      ]
+    },
+    {
+      "check": "Clean-state dry run",
+      "status": "pass",
+      "detail": "Configuration and transition simulation complete; no scientific process launched and no biological results fabricated"
+    },
+    {
+      "check": "Deployment readiness",
+      "status": "warning",
+      "detail": "Structural validation and data/software execution readiness are reported separately"
+    }
+  ],
+  "stages": [
+    {
+      "id": "target.detection",
+      "after": [],
+      "soft_after": [],
+      "produces": "target/handoff/workflow_manifest.json",
+      "inputs": [
+        "target_raw",
+        "target_configuration"
+      ],
+      "optional": false,
+      "gate": "target",
+      "simulated_state": "blocked_on_data",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/target/handoff/workflow_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "validation.detection",
+      "after": [],
+      "soft_after": [],
+      "produces": "validation/handoff/workflow_manifest.json",
+      "inputs": [
+        "validation_fasta",
+        "validation_labels"
+      ],
+      "optional": false,
+      "gate": "validation",
+      "simulated_state": "blocked_on_data",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/validation/handoff/workflow_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "calibration.detection",
+      "after": [],
+      "soft_after": [],
+      "produces": "calibration/handoff/workflow_manifest.json",
+      "inputs": [
+        "calibration_fasta",
+        "calibration_labels"
+      ],
+      "optional": true,
+      "gate": "calibration",
+      "simulated_state": "skipped_optional_input",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/calibration/handoff/workflow_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "homology.rbh",
+      "after": [],
+      "soft_after": [],
+      "produces": "homology/rbh_candidates.faa",
+      "inputs": [
+        "curated_references",
+        "target_raw",
+        "reference_raw"
+      ],
+      "optional": false,
+      "gate": "homology",
+      "simulated_state": "blocked_on_data",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/homology_retrieval/results/homology_run/rbh_candidates.faa",
+      "executed": false
+    },
+    {
+      "id": "target.external_context",
+      "after": [
+        "target.detection"
+      ],
+      "soft_after": [],
+      "produces": "target/returned/context",
+      "inputs": [],
+      "optional": true,
+      "gate": "target",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/target/returned/context",
+      "executed": false
+    },
+    {
+      "id": "validation.external_context",
+      "after": [
+        "validation.detection"
+      ],
+      "soft_after": [],
+      "produces": "validation/returned/context",
+      "inputs": [],
+      "optional": true,
+      "gate": "validation",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/validation/returned/context",
+      "executed": false
+    },
+    {
+      "id": "calibration.external_context",
+      "after": [
+        "calibration.detection"
+      ],
+      "soft_after": [],
+      "produces": "calibration/returned/context",
+      "inputs": [],
+      "optional": true,
+      "gate": "calibration",
+      "simulated_state": "skipped_optional_gate",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/calibration/returned/context",
+      "executed": false
+    },
+    {
+      "id": "target.motifs",
+      "after": [
+        "target.external_context"
+      ],
+      "soft_after": [],
+      "produces": "target/annotation/workflow_manifest.json",
+      "inputs": [],
+      "optional": false,
+      "gate": "target",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/target/annotation/workflow_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "validation.motifs",
+      "after": [
+        "validation.external_context"
+      ],
+      "soft_after": [],
+      "produces": "validation/annotation/workflow_manifest.json",
+      "inputs": [],
+      "optional": false,
+      "gate": "validation",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/validation/annotation/workflow_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "calibration.motifs",
+      "after": [
+        "calibration.external_context"
+      ],
+      "soft_after": [],
+      "produces": "calibration/annotation/workflow_manifest.json",
+      "inputs": [],
+      "optional": false,
+      "gate": "calibration",
+      "simulated_state": "skipped_optional_gate",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/calibration/annotation/workflow_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "target.references",
+      "after": [
+        "target.motifs"
+      ],
+      "soft_after": [],
+      "produces": "target/downstream/references/panel.auto.json",
+      "inputs": [
+        "reference_raw"
+      ],
+      "optional": false,
+      "gate": "target",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/target/downstream/references/panel.auto.json",
+      "executed": false
+    },
+    {
+      "id": "validation.references",
+      "after": [
+        "validation.motifs"
+      ],
+      "soft_after": [],
+      "produces": "validation/downstream/references/panel.auto.json",
+      "inputs": [
+        "reference_raw"
+      ],
+      "optional": false,
+      "gate": "validation",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/validation/downstream/references/panel.auto.json",
+      "executed": false
+    },
+    {
+      "id": "calibration.references",
+      "after": [
+        "calibration.motifs"
+      ],
+      "soft_after": [],
+      "produces": "calibration/downstream/references/panel.auto.json",
+      "inputs": [
+        "reference_raw"
+      ],
+      "optional": false,
+      "gate": "calibration",
+      "simulated_state": "skipped_optional_gate",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/calibration/downstream/references/panel.auto.json",
+      "executed": false
+    },
+    {
+      "id": "target.orthology",
+      "after": [
+        "target.references"
+      ],
+      "soft_after": [],
+      "produces": "target/downstream/orthology/workflow_manifest.json",
+      "inputs": [],
+      "optional": false,
+      "gate": "target",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/target/downstream/orthology/workflow_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "validation.orthology",
+      "after": [
+        "validation.references"
+      ],
+      "soft_after": [],
+      "produces": "validation/downstream/orthology/workflow_manifest.json",
+      "inputs": [],
+      "optional": false,
+      "gate": "validation",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/validation/downstream/orthology/workflow_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "calibration.orthology",
+      "after": [
+        "calibration.references"
+      ],
+      "soft_after": [],
+      "produces": "calibration/downstream/orthology/workflow_manifest.json",
+      "inputs": [],
+      "optional": false,
+      "gate": "calibration",
+      "simulated_state": "skipped_optional_gate",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/calibration/downstream/orthology/workflow_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "target.benchmark",
+      "after": [
+        "target.orthology"
+      ],
+      "soft_after": [],
+      "produces": "target/downstream/benchmark/summary.json",
+      "inputs": [
+        "benchmark_refogs",
+        "benchmark_input"
+      ],
+      "optional": true,
+      "gate": "target",
+      "simulated_state": "skipped_optional_input",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/target/downstream/benchmark/summary.json",
+      "executed": false
+    },
+    {
+      "id": "validation.benchmark",
+      "after": [
+        "validation.orthology"
+      ],
+      "soft_after": [],
+      "produces": "validation/downstream/benchmark/summary.json",
+      "inputs": [
+        "benchmark_refogs",
+        "benchmark_input"
+      ],
+      "optional": true,
+      "gate": "validation",
+      "simulated_state": "skipped_optional_input",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/validation/downstream/benchmark/summary.json",
+      "executed": false
+    },
+    {
+      "id": "calibration.benchmark",
+      "after": [
+        "calibration.orthology"
+      ],
+      "soft_after": [],
+      "produces": "calibration/downstream/benchmark/summary.json",
+      "inputs": [
+        "benchmark_refogs",
+        "benchmark_input"
+      ],
+      "optional": true,
+      "gate": "calibration",
+      "simulated_state": "skipped_optional_gate",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/calibration/downstream/benchmark/summary.json",
+      "executed": false
+    },
+    {
+      "id": "target.audit",
+      "after": [
+        "target.orthology"
+      ],
+      "soft_after": [
+        "target.benchmark"
+      ],
+      "produces": "target/downstream/final/audited_family_assignments.tsv",
+      "inputs": [
+        "negative_exclusion_fasta",
+        "negative_exclusion_labels"
+      ],
+      "optional": false,
+      "gate": "target",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/target/downstream/final/audited_family_assignments.tsv",
+      "executed": false
+    },
+    {
+      "id": "validation.audit",
+      "after": [
+        "validation.orthology"
+      ],
+      "soft_after": [
+        "validation.benchmark"
+      ],
+      "produces": "validation/downstream/final/audited_family_assignments.tsv",
+      "inputs": [
+        "negative_exclusion_fasta",
+        "negative_exclusion_labels"
+      ],
+      "optional": false,
+      "gate": "validation",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/validation/downstream/final/audited_family_assignments.tsv",
+      "executed": false
+    },
+    {
+      "id": "calibration.audit",
+      "after": [
+        "calibration.orthology"
+      ],
+      "soft_after": [
+        "calibration.benchmark"
+      ],
+      "produces": "calibration/downstream/final/audited_family_assignments.tsv",
+      "inputs": [
+        "negative_exclusion_fasta",
+        "negative_exclusion_labels"
+      ],
+      "optional": false,
+      "gate": "calibration",
+      "simulated_state": "skipped_optional_gate",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/calibration/downstream/final/audited_family_assignments.tsv",
+      "executed": false
+    },
+    {
+      "id": "target.report",
+      "after": [
+        "target.audit"
+      ],
+      "soft_after": [],
+      "produces": "target/reports/report.html",
+      "inputs": [],
+      "optional": false,
+      "gate": "target",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/target/reports/report.html",
+      "executed": false
+    },
+    {
+      "id": "target.phylogeny",
+      "after": [
+        "target.audit"
+      ],
+      "soft_after": [],
+      "produces": "target/downstream/phylogeny/summary.json",
+      "inputs": [],
+      "optional": true,
+      "gate": "target",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/target/downstream/phylogeny/summary.json",
+      "executed": false
+    },
+    {
+      "id": "validation.report",
+      "after": [
+        "validation.audit"
+      ],
+      "soft_after": [],
+      "produces": "validation/reports/validation_review.html",
+      "inputs": [],
+      "optional": false,
+      "gate": "validation",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/validation/reports/validation_review.html",
+      "executed": false
+    },
+    {
+      "id": "validation.phylogeny",
+      "after": [
+        "validation.audit"
+      ],
+      "soft_after": [],
+      "produces": "validation/downstream/phylogeny/summary.json",
+      "inputs": [],
+      "optional": true,
+      "gate": "validation",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/validation/downstream/phylogeny/summary.json",
+      "executed": false
+    },
+    {
+      "id": "calibration.report",
+      "after": [
+        "calibration.audit"
+      ],
+      "soft_after": [],
+      "produces": "calibration/reports/report.html",
+      "inputs": [],
+      "optional": false,
+      "gate": "calibration",
+      "simulated_state": "skipped_optional_gate",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/calibration/reports/report.html",
+      "executed": false
+    },
+    {
+      "id": "calibration.phylogeny",
+      "after": [
+        "calibration.audit"
+      ],
+      "soft_after": [],
+      "produces": "calibration/downstream/phylogeny/summary.json",
+      "inputs": [],
+      "optional": true,
+      "gate": "calibration",
+      "simulated_state": "skipped_optional_gate",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/runs/PLANNED_ONLY/calibration/downstream/phylogeny/summary.json",
+      "executed": false
+    },
+    {
+      "id": "reconciliation.library",
+      "after": [
+        "target.audit",
+        "homology.rbh"
+      ],
+      "soft_after": [],
+      "produces": "reconciliation/library_manifest.json",
+      "inputs": [],
+      "optional": false,
+      "gate": "reconciliation",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/independent_family_phylogeny/library_reconciled/library_manifest.json",
+      "executed": false
+    },
+    {
+      "id": "independent.align",
+      "after": [
+        "reconciliation.library"
+      ],
+      "soft_after": [],
+      "produces": "independent/aligned.fasta",
+      "inputs": [],
+      "optional": false,
+      "gate": "independent",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/independent_family_phylogeny/results/PLANNED_ONLY/FAMILY/aligned.fasta",
+      "executed": false
+    },
+    {
+      "id": "independent.trim",
+      "after": [
+        "independent.align"
+      ],
+      "soft_after": [],
+      "produces": "independent/trimmed.fasta",
+      "inputs": [],
+      "optional": false,
+      "gate": "independent",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/independent_family_phylogeny/results/PLANNED_ONLY/FAMILY/trimmed.fasta",
+      "executed": false
+    },
+    {
+      "id": "independent.tree",
+      "after": [
+        "independent.trim"
+      ],
+      "soft_after": [],
+      "produces": "independent/tree.treefile",
+      "inputs": [],
+      "optional": false,
+      "gate": "independent",
+      "simulated_state": "blocked_on_upstream",
+      "output_destination": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/independent_family_phylogeny/results/PLANNED_ONLY/FAMILY/tree.treefile",
+      "executed": false
+    }
+  ],
+  "input_decisions": [
+    {
+      "action": "unidentified_input",
+      "requested": "target_raw",
+      "dataset": "target_raw",
+      "stage": "target.detection",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/target_raw",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply matching raw target proteomes; use --input-dir <directory> (homology: --target-dir). Never substitute evaluation controls or cached outputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "target_configuration",
+      "dataset": "target_configuration",
+      "stage": "target.detection",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/config/targets.json",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "validation_fasta",
+      "dataset": "validation_fasta",
+      "stage": "validation.detection",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/validation.faa",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "validation_labels",
+      "dataset": "validation_labels",
+      "stage": "validation.detection",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/validation_set.csv",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "calibration_fasta",
+      "dataset": "calibration_fasta",
+      "stage": "calibration.detection",
+      "mandatory": false,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration.faa",
+      "available": false,
+      "decision": "skip_operation",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "calibration_labels",
+      "dataset": "calibration_labels",
+      "stage": "calibration.detection",
+      "mandatory": false,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration_set.xlsx",
+      "available": false,
+      "decision": "skip_operation",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "curated_references",
+      "dataset": "curated_references",
+      "stage": "homology.rbh",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/homology_retrieval/reference_fasta",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "target_raw",
+      "dataset": "target_raw",
+      "stage": "homology.rbh",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/target_raw",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply matching raw target proteomes; use --input-dir <directory> (homology: --target-dir). Never substitute evaluation controls or cached outputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "reference_raw",
+      "dataset": "reference_raw",
+      "stage": "homology.rbh",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply matching raw references; use --reference-raw <directory> (homology: --background-dir). Select only the required reference panel."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "reference_raw",
+      "dataset": "reference_raw",
+      "stage": "target.references",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply matching raw references; use --reference-raw <directory> (homology: --background-dir). Select only the required reference panel."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "reference_raw",
+      "dataset": "reference_raw",
+      "stage": "validation.references",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply matching raw references; use --reference-raw <directory> (homology: --background-dir). Select only the required reference panel."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "benchmark_refogs",
+      "dataset": "benchmark_refogs",
+      "stage": "target.benchmark",
+      "mandatory": false,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw/RefOGs",
+      "available": false,
+      "decision": "skip_operation",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "benchmark_input",
+      "dataset": "benchmark_input",
+      "stage": "target.benchmark",
+      "mandatory": false,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw/Input",
+      "available": false,
+      "decision": "skip_operation",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "benchmark_refogs",
+      "dataset": "benchmark_refogs",
+      "stage": "validation.benchmark",
+      "mandatory": false,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw/RefOGs",
+      "available": false,
+      "decision": "skip_operation",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "benchmark_input",
+      "dataset": "benchmark_input",
+      "stage": "validation.benchmark",
+      "mandatory": false,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw/Input",
+      "available": false,
+      "decision": "skip_operation",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "negative_exclusion_fasta",
+      "dataset": "negative_exclusion_fasta",
+      "stage": "target.audit",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration.faa",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "negative_exclusion_labels",
+      "dataset": "negative_exclusion_labels",
+      "stage": "target.audit",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration_set.xlsx",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "negative_exclusion_fasta",
+      "dataset": "negative_exclusion_fasta",
+      "stage": "validation.audit",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration.faa",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    },
+    {
+      "action": "unidentified_input",
+      "requested": "negative_exclusion_labels",
+      "dataset": "negative_exclusion_labels",
+      "stage": "validation.audit",
+      "mandatory": true,
+      "path": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration_set.xlsx",
+      "available": false,
+      "decision": "stop_stage",
+      "reason": "expected_absent_in_clean_state",
+      "remedy": "Supply the matching dataset at the registered path, or pass an explicit input path; never use cached results as raw inputs."
+    }
+  ],
+  "software": [
+    {
+      "name": "hmmsearch",
+      "available": true,
+      "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/hmmsearch",
+      "version_verified": false,
+      "required": true
+    },
+    {
+      "name": "hmmpress",
+      "available": true,
+      "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/hmmpress",
+      "version_verified": false,
+      "required": true
+    },
+    {
+      "name": "blastp",
+      "available": true,
+      "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/blastp",
+      "version_verified": false,
+      "required": true
+    },
+    {
+      "name": "makeblastdb",
+      "available": true,
+      "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/makeblastdb",
+      "version_verified": false,
+      "required": true
+    },
+    {
+      "name": "orthofinder",
+      "available": true,
+      "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/orthofinder",
+      "version_verified": false,
+      "required": true
+    },
+    {
+      "name": "mafft",
+      "available": true,
+      "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/mafft",
+      "version_verified": false,
+      "required": true
+    },
+    {
+      "name": "trimal",
+      "available": true,
+      "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/trimal",
+      "version_verified": false,
+      "required": true
+    },
+    {
+      "name": "iqtree",
+      "available": true,
+      "path": "/home/evans_adu/miniconda3/envs/adhesome-workflow-v1/bin/iqtree",
+      "version_verified": false,
+      "required": true
+    },
+    {
+      "name": "openpyxl",
+      "available": true,
+      "version": "3.1.5",
+      "required": true
+    },
+    {
+      "name": "biopython",
+      "available": true,
+      "version": "1.85",
+      "required": true
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "HMM metadata retains its historical build-time family-rule fingerprint; current positive/screening model coverage is checked separately, without rewriting that provenance.",
+    "Executable paths are checked without running programs; tool versions must match the supplied conda environment before real execution.",
+    "OrthoFinder bundled/transitive programs are not executed by this check; install the supplied conda environment and verify its configured search/tree backends before inference.",
+    "Historical standalone families.json/queue OG identifiers remain source-run-specific; a fresh source result requires reviewed mappings or the reconciliation handoff.",
+    "Biological inputs are absent or assumed absent: expected for a clean-state structural dry run; actual execution is not ready."
+  ],
+  "input_mappings": {
+    "reference_raw": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw",
+    "reference_proteomes": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw",
+    "reference_proteome": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw",
+    "target_raw": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/target_raw",
+    "target_proteomes": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/target_raw",
+    "target_configuration": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/config/targets.json",
+    "targets_config": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/config/targets.json",
+    "curated_references": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/homology_retrieval/reference_fasta",
+    "reference_fasta": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/homology_retrieval/reference_fasta",
+    "refrence_fasta": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/homology_retrieval/reference_fasta",
+    "calibration_fasta": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration.faa",
+    "calibration_labels": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration_set.xlsx",
+    "negative_exclusion_fasta": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration.faa",
+    "negative_exclusion_labels": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/calibration_set.xlsx",
+    "validation_fasta": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/validation.faa",
+    "validation_labels": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/validation_set.csv",
+    "identity_model": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/validation/identity_probability_model.json",
+    "benchmark_refogs": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw/RefOGs",
+    "benchmark_input": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis/input/reference_raw/Input",
+    "phylogeny_library": "/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/independent_family_phylogeny/library/library_manifest.json"
+  },
+  "limitation": "A structural pass is not evidence that biological analyses, inference, probability calibration or performance thresholds will succeed."
+}

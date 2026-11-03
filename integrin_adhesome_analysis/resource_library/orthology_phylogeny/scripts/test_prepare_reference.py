@@ -18,6 +18,21 @@ from pipeline import read_tsv, digest
 
 
 class ReferencePreparationTests(unittest.TestCase):
+    def test_selected_panel_does_not_read_unrelated_fasta_or_ground_truth(self):
+        from prepare_references import build
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);raw=root/'raw';raw.mkdir()
+            (raw/'RefA.faa').write_text('>reference1 gene=gene1\nMACDEFGHIK\n')
+            (raw/'Unrelated.faa').write_text('INVALID UNRELATED PROTEOME')
+            (raw/'RefOGs').mkdir();(raw/'RefOGs/RefOG1.txt').write_text('invalid ground truth that must not be opened')
+            handoff=root/'handoff';handoff.mkdir()
+            prepared=root/'detection/TargetA/prepared';prepared.mkdir(parents=True)
+            target=prepared/'TargetA.faa';target.write_text('>TargetA__gene1\nMACDEFGHIL\n')
+            (handoff/'workflow_manifest.json').write_text(json.dumps(dict(target_species=['TargetA'],
+                detection=str(root/'detection'),sources={str(target.resolve()):digest(target)})))
+            panel=build(raw,handoff,root/'panel',reference_files=['RefA.faa'])
+            self.assertEqual([p['species'] for p in json.loads(panel.read_text())['proteomes']],['TargetA','RefA'])
+
     def test_collapse_and_mapping_failure(self):
         with tempfile.TemporaryDirectory() as td:
             root=_layout_resource(Path(td))

@@ -1,0 +1,7 @@
+name: homology-retrieval
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - blast=2.16.0

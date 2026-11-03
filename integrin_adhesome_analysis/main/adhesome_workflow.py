@@ -32,6 +32,7 @@ from identity_probability import resource_hashes as probability_resources
 from evaluate_validation import after_audit as evaluate_controls,resource_hashes as validation_resources
 from orthogroup_context import validate_weight,configuration as context_configuration
 from stage2_evidence import default_profile
+from input_dependencies import InputRegistry, raw_input
 
 ROOT = _LAYOUT_BUNDLE_ROOT
 VERSION = '1.0'
@@ -159,6 +160,8 @@ def start(args):
     if not args.detection and not args.input_dir:
         raise ValueError('Supply --input-dir with target proteomes, or --detection with existing detection output')
     config_path = getattr(args, 'targets_config', None)
+    if not args.detection and config_path is None:config_path=raw_input('target_configuration')
+    if config_path:InputRegistry().require('target_configuration','target.configuration',config_path)
     excluded=set(getattr(args,'exclude_target',None) or [])
     resuming=bool(getattr(args,'resume',False))
     expected = None
@@ -179,6 +182,7 @@ def start(args):
         raise ValueError('New detection requires --targets-config with the target species and gene-ID rules')
     out = _layout_resource(args.out).resolve()
     if not args.detection:
+        InputRegistry().require('target_raw','detection',args.input_dir)
         sys.path.insert(0,str(DETECT))
         try:
             from adhesome_pipeline import check_inputs
@@ -552,6 +556,9 @@ def downstream(args):
                        '--handoff',handoff,'--out',_layout_resource(out/'references')]
     for flag in ('benchmark_refogs','benchmark_input_dir'):
         if getattr(args,flag,None):reference_command+=['--'+flag.replace('_','-'),getattr(args,flag)]
+    for filename in getattr(args,'reference_file',None) or []:
+        reference_command+=['--reference-file',filename]
+    if getattr(args,'reference_panel',None):reference_command+=['--reference-panel',args.reference_panel]
     stage('references',_layout_resource(out/'references'),lambda:execute(reference_command,_layout_resource(out/'logs')))
     stage('panel',_layout_resource(out/'panel'),lambda:calibrate(argparse.Namespace(handoff=handoff,panel=_layout_resource(out/'references/panel.auto.json'),out=_layout_resource(out/'panel'))))
     stage('orthology',_layout_resource(out/'orthology'),lambda:orthology(argparse.Namespace(panel=_layout_resource(out/'panel'),out=_layout_resource(out/'orthology'),results=None,input_manifest=None,
@@ -664,7 +671,7 @@ def recover(args):
         if generated!=json.loads((_layout_resource(run/'panel/panel.snapshot.json')).read_text()):
             raise ValueError('Generated reference panel differs from staged panel')
         state=dict(annotation_sha256=digest(_layout_resource(annotation/'workflow_manifest.json')),stages={},settings=dict(
-            annotation=str(annotation),out=str(run),reference_raw=str(_layout_resource(ROOT/'inputs/reference_raw')),
+            annotation=str(annotation),out=str(run),reference_raw=str(raw_input('reference_raw')),
             threads=args.threads or 8,analysis_threads=args.analysis_threads or 8,iqtree_threads=args.iqtree_threads or 2,
             compare=None,phylogeny=False,allow_partial_phylogeny=False))
         def adopt(name,files):
@@ -845,7 +852,7 @@ def orthology(args):
               previous_references=old[r['candidate_id']]['references'], current_references=r['references'],
               previous_review=old[r['candidate_id']]['calibration_review'], current_review=r['calibration_review']) for r in review])
     if not getattr(args,'inside_workflow',False):
-        benchmark_command(results,panel,getattr(args,'reference_raw',_layout_resource(ROOT/'inputs/reference_raw')),_layout_resource(out/'benchmark'),_layout_resource(out/'logs'),
+        benchmark_command(results,panel,getattr(args,'reference_raw',raw_input('reference_raw')),_layout_resource(out/'benchmark'),_layout_resource(out/'logs'),
                           getattr(args,'benchmark_refogs',None),getattr(args,'benchmark_input_dir',None),getattr(args,'benchmark_protocol','open_orthobench'),
                           getattr(args,'benchmark_scope','all'),getattr(args,'benchmark_selection',None),
                           getattr(args,'benchmark_level','root'),getattr(args,'benchmark_quality_policy',None))
@@ -954,6 +961,8 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
 
 
 def audit(args):
+    registry=InputRegistry()
+    for name in ('negative_exclusion_fasta','negative_exclusion_labels'):registry.require(name,'audit.negative_exclusion')
     context_weight=validate_weight(getattr(args,'orthogroup_context_weight',None))
     coverage=getattr(args,'family_coverage',DEFAULT_FAMILY_COVERAGE)
     from stage2_evidence import CONFIG as stage2_config,configuration as stage2_configuration
@@ -1049,7 +1058,7 @@ def main(argv=None):
     sub = p.add_subparsers(dest='command', required=True)
     s = sub.add_parser('start', help='Run/reuse detection and export supported/provisional hypotheses')
     s.add_argument('--detection', type=Path, help='Existing batch detection output root')
-    s.add_argument('--input-dir', type=Path)
+    s.add_argument('--input-dir', type=Path, default=raw_input('target_raw'))
     s.add_argument('--targets-config', type=Path, help='JSON target proteome configuration; required for new detection')
     s.add_argument('--check-inputs',action='store_true',help='Validate all target file/header/gene mappings and exit without creating a run')
     s.add_argument('--resume',action='store_true',help='Continue a failed start in the same directory; reuse completed targets without backups')
@@ -1071,7 +1080,9 @@ def main(argv=None):
     s.set_defaults(func=downstream)
     for name in ('resume','continue'):
         command=sub.choices[name]
-        command.add_argument('--reference-raw',type=Path,default=_layout_resource(ROOT/'inputs/reference_raw'))
+        command.add_argument('--reference-raw',type=Path,default=raw_input('reference_raw'))
+        command.add_argument('--reference-file',action='append',help='Select relative reference FASTA paths; repeat; unselected proteomes are not loaded')
+        command.add_argument('--reference-panel',help='Named explicit file list in config/input_registry.json')
         command.add_argument('--benchmark-refogs',type=Path,help='Override automatic RefOGs discovery under reference_raw')
         command.add_argument('--benchmark-input-dir',type=Path,help='Override automatic matching benchmark Input discovery')
         command.add_argument('--benchmark-protocol',choices=['open_orthobench','custom'],default='open_orthobench')
@@ -1100,7 +1111,7 @@ def main(argv=None):
     s.add_argument('--compare', type=Path)
     s.add_argument('--threads', type=int, default=16)
     s.add_argument('--analysis-threads', type=int, default=8)
-    s.add_argument('--reference-raw',type=Path,default=_layout_resource(ROOT/'inputs/reference_raw'))
+    s.add_argument('--reference-raw',type=Path,default=raw_input('reference_raw'))
     s.add_argument('--benchmark-refogs',type=Path)
     s.add_argument('--benchmark-input-dir',type=Path)
     s.add_argument('--benchmark-protocol',choices=['open_orthobench','custom'],default='open_orthobench')
@@ -1111,7 +1122,7 @@ def main(argv=None):
     s.set_defaults(func=orthology)
     s=sub.add_parser('benchmark',help='Evaluate completed orthology against supplied reference-proteome RefOGs')
     s.add_argument('--orthology',type=Path,required=True)
-    s.add_argument('--reference-raw',type=Path,default=_layout_resource(ROOT/'inputs/reference_raw'))
+    s.add_argument('--reference-raw',type=Path,default=raw_input('reference_raw'))
     s.add_argument('--refogs',type=Path)
     s.add_argument('--input-dir',type=Path)
     s.add_argument('--protocol',choices=['open_orthobench','custom'],default='open_orthobench')

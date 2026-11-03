@@ -47,7 +47,9 @@ def boolean(value):
 def predictions(path):
     rows = read(path)
     for row in rows:
-        for key in FLAGS:row[key] = boolean(row[key])
+        for key in FLAGS:
+            if key in ('training_overlap','calibration_overlap') and row[key]=='unknown':continue
+            row[key] = boolean(row[key])
     return rows
 
 
@@ -269,9 +271,10 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
     doc.heading('Exact-sequence overlap strata')
     strata=[]
     for label,key in [('Calibration','calibration_overlap'),('Forward references','reference_overlap'),('Identity training','training_overlap')]:
-        for value in (False,True):
+        for value in (False,True,'unknown'):
             subset=[r for r in rows if r[key]==value];m=metrics(subset,'supported')
-            strata.append((label,'Exact overlap' if value else 'No exact overlap',sum(r['control_class']=='positive' for r in subset),
+            if value=='unknown' and not subset:continue
+            strata.append((label,'Unknown: comparison input unavailable' if value=='unknown' else 'Exact overlap' if value else 'No exact overlap',sum(r['control_class']=='positive' for r in subset),
                 sum(r['control_class']!='positive' for r in subset),m['TP'],m['FP'],pct(m['recall']),dec(m['F1'])))
     clean=[r for r in rows if not any(r[key] for key in FLAGS[-3:])];clean_metrics=metrics(clean,'supported')
     strata.append(('All three','No exact overlap',sum(r['control_class']=='positive' for r in clean),sum(r['control_class']!='positive' for r in clean),

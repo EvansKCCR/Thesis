@@ -225,7 +225,7 @@ explicit. No uncalibrated hit-level confidence percentages are assigned.
 ## References, orthology and reference-panel expansion
 
 Ordinary raw reference FASTAs and applicable GFF/gene maps belong in
-`inputs/reference_raw/`. FASTA/gzip variants are accepted. Gene preparation uses
+`input/reference_raw/`. FASTA/gzip variants are accepted. Gene preparation uses
 matching `Code.protein_gene.tsv`/`Code.tsv`, NCBI-style `Code.gff`/`Code.gff3`
 protein-to-GeneID CDS annotations, explicit `gene=ID`/`gene:ID` headers or already
 prepared `Code__gene_id` headers. Every protein needs an explicit mapping; the
@@ -243,7 +243,7 @@ The default is the original Open_Orthobench scorer with `all` scope. Original
 proteomes and ground truth are supplied under:
 
 ```text
-inputs/reference_raw/BENCHMARKS/
+input/reference_raw/BENCHMARKS/
   Input/                         # 12 original FASTAs
   RefOGs/                        # RefOG001.txt ... RefOG070.txt
     low_certainty_assignments/   # supplied uncertainty exclusions

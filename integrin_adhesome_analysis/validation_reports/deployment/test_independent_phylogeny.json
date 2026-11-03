@@ -1,0 +1,12 @@
+{
+  "group": "independent_phylogeny",
+  "tests": 12,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 1,
+  "passed": 11,
+  "details": [],
+  "skip_reasons": [
+    "Biopython is not installed in this test environment"
+  ]
+}

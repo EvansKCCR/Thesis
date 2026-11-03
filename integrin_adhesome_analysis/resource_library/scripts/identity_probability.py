@@ -31,7 +31,7 @@ def fingerprint():
     files=['scripts/cdd_evidence.py','scripts/family_catalogue.py','scripts/stage2_evidence.py','scripts/identity_probability.py','scripts/family_identity.py','scripts/stage2_resolution.py','scripts/control_exclusion.py','scripts/calibrate_identity.py','scripts/label_ontology.py','detection/config/family_rules.json',
         'annotation/integrated_adhesome_pipeline.py',
         'annotation/audit_policy.json',
-        'annotation/family_identity_rules.json']
+        'annotation/family_identity_rules.json','config/input_registry.json']
     return {name:sha(LIBRARY if name.endswith('/family_identity_rules.json') else ROOT/name) for name in files}
 
 
@@ -40,7 +40,14 @@ def resource_hashes():
     result={name:sha(ROOT/name) for name in ('scripts/identity_probability.py','scripts/stage2_resolution.py','scripts/control_exclusion.py','scripts/cdd_evidence.py','scripts/family_catalogue.py','scripts/phylogenetic_identity.py')}
     for name in ('calibration_set.xlsx','calibration.faa'):
         path=_layout_resource(ROOT/'validation')/name
-        result[path.relative_to(ROOT).as_posix()]=sha(path)
+        result[path.relative_to(ROOT).as_posix()]=sha(path) if path.is_file() else None
+    from input_dependencies import InputRegistry
+    registry=InputRegistry(ROOT,path=_LAYOUT_BUNDLE_ROOT/'config/input_registry.json')
+    result['config/input_registry.json']=sha(registry.path)
+    for name in ('negative_exclusion_labels','negative_exclusion_fasta'):
+        path=registry.path_for(name)
+        key=path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else str(path)
+        result[key]=sha(path) if path.is_file() else None
     if _layout_resource(DEFAULT_MODEL).exists():
         result[str(DEFAULT_MODEL.relative_to(ROOT)).replace('\\','/')]=sha(DEFAULT_MODEL)
         model=json.loads(_layout_resource(DEFAULT_MODEL).read_text(encoding='utf-8'))

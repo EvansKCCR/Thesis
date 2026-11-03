@@ -1,33 +1,13 @@
 {
-  "qc": {
-    "min_length": 30,
-    "max_ambiguous_fraction": 0.05,
-    "max_ambiguous_run": 20
-  },
+  "qc": {"min_length":30,"max_ambiguous_fraction":0.05,"max_ambiguous_run":20},
   "proteomes": [
     {
-      "code": "Sman",
-      "species": "Schistosoma mansoni",
-      "assembly": "SM_V10",
-      "source_url": "http://www.ebi.ac.uk/ena/data/view/PRJEA36577",
-      "path": "../../resource_library/detection/proteome_fasta_files/Smansoni_proteins.fa",
-      "gene_regex": "(?:^|\\s)gene=([^\\s]+)"
-    },
-    {
-      "code": "Shae",
-      "species": "Schistosoma haematobium",
-      "assembly": "tdSchHaem2.1",
-      "source_url": "http://www.ebi.ac.uk/ena/data/view/PRJEB44434",
-      "path": "../../resource_library/detection/proteome_fasta_files/Shaematobium_proteins.fa",
-      "gene_regex": "(?:^|\\s)gene=([^\\s]+)"
-    },
-    {
-      "code": "Sjap",
-      "species": "Schistosoma japonicum",
-      "assembly": "ASM636876v1",
-      "source_url": "http://www.ebi.ac.uk/ena/data/view/PRJNA520774",
-      "path": "../../resource_library/detection/proteome_fasta_files/Sjaponicum_proteins.fa",
-      "gene_regex": "(?:^|\\s)gene=([^\\s]+)"
+      "code":"TargetA",
+      "species":"User target species",
+      "assembly":"replace_with_assembly_and_release",
+      "source_url":"replace_with_proteome_source",
+      "path":"TargetA.faa",
+      "gene_regex":"(?:^|\\s)gene[=:]([^\\s]+)"
     }
   ]
 }

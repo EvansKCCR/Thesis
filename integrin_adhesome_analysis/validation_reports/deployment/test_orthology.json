@@ -1,0 +1,12 @@
+{
+  "group": "orthology",
+  "tests": 51,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 8,
+  "passed": 43,
+  "details": [],
+  "skip_reasons": [
+    "Biopython required"
+  ]
+}

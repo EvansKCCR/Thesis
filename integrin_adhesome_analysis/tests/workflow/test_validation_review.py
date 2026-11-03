@@ -177,7 +177,7 @@ class ValidationReviewTests(unittest.TestCase):
     def test_scheduler_refreshes_after_both_workers_without_rerunning_branches(self):
         with tempfile.TemporaryDirectory() as td:
             run,rows,labels=self.fixture(_layout_resource(Path(td)))
-            contract=dict(contract_sha256='fixture',frozen_settings=dict(orthogroup_context_weight=1.0))
+            contract=dict(contract_sha256='fixture',frozen_settings=dict(orthogroup_context_weight=1.0),datasets={'calibration':{},'validation':{}})
             args=argparse.Namespace(mode='validation',out=run,threads=2,schedule='parallel',preflight_only=False)
             def completed(kinds,worker,workers):
                 self.add_calibration(run,rows)
@@ -193,7 +193,7 @@ class ValidationReviewTests(unittest.TestCase):
     def test_report_failure_is_distinguished_without_restarting_completed_analysis(self):
         with tempfile.TemporaryDirectory() as td:
             run,rows,labels=self.fixture(_layout_resource(Path(td)));labels.write_text(_layout_resource(labels).read_text()+'\n')
-            contract=dict(contract_sha256='fixture',frozen_settings=dict(orthogroup_context_weight=1.0))
+            contract=dict(contract_sha256='fixture',frozen_settings=dict(orthogroup_context_weight=1.0),datasets={'calibration':{},'validation':{}})
             args=argparse.Namespace(mode='validation',out=run,threads=2,schedule='parallel',preflight_only=False)
             gates={kind:dict(status='complete') for kind in ('calibration','validation')}
             with patch.object(workflows,'prepare',return_value=contract),patch.object(workflows,'verify_frozen'),\

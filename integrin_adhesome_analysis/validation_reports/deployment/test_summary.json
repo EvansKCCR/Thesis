@@ -1,0 +1,93 @@
+{
+  "tests": 469,
+  "passed": 460,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 9,
+  "groups": [
+    {
+      "group": "audit",
+      "tests": 75,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 75,
+      "details": [],
+      "skip_reasons": []
+    },
+    {
+      "group": "detection",
+      "tests": 90,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 90,
+      "details": [],
+      "skip_reasons": []
+    },
+    {
+      "group": "homology",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 32,
+      "details": [],
+      "skip_reasons": []
+    },
+    {
+      "group": "independent_phylogeny",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 11,
+      "details": [],
+      "skip_reasons": [
+        "Biopython is not installed in this test environment"
+      ]
+    },
+    {
+      "group": "motifs",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 21,
+      "details": [],
+      "skip_reasons": []
+    },
+    {
+      "group": "orthology",
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 8,
+      "passed": 43,
+      "details": [],
+      "skip_reasons": [
+        "Biopython required"
+      ]
+    },
+    {
+      "group": "reconciliation",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 22,
+      "details": [],
+      "skip_reasons": []
+    },
+    {
+      "group": "workflow",
+      "tests": 166,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 166,
+      "details": [],
+      "skip_reasons": []
+    }
+  ]
+}

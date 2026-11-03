@@ -18,14 +18,21 @@ from pipeline import records, digest, write_tsv, VERSION
 from refseq_gene_map import parse_gff
 from prepare_reference import prepare, BENCHMARK_SEQUENCE_POLICY
 from benchmark_workflow import bundle, read_groups, input_proteomes
+from input_dependencies import InputRegistry
 
 
-def build(raw, handoff, out, benchmark_refogs=None, benchmark_input_dir=None):
+def build(raw, handoff, out, benchmark_refogs=None, benchmark_input_dir=None, reference_files=None, reference_panel=None):
+    registry=InputRegistry(_LAYOUT_BUNDLE_ROOT)
+    raw=registry.require('reference_raw','orthology.reference_preparation',raw)
     meta=json.loads((_layout_resource(handoff/'workflow_manifest.json')).read_text())
     targets=meta['target_species']
-    files=sorted(p for p in raw.iterdir() if _layout_resource(p).is_file() and
+    selected=registry.select_references(panel=reference_panel,files=reference_files,raw=raw)
+    files=selected if selected is not None else sorted(p for p in raw.iterdir() if _layout_resource(p).is_file() and
         re.search(r'\.(fa|faa|fasta)(\.gz)?$',p.name,re.I))
-    refogs,input_dir=bundle(raw,benchmark_refogs,benchmark_input_dir)
+    if any(not re.search(r'\.(fa|faa|fasta)(\.gz)?$',p.name,re.I) for p in files):
+        raise ValueError('Reference preparation supports .fa, .faa, .fasta (optionally .gz)')
+    # An explicit panel never expands itself into unrelated benchmark proteomes.
+    refogs,input_dir=bundle(raw,benchmark_refogs,benchmark_input_dir) if selected is None else (None,None)
     benchmark_files=set()
     if refogs is not None:
         truth,uncertain,truth_paths=read_groups(refogs)
@@ -57,13 +64,13 @@ def build(raw, handoff, out, benchmark_refogs=None, benchmark_input_dir=None):
         seen.add(code)
         folder=out/code
         folder.mkdir()
-        maps=[p for p in (_layout_resource(raw/f'{code}.protein_gene.tsv'),_layout_resource(raw/f'{code}.tsv')) if _layout_resource(p).exists()]
-        gffs=[p for p in (_layout_resource(raw/f'{code}.gff'),_layout_resource(raw/f'{code}.gff3')) if _layout_resource(p).exists()]
+        maps=[p for p in (_layout_resource(source.parent/f'{code}.protein_gene.tsv'),_layout_resource(source.parent/f'{code}.tsv')) if _layout_resource(p).exists()]
+        gffs=[p for p in (_layout_resource(source.parent/f'{code}.gff'),_layout_resource(source.parent/f'{code}.gff3')) if _layout_resource(p).exists()]
         if len(maps)>1 or len(gffs)>1:
             raise ValueError(f'Ambiguous mapping/GFF sidecars for {code}')
         rows=list(records(source))
         provenance=dict(fasta=str(_layout_resource(source).resolve()),fasta_sha256=digest(source))
-        panel_metadata=_layout_resource(raw/f'{code}.reference.json')
+        panel_metadata=_layout_resource(source.parent/f'{code}.reference.json')
         if _layout_resource(panel_metadata).exists():
             scope=json.loads(_layout_resource(panel_metadata).read_text(encoding='utf-8'))
             if scope.get('fasta_sha256')!=provenance['fasta_sha256']:
@@ -123,8 +130,10 @@ if __name__=='__main__':
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--benchmark-refogs',type=Path)
     p.add_argument('--benchmark-input-dir',type=Path)
+    p.add_argument('--reference-file',action='append')
+    p.add_argument('--reference-panel')
     a=p.parse_args()
     try:
-        print(build(_layout_resource(a.raw).resolve(),_layout_resource(a.handoff).resolve(),_layout_resource(a.out).resolve(),a.benchmark_refogs,a.benchmark_input_dir))
+        print(build(_layout_resource(a.raw).resolve(),_layout_resource(a.handoff).resolve(),_layout_resource(a.out).resolve(),a.benchmark_refogs,a.benchmark_input_dir,a.reference_file,a.reference_panel))
     except (OSError,ValueError,KeyError) as exc:
         p.exit(1,f'ERROR: {exc}\n')

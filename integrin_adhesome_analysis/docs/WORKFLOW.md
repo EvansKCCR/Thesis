@@ -6,6 +6,18 @@ is for the user to execute locally. Reading this guide does not launch analysis.
 Choose new output directories for new scientific configurations and use actual
 absolute stored-run paths when reusing the separate installation.
 
+## Clean-state structural validation
+
+```bash
+python -B maintenance/validate_deployment.py --dry-run --clean-state --phylogeny \
+  --report-dir validation_reports/deployment
+```
+
+This plans every conditional workflow without opening target/reference or
+calibration/validation datasets. See [deployment maintenance](MAINTENANCE.md#clean-state-deployment-validation)
+for input roles, selective references, readiness limits and the changed-file map.
+`--preflight-only` remains a real-data preflight; it is not a clean-state dry run.
+
 ## 1. Choose the bundle root and environment
 
 ```bash
@@ -21,13 +33,13 @@ from the root, not from individual stage/script directories.
 ## 2. Prepare targets and raw references
 
 Create your own `config/targets.json` from `config/targets.example.json` and put the
-configured complete protein FASTAs under `inputs/targets/`. Each entry has an
+configured complete protein FASTAs under `input/target_raw/`. Each entry has an
 explicit gene-ID mapping; codes and species are user-defined. Do not select
 validation/calibration controls for an isolated production target analysis.
 
 Put ordinary reference FASTAs and matching GFF or protein/gene TSV files in
-`inputs/reference_raw/`. Keep original benchmark files under
-`inputs/reference_raw/BENCHMARKS/Input/` and `BENCHMARKS/RefOGs/` as described in
+`input/reference_raw/`. Keep original benchmark files under
+`input/reference_raw/BENCHMARKS/Input/` and `BENCHMARKS/RefOGs/` as described in
 the manual. Add ordinary reference proteomes here before creating a new panel.
 The resumed workflow prepares them and writes panel configuration automatically.
 The optional targeted human FASTA requires its `.reference.json` scope/hash
@@ -37,14 +49,14 @@ sidecar and is not substituted for a complete proteome without declaring scope.
 
 ### Validation and calibration self-test
 
-Start the two isolated branches:
+Start validation and the calibration self-test when its datasets are available:
 
 ```bash
 python -B main/run_pipeline.py --mode validation \
   --select-labelled-validation --out runs/isolated_validation --threads 4
 ```
 
-The first run stops at both external-evidence handoffs. It selects exactly the
+The first run stops at each active branch’s external-evidence handoff. Missing optional calibration inputs skip that self-test with a recorded reason. It selects exactly the
 1,737 labelled validation IDs and records the 73 unlabelled FASTA records as
 exclusions. Calibration has its separate 581-record population. A total budget
 of four threads is shared across the two concurrent branches. Add
@@ -78,7 +90,7 @@ and join returned results by a gene name or human accession.
 
 ```bash
 python -B main/run_pipeline.py --mode target \
-  --input-dir inputs/targets --targets-config config/targets.json \
+  --input-dir input/target_raw --targets-config config/targets.json \
   --out runs/isolated_targets --threads 4
 ```
 
@@ -140,7 +152,7 @@ python -B -m schisto_adhesome.validation_review --run runs/isolated_validation
 
 ```bash
 python -B main/adhesome_workflow.py start --targets-config config/targets.json \
-  --input-dir inputs/targets --out runs/handoff --threads 4 --check-inputs
+  --input-dir input/target_raw --out runs/handoff --threads 4 --check-inputs
 ```
 
 The preflight does not start analysis or create the handoff. After it passes,
@@ -158,7 +170,7 @@ these exported sequence IDs.
 
 ```bash
 python -B main/adhesome_workflow.py resume --handoff runs/handoff \
-  --context-dir returned/context --reference-raw inputs/reference_raw \
+  --context-dir returned/context --reference-raw input/reference_raw \
   --out runs/annotation --threads 4
 ```
 
@@ -173,7 +185,7 @@ If annotation is already complete, use its actual sealed directory:
 
 ```bash
 python -B main/adhesome_workflow.py continue --annotation runs/annotation \
-  --reference-raw inputs/reference_raw --out runs/downstream_new --threads 4
+  --reference-raw input/reference_raw --out runs/downstream_new --threads 4
 ```
 
 `continue` creates a new downstream analysis. It is useful after reference
@@ -271,14 +283,14 @@ proteomes. Adding them afterward needs new inference.
 ```bash
 python -B main/adhesome_workflow.py benchmark \
   --orthology /absolute/path/to/stored/orthology \
-  --reference-raw inputs/reference_raw --level root --out runs/benchmark_review
+  --reference-raw input/reference_raw --level root --out runs/benchmark_review
 ```
 
 Explicit alternatives:
 
 ```text
 --level cohort-lca
---scope adhesome --selection inputs/reference_raw/adhesome_refog_selection.tsv
+--scope adhesome --selection input/reference_raw/adhesome_refog_selection.tsv
 --protocol custom
 --quality-policy /absolute/path/to/quality_policy.json
 ```
@@ -358,7 +370,7 @@ This is different from the `resume --handoff` external-return command.
 
 ```bash
 python -B main/adhesome_workflow.py start --resume --exclude-target Sguin \
-  --input-dir inputs/targets --targets-config config/targets.json \
+  --input-dir input/target_raw --targets-config config/targets.json \
   --out runs/handoff --threads 4
 ```
 
@@ -381,3 +393,12 @@ recovery paths that would silently archive partial evidence.
 See [MAINTENANCE.md](MAINTENANCE.md) for input/reference repairs, saved-version
 constraints, probability refits and resource checks. No guide command changes
 the scientific policies merely by being documented here.
+
+## Optional independent RBH / main-audit reconciliation
+
+The [reconciliation guide](../../reconciliation/docs/WORKFLOW.md) documents a
+separate candidate handoff and `library_reconciled` family-tree library. The
+three scientific workflows remain independently runnable. Existing audit
+classifications, family libraries and analysis checkpoints are unchanged. Use
+the new `rbh_audit_reconciled_v1` run name for this library; its source annotations
+and short tree identifiers are traceable in the accompanying TSV files.

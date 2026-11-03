@@ -14,6 +14,7 @@ import argparse
 from pathlib import Path
 import subprocess
 import sys
+from input_dependencies import raw_input
 
 
 def main():
@@ -22,7 +23,7 @@ def main():
     parser.add_argument('--version',action='version',version='adhesome-detection 1.0')
     parser.add_argument('--cpu',type=int,default=8)
     parser.add_argument('--config',type=Path,required=True,help='Target species and explicit gene-ID extraction rules')
-    parser.add_argument('--input-dir',type=Path,default=_layout_resource(root/'proteome_fasta_files'))
+    parser.add_argument('--input-dir',type=Path,default=raw_input('target_raw'))
     parser.add_argument('--out',type=Path,default=_layout_resource(root/'results/detection_v1.0'))
     parser.add_argument('--check-inputs',action='store_true',help='Validate target inputs without running detection')
     parser.add_argument('--species',action='append',help='Process only this configured target; repeat to select several and preserve other target results')

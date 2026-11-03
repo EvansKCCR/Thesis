@@ -1,0 +1,10 @@
+{
+  "group": "audit",
+  "tests": 75,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": 75,
+  "details": [],
+  "skip_reasons": []
+}

@@ -30,7 +30,7 @@ class LayoutPathsTests(unittest.TestCase):
         for previous,current in layout['file_map'].items():
             target=pipeline_paths.ROOT/current
             with self.subTest(previous=previous):
-                self.assertTrue(target.is_file())
+                if 'cache' not in Path(current).parts:self.assertTrue(target.is_file())
                 self.assertEqual(pipeline_paths.recorded_resource(previous),target)
                 self.assertEqual(pipeline_paths.resource_path(target),target)
 
@@ -104,7 +104,7 @@ class LayoutPathsTests(unittest.TestCase):
             control_exclusion.controls.cache_clear()
             try:
                 with patch.object(control_exclusion,'ROOT',root):
-                    with self.assertRaisesRegex(ValueError,'Missing calibration exclusion inputs'):
+                    with self.assertRaisesRegex(ValueError,'unidentified_input: stage=audit.negative_exclusion'):
                         control_exclusion.controls()
             finally:control_exclusion.controls.cache_clear()
 

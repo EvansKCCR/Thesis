@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Version 1.0: selected analysis plus mandatory isolated calibration self-test."""
+"""Version 1.0: selected analysis and isolated self-test when its inputs exist."""
 
 # Resolve source resources independently of the caller working directory.
 import sys as _layout_sys
@@ -16,18 +16,24 @@ import argparse
 from pathlib import Path
 import sys
 from schisto_adhesome.datasets import ROOT
-from schisto_adhesome.workflows import run
 
 
 def main(argv=None):
+    argv=list(sys.argv[1:] if argv is None else argv)
+    if '--dry-run' in argv:
+        from deployment_validation import main as validate_deployment
+        return validate_deployment(argv)
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version',action='version',version='schisto-adhesome 1.0')
     parser.add_argument('--mode',choices=['validation','target'],required=True)
     parser.add_argument('--config',type=Path,default=_layout_resource(ROOT/'configs/isolated_workflow.json'))
     parser.add_argument('--out',type=Path,required=True)
-    parser.add_argument('--reference-raw',type=Path,default=_layout_resource(ROOT/'inputs/reference_raw'))
-    parser.add_argument('--input-dir',type=Path)
-    parser.add_argument('--targets-config',type=Path)
+    from input_dependencies import raw_input
+    parser.add_argument('--reference-raw',type=Path,default=raw_input('reference_raw'))
+    parser.add_argument('--reference-file',dest='reference_files',action='append',help='Select relative raw reference FASTA paths; repeat')
+    parser.add_argument('--reference-panel',help='Named reference file list in config/input_registry.json')
+    parser.add_argument('--input-dir',type=Path,default=raw_input('target_raw'))
+    parser.add_argument('--targets-config',type=Path,default=raw_input('target_configuration'))
     parser.add_argument('--reuse-target-detection',type=Path,help='Reuse only sequence/config-verified completed production species; controls are omitted')
     parser.add_argument('--compare-calibration',type=Path,help='Previous isolated calibration reports directory for assignment/metric drift diagnostics')
     for kind in ('calibration','validation'):
@@ -46,6 +52,7 @@ def main(argv=None):
     parser.add_argument('--resume',action='store_true')
     args=parser.parse_args(argv)
     if args.threads<1:parser.error('--threads must be positive')
+    from schisto_adhesome.workflows import run
     try:return run(args)
     except (OSError,ValueError,KeyError) as exc:
         print('ERROR: '+str(exc),file=sys.stderr);return 1

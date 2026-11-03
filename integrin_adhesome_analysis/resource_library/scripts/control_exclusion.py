@@ -24,8 +24,10 @@ ROOT=_LAYOUT_BUNDLE_ROOT
 @lru_cache(maxsize=1)
 def controls():
     from openpyxl import load_workbook
-    folder=_layout_resource(ROOT/'validation');labels=_layout_resource(folder/'calibration_set.xlsx');proteins=_layout_resource(folder/'calibration.faa')
-    if not _layout_resource(labels).is_file() or not _layout_resource(proteins).is_file():raise ValueError('Missing calibration exclusion inputs: '+str(folder))
+    from input_dependencies import InputRegistry
+    registry=InputRegistry(ROOT,path=_LAYOUT_BUNDLE_ROOT/'config/input_registry.json')
+    labels=registry.require('negative_exclusion_labels','audit.negative_exclusion')
+    proteins=registry.require('negative_exclusion_fasta','audit.negative_exclusion')
     book=load_workbook(labels,read_only=True,data_only=True);values=iter(book['control_identity'].values)
     fields=next(values);rows=[dict(zip(fields,row)) for row in values if any(v is not None for v in row)];book.close()
     sequences=fasta(proteins);negative_by_hash=defaultdict(list);negative_families=defaultdict(list);positive_families=set();classes=defaultdict(set)

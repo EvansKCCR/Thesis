@@ -1,0 +1,54 @@
+{
+  "queue_version": "1.0",
+  "status": "prepared_not_launched",
+  "run_name": "proteome_panels_only",
+  "wait_for_families": [
+    "fes_fps_like",
+    "rho_gtpase_like",
+    "src_like",
+    "spectrin_like",
+    "tubulin_like",
+    "adf_cofilin",
+    "profilin_like",
+    "actin",
+    "hsp70_like"
+  ],
+  "added_families": [
+    "talin_like",
+    "shp_ptpn6_11_like",
+    "insr_like",
+    "laminin_like",
+    "collagen_like",
+    "tetraspanin_like"
+  ],
+  "all_families": [
+    "fes_fps_like",
+    "rho_gtpase_like",
+    "src_like",
+    "spectrin_like",
+    "tubulin_like",
+    "adf_cofilin",
+    "profilin_like",
+    "actin",
+    "hsp70_like",
+    "talin_like",
+    "shp_ptpn6_11_like",
+    "insr_like",
+    "laminin_like",
+    "collagen_like",
+    "tetraspanin_like"
+  ],
+  "parameters": {
+    "excluded_panels": [
+      "validation"
+    ],
+    "alignment": "genafpair",
+    "trim": "gappyout",
+    "mafft_threads": 4,
+    "iqtree_threads": "AUTO",
+    "seed": 20261028
+  },
+  "library_manifest_sha256": "7d414a3684aacc2dc0e4630a46122f8b0e84f10d1d2b13ef9cb42002240a0b12",
+  "preserved_run_files_checked": 76,
+  "policy": "Do not launch additions until original nine-family runner publishes final status and every original tree is complete"
+}

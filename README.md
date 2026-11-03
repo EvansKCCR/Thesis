@@ -1,98 +1,30 @@
-# Integrin–adhesome working bundle — version 1.0
+# Independent analysis workflows â€” version 1.0
 
-Use these maintained entry points:
+This workspace contains three independently runnable workflows. Each has independent execution, configuration, environment and results. Homology
+reads the main project’s registered raw inputs.
 
-| Entry point | Purpose |
-| --- | --- |
-| `scripts/run_pipeline.py` | New target or validation analyses, each with a separate calibration self-test |
-| `adhesome_workflow.py` | Staged detection, external evidence return, orthology, audit and recovery |
-| `scripts/report_audits.py` | Label-based performance reports from completed standalone audits |
+| Bundle | Entry point | Instructions |
+| --- | --- | --- |
+| `integrin_adhesome_analysis/` | `adhesome_workflow.py` | [Main workflow](integrin_adhesome_analysis/docs/WORKFLOW.md) Â· [Manual](integrin_adhesome_analysis/docs/MANUAL.md) Â· [Maintenance](integrin_adhesome_analysis/docs/MAINTENANCE.md) |
+| `homology_retrieval/` | `reciprocal_blast.py` | [Homology/RBH manual](homology_retrieval/RBH_README.md) |
+| `independent_family_phylogeny/` | `run_phylogeny.py` | [Phylogeny workflow](independent_family_phylogeny/docs/WORKFLOW.md) Â· [Manual](independent_family_phylogeny/docs/MANUAL.md) Â· [Maintenance](independent_family_phylogeny/docs/MAINTENANCE.md) |
 
-New runs and standalone audits use the expanded family/identity pair and the
-improved `calibrated_v1` Stage 2 profile by default. Explicit
-`--stage2-profile original` retains the historical comparison option. Older
-recovery checkpoints keep their recorded profile; an older checkpoint without
-that field retains `original`. Nothing is reclassified during installation.
+The main adhesome workflow uses the expanded family/identity library and
+`calibrated_v1` Stage 2 profile. Its maintained scripts are in `main/`,
+maintenance utilities in `maintenance/`, dependencies/rules in `config/`, and
+runtime resources in `resource_library/`. The root `adhesome_workflow.py` remains
+a compatible entry point. Each bundle's guide specifies its working directory.
 
-Start with [the workflow guide](docs/ISOLATED_WORKFLOWS.md).
+[Candidate reconciliation and independent tree preparation](reconciliation/docs/WORKFLOW.md)
+provides an explicit handoff between completed RBH results, the selected target
+audit and a new family-phylogeny library. It retains source decisions and negative
+exclusions. It launches no scientific workflow and does not feed tree results
+back automatically. Existing libraries, stored audits and tree runs remain in
+their original folders.
 
-```text
-integrin_adhesome_analysis/
-  adhesome_workflow.py       staged workflow entry point
-  pipeline_paths.py          shared bundle-root and import resolution
-  scripts/                  runtime libraries, run_pipeline.py and report_audits.py
-  README.md
-  environment.yml / requirements.txt / VERSION
-  configs/                  run settings and editable panel example
-  docs/                     workflow, validation and benchmark guides
-  tools/                    optional development/evaluation commands
-  tests/
-    workflow/               workflow, defaults, reporting and recovery tests
-    audit/                  family classifier regression tests
-  maintenance/              checkpoint adapters and read-only workspace checks
-  schisto_adhesome/          isolated branch orchestration and reporting
-  detection/                detection code, rules, reference panel and HMMs
-  validation/               labelled calibration/validation inputs
-  motif_annotation/
-  orthology_phylogeny/
-  annotation/
-  templates/                workbook/export contracts
-  inputs/ / returned/ / runs/   installation-specific data and saved outputs
-```
-
-Shared runtime libraries live in `scripts/`: evidence joins/exports, family
-rules, identity/ontology, exclusions, orthogroup context and terminal evaluation.
-`pipeline_paths.py` exposes the bundle root and these libraries to each entry
-point, independently of the caller's working directory. Resource lookups use
-the stage directories shown above.
-
-Calibration fitting and the exclusion gate explicitly read `validation/calibration_set.xlsx`
-and `validation/calibration.faa`; validation sequences and auxiliary workbooks
-in the same directory cannot replace that pair. Label and sequence inputs,
-historical model fingerprints and saved-run manifests are not rewritten by this
-path update. [Path repairs](maintenance/path_repairs.json) records the active
-configuration-path changes; family rule definitions and reference sequences are
-unchanged. Numerical probability calibration remains disabled when its original
-fingerprint is stale; no fitting is performed by path checks.
-
-Run from this bundle root. For example, new validation analyses start with:
-
-```bash
-conda activate adhesome-workflow-v1
-python -B scripts/run_pipeline.py --mode validation --select-labelled-validation \
-  --out runs/validation_v1 --threads 4
-```
-
-`runs/` examples refer to outputs created under this bundle. Previously stored
-outputs remain in the separate `pipeline_validation` installation. To audit
-those from the reorganized source, use their absolute paths:
-
-```bash
-STORED_RUNS=/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/pipeline_validation/integrin_adhesome_analysis/runs
-python -B adhesome_workflow.py audit \
-  --annotation "$STORED_RUNS/annotation" \
-  --orthology "$STORED_RUNS/annotation/downstream/orthology" \
-  --benchmark "$STORED_RUNS/annotation/downstream/benchmark" \
-  --out runs/target_audit_optimized \
-  --stage2-profile calibrated_v1 --orthogroup-context-weight 1.0
-```
-
-Use a new output directory. Older frozen runs keep their recorded contracts;
-this reorganization does not migrate them or rerun completed stages.
-
-Optional scripts moved under `tools/`; their imports and resource roots resolve
-from the script location. Their new command paths are listed in
-[tools/README.md](tools/README.md). Tests and CI use the central `tests/` tree.
-
-Check the organized bundle without analysis:
-
-```bash
-python -B maintenance/check_workspace.py
-python -B tools/validate_resources.py --allow-stale-calibration
-```
-
-The first command checks paths, configuration targets, Markdown links, syntax and CLI help only. The second verifies
-resource checksums without fitting a numerical identity model. Evidence-based
-family confidence does not require experimental annotation or a probability fit.
-
-For synthetic regression tests, see [tests/README.md](tests/README.md).
+Fresh deployment does not include analysis datasets, prepared panels or saved
+runs. Start with the [clean-state deployment check](integrin_adhesome_analysis/docs/MAINTENANCE.md#clean-state-deployment-validation).
+Homology uses `integrin_adhesome_analysis/input/reference_raw/` and
+`integrin_adhesome_analysis/input/target_raw/` through the shared input registry.
+The reconciliation guide describes how to prepare a new library after completed
+RBH and main-audit outputs exist; no dated audit is selected automatically.

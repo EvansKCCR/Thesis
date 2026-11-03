@@ -1,2 +1,14 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Scientific assets carry byte-level hashes; preserve their original bytes.
+integrin_adhesome_analysis/config/** -text
+*.hmm -text
+*.faa -text
+*.fa -text
+*.fasta -text
+*.csv -text
+*.tsv -text
+*.xlsx -text
+*.gz -text
+*.metadata.json -text

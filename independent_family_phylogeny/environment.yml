@@ -1,0 +1,10 @@
+name: independent-family-phylogeny
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.10
+  - biopython
+  - mafft
+  - trimal
+  - iqtree>=2

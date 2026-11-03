@@ -172,22 +172,29 @@ def materialize(kind, rows, folder, qc):
     return mappings
 
 
-def reference_inventory(raw):
+def reference_inventory(raw, selected_files=None):
     """Freeze raw FASTAs, mappings, GFFs and ground truth by content, not path alone."""
     raw = _layout_resource(Path(raw)).resolve()
-    files = {p.relative_to(raw).as_posix(): sha(p) for p in sorted(_layout_resource(raw).rglob('*')) if _layout_resource(p).is_file()}
+    candidates=list(raw.rglob('*')) if selected_files is None else list(selected_files)
+    if selected_files is not None:
+        for source in selected_files:
+            stem=re.sub(r'\.(fa|faa|fasta)(\.gz)?$','',source.name,flags=re.I)
+            candidates.extend(source.parent/(stem+suffix) for suffix in ('.protein_gene.tsv','.tsv','.gff','.gff3','.reference.json'))
+    files = {p.relative_to(raw).as_posix(): sha(p) for p in sorted(set(candidates)) if _layout_resource(p).is_file()}
     if not any(re.search(r'\.(fa|faa|fasta)(\.gz)?$', p, re.I) for p in files):
         raise ValueError('No reference FASTAs in ' + str(raw))
-    return dict(root=str(raw), files=files, version=hashlib.sha256(json.dumps(files, sort_keys=True).encode()).hexdigest())
+    result=dict(root=str(raw), files=files, version=hashlib.sha256(json.dumps(files, sort_keys=True).encode()).hexdigest())
+    if selected_files is not None:result['selection']=[p.relative_to(raw).as_posix() for p in selected_files]
+    return result
 
 
-def reference_matches(rows, raw):
+def reference_matches(rows, raw, selected_files=None):
     """Exact overlap against the whole frozen orthology panel, not only search seeds."""
     import gzip
     wanted=defaultdict(list)
     for r in rows:wanted[r['sequence_sha256']].append(r['original_id'])
     result=[]
-    for path in sorted(_layout_resource(Path(raw)).rglob('*')):
+    for path in sorted(selected_files if selected_files is not None else _layout_resource(Path(raw)).rglob('*')):
         if not _layout_resource(path).is_file() or not re.search(r'\.(fa|faa|fasta)(\.gz)?$',path.name,re.I):continue
         opener=gzip.open if path.suffix=='.gz' else open
         header=None;parts=[]

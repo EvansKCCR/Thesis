@@ -115,6 +115,8 @@ def _execute(args):
              '--analysis-threads',str(args.threads),'--family-coverage',settings['family_coverage'],
              '--stage2-profile',settings.get('stage2_profile','original'),
              '--benchmark-scope',settings.get('benchmark_scope','all')]
+        for filename in settings.get('reference_files',[]):cmd+=['--reference-file',filename]
+        if settings.get('reference_panel'):cmd+=['--reference-panel',settings['reference_panel']]
         for key in ('orthogroup_context_weight','orthofinder_search','orthofinder_method',
                     'orthofinder_inflation','benchmark_selection'):
             if settings.get(key) is not None:cmd+=['--'+key.replace('_','-'),str(settings[key])]
@@ -136,15 +138,17 @@ def _execute(args):
             summary=target_report(audit,reports)
         else:
             manifest=read(_layout_resource(branch/'inputs/sequence_manifest.tsv'))
-            cal=read(_layout_resource(run/'calibration/inputs/sequence_manifest.tsv'))
+            cal_path=_layout_resource(run/'calibration/inputs/sequence_manifest.tsv')
+            cal=read(cal_path) if cal_path.is_file() else None
             references=set()
             references.update(r['sequence_sha256'] for r in read(_layout_resource(branch/'reference_overlap.tsv')))
             for path in (_layout_resource(ROOT/'detection/references/adhesome_v1.0/search_catalogue.csv'),
                          _layout_resource(ROOT/'detection/references/adhesome_v1.0/metazoan_catalogue.csv')):
                 references.update(r['sequence_sha256'] for r in core.read(path,','))
-            model=json.loads((_layout_resource(ROOT/'validation/identity_probability_model.json')).read_text())
-            training={r['sequence_sha256'] for r in model.get('samples',[])}
-            predictions=evaluate_branch(branch,manifest,audit,{r['sequence_sha256'] for r in cal},references,training)
+            model_path=_layout_resource(ROOT/'validation/identity_probability_model.json')
+            model=json.loads(model_path.read_text()) if model_path.is_file() else None
+            training={r['sequence_sha256'] for r in model.get('samples',[])} if model is not None else None
+            predictions=evaluate_branch(branch,manifest,audit,{r['sequence_sha256'] for r in cal} if cal is not None else None,references,training)
             summary=summarize_predictions(predictions,reports,args.kind)
             if args.kind=='calibration':
                 drift=[]

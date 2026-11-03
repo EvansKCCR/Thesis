@@ -132,8 +132,8 @@ def evaluate_branch(branch, manifest, audit, overlap_hashes, reference_hashes, t
             orthogroup=row.get('Orthogroup') or row.get('orthogroup',''),
             orthology_score=row.get('orthology_score_0_3',''), ambiguity=row.get('assignment_confidence',''),
             length_bin='<100' if length<100 else '100-299' if length<300 else '300-999' if length<1000 else '>=1000',
-            calibration_overlap=digest in overlap_hashes, reference_overlap=digest in reference_hashes,
-            training_overlap=digest in training_hashes))
+            calibration_overlap=digest in overlap_hashes if overlap_hashes is not None else 'unknown', reference_overlap=digest in reference_hashes,
+            training_overlap=digest in training_hashes if training_hashes is not None else 'unknown'))
     return output
 
 

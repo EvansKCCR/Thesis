@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "scope": "Prepare phylogenies for families queried by the independent RBH workflow; retain all accepted target audit calls in the candidate catalogue.",
+  "main_accepted_decisions": ["family_supported", "provisional_family"],
+  "families": [
+    {"family": "CIB_family", "reference_sets": ["CIB_like_references"], "main_labels": ["CIB_family"]},
+    {"family": "ENA_VASP_like", "reference_sets": ["ENAH_references", "VASP_references"], "main_labels": ["ENA_VASP_like"]},
+    {"family": "kinectin_like", "reference_sets": ["KTN_like_references"], "main_labels": ["kinectin_like"]},
+    {"family": "MAPK8IP_like", "reference_sets": ["MAPK8IP3_like_references"], "main_labels": ["MAPK8IP_like"], "note": "The main family label is broader than the MAPK8IP3 reference set; this mapping does not assert a specific identity."},
+    {"family": "NDEL1_like", "reference_sets": ["NDEL1_like_references"], "main_labels": ["NDEL1_like"]},
+    {"family": "nexilin_like", "reference_sets": ["NEXN_like_references"], "main_labels": ["nexilin_like"]},
+    {"family": "parvin_like", "reference_sets": ["parvin_references"], "main_labels": ["parvin_like"]},
+    {"family": "PEAK1_like", "reference_sets": ["PEAK1_like_references"], "main_labels": ["PEAK1_like"]},
+    {"family": "PPM_like", "reference_sets": ["PPM_like_references"], "main_labels": ["PPM_like"]},
+    {"family": "RACK1_like", "reference_sets": ["RACK1_like_references"], "main_labels": ["RACK1_like"]},
+    {"family": "SORBS_like", "reference_sets": ["SORB_like_references"], "main_labels": ["SORBS_like"]},
+    {"family": "SPTLC_like", "reference_sets": ["SPTLC_like_references"], "main_labels": ["SPTLC_like"]}
+  ]
+}

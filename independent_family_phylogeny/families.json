@@ -1,0 +1,17 @@
+{
+  "fes_fps_like": {"label": "Fes/Fps-like", "category": "signalling", "orthogroups": ["OG0000625"]},
+  "rho_gtpase_like": {"label": "Rho GTPase-like", "category": "signalling", "orthogroups": ["OG0000876", "OG0008033", "OG0009113"]},
+  "src_like": {"label": "Src-like", "category": "signalling", "orthogroups": ["OG0000122", "OG0001280"]},
+  "spectrin_like": {"label": "Spectrin-like", "category": "cytoskeletal_interface", "orthogroups": ["OG0001980"]},
+  "tubulin_like": {"label": "Tubulin-like", "category": "cytoskeletal_interface", "orthogroups": ["OG0000130", "OG0009122", "OG0012564"]},
+  "adf_cofilin": {"label": "ADF/cofilin", "category": "cytoskeletal_interface", "orthogroups": ["OG0000416", "OG0002163", "OG0002221"]},
+  "profilin_like": {"label": "Profilin-like", "category": "cytoskeletal_interface", "orthogroups": ["OG0013725"]},
+  "actin": {"label": "Actin", "category": "cytoskeletal_interface", "orthogroups": ["OG0008484", "OG0000012", "OG0006209", "OG0006780", "OG0006649", "OG0007724", "OG0000437", "OG0002740", "OG0014370"]},
+  "hsp70_like": {"label": "HSP70-like", "category": "associated_protein", "orthogroups": ["OG0004053", "OG0003628", "OG0000082", "OG0003875"]},
+  "talin_like": {"label": "Talin-like", "category": "cytoskeletal_interface", "orthogroups": ["OG0001037"]},
+  "shp_ptpn6_11_like": {"label": "SHP PTPN6/11-like", "category": "signalling", "orthogroups": ["OG0001434"]},
+  "insr_like": {"label": "INSR-like", "category": "signalling", "orthogroups": ["OG0000730"]},
+  "laminin_like": {"label": "Laminin-like", "category": "extracellular_matrix", "orthogroups": ["OG0000671", "OG0000925", "OG0001615", "OG0002753"]},
+  "collagen_like": {"label": "Collagen-like", "category": "extracellular_matrix", "orthogroups": ["OG0000219", "OG0000247", "OG0000250", "OG0009857"]},
+  "tetraspanin_like": {"label": "Tetraspanin-like", "category": "membrane_associated", "orthogroups": ["OG0000840", "OG0000290", "OG0009188", "OG0000180", "OG0001078", "OG0000303", "OG0001445", "OG0010672", "OG0000405", "OG0006047", "OG0000534", "OG0006646", "OG0011637"]}
+}
