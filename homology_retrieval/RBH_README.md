@@ -3,7 +3,7 @@
 `reciprocal_blast.py` recursively discovers reference FASTAs, matches each
 reference query to its corresponding complete source proteome, and searches
 any number of target proteomes. It uses Python's standard library and NCBI
-BLAST+ (`blastp`, `makeblastdb`). No analysis is launched during installation.
+BLAST+ (`blastp`, `makeblastdb`).
 
 ## Directory layout
 
