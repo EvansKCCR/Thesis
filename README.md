@@ -1,4 +1,4 @@
-# Independent analysis workflows â€” version 1.0
+# Independent analysis workflows version 1.0
 
 This workspace contains three independently runnable workflows. Each has independent execution, configuration, environment and results. Homology
 reads the main project’s registered raw inputs.
@@ -22,8 +22,7 @@ exclusions. It launches no scientific workflow and does not feed tree results
 back automatically. Existing libraries, stored audits and tree runs remain in
 their original folders.
 
-Fresh deployment does not include analysis datasets, prepared panels or saved
-runs. Start with the [clean-state deployment check](integrin_adhesome_analysis/docs/MAINTENANCE.md#clean-state-deployment-validation).
+Start with the [clean-state deployment check](integrin_adhesome_analysis/docs/MAINTENANCE.md#clean-state-deployment-validation).
 Homology uses `integrin_adhesome_analysis/input/reference_raw/` and
 `integrin_adhesome_analysis/input/target_raw/` through the shared input registry.
 The reconciliation guide describes how to prepare a new library after completed
