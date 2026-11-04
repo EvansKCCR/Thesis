@@ -3,7 +3,7 @@
 `reciprocal_blast.py` recursively discovers reference FASTAs, matches each
 reference query to its corresponding complete source proteome, and searches
 any number of target proteomes. It uses Python's standard library and NCBI
-BLAST+ (`blastp`, `makeblastdb`). No analysis is launched during installation.
+BLAST+ (`blastp`, `makeblastdb`).
 
 ## Directory layout
 
@@ -53,10 +53,6 @@ Each query is routed to **one complete source proteome**, in this order:
 Unidentified queries stop with an explicit `unidentified_input` assessment. A sole
 unrelated background is never substituted; supply `--source-map` when necessary.
 
-The user-confirmed alias **`candidate = homo_sapiens` applies to every
-`candidate|...` reference**, across all families. Original protein IDs remain
-unchanged. Its trace is
-`source_assignment=user_confirmed_header_alias:candidate=homo_sapiens`.
 A species explicitly named in a reference header cannot silently route to a
 different species if its background is absent.
 
