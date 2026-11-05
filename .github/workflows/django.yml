@@ -47,4 +47,7 @@ jobs:
       - name: Run workflow tests
         run: |
           python -m pytest tests/ -v
+
+      - name: Test post hoc Stage 2 refinement
+        run: python -B -m unittest discover -s ../schisto_pfam_cdd_reclassify/tests -v
  

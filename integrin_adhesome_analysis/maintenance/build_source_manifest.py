@@ -17,7 +17,7 @@ def source_files(root=ROOT):
     selected=set()
     for folder in ['config','main','maintenance','resource_library','tests','docs']:
         selected.update(p for p in (main/folder).rglob('*') if p.is_file())
-    for folder in ['homology_retrieval','independent_family_phylogeny','reconciliation','.github']:
+    for folder in ['homology_retrieval','independent_family_phylogeny','reconciliation','schisto_pfam_cdd_reclassify','.github']:
         selected.update(p for p in (root/folder).rglob('*') if p.is_file() and p.suffix.lower() in ('.py','.md','.json','.yml','.yaml'))
     for folder in (root,main):
         selected.update(p for p in folder.iterdir() if p.is_file() and p.name in

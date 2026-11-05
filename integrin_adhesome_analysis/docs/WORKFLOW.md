@@ -402,3 +402,46 @@ three scientific workflows remain independently runnable. Existing audit
 classifications, family libraries and analysis checkpoints are unchanged. Use
 the new `rbh_audit_reconciled_v1` run name for this library; its source annotations
 and short tree identifiers are traceable in the accompanying TSV files.
+
+## Optional post hoc refinement of unresolved Stage 2 assignments
+
+After the audit completes, review its existing Pfam/CDD annotations with:
+
+```bash
+python -B main/adhesome_workflow.py refine-unresolved \
+  --input /absolute/path/to/completed/audit/Stage_2_output.xlsx \
+  --out runs/posthoc_domain_review_v1
+```
+
+`--check-inputs` validates the input without writing outputs; `--out` is optional
+in that mode. The audit TSV/CSV export is also accepted. Use a new output folder
+outside the sealed source audit. This invokes the sibling
+[`schisto_pfam_cdd_reclassify`](../../schisto_pfam_cdd_reclassify/README_local_Pfam_CDD_reclassification.md)
+adapter and does not restart detection, orthology, audit, calibration or phylogeny.
+
+The separate `Stage_2_posthoc_refinement.tsv` preserves every source column and
+adds `posthoc_*` proposal fields. Supported and negative-excluded assignments are
+preserved; unresolved, ambiguous and provisional assignments enter review.
+`Schisto_unassigned_Pfam_CDD_classification.tsv` contains only that review subset.
+Review tiers A–D are heuristic domain evidence tiers, distinct from audit grades
+and calibrated probabilities. They do not change validation performance metrics
+or promote original assignments automatically. The source workbook is unchanged.
+
+To evaluate saved calibration or validation refinement outputs against their
+reference labels, without repeating classification:
+
+```bash
+python -B main/adhesome_workflow.py report-refinement \
+  --refinement /absolute/path/to/completed/posthoc/validation \
+  --labels /absolute/path/to/validation_set.csv \
+  --sequence-manifest /absolute/path/to/validation/inputs/sequence_manifest.tsv \
+  --kind validation \
+  --out runs/posthoc_performance_v1/validation
+```
+
+For calibration select `--kind calibration`, `calibration_set.xlsx` and the
+calibration branch's own sequence manifest. Original supported calls, tier A
+proposals and tier A+B proposals receive separate performance tables and confusion
+counts. Full-cohort metrics retain missing audit positives as false negatives;
+proposal-only metrics also report the eligible unresolved subset. Family-label
+coverage gaps are explicit. No combined/promoted audit result is generated.

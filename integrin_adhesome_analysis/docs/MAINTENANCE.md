@@ -432,3 +432,27 @@ bytes relative to their recorded library hashes. This policy preserves their
 existing working bytes; it does not rebuild or edit the scientific library.
 The source index is validated by the deployment command rather than a generic
 raw `sha256sum -c` check on a Windows text checkout.
+
+### Post hoc Stage 2 review adapter
+
+The sibling `schisto_pfam_cdd_reclassify` bundle is included in the source inventory
+and deployment entry-point checks. It reads an explicit completed audit; it does
+not alter frozen run checkpoints or participate in audit acceptance. Its supplied
+ordered domain rules have an independent `RULESET_VERSION`. Maintain that version
+and its synthetic tests when changing the rule bodies. Current main family rules
+are not implicitly substituted for these post hoc rules.
+
+Run `python -B -m unittest discover -s ../schisto_pfam_cdd_reclassify/tests -v`
+from the main bundle to test workbook/TSV contracts, scope accounting, duplicate
+keys, excluded records, source preservation and the main CLI adapter. No stored
+audit or external analytical program is executed by these tests. Existing output
+directories are refused; choose a new directory for another local review.
+
+`report-refinement`/`report_posthoc.py` report from saved refinement outputs and
+explicit reference labels with the branch's exact sequence manifest. Reporting
+verifies the refinement table hash, unique label mappings and available sequence
+lengths. It never refits calibration, reruns classification or changes original
+audit/proposal fields. Reporting-only label equivalences live in the sibling
+`config/evaluation_labels.json`; their hashes and the trusted-name evaluation
+ontology hashes are recorded in each report manifest. Keep negative controls out
+of identity training. Unknown truth labels and unmapped proposals remain visible.

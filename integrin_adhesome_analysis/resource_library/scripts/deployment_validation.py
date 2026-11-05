@@ -127,7 +127,7 @@ def audit(root=ROOT, workflow='all', clean_state=True, phylogeny=False, registry
     record('Scientific asset checkout integrity','*.hmm -text' in attributes and 'integrin_adhesome_analysis/config/** -text' in attributes,
            'Git preserves hashed scientific library/config bytes; release code-text checks normalize LF without changing biological fingerprints')
     parse_errors, parsed = [], 0
-    for folder in [root/'main', root/'maintenance', root/'resource_library', bundle/'homology_retrieval', bundle/'reconciliation', bundle/'independent_family_phylogeny']:
+    for folder in [root/'main', root/'maintenance', root/'resource_library', bundle/'homology_retrieval', bundle/'reconciliation', bundle/'independent_family_phylogeny', bundle/'schisto_pfam_cdd_reclassify']:
         for path in folder.rglob('*.py'):
             if '__pycache__' in path.parts:
                 continue
@@ -145,7 +145,10 @@ def audit(root=ROOT, workflow='all', clean_state=True, phylogeny=False, registry
         'isolated_branches': root/'main/run_pipeline.py',
         'homology': bundle/'homology_retrieval/reciprocal_blast.py',
         'reconciliation': bundle/'reconciliation/reconcile_candidates.py',
-        'independent_phylogeny': bundle/'independent_family_phylogeny/run_phylogeny.py'}
+        'independent_phylogeny': bundle/'independent_family_phylogeny/run_phylogeny.py',
+        'posthoc_refinement': bundle/'schisto_pfam_cdd_reclassify/schisto_pfam_cdd_reclassify.py',
+        'posthoc_input_adapter': bundle/'schisto_pfam_cdd_reclassify/stage2_io.py',
+        'posthoc_reporting': bundle/'schisto_pfam_cdd_reclassify/report_posthoc.py'}
     for name, path in entrypoints.items():
         record('Stage entry point: '+name, path.is_file(), str(path.relative_to(bundle)))
     # Check deployed HMM/library membership, not target/reference proteomes.

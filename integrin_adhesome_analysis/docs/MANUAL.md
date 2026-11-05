@@ -363,3 +363,12 @@ family support separately from `identity_supported`,
 
 See [WORKFLOW.md](WORKFLOW.md) for the operational commands and
 [MAINTENANCE.md](MAINTENANCE.md) for recovery limitations and library upkeep.
+
+An optional post hoc Pfam/CDD refinement reads the completed Stage 2 workbook or
+audit TSV. It produces separate proposals for unresolved, provisional and
+ambiguous species/protein records while preserving original family names,
+support, grades, probabilities and all source evidence. Its review tiers are
+not audit grades or calibrated probabilities. Supported assignments and explicit
+negative exclusions are retained. See the
+[post hoc guide](../../schisto_pfam_cdd_reclassify/README_local_Pfam_CDD_reclassification.md)
+and the `refine-unresolved` command in the workflow guide.

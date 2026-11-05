@@ -1052,6 +1052,32 @@ def audit(args):
         print('Validation evaluation failed; completed audit retained: '+validation['error'],flush=True)
 
 
+def refine_unresolved(args):
+    """Run the independent post hoc adapter against an explicit completed audit."""
+    script=ROOT.parent/'schisto_pfam_cdd_reclassify/schisto_pfam_cdd_reclassify.py'
+    if not script.is_file():
+        raise ValueError('Missing sibling post hoc refinement bundle: '+str(script))
+    command=[sys.executable,'-B',str(script),'--input',str(args.input),'--sheet',args.sheet]
+    if args.out is not None:command+=['--outdir',str(args.out)]
+    if args.check_inputs:command+=['--check-inputs']
+    if args.compare:command+=['--compare',str(args.compare)]
+    if args.strict:command+=['--strict']
+    if subprocess.run(command).returncode:
+        raise ValueError('Post hoc refinement failed; inspect the preceding input/review error')
+
+
+def report_refinement(args):
+    """Evaluate saved proposals against labels without rerunning the audit/review."""
+    script=ROOT.parent/'schisto_pfam_cdd_reclassify/report_posthoc.py'
+    if not script.is_file():raise ValueError('Missing post hoc reporting script: '+str(script))
+    command=[sys.executable,'-B',str(script),'--refinement',str(args.refinement),
+        '--labels',str(args.labels),'--sequence-manifest',str(args.sequence_manifest),
+        '--kind',args.kind,'--label-sheet',args.label_sheet,'--out',str(args.out)]
+    if args.aliases:command+=['--aliases',str(args.aliases)]
+    if subprocess.run(command).returncode:
+        raise ValueError('Post hoc performance reporting failed; inspect the preceding input/report error')
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--version', action='version', version='adhesome-workflow '+VERSION)
@@ -1152,6 +1178,23 @@ def main(argv=None):
             help='Default: current canonical family/identity pair; original uses the detection family catalogue')
     for s in sub.choices.values():
         s.add_argument('--out', type=Path, required=True, help='New output directory')
+    s=sub.add_parser('refine-unresolved',help='Optional post hoc Pfam/CDD review of a completed Stage 2 audit')
+    s.add_argument('--input',type=Path,required=True,help='Stage_2_output.xlsx or its audit TSV/CSV export')
+    s.add_argument('--sheet',default='Audited_family_assignment')
+    s.add_argument('--out',type=Path,help='New separate review directory; required unless checking inputs')
+    s.add_argument('--check-inputs',action='store_true',help='Validate input schema and accounting; write nothing')
+    s.add_argument('--compare',type=Path,help='Prior post hoc review TSV for comparison')
+    s.add_argument('--strict',action='store_true',help='Historical frozen reproduction counts only; omit for new audits')
+    s.set_defaults(func=refine_unresolved)
+    s=sub.add_parser('report-refinement',help='Report saved post hoc proposals against calibration/validation labels')
+    s.add_argument('--refinement',type=Path,required=True)
+    s.add_argument('--labels',type=Path,required=True)
+    s.add_argument('--sequence-manifest',type=Path,required=True)
+    s.add_argument('--kind',choices=['calibration','validation'],required=True)
+    s.add_argument('--label-sheet',default='control_identity')
+    s.add_argument('--aliases',type=Path,help='Explicit reporting-only family/proposal label equivalences')
+    s.add_argument('--out',type=Path,required=True,help='New separate report directory')
+    s.set_defaults(func=report_refinement)
     s=sub.add_parser('recover',help='Resume a checkpointed failed downstream run in place')
     s.add_argument('--run',type=Path,required=True,help='Failed downstream directory or its parent annotation directory')
     identity_switch=s.add_mutually_exclusive_group()

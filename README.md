@@ -5,9 +5,9 @@ reads the main project’s registered raw inputs.
 
 | Bundle | Entry point | Instructions |
 | --- | --- | --- |
-| `integrin_adhesome_analysis/` | `adhesome_workflow.py` | [Main workflow](integrin_adhesome_analysis/docs/WORKFLOW.md) Â· [Manual](integrin_adhesome_analysis/docs/MANUAL.md) Â· [Maintenance](integrin_adhesome_analysis/docs/MAINTENANCE.md) |
+| `integrin_adhesome_analysis/` | `adhesome_workflow.py` | [Main workflow](integrin_adhesome_analysis/docs/WORKFLOW.md) | [Manual](integrin_adhesome_analysis/docs/MANUAL.md) | [Maintenance](integrin_adhesome_analysis/docs/MAINTENANCE.md) |
 | `homology_retrieval/` | `reciprocal_blast.py` | [Homology/RBH manual](homology_retrieval/RBH_README.md) |
-| `independent_family_phylogeny/` | `run_phylogeny.py` | [Phylogeny workflow](independent_family_phylogeny/docs/WORKFLOW.md) Â· [Manual](independent_family_phylogeny/docs/MANUAL.md) Â· [Maintenance](independent_family_phylogeny/docs/MAINTENANCE.md) |
+| `independent_family_phylogeny/` | `run_phylogeny.py` | [Phylogeny workflow](independent_family_phylogeny/docs/WORKFLOW.md) | [Manual](independent_family_phylogeny/docs/MANUAL.md) | [Maintenance](independent_family_phylogeny/docs/MAINTENANCE.md) |
 
 The main adhesome workflow uses the expanded family/identity library and
 `calibrated_v1` Stage 2 profile. Its maintained scripts are in `main/`,
@@ -22,8 +22,6 @@ exclusions. It launches no scientific workflow and does not feed tree results
 back automatically. Existing libraries, stored audits and tree runs remain in
 their original folders.
 
-Fresh deployment does not include analysis datasets, prepared panels or saved
-runs. Start with the [clean-state deployment check](integrin_adhesome_analysis/docs/MAINTENANCE.md#clean-state-deployment-validation).
 Homology uses `integrin_adhesome_analysis/input/reference_raw/` and
 `integrin_adhesome_analysis/input/target_raw/` through the shared input registry.
 The reconciliation guide describes how to prepare a new library after completed
