@@ -21,10 +21,3 @@ audit and a new family-phylogeny library. It retains source decisions and negati
 exclusions. It launches no scientific workflow and does not feed tree results
 back automatically. Existing libraries, stored audits and tree runs remain in
 their original folders.
-
-
-Start with the [clean-state deployment check](integrin_adhesome_analysis/docs/MAINTENANCE.md#clean-state-deployment-validation).
-Homology uses `integrin_adhesome_analysis/input/reference_raw/` and
-`integrin_adhesome_analysis/input/target_raw/` through the shared input registry.
-The reconciliation guide describes how to prepare a new library after completed
-RBH and main-audit outputs exist; no dated audit is selected automatically.
