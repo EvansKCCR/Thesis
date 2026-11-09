@@ -209,3 +209,35 @@ The original audit and refinement tables are never edited. Output checksums and
 completed refinement status are verified first. Reports are descriptive evaluation
 of the supplied panels; no independent generalization claim is made, and
 reference/training overlap is not estimated by this reporting step.
+
+### Positive-control orthogroup reconstruction
+
+Add both `--orthogroups /path/to/Orthogroups.tsv` and
+`--panel-proteomes /path/to/panel/proteomes` to either reporting entry point.
+Use the orthogroups, FASTAs and sequence manifest from the **same saved branch**.
+This counts all labelled positives regardless of their audit or proposal status.
+It verifies positive-control sequences against the saved target FASTAs and reads
+the selected same-species reference FASTAs. No orthology inference is launched.
+
+The HTML and Markdown reports show the counts by species and match type:
+exact source protein ID, identical amino acid sequence under another ID,
+other same-species member, no same-species member, and no mapped reference.
+The exact ID category takes priority if both tests pass. Validation uses the
+original protein identifier; calibration uses the explicit accession. Sequence
+matching uses the full prepared amino acid sequence, ignoring case and one
+terminal stop. The rate denominators are shown separately for controls with a
+same-species reference and controls with an exact ID or sequence available in it.
+A species without a mapped reference is not assessable for this comparison.
+
+Reference columns are identified by the exact species name with underscores,
+or by `Bench_<species_name>_<assembly_or_release>`. The labelled target columns
+are excluded from reference matching. For differently named or ambiguous inputs,
+use `--reference-column 'Mus musculus=your_mouse_column'`. An empty value marks a
+species not assessable. The mapping is recorded in the report manifest.
+
+`orthogroup_reconstruction.tsv` contains the species totals and rates.
+`orthogroup_reconstruction_controls.tsv` lists the assigned group, match type,
+and matching reference IDs for each positive control. The manifest records the
+input FASTA and orthogroup checksums. These counts measure group co-membership,
+independently of audit and proposal correctness; they do not establish one-to-one
+orthology or exact reconstruction of a complete orthogroup.

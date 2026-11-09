@@ -1,5 +1,6 @@
 """Synthetic saved refinements and independent labels; never score a stored run."""
 import contextlib
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -69,6 +70,46 @@ class ReportingTests(unittest.TestCase):
                 '--sequence-manifest',str(self.mapping),'--kind','validation','--out',str(self.out),*extra])
 
     def table(self,name):return report.read_table(self.out/name)[0]
+
+    def orthogroup_fixture(self):
+        panel=self.root/'panel';panel.mkdir()
+        groups=self.root/'orthogroups'/'Orthogroups.tsv';groups.parent.mkdir()
+        ref='Bench_Mus_musculus_test'
+        seqs=['MKT','MRA','MNP','MQP','MFF']
+        mappings,fields=report.read_table(self.mapping)
+        for i,row in enumerate(mappings):
+            row['species']='Mus musculus' if i<4 else 'Xenopus tropicalis' if i==4 else 'Homo sapiens'
+            row['sequence_sha256']=hashlib.sha256(seqs[i].encode()).hexdigest() if i<5 else ''
+        refine.write_tsv(self.mapping,mappings,fields+['species','sequence_sha256'])
+        (panel/'Synthetic.faa').write_text(''.join(f'>internal_P{i}\n{s}\n' for i,s in enumerate(seqs)),encoding='ascii')
+        (panel/(ref+'.faa')).write_text(f'>{ref}__P0\nMKT\n>{ref}__old_id\nMRA\n>{ref}__other\nMWW\n>{ref}__P3\nMQP\n',encoding='ascii')
+        refs=[ref+'__P0',ref+'__old_id',ref+'__other','','']
+        refine.write_tsv(groups,[{'Orthogroup':f'OG{i}','Synthetic':f'internal_P{i}',ref:p} for i,p in enumerate(refs)]+
+                         [{'Orthogroup':'OG5','Synthetic':'',ref:ref+'__P3'}])
+        return groups,panel
+
+    def test_reconstruction_counts_species_and_disjoint_match_types(self):
+        groups,panel=self.orthogroup_fixture()
+        with patch.object(refine,'classify',side_effect=AssertionError('Classification rerun')):
+            self.assertEqual(self.run_report('--orthogroups',str(groups),'--panel-proteomes',str(panel)),0)
+        mouse,frog,total=self.table('orthogroup_reconstruction.tsv')
+        self.assertEqual(mouse['species'],'Mus musculus')
+        self.assertEqual([mouse[k] for k in ('exact_id','identical_sequence_only','other_same_species_member','no_same_species_member')],['1']*4)
+        self.assertEqual(frog['reference_not_available'],'1')
+        self.assertEqual(frog['recovery_among_with_reference'],'')
+        self.assertEqual([total[k] for k in ('positive_controls','assigned_orthogroup','controls_with_reference','exact_match_available','exact_match_recovered')],['5','5','4','3','2'])
+        self.assertAlmostEqual(float(total['recovery_among_available_matches']),2/3)
+        self.assertEqual(len(self.table('orthogroup_reconstruction_controls.tsv')),5)
+        self.assertIn('Positive-control orthogroup reconstruction',(self.out/'performance_report.html').read_text(encoding='utf-8'))
+        receipt=json.loads((self.out/'report_manifest.json').read_text(encoding='utf-8'))
+        self.assertIn('orthogroups',receipt['source_sha256'])
+        self.assertEqual(receipt['orthogroup_reconstruction']['totals']['exact_match_recovered'],2)
+
+    def test_reconstruction_rejects_mismatched_panel_without_writing(self):
+        groups,panel=self.orthogroup_fixture()
+        (panel/'Synthetic.faa').write_text('>internal_P0\nMMM\n',encoding='ascii')
+        self.assertEqual(self.run_report('--orthogroups',str(groups),'--panel-proteomes',str(panel)),1)
+        self.assertFalse(self.out.exists())
 
     def test_separate_binary_policies_full_cohort_and_unresolved_denominators(self):
         before={p:refine.sha256(p) for p in [self.labels,self.mapping,*self.refinement.iterdir()]}

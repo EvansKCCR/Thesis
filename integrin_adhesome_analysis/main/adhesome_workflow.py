@@ -1074,6 +1074,9 @@ def report_refinement(args):
         '--labels',str(args.labels),'--sequence-manifest',str(args.sequence_manifest),
         '--kind',args.kind,'--label-sheet',args.label_sheet,'--out',str(args.out)]
     if args.aliases:command+=['--aliases',str(args.aliases)]
+    if args.orthogroups:command+=['--orthogroups',str(args.orthogroups)]
+    if args.panel_proteomes:command+=['--panel-proteomes',str(args.panel_proteomes)]
+    for value in args.reference_column:command+=['--reference-column',value]
     if subprocess.run(command).returncode:
         raise ValueError('Post hoc performance reporting failed; inspect the preceding input/report error')
 
@@ -1193,6 +1196,9 @@ def main(argv=None):
     s.add_argument('--kind',choices=['calibration','validation'],required=True)
     s.add_argument('--label-sheet',default='control_identity')
     s.add_argument('--aliases',type=Path,help='Explicit reporting-only family/proposal label equivalences')
+    s.add_argument('--orthogroups',type=Path,help='Saved OrthoFinder Orthogroups.tsv')
+    s.add_argument('--panel-proteomes',type=Path,help='Matching saved panel/proteomes directory')
+    s.add_argument('--reference-column',action='append',default=[],metavar='SPECIES=COLUMN')
     s.add_argument('--out',type=Path,required=True,help='New separate report directory')
     s.set_defaults(func=report_refinement)
     s=sub.add_parser('recover',help='Resume a checkpointed failed downstream run in place')

@@ -445,3 +445,11 @@ proposals and tier A+B proposals receive separate performance tables and confusi
 counts. Full-cohort metrics retain missing audit positives as false negatives;
 proposal-only metrics also report the eligible unresolved subset. Family-label
 coverage gaps are explicit. No combined/promoted audit result is generated.
+
+Supply `--orthogroups` with the branch's saved `Orthogroups.tsv` and
+`--panel-proteomes` with its `downstream/panel/proteomes` directory to add
+positive-control reconstruction counts by species and match type. Both files
+and the sequence manifest must belong to the same saved branch. Exact ID,
+identical sequence under a different ID, and other same-species co-membership
+are reported separately. No reference match is counted for species without a
+mapped reference proteome. See the sibling guide for mapping overrides.

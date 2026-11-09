@@ -9,12 +9,14 @@ import csv
 import html
 import json
 from pathlib import Path
+import re
 import sys
 import zipfile
 import xml.etree.ElementTree as ET
 
 from schisto_pfam_cdd_reclassify import load_xlsx, sha256, write_tsv
 from stage2_io import SUPPORTED, REVIEW, excluded, integer_length, token
+import orthogroup_reconstruction as orthogroup
 
 ROOT = Path(__file__).resolve().parent
 POLICIES = ('original_supported', 'posthoc_A', 'posthoc_AB')
@@ -102,6 +104,7 @@ def labels_and_mapping(labels, mapping_path, kind, label_sheet, config, resolver
             if integer_length(length)!=integer_length(row['length']):
                 raise ValueError('Label/manifest length mismatch: '+identity)
         gold['pair']=pair
+        gold['sequence_manifest_row']=dict(row,Specie=pair[0],protein_id=pair[1])
         by_pair[pair]=identity
     if used!=set(records):
         raise ValueError('Sequence manifest must cover every labelled ID; missing: '+', '.join(sorted(set(records)-used)[:8]))
@@ -208,7 +211,7 @@ def display(value):
     return f'{value:.1%}' if isinstance(value,float) else str(value)
 
 
-def render(folder, kind, summary, matrices, family_matrices):
+def render(folder, kind, summary, matrices, family_matrices, recovery=None):
     title=kind.capitalize()+' post hoc performance — workflow 1.0'
     paragraphs=[
         'Original supported audit calls and post hoc proposals are scored separately. No combined or promoted audit result is created.',
@@ -216,13 +219,25 @@ def render(folder, kind, summary, matrices, family_matrices):
         'Binary PPV/recall/F1 describe issuing a call or proposal for positive controls; family PPV/recall/F1 additionally require a correct mapped expected family. A wrong accepted family contributes both a family FP and FN. Positive labels without an expected family remain in binary metrics and are explicitly excluded from family metrics.',
         'Tier A and A+B proposals are exploratory domain-rule hypotheses, not supported audit assignments, calibrated probabilities, exact protein identities or demonstrated independent improvement. C/D proposals remain descriptive and are not scored as family calls.',
         'Expected families come only from trusted reference labels and the existing evaluation ontology. Proposal label equivalences are explicit. An unmapped proposal counts as incorrect when an evaluable family label exists. Negative labels are evaluation/exclusion controls and do not train a model.',
-        'No model fitting, rule optimization, classification, orthology or phylogeny is run by this report. Reference/training overlap is not evaluated here; calibration and previously inspected validation labels do not establish unseen-sequence accuracy.'
+        'No model fitting, rule optimization, classification, orthology or phylogeny is run by this report. Calibration and previously inspected validation labels do not establish unseen-sequence accuracy.'
     ]
     sections=[]
     sections.append(('Record accounting',['Item','Count'],[[k,str(v)] for k,v in summary.items()]))
     for name, rows, fields in [('Binary performance',matrices,['population','policy','n','TP','FP','TN','FN','PPV','recall','F1','specificity']),
                               ('Family assignment performance',family_matrices,['population','policy','TP','FP','FN','PPV','recall','F1','evaluable_positive_labels','unmapped_positive_labels'])]:
         sections.append((name,fields,[[display(r.get(f)) for f in fields] for r in rows]))
+    if recovery is not None:
+        paragraphs.append('Orthogroup recovery is counted from saved groups and panel FASTAs, independently of audit calls and proposals. Exact ID takes priority over identical sequence under another ID. Other same-species members are not exact recoveries. Controls without a mapped reference are not assessable. Co-membership does not establish one-to-one orthology.')
+        fields = ['species','positive_controls','assigned_orthogroup','controls_with_reference',
+                  'any_same_species_member','exact_id','identical_sequence_only','other_same_species_member',
+                  'no_same_species_member','reference_not_available','exact_match_available',
+                  'exact_match_recovered','recovery_among_with_reference','recovery_among_available_matches']
+        headers = ['Species','Positive controls','In an orthogroup','With reference','Any same-species member',
+                   'Exact ID','Identical sequence only','Other same-species member','No same-species member',
+                   'No mapped reference','Exact match in panel','Exact match recovered',
+                   'Recovered / with reference','Recovered / exact match in panel']
+        sections.append(('Positive-control orthogroup reconstruction',headers,
+                         [[display(r[f]) for f in fields] for r in recovery]))
     esc=lambda x:html.escape(str(x),quote=True)
     body='<h1>'+esc(title)+'</h1>'+''.join('<p>'+esc(p)+'</p>' for p in paragraphs)
     md=['# '+title,'',*paragraphs]
@@ -233,6 +248,7 @@ def render(folder, kind, summary, matrices, family_matrices):
         md+=['| '+' | '.join(str(v).replace('|','\\|') for v in row)+' |' for row in rows]
     links=['predictions.tsv','binary_metrics.tsv','family_metrics.tsv','family_confusion.tsv',
            'unmapped_labels.tsv','unmapped_proposals.tsv','family_misclassifications.tsv','unmatched_refinement_records.tsv','report_manifest.json']
+    if recovery is not None:links.extend(['orthogroup_reconstruction.tsv','orthogroup_reconstruction_controls.tsv'])
     body+='<h2>Detailed tables and provenance</h2><ul>'+''.join('<li><a href="'+esc(p)+'">'+esc(p)+'</a></li>' for p in links)+'</ul>'
     css='body{font:15px/1.6 system-ui;background:#f5f7f9;color:#183043;margin:0}main{max-width:1250px;margin:24px auto;padding:32px;background:white;border-top:6px solid #176c78}h1,h2{color:#154a58}.table{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px;text-align:left;border-bottom:1px solid #dce5ea}th{background:#e9f2f5}tr:nth-child(even){background:#f7f9fb}@media print{main{margin:0;padding:0}.table{overflow:visible}}'
     (folder/'performance_report.html').write_text('<!doctype html><html lang="en"><meta charset="utf-8"><title>'+esc(title)+'</title><style>'+css+'</style><main>'+body+'</main></html>',encoding='utf-8')
@@ -243,6 +259,10 @@ def generate(args):
     folder=args.refinement.resolve();destination=args.out.resolve()
     if destination.exists():raise ValueError('Choose a new report output directory: '+str(destination))
     protected=[folder,args.sequence_manifest.resolve().parent]
+    if bool(args.orthogroups)!=bool(args.panel_proteomes) or (args.reference_column and not args.orthogroups):
+        raise ValueError('Orthogroup reconstruction requires both --orthogroups and --panel-proteomes')
+    if args.orthogroups:
+        protected.extend([args.orthogroups.resolve().parent,args.panel_proteomes.resolve()])
     if any(destination==p or p in destination.parents for p in protected):
         raise ValueError('Keep reports outside refinement and frozen-input directories')
     config_path=args.aliases.resolve()
@@ -259,6 +279,19 @@ def generate(args):
     before.update({k:sha256(p) for k,p in refinement_sources.items()})
     resolver,broad,ontology_hashes=ontology()
     gold,by_pair=labels_and_mapping(args.labels,args.sequence_manifest,args.kind,args.label_sheet,config,resolver,broad)
+    recovery=None
+    if args.orthogroups:
+        orthogroups=args.orthogroups.resolve()
+        controls=[r['sequence_manifest_row'] for r in gold.values() if r['control_class']=='positive']
+        for r in controls:
+            if not r.get('species') or not r.get('original_id') or not re.fullmatch(r'[0-9a-f]{64}',r.get('sequence_sha256') or ''):
+                raise ValueError('Reconstruction requires species, original_id and sequence_sha256 in the positive-control manifest')
+        reference_mapping, panel_files=orthogroup.panel_inputs(orthogroups,args.panel_proteomes.resolve(),controls,
+            {pair[0] for pair in by_pair},args.reference_column)
+        recovery_sources={'orthogroups':orthogroups,**{'panel:'+c:p for c,p in panel_files.items()}}
+        sources.update(recovery_sources)
+        before.update({k:sha256(p) for k,p in recovery_sources.items()})
+        recovery, recovery_details=orthogroup.reconstruction(orthogroups,controls,reference_mapping,panel_files,args.kind)
     if predictions and not predictions.keys() & by_pair.keys():
         raise ValueError('No refinement keys match this reference panel/sequence manifest')
     for pair,row in predictions.items():
@@ -308,7 +341,10 @@ def generate(args):
     write_tsv(destination/'unmapped_proposals.tsv',[r for r in rows if r['posthoc_AB'] and not r['posthoc_evaluation_family']],list(rows[0]))
     write_tsv(destination/'family_misclassifications.tsv',misclassified,['policy',*list(rows[0])])
     write_tsv(destination/'unmatched_refinement_records.tsv',unmatched,['Specie','protein_id','reason'])
-    render(destination,args.kind,summary,matrices,families)
+    if recovery is not None:
+        write_tsv(destination/'orthogroup_reconstruction.tsv',recovery,list(recovery[0]))
+        write_tsv(destination/'orthogroup_reconstruction_controls.tsv',recovery_details,orthogroup.DETAIL_FIELDS)
+    render(destination,args.kind,summary,matrices,families,recovery)
     receipt=dict(version='1.0',kind=args.kind,status='complete',created_utc=datetime.now(timezone.utc).isoformat(),
         source_files={k:str(p) for k,p in sources.items()},source_sha256=before,
         source_audit_sha256=manifest['input_sha256'],source_audit_path=manifest['input'],
@@ -317,6 +353,9 @@ def generate(args):
         classification_rerun=False,model_fitted=False,exact_protein_identity_scored=False,
         negative_controls_used_for_training=False,
         output_sha256={p.name:sha256(p) for p in sorted(destination.iterdir()) if p.is_file()})
+    if recovery is not None:
+        receipt['orthogroup_reconstruction']=dict(reference_columns=reference_mapping,totals=recovery[-1],
+            code_sha256=sha256(Path(orthogroup.__file__)))
     (destination/'report_manifest.json').write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8')
     print('Report: '+str(destination/'performance_report.html'))
     return 0
@@ -330,6 +369,10 @@ def main(argv=None):
     parser.add_argument('--kind',choices=['calibration','validation'],required=True)
     parser.add_argument('--label-sheet',default='control_identity')
     parser.add_argument('--aliases',type=Path,default=ROOT/'config/evaluation_labels.json')
+    parser.add_argument('--orthogroups',type=Path,help='Saved OrthoFinder Orthogroups.tsv for optional reconstruction counts')
+    parser.add_argument('--panel-proteomes',type=Path,help='Matching saved panel/proteomes directory')
+    parser.add_argument('--reference-column',action='append',default=[],metavar='SPECIES=COLUMN',
+        help='Override the matching reference column; empty value marks a species not assessable')
     parser.add_argument('--out',type=Path,required=True,help='New report directory outside saved input/output directories')
     args=parser.parse_args(argv)
     try:return generate(args)
