@@ -20,6 +20,8 @@ import re
 import shutil
 import subprocess
 import sys
+import time
+from datetime import datetime, timezone
 from adhesome_core import fasta, write_fasta, table, write_table, digest, save_json, pf, sequence_dict, VERSION, detection_evidence, validate_protein_input
 from adhesome_components import annotate_components, load_crosswalk, CANDIDATE_FIELDS
 from reference_identity import identity_evidence, IDENTITY_FIELDS
@@ -109,8 +111,26 @@ def run(command, log):
     save_json(str(log) + '.command.json', dict(command=[str(x) for x in command],
         executable=executable, executable_sha256=digest(executable),
         version_output=(version.stdout + version.stderr)[:8000]))
-    with open(_layout_resource(log), 'w', encoding='utf-8') as handle:
-        subprocess.run([str(x) for x in command], stdout=handle, stderr=subprocess.STDOUT, check=True)
+    started=time.perf_counter()
+    print(f'{datetime.now(timezone.utc).isoformat()} | TOOL START {command[0]}: {log}',flush=True)
+    try:
+        with open(_layout_resource(log), 'w', encoding='utf-8') as handle:
+            subprocess.run([str(x) for x in command], stdout=handle, stderr=subprocess.STDOUT, check=True)
+    except Exception as exc:
+        print(f'{datetime.now(timezone.utc).isoformat()} | TOOL FAILED {command[0]}; elapsed {time.perf_counter()-started:.1f}s; {exc}',flush=True)
+        raise
+    print(f'{datetime.now(timezone.utc).isoformat()} | TOOL COMPLETE {command[0]}; elapsed {time.perf_counter()-started:.1f}s',flush=True)
+
+
+def timed_stage(label, action):
+    started=time.perf_counter();stamp=datetime.now(timezone.utc).isoformat()
+    print(f'{stamp} | STAGE {label} START',flush=True)
+    try:result=action()
+    except Exception as exc:
+        print(f'{datetime.now(timezone.utc).isoformat()} | STAGE {label} FAILED; elapsed {time.perf_counter()-started:.1f}s; {exc}',flush=True)
+        raise
+    print(f'{datetime.now(timezone.utc).isoformat()} | STAGE {label} COMPLETE; elapsed {time.perf_counter()-started:.1f}s',flush=True)
+    return result
 
 def scan(args):
     validate_protein_input(args.proteome,hmmer_limit=True)
@@ -374,7 +394,12 @@ def classify_strict(args):
                     raise ValueError('Evidence must include a source')
                 evidence[(row['protein_id'], row['family'])].append(row)
     results, architecture_rows = [], []
-    for identifier, sequence in sequences.items():
+    classification_started=time.perf_counter();total_sequences=len(sequences)
+    for sequence_index,(identifier, sequence) in enumerate(sequences.items(),1):
+        if sequence_index==1 or sequence_index%100==0 or sequence_index==total_sequences:
+            elapsed=time.perf_counter()-classification_started
+            eta=(elapsed/sequence_index)*(total_sequences-sequence_index) if sequence_index else 0
+            print(f'{datetime.now(timezone.utc).isoformat()} | CLASSIFY {sequence_index}/{total_sequences} ({100*sequence_index/max(1,total_sequences):.1f}%); elapsed {elapsed:.1f}s; ETA {eta:.1f}s; protein {identifier}',flush=True)
         hits = sorted(domains[identifier], key=lambda r: (int(r['ali_from']), int(r['ali_to'])))
         architecture = ';'.join(f'{r["pfam_accession"]}:{r["ali_from"]}-{r["ali_to"]}' for r in hits)
         if hits:
@@ -587,7 +612,7 @@ def batch(args):
                     exclusion_reason='user_requested_exclusion' if code in excluded else 'removed_from_target_configuration')
         summary['selected_target_attempts']=previous.get('selected_target_attempts',[])+[dict(targets=sorted(requested),previous_status={code:previous['species'].get(code,{}).get('status') for code in requested})]
     output.mkdir(parents=True, exist_ok=True)
-    for species in settings['proteomes']:
+    for target_index,species in enumerate(settings['proteomes'],1):
         code = species['code']
         if (requested or resuming) and code not in requested:
             if resuming:print(f'REUSE completed target {code}',flush=True)
@@ -620,10 +645,10 @@ def batch(args):
         status = dict(species=species['species'], input=str(inputs[code]), output=str(folder), status='running')
         summary['species'][code] = status
         save_json(_layout_resource(output / 'batch.json'), summary)
-        print(f'Processing {species["species"]}: {inputs[code]}', flush=True)
+        print(f'{datetime.now(timezone.utc).isoformat()} | TARGET {target_index}/{len(settings["proteomes"])} START {species["species"]}: {inputs[code]}', flush=True)
         try:
             if reuse_preparation:print(f'REUSE {code} preparation',flush=True)
-            else:prepare(config, _layout_resource(folder / 'prepared'))
+            else:timed_stage(f'{code} sequence preparation',lambda:prepare(config, _layout_resource(folder / 'prepared')))
             if not args.prepare_only:
                 scan_args = argparse.Namespace(**vars(args))
                 scan_args.proteome = str(_layout_resource(folder / 'prepared') / (code + '.faa'))
@@ -639,21 +664,21 @@ def batch(args):
                         and set(artifacts)=={'domains.csv','domains.audit.csv','combined.domtblout'}
                         and all((_layout_resource(folder/'domains'/name)).is_file() and digest(_layout_resource(folder/'domains')/name)==sha for name,sha in artifacts.items()))
                 if reuse_scan:print(f'REUSE {code} completed domain scan',flush=True)
-                else:scan(scan_args)
+                else:timed_stage(f'{code} Pfam domain scan',lambda:scan(scan_args))
                 homology_path = None
                 if args.reference_set:
                     references = _layout_resource(Path(args.reference_set))
                     forward_name='search_references.faa' if (_layout_resource(references/'search_references.faa')).exists() else 'adhesome_references.faa'
                     catalogue_name='search_catalogue.csv' if forward_name=='search_references.faa' else 'reference_catalogue.csv'
-                    homology(argparse.Namespace(proteome=scan_args.proteome,references=str(references/forward_name),
+                    timed_stage(f'{code} reciprocal homology search',lambda:homology(argparse.Namespace(proteome=scan_args.proteome,references=str(references/forward_name),
                         catalogue=str(references/catalogue_name),metazoan=str(_layout_resource(references/'metazoan_references.faa')),
                         metazoan_catalogue=str(_layout_resource(references/'metazoan_catalogue.csv')),out=str(_layout_resource(folder/'homology')),cpu=args.cpu,
-                        evalue=1e-5,coverage=.3,tie_fraction=.01))
+                        evalue=1e-5,coverage=.3,tie_fraction=.01)))
                     homology_path = str(_layout_resource(folder/'homology/homology.csv'))
-                classify(argparse.Namespace(proteome=scan_args.proteome,
+                timed_stage(f'{code} family classification',lambda:classify(argparse.Namespace(proteome=scan_args.proteome,
                     domains=str(_layout_resource(folder / 'domains/domains.csv')), rules=args.rules,
                     homology=homology_path, evidence=None, manifest=args.manifest,crosswalk=crosswalk,
-                    classification_mode=args.classification_mode, out=str(_layout_resource(folder / 'candidates'))))
+                    classification_mode=args.classification_mode, out=str(_layout_resource(folder / 'candidates')))))
             status['status'] = ('prepared' if args.prepare_only else
                                 'completed_with_homology' if args.reference_set else 'completed_domain_screen')
         except Exception as error:
@@ -661,6 +686,7 @@ def batch(args):
             save_json(_layout_resource(output / 'batch.json'), summary)
             raise
         save_json(_layout_resource(output / 'batch.json'), summary)
+        print(f'{datetime.now(timezone.utc).isoformat()} | TARGET {target_index}/{len(settings["proteomes"])} COMPLETE {code}; state {status["status"]}',flush=True)
 
     save_json(_layout_resource(output / 'batch.json'), summary)
 

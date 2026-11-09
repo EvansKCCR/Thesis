@@ -16,6 +16,8 @@ import json
 import os
 from pathlib import Path
 import sys
+import time
+from datetime import datetime, timezone
 
 from .datasets import ROOT, dump, sha, table
 from .workflows import verify_frozen
@@ -77,11 +79,25 @@ def _execute(args):
         if _layout_resource(receipt).exists():
             core.verify(folder,kind)
             stages[name]=dict(status='complete',execution='reused',manifest_sha256=sha(receipt))
+            print(f'{datetime.now(timezone.utc).isoformat()} | STAGE {name.upper()} REUSE; checkpoint verified',flush=True)
         else:
-            stages[name]=dict(status='running',execution='recomputed');dump(state_path,stages)
-            action()
-            core.verify(folder,kind)
-            stages[name]=dict(status='complete',execution='recomputed',manifest_sha256=sha(receipt))
+            started=time.perf_counter();started_utc=datetime.now(timezone.utc).isoformat()
+            stages[name]=dict(status='running',execution='recomputed',started_utc=started_utc);dump(state_path,stages)
+            print(f'{started_utc} | STAGE {name.upper()} START',flush=True)
+            try:
+                action()
+                core.verify(folder,kind)
+                elapsed=time.perf_counter()-started
+                stages[name]=dict(status='complete',execution='recomputed',manifest_sha256=sha(receipt),
+                    started_utc=started_utc,completed_utc=datetime.now(timezone.utc).isoformat(),elapsed_seconds=round(elapsed,3))
+                print(f'{datetime.now(timezone.utc).isoformat()} | STAGE {name.upper()} COMPLETE; elapsed {elapsed:.1f}s',flush=True)
+            except Exception as exc:
+                elapsed=time.perf_counter()-started
+                stages[name]=dict(status='failed',execution='recomputed',error=str(exc),started_utc=started_utc,
+                    failed_utc=datetime.now(timezone.utc).isoformat(),elapsed_seconds=round(elapsed,3))
+                dump(state_path,stages)
+                print(f'{datetime.now(timezone.utc).isoformat()} | STAGE {name.upper()} FAILED; elapsed {elapsed:.1f}s; {exc}',flush=True)
+                raise
         dump(state_path,stages)
     try:
         if args.kind=='target':

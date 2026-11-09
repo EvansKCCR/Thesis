@@ -26,6 +26,8 @@ import re
 import shutil
 import subprocess
 import sys
+import time
+from datetime import datetime, timezone
 from collections import defaultdict
 from pathlib import Path
 from identity_probability import resource_hashes as probability_resources
@@ -116,23 +118,61 @@ def write_fasta(path, seqs):
     _layout_resource(Path(path)).write_text(''.join(f'>{k}\n{v}\n' for k,v in sorted(seqs.items())), encoding='ascii')
 
 
-def execute(command, logdir):
+def progress(message):
+    timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+    print(f'{timestamp} | {message}',flush=True)
+
+
+def elapsed_text(seconds):
+    seconds=max(0,int(seconds));hours,seconds=divmod(seconds,3600);minutes,seconds=divmod(seconds,60)
+    return f'{hours:02d}:{minutes:02d}:{seconds:02d}'
+
+
+def execute(command, logdir, label=None):
     logdir.mkdir(parents=True, exist_ok=True)
     n = len(list(_layout_resource(logdir).glob('command_*.json')))+1
     record = dict(command=[str(x) for x in command], cwd=str(ROOT), status='running')
     dest = _layout_resource(logdir/f'command_{n:03}.json')
+    label=label or Path(str(command[0])).name
+    started=time.perf_counter()
+    record['started_utc']=datetime.now(timezone.utc).isoformat()
     dump(dest, record)
+    progress(f'START {label}; command log: {logdir/f"command_{n:03}.log"}')
     with (_layout_resource(logdir/f'command_{n:03}.log')).open('w', encoding='utf-8') as log:
         try:
-            proc = subprocess.run(record['command'], cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
-            record.update(status='complete' if proc.returncode == 0 else 'failed', exit_code=proc.returncode)
+            proc=subprocess.Popen(record['command'],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,
+                                  text=True,encoding='utf-8',errors='replace',bufsize=1)
+            assert proc.stdout is not None
+            # OrthoFinder and several bioinformatics tools update progress with
+            # carriage returns rather than newlines. Read character-wise so
+            # those updates reach the terminal while the command is running.
+            buffer=[]
+            while True:
+                char=proc.stdout.read(1)
+                if char=='':break
+                log.write(char)
+                if char in ('\r','\n'):
+                    if buffer:print(''.join(buffer),flush=True)
+                    buffer.clear()
+                    log.flush()
+                else:buffer.append(char)
+            if buffer:
+                print(''.join(buffer),flush=True)
+            log.flush()
+            exit_code=proc.wait()
+            duration=time.perf_counter()-started
+            record.update(status='complete' if exit_code==0 else 'failed',exit_code=exit_code,
+                          elapsed_seconds=round(duration,3),completed_utc=datetime.now(timezone.utc).isoformat())
         except OSError as exc:
             record.update(status='failed', error=str(exc))
             dump(dest, record)
+            progress(f'FAILED {label}; elapsed {elapsed_text(time.perf_counter()-started)}; {exc}')
             raise
     dump(dest, record)
-    if proc.returncode:
+    if exit_code:
+        progress(f'FAILED {label}; exit status {exit_code}; elapsed {elapsed_text(duration)}; inspect {logdir/f"command_{n:03}.log"}')
         raise ValueError(f'Command failed; inspect {logdir}/command_{n:03}.log')
+    progress(f'COMPLETE {label}; elapsed {elapsed_text(duration)}')
 
 
 def seal(folder, kind, **metadata):
@@ -207,7 +247,7 @@ def start(args):
         cmd += ['--config', _layout_resource(config_path).resolve()]
         if resuming:cmd+=['--resume']
         for code in sorted(excluded):cmd+=['--exclude-target',code]
-        execute(cmd, _layout_resource(out/'logs'))
+        execute(cmd, _layout_resource(out/'logs'),label='Stage 1 target detection')
     batch_path=_layout_resource(detection/'batch.json')
     if _layout_resource(batch_path).exists():
         statuses=json.loads(_layout_resource(batch_path).read_text(encoding='utf-8')).get('species',{})
@@ -297,7 +337,8 @@ def start(args):
     domains = sorted(path for path in _layout_resource(detection).glob('*/domains/domains.csv') if path.parents[1].name in species)
     source_fastas = sorted(path for path in _layout_resource(detection).glob('*/prepared/*.faa') if path.parents[1].name in species)
     execute([sys.executable, _layout_resource(MOTIF/'import_domain_regions.py'), '--input-dir', _layout_resource(out/'families'),
-             '--domains', *domains, '--source-fasta', *source_fastas, '--out', _layout_resource(out/'verified_regions.tsv')], _layout_resource(out/'logs'))
+             '--domains', *domains, '--source-fasta', *source_fastas, '--out', _layout_resource(out/'verified_regions.tsv')],
+            _layout_resource(out/'logs'),label='Verify and import domain regions')
     provenance = json.loads((_layout_resource(out/'verified_regions.provenance.json')).read_text(encoding='utf-8'))
     if provenance['unverified_records']:
         raise ValueError('Unverified domain source sequences; inspect provenance')
@@ -411,7 +452,7 @@ def resume(args):
             dest.parent.mkdir(parents=True,exist_ok=True)
             if _layout_resource(source).resolve()!=_layout_resource(dest).resolve():shutil.copyfile(source,dest)
         if args.external_evidence:write(_layout_resource(out/'external_evidence.tsv'),external)
-        execute(cmd, _layout_resource(out/'logs'))
+        execute(cmd, _layout_resource(out/'logs'),label='External context and motif annotation')
     except (ValueError,OSError,KeyError) as exc:
         state.update(status='failed',error=str(exc))
         dump(checkpoint,state)
@@ -537,20 +578,29 @@ def downstream(args):
             for filename,sha in previous['files'].items():
                 if digest(out/filename)!=sha:
                     raise ValueError(f'Completed checkpoint changed: {filename}')
-            print(f'REUSE {name}',flush=True)
+            progress(f'STAGE {name.upper()} REUSE; checkpoint verified')
             return
         if _layout_resource(folder).exists() and not preserve:
             archive_attempt(folder)
-        state['stages'][name]=dict(status='running')
+        stage_started=time.perf_counter()
+        started_utc=datetime.now(timezone.utc).isoformat()
+        state['stages'][name]=dict(status='running',started_utc=started_utc)
         dump(checkpoint,state)
+        progress(f'STAGE {name.upper()} START')
         try:
             action()
             files={str(p.relative_to(out)):digest(p) for p in _layout_resource(folder).rglob('*') if _layout_resource(p).is_file()}
-            state['stages'][name]=dict(status='complete',files=files)
+            duration=time.perf_counter()-stage_started
+            state['stages'][name]=dict(status='complete',files=files,started_utc=started_utc,
+                completed_utc=datetime.now(timezone.utc).isoformat(),elapsed_seconds=round(duration,3))
             dump(checkpoint,state)
+            progress(f'STAGE {name.upper()} COMPLETE; elapsed {elapsed_text(duration)}')
         except Exception as exc:
-            state['stages'][name]=dict(status='failed',error=str(exc))
+            duration=time.perf_counter()-stage_started
+            state['stages'][name]=dict(status='failed',error=str(exc),started_utc=started_utc,
+                failed_utc=datetime.now(timezone.utc).isoformat(),elapsed_seconds=round(duration,3))
             dump(checkpoint,state)
+            progress(f'STAGE {name.upper()} FAILED; elapsed {elapsed_text(duration)}; {exc}')
             raise
     reference_command=[sys.executable,_layout_resource(ORTH/'prepare_references.py'),'--raw',_layout_resource(args.reference_raw).resolve(),
                        '--handoff',handoff,'--out',_layout_resource(out/'references')]
@@ -559,7 +609,7 @@ def downstream(args):
     for filename in getattr(args,'reference_file',None) or []:
         reference_command+=['--reference-file',filename]
     if getattr(args,'reference_panel',None):reference_command+=['--reference-panel',args.reference_panel]
-    stage('references',_layout_resource(out/'references'),lambda:execute(reference_command,_layout_resource(out/'logs')))
+    stage('references',_layout_resource(out/'references'),lambda:execute(reference_command,_layout_resource(out/'logs'),label='Prepare reference proteomes'))
     stage('panel',_layout_resource(out/'panel'),lambda:calibrate(argparse.Namespace(handoff=handoff,panel=_layout_resource(out/'references/panel.auto.json'),out=_layout_resource(out/'panel'))))
     stage('orthology',_layout_resource(out/'orthology'),lambda:orthology(argparse.Namespace(panel=_layout_resource(out/'panel'),out=_layout_resource(out/'orthology'),results=None,input_manifest=None,
         threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare,recovering=recovering,inside_workflow=True,
@@ -614,14 +664,14 @@ def downstream(args):
                       '--candidate-report',_layout_resource(candidates/'candidate_report.tsv')]
             dup=_layout_resource(candidates/'candidate_duplications.tsv')
             cmd+=['--duplications',dup] if _layout_resource(dup).exists() else ['--allow-missing-duplications']
-            stage('phylogeny_prepare',_layout_resource(out/'phylogeny'),lambda:execute(cmd,_layout_resource(out/'logs')))
+            stage('phylogeny_prepare',_layout_resource(out/'phylogeny'),lambda:execute(cmd,_layout_resource(out/'logs'),label='Prepare phylogeny groups'))
             tree_cmd=[sys.executable,_layout_resource(ORTH/'phylogeny.py'),'run','--project',_layout_resource(out/'phylogeny'),'--threads',args.threads,
                       '--iqtree-threads',getattr(args,'iqtree_threads',2)]
             if getattr(args,'allow_partial_phylogeny',False):
                 tree_cmd+=['--allow-partial']
             if recovering:
                 tree_cmd+=['--retry-failed']
-            stage('phylogeny_run',_layout_resource(out/'phylogeny'),lambda:execute(tree_cmd,_layout_resource(out/'logs')),preserve=True)
+            stage('phylogeny_run',_layout_resource(out/'phylogeny'),lambda:execute(tree_cmd,_layout_resource(out/'logs'),label='Phylogeny inference'),preserve=True)
             tree_summary=_layout_resource(out/'phylogeny/run_summary.json')
             dump(_layout_resource(out/'phylogeny_status.json'),dict(status=json.loads(_layout_resource(tree_summary).read_text()).get('status','complete') if _layout_resource(tree_summary).exists() else 'complete'))
         else:
@@ -818,7 +868,7 @@ def orthology(args):
             if (_layout_resource(out/'inference')).exists():
                 archive_attempt(_layout_resource(out/'inference'))
             inference_command=['orthofinder','-f',_layout_resource(panel/'proteomes'),'-t',args.threads,'-a',args.analysis_threads,'-o',_layout_resource(out/'inference'),*inference_options]
-            execute(inference_command, _layout_resource(out/'logs'))
+            execute(inference_command, _layout_resource(out/'logs'),label='OrthoFinder inference')
             dump(receipt,dict(panel_manifest=digest(_layout_resource(panel/'workflow_manifest.json')),inference_settings=inference_settings,
                 inference_command=[str(item) for item in inference_command],
                 files={str(p.relative_to(_layout_resource(out/'inference'))):digest(p) for p in (_layout_resource(out/'inference')).rglob('*') if _layout_resource(p).is_file()}))
@@ -830,7 +880,8 @@ def orthology(args):
         archive_attempt(_layout_resource(out/'candidates'))
     execute([sys.executable, _layout_resource(ORTH/'pipeline.py'),'extract','--results',results,
              '--candidate-set','workflow','--candidate-audit',_layout_resource(panel/'candidate_audit.tsv'),
-             '--species-list',_layout_resource(panel/'species.json'),'--target-species',_layout_resource(panel/'targets.json'),'--output',_layout_resource(out/'candidates')], _layout_resource(out/'logs'))
+             '--species-list',_layout_resource(panel/'species.json'),'--target-species',_layout_resource(panel/'targets.json'),'--output',_layout_resource(out/'candidates')],
+            _layout_resource(out/'logs'),label='Extract orthology candidate groups')
     report = read(_layout_resource(out/'candidates/candidate_report.tsv'))
     reference_columns = [k for k in report[0] if k.endswith('_orthologues')]
     review = []
@@ -875,7 +926,7 @@ def benchmark_command(results,panel,raw,out,logs,refogs=None,input_dir=None,prot
     if input_dir:command+=['--input-dir',input_dir]
     if selection:command+=['--selection',selection]
     if quality_policy:command+=['--quality-policy',quality_policy]
-    execute(command,logs)
+    execute(command,logs,label='Evolutionary benchmark')
 
 
 def benchmark(args):
@@ -969,13 +1020,23 @@ def audit(args):
     stage2_profile=getattr(args,'stage2_profile',default_profile())
     if stage2_profile not in stage2_configuration()['profiles']:raise ValueError('Unknown Stage 2 profile')
     selected_rules,selected_identity=audit_configuration(coverage)
-    annotation,orthology_dir=_layout_resource(args.annotation).resolve(),_layout_resource(args.orthology).resolve()
+    annotation=_layout_resource(args.annotation).resolve()
     ann=verify(annotation,'annotation')
-    ort=verify(orthology_dir,'orthology',required_files=['candidates/candidate_report.tsv','candidates/provenance.json'])
-    panel=_layout_resource(Path(ort['panel']));pan=verify(panel,'panel');handoff=_layout_resource(Path(ann['handoff']));hand=verify(handoff,'handoff')
-    if ann['handoff_manifest']!=pan['handoff_manifest'] or digest(_layout_resource(handoff/'workflow_manifest.json'))!=ann['handoff_manifest']:
-        raise ValueError('Annotation and orthology must use the same unchanged stage 1 handoff')
-    if digest(_layout_resource(panel/'workflow_manifest.json'))!=ort['panel_manifest']:raise ValueError('Orthology panel manifest changed')
+    orthology_dir=_layout_resource(args.orthology).resolve() if getattr(args,'orthology',None) else None
+    handoff=_layout_resource(Path(ann['handoff']));hand=verify(handoff,'handoff')
+    if digest(_layout_resource(handoff/'workflow_manifest.json'))!=ann['handoff_manifest']:
+        raise ValueError('Annotation handoff changed')
+    if orthology_dir is not None:
+        ort=verify(orthology_dir,'orthology',required_files=['candidates/candidate_report.tsv','candidates/provenance.json'])
+        panel=_layout_resource(Path(ort['panel']));pan=verify(panel,'panel')
+        if ann['handoff_manifest']!=pan['handoff_manifest']:
+            raise ValueError('Annotation and orthology must use the same unchanged stage 1 handoff')
+        if digest(_layout_resource(panel/'workflow_manifest.json'))!=ort['panel_manifest']:raise ValueError('Orthology panel manifest changed')
+    else:
+        ort=None;panel=None
+        if getattr(args,'benchmark',None):raise ValueError('--benchmark requires completed --orthology results')
+        if getattr(args,'orthogroup_context_weight',None) not in (None,0,0.0):
+            raise ValueError('A nonzero orthogroup-context weight requires completed --orthology results')
     rows=read(_layout_resource(handoff/'hypotheses.tsv'));original_count=len(rows)
     allowed={(r.get('Specie') or r['protein_id'].split('__',1)[0],r['protein_id']) for r in rows}
     seen={(sp,pid,r['family']) for r in rows for sp,pid in [(r.get('Specie') or r['protein_id'].split('__',1)[0],r['protein_id'])]}
@@ -994,10 +1055,18 @@ def audit(args):
                 seen.add(key)
                 rows.append(dict(source_row,Specie=sp,sequence_sha256=sequence_hashes[pid],
                     Stage1_source_table=str(table),Stage1_source_row=index,motif_family=source_row['family']))
-    benchmark_folder=getattr(args,'benchmark',None)
-    if benchmark_folder is None:
-        benchmark_folder=next((p for p in (_layout_resource(orthology_dir/'benchmark'),_layout_resource(orthology_dir.parent/'benchmark')) if (_layout_resource(p/'summary.json')).exists()),_layout_resource(orthology_dir/'benchmark'))
-    benchmark_fields,benchmark_sha=benchmark_evidence(benchmark_folder,orthology_dir,ort,panel)
+    if orthology_dir is None:
+        benchmark_sha=None
+        benchmark_fields=dict(Orthology_benchmark_status='not_run_no_orthology',Orthology_benchmark_scope='',
+            Orthology_benchmark_acceptance='not_assessed',Orthology_benchmark_weight='',
+            Orthology_benchmark_source='',Orthology_benchmark_reason='Orthology and its benchmark have not been run',
+            Orthology_benchmark_f1='',Orthology_benchmark_precision='',Orthology_benchmark_recall='',
+            Orthology_benchmark_refogs='',orthology_benchmark_weight_status='not_applied')
+    else:
+        benchmark_folder=getattr(args,'benchmark',None)
+        if benchmark_folder is None:
+            benchmark_folder=next((p for p in (_layout_resource(orthology_dir/'benchmark'),_layout_resource(orthology_dir.parent/'benchmark')) if (_layout_resource(p/'summary.json')).exists()),_layout_resource(orthology_dir/'benchmark'))
+        benchmark_fields,benchmark_sha=benchmark_evidence(benchmark_folder,orthology_dir,ort,panel)
     from audit_join import join
     rows,support=join(annotation,handoff,panel,orthology_dir,rows,benchmark_fields)
     if {(r.get('Specie') or r['protein_id'].split('__',1)[0],r['protein_id']) for r in rows}!=allowed:
@@ -1026,11 +1095,12 @@ def audit(args):
     if getattr(args,'phylogenetic_identity_resolution',False):
         audit_command+=['--phylogenetic-identity-resolution']
         if getattr(args,'phylogenetic_identity_evidence',None):audit_command+=['--phylogenetic-identity-evidence',args.phylogenetic_identity_evidence]
-    execute(audit_command,_layout_resource(out/'logs'))
+    execute(audit_command,_layout_resource(out/'logs'),label='Stage 2 family audit')
     validation=(dict(status='isolated_branch_evaluation',branch=os.environ['SCHISTO_ISOLATED_BRANCH'])
                 if os.environ.get('SCHISTO_ISOLATED_BRANCH') else evaluate_controls(out,handoff))
     motif_snapshot=_layout_resource(MOTIF/'Motif_library/adhesion_core.json')
-    seal(out,'audit',annotation=str(annotation),orthology=str(orthology_dir),benchmark_summary_sha256=benchmark_sha,
+    seal(out,'audit',annotation=str(annotation),orthology=str(orthology_dir) if orthology_dir is not None else None,
+        audit_scope='orthology_enriched' if orthology_dir is not None else 'preliminary_without_orthology',benchmark_summary_sha256=benchmark_sha,
         phylogenetic_identity_resolution=bool(getattr(args,'phylogenetic_identity_resolution',False)),
         phylogenetic_identity_evidence_sha256=(digest(args.phylogenetic_identity_evidence) if getattr(args,'phylogenetic_identity_resolution',False) and getattr(args,'phylogenetic_identity_evidence',None) and _layout_resource(args.phylogenetic_identity_evidence).is_file() else None),
         stage2_profile=stage2_profile,stage2_evidence_code_sha256=digest(_layout_resource(ROOT/'scripts/stage2_evidence.py')),
@@ -1044,7 +1114,8 @@ def audit(args):
         identity_code_sha256=digest(IDENTITY_CODE),identity_library_sha256=digest(identities),audit_report_sha256=digest(AUDIT_REPORT),
         identity_probability_resources=probability_resources(),
         validation_evaluation=validation,validation_evaluation_resources=validation_resources(),
-        annotation_manifest=digest(_layout_resource(annotation/'workflow_manifest.json')),orthology_manifest=digest(_layout_resource(orthology_dir/'workflow_manifest.json')))
+        annotation_manifest=digest(_layout_resource(annotation/'workflow_manifest.json')),
+        orthology_manifest=digest(_layout_resource(orthology_dir/'workflow_manifest.json')) if orthology_dir is not None else None)
     print(f'Stage 2 family refinement complete: {out}/Stage_2_output.xlsx')
     if validation['status']=='complete':
         print(f"Validation target performance: {validation['directory']} (F1={validation['F1']}, PPV={validation['PPV']})",flush=True)
@@ -1160,10 +1231,10 @@ def main(argv=None):
     s.add_argument('--level',choices=['root','cohort-lca'],default='root')
     s.add_argument('--quality-policy',type=Path)
     s.set_defaults(func=benchmark)
-    s = sub.add_parser('audit', help='Join all evidence and run conservative family audit')
+    s = sub.add_parser('audit', help='Run a preliminary audit from annotation alone, or enrich it with completed orthology')
     s.add_argument('--annotation', type=Path, required=True)
-    s.add_argument('--orthology', type=Path, required=True)
-    s.add_argument('--benchmark',type=Path,help='Sealed benchmark output; standalone orthology uses its own benchmark subdirectory by default')
+    s.add_argument('--orthology', type=Path,help='Optional completed orthology output; omit to audit available annotation evidence before orthology')
+    s.add_argument('--benchmark',type=Path,help='Sealed benchmark output; requires --orthology')
     s.set_defaults(func=audit)
     for name in ('resume','continue','orthology'):
         sub.choices[name].add_argument('--orthofinder-inflation',type=float,help='Explicit MCL inflation for new inference (1-10); unset preserves the installed OrthoFinder default')
@@ -1181,7 +1252,7 @@ def main(argv=None):
             help='Default: current canonical family/identity pair; original uses the detection family catalogue')
     for s in sub.choices.values():
         s.add_argument('--out', type=Path, required=True, help='New output directory')
-    s=sub.add_parser('refine-unresolved',help='Optional post hoc Pfam/CDD review of a completed Stage 2 audit')
+    s=sub.add_parser('refine-unresolved',help='Post hoc Pfam/CDD review of any saved Stage 2 audit, with or without orthology')
     s.add_argument('--input',type=Path,required=True,help='Stage_2_output.xlsx or its audit TSV/CSV export')
     s.add_argument('--sheet',default='Audited_family_assignment')
     s.add_argument('--out',type=Path,help='New separate review directory; required unless checking inputs')

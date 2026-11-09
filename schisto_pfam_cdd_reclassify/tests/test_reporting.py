@@ -82,28 +82,35 @@ class ReportingTests(unittest.TestCase):
             row['sequence_sha256']=hashlib.sha256(seqs[i].encode()).hexdigest() if i<5 else ''
         refine.write_tsv(self.mapping,mappings,fields+['species','sequence_sha256'])
         (panel/'Synthetic.faa').write_text(''.join(f'>internal_P{i}\n{s}\n' for i,s in enumerate(seqs)),encoding='ascii')
-        (panel/(ref+'.faa')).write_text(f'>{ref}__P0\nMKT\n>{ref}__old_id\nMRA\n>{ref}__other\nMWW\n>{ref}__P3\nMQP\n',encoding='ascii')
-        refs=[ref+'__P0',ref+'__old_id',ref+'__other','','']
+        (panel/(ref+'.faa')).write_text(f'>{ref}__P0\nmkt*\n>{ref}__old_id\nMRA\n>{ref}__P2\nMWW\n>{ref}__P3\nMQP\n',encoding='ascii')
+        refs=[ref+'__P0',ref+'__old_id',ref+'__P2','','']
         refine.write_tsv(groups,[{'Orthogroup':f'OG{i}','Synthetic':f'internal_P{i}',ref:p} for i,p in enumerate(refs)]+
                          [{'Orthogroup':'OG5','Synthetic':'',ref:ref+'__P3'}])
         return groups,panel
 
-    def test_reconstruction_counts_species_and_disjoint_match_types(self):
+    def test_reconstruction_uses_sequences_independently_of_identifier_agreement(self):
         groups,panel=self.orthogroup_fixture()
         with patch.object(refine,'classify',side_effect=AssertionError('Classification rerun')):
             self.assertEqual(self.run_report('--orthogroups',str(groups),'--panel-proteomes',str(panel)),0)
         mouse,frog,total=self.table('orthogroup_reconstruction.tsv')
         self.assertEqual(mouse['species'],'Mus musculus')
-        self.assertEqual([mouse[k] for k in ('exact_id','identical_sequence_only','other_same_species_member','no_same_species_member')],['1']*4)
+        self.assertEqual([mouse[k] for k in ('identical_sequence_recovered','identical_sequence_available_not_recovered',
+                                           'other_same_species_member','no_same_species_member')],['2','1','1','0'])
         self.assertEqual(frog['reference_not_available'],'1')
         self.assertEqual(frog['recovery_among_with_reference'],'')
-        self.assertEqual([total[k] for k in ('positive_controls','assigned_orthogroup','controls_with_reference','exact_match_available','exact_match_recovered')],['5','5','4','3','2'])
+        self.assertEqual([total[k] for k in ('positive_controls','assigned_orthogroup','controls_with_reference',
+                                           'identical_sequence_available','identical_sequence_recovered')],['5','5','4','3','2'])
         self.assertAlmostEqual(float(total['recovery_among_available_matches']),2/3)
-        self.assertEqual(len(self.table('orthogroup_reconstruction_controls.tsv')),5)
+        details={r['original_id']:r for r in self.table('orthogroup_reconstruction_controls.tsv')}
+        self.assertEqual(len(details),5)
+        self.assertEqual(details['P1']['identical_sequence_in_group'],'True')  # Different reference ID.
+        self.assertEqual(details['P2']['identical_sequence_in_group'],'False')  # Same ID, different sequence.
+        self.assertEqual(details['P3']['match_type'],'identical_sequence_available_not_recovered')
         self.assertIn('Positive-control orthogroup reconstruction',(self.out/'performance_report.html').read_text(encoding='utf-8'))
         receipt=json.loads((self.out/'report_manifest.json').read_text(encoding='utf-8'))
         self.assertIn('orthogroups',receipt['source_sha256'])
-        self.assertEqual(receipt['orthogroup_reconstruction']['totals']['exact_match_recovered'],2)
+        self.assertEqual(receipt['orthogroup_reconstruction']['totals']['identical_sequence_recovered'],2)
+        self.assertEqual(receipt['orthogroup_reconstruction']['match_criterion'],'identical_full_length_amino_acid_sequence')
 
     def test_reconstruction_rejects_mismatched_panel_without_writing(self):
         groups,panel=self.orthogroup_fixture()

@@ -219,15 +219,17 @@ This counts all labelled positives regardless of their audit or proposal status.
 It verifies positive-control sequences against the saved target FASTAs and reads
 the selected same-species reference FASTAs. No orthology inference is launched.
 
-The HTML and Markdown reports show the counts by species and match type:
-exact source protein ID, identical amino acid sequence under another ID,
-other same-species member, no same-species member, and no mapped reference.
-The exact ID category takes priority if both tests pass. Validation uses the
-original protein identifier; calibration uses the explicit accession. Sequence
-matching uses the full prepared amino acid sequence, ignoring case and one
-terminal stop. The rate denominators are shown separately for controls with a
-same-species reference and controls with an exact ID or sequence available in it.
-A species without a mapped reference is not assessable for this comparison.
+The HTML and Markdown reports count recovery only when the control's saved
+orthogroup contains a same-species reference protein with an identical full
+amino acid sequence. Protein IDs locate records but never establish a match.
+Sequence comparison ignores case and one terminal stop. No alignment, partial
+sequence or similarity threshold is used. The species table distinguishes an
+identical sequence recovered in the group, an identical sequence present in the
+reference panel but not recovered in the group, and controls with no identical
+reference sequence. Other same-species group members are shown separately.
+Rates use two denominators: positives with a same-species reference, and
+positives with an identical sequence available in that reference. A species
+without a mapped reference is not assessable for this comparison.
 
 Reference columns are identified by the exact species name with underscores,
 or by `Bench_<species_name>_<assembly_or_release>`. The labelled target columns
@@ -238,6 +240,60 @@ species not assessable. The mapping is recorded in the report manifest.
 `orthogroup_reconstruction.tsv` contains the species totals and rates.
 `orthogroup_reconstruction_controls.tsv` lists the assigned group, match type,
 and matching reference IDs for each positive control. The manifest records the
-input FASTA and orthogroup checksums. These counts measure group co-membership,
-independently of audit and proposal correctness; they do not establish one-to-one
-orthology or exact reconstruction of a complete orthogroup.
+input FASTA and orthogroup checksums. Positive labels select controls after
+inference and do not enter the sequence comparison. The saved groups included
+the controls as input sequences, so these counts measure recovery of known
+sequences in the same group. They do not establish unseen-sequence recovery,
+one-to-one orthology or exact reconstruction of a complete orthogroup.
+
+### Blind, reference-only orthogroup reconstruction
+
+For a blind test, use `blind_orthogroup_test.py` in two phases. The preparation
+step takes reference FASTAs from the saved panel, puts only those proteomes in
+`reference_proteomes/`, and writes positive controls to a separate FASTA outside
+that inference directory. It checks every extracted control against the saved
+sequence manifest. Run OrthoFinder only on `reference_proteomes/`. After it
+finishes, evaluate the withheld controls against its `Orthogroups.tsv` by exact
+full-length sequence identity. IDs are retained for locating FASTA records and
+reporting matches; they are never a match criterion. This test reports only
+controls with an identical reference sequence that map to one orthogroup as
+reconstructed. Controls with no identical sequence in the available reference
+proteomes are reported separately and are not counted as reconstruction
+failures among identity-assessable controls.
+
+Example from the validation installation in WSL (set `KIND=calibration` and
+the corresponding branch when testing calibration instead):
+
+```bash
+cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/pipeline_validation/integrin_adhesome_analysis
+SCRIPT=/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/schisto_pfam_cdd_reclassify/blind_orthogroup_test.py
+KIND=validation
+BRANCH="runs/isolated_validation/$KIND"
+BLIND="runs/blind_reference_only/$KIND"
+
+python -B "$SCRIPT" prepare \
+  --panel-proteomes "$BRANCH/downstream/panel/proteomes" \
+  --target-species "$BRANCH/downstream/panel/targets.json" \
+  --controls "$BRANCH/inputs/sequence_manifest.tsv" \
+  --out "$BLIND"
+
+orthofinder -f "$BLIND/reference_proteomes" -t 4 -a 4 -o "$BLIND/orthofinder"
+
+find "$BLIND/orthofinder" -type f -path '*/Orthogroups/Orthogroups.tsv' -print
+ORTHOGROUPS=$(find "$BLIND/orthofinder" -type f -path '*/Orthogroups/Orthogroups.tsv' -print -quit)
+test -n "$ORTHOGROUPS" || { echo 'Orthogroups.tsv not found'; exit 1; }
+python -B "$SCRIPT" evaluate \
+  --prepared "$BLIND" \
+  --orthogroups "$ORTHOGROUPS" \
+  --out "$BLIND/results"
+```
+
+Use a new `BLIND` directory each time; the script refuses an existing
+destination rather than overwrite it. The OrthoFinder input folder is
+`$BLIND/reference_proteomes` only. Do not point OrthoFinder at the parent
+`$BLIND`, because that parent also contains the withheld controls. Results are
+written to `blind_reconstruction_by_species.tsv`,
+`blind_reconstruction_controls.tsv`, and `blind_test_results.json`. Exact
+identity is deliberately conservative: it does not use approximate similarity,
+alignment, or inferred paralogue assignment for controls lacking an identical
+reference sequence.

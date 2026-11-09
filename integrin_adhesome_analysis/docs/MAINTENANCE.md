@@ -83,12 +83,16 @@ search coverage for families with no rows.
 
 ## Pfam and component-reference resources
 
-The current 214-model library includes the 38 accessions previously absent from
-the expanded family catalogue. The original 176 records/versions/GA thresholds
-were preserved and the fallback split is empty. Inspect
-[pfam_expansion_20261026.json](../maintenance/pfam_expansion_20261026.json),
-`resource_library/detection/databases/pfam/adhesome_v1.0.hmm.metadata.json` and the
-`source_v1.0/download_provenance.json` record. Model source/version labels identify
+The 26 October 2026 expansion added 38 rule-required accessions to the original
+176 models. On 9 November 2026, a further 94 requested profiles were retrieved
+and passed through `build_adhesome_pfam_library.build()` from validated HMM
+records. The active main library now has 308 models; all 308 currently have GA
+thresholds. Existing 214 model records, versions and thresholds were preserved.
+The new models are also available as the separate additive
+`resource_library/detection/databases/pfam/adhesome_v1.0.additions.hmm` bundle.
+Inspect [the latest expansion receipt](../maintenance/pfam_expansion_latest.json),
+the additions metadata, `adhesome_v1.0.hmm.metadata.json` and
+`source_v1.0/download_provenance.json`. Model source/version labels identify
 provenance and do not change pipeline release version 1.0.
 
 For a future reviewed rule-driven model addition:
@@ -104,7 +108,13 @@ model versions and analytical configuration, validates accession/state/GA data,
 and rebuilds manifest-linked source/GA/fallback hashes without launching scans.
 Normal adjacent temporary publication preserves inherited Windows permissions;
 there is no project backup. Detection later creates its HMMER indexes when a scan
-is deliberately launched. To rebuild from an already supplied complete source:
+is deliberately launched. The user-requested additions in
+`maintenance/pfam_requested_additions.json` are merged into this same operation.
+The merged main library remains the active workflow library; the additive HMM
+subset is also retained as `adhesome_v1.0.additions.hmm` with separate metadata.
+New profiles are detection resources only; this operation does not add family
+rules or assign biological identities. To rebuild from an already supplied
+complete source:
 
 ```bash
 python -B resource_library/detection/build_adhesome_pfam_library.py \

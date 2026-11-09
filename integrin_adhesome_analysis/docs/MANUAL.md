@@ -102,8 +102,8 @@ validation species and must not be used as an isolated production target config.
 | `config/annotation/family_identity_rules.json` | Canonical 197-rule identity library |
 | `config/annotation/family_set_registry.json` | 159-set coverage/QC registry; not a production confidence cap |
 | `config/annotation/stage2_evidence_rules.json`, `config/annotation/audit_policy.json` | Executable evidence profiles and audit policy |
-| `config/detection/adhesome_pfam_manifest.csv` | 214 unique Pfam models |
-| `resource_library/detection/databases/pfam/adhesome_v1.0.hmm` | All 214 GA-thresholded models; fallback split empty |
+| `config/detection/adhesome_pfam_manifest.csv` | 308 unique Pfam models |
+| `resource_library/detection/databases/pfam/adhesome_v1.0.hmm` | All 308 GA-thresholded models; fallback split empty |
 | `config/detection/adhesome_component_crosswalk.csv` | 230 component records |
 | `resource_library/detection/references/adhesome_v1.0/` | Paired curated search/competition panel, 354 forward and 425 reciprocal records |
 | `config/motif_annotation/adhesion_core.json` | Default 53 adhesion-associated scan rules |

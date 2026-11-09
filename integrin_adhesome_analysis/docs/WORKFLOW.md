@@ -137,6 +137,14 @@ Each branch has its own annotation, panel, orthology, benchmark, final audit and
 reports. Optional integrated tree inference is a separate operation; this mode
 wrapper does not automatically launch it.
 
+During a run, the terminal shows timestamped `BRANCH` and `STAGE` start,
+completion, reuse and failure messages with elapsed time. Each branch's live
+output is prefixed `[calibration]`, `[validation]` or `[target]` and is also
+saved to that branch's `branch.log`. Long-running commands stream their output;
+OrthoFinder's own search and MSA/tree progress counters therefore remain visible
+while running. Command-specific stdout/stderr logs and stage receipts remain
+available for later diagnosis and resume.
+
 New validation runs/resumes automatically create
 `validation/reports/validation_review.html` and `.md` after the audit, and refresh
 calibration comparisons once both branches finish. To regenerate only a saved
@@ -180,6 +188,13 @@ for hand-written reference JSON. `--annotation-only` deliberately stops after
 annotation. `--topology-file returned/predicted_topologies.3line` is available
 for a topology-only return. `--motif-scope master` explicitly selects the full
 347-rule library instead of the adhesion subset.
+
+The terminal reports each checkpointed stage with a UTC timestamp, elapsed
+time, and `START`, `COMPLETE`, `REUSE` or `FAILED` status. Tool output is streamed
+to the terminal and copied to `logs/command_NNN.log`; OrthoFinder's native
+progress counters and time estimates are visible during inference rather than
+appearing only after the command ends. The same progress messages are retained
+in the parent run/branch log.
 
 If annotation is already complete, use its actual sealed directory:
 
@@ -405,12 +420,50 @@ and short tree identifiers are traceable in the accompanying TSV files.
 
 ## Optional post hoc refinement of unresolved Stage 2 assignments
 
-After the audit completes, review its existing Pfam/CDD annotations with:
+Post hoc refinement needs a saved Stage 2 workbook, but it does not require
+orthology. You can create a preliminary Stage 2 audit immediately after motif
+annotation, review its Pfam/CDD evidence, and later repeat the refinement against
+the orthology-enriched audit. Keep each pass in a separate output directory.
+
+First produce motif annotation without automatically entering the downstream
+reference/orthology workflow:
+
+```bash
+python -B main/adhesome_workflow.py resume \
+  --handoff runs/handoff/validation \
+  --context-dir returned/validation \
+  --out runs/annotation/validation \
+  --annotation-only
+```
+
+Run a preliminary audit from annotation alone. Omitting `--orthology` marks
+orthology and benchmark fields as not run; the family audit uses the available
+Stage 1, external-context, Pfam/CDD and motif evidence:
+
+```bash
+python -B main/adhesome_workflow.py audit \
+  --annotation runs/annotation/validation \
+  --out runs/preliminary_audit/validation
+```
+
+The same command works on a production-target annotation. Validation branches
+also generate the control performance evaluation when the validation target is
+present. This preliminary audit is a separate snapshot; it does not occupy or
+modify the later `annotation/downstream/final` result.
+
+Run the independent post hoc refinement and report before orthology:
 
 ```bash
 python -B main/adhesome_workflow.py refine-unresolved \
-  --input /absolute/path/to/completed/audit/Stage_2_output.xlsx \
-  --out runs/posthoc_domain_review_v1
+  --input runs/preliminary_audit/validation/Stage_2_output.xlsx \
+  --out runs/posthoc_domain_review_v1/validation
+
+python -B main/adhesome_workflow.py report-refinement \
+  --refinement runs/posthoc_domain_review_v1/validation \
+  --labels validation/validation_set.csv \
+  --sequence-manifest runs/annotation/validation/inputs/sequence_manifest.tsv \
+  --kind validation \
+  --out runs/posthoc_performance_v1/validation
 ```
 
 `--check-inputs` validates the input without writing outputs; `--out` is optional
@@ -418,6 +471,8 @@ in that mode. The audit TSV/CSV export is also accepted. Use a new output folder
 outside the sealed source audit. This invokes the sibling
 [`schisto_pfam_cdd_reclassify`](../../schisto_pfam_cdd_reclassify/README_local_Pfam_CDD_reclassification.md)
 adapter and does not restart detection, orthology, audit, calibration or phylogeny.
+The refinement can be run again later against the second audit; choose a new
+`--out` directory for each pass.
 
 The separate `Stage_2_posthoc_refinement.tsv` preserves every source column and
 adds `posthoc_*` proposal fields. Supported and negative-excluded assignments are
@@ -446,10 +501,32 @@ counts. Full-cohort metrics retain missing audit positives as false negatives;
 proposal-only metrics also report the eligible unresolved subset. Family-label
 coverage gaps are explicit. No combined/promoted audit result is generated.
 
-Supply `--orthogroups` with the branch's saved `Orthogroups.tsv` and
+After orthology completes, refine the new enriched audit and rerun the report in
+a new directory. Supply `--orthogroups` with that branch's saved `Orthogroups.tsv` and
 `--panel-proteomes` with its `downstream/panel/proteomes` directory to add
-positive-control reconstruction counts by species and match type. Both files
-and the sequence manifest must belong to the same saved branch. Exact ID,
-identical sequence under a different ID, and other same-species co-membership
-are reported separately. No reference match is counted for species without a
-mapped reference proteome. See the sibling guide for mapping overrides.
+positive-control reconstruction counts by species and match type. These inputs
+must belong to the same saved branch. Recovery requires a full-length identical
+sequence in the control's orthogroup from the same-species reference proteome.
+ID agreement does not affect recovery. Available identical sequences missing
+from the group and other same-species members are reported separately. Species
+without a mapped reference are not assessable. See the sibling guide for
+mapping overrides.
+
+To run orthology and the orthology-enriched audit after the preliminary pass,
+continue from the same annotation in a new downstream directory:
+
+```bash
+python -B main/adhesome_workflow.py continue \
+  --annotation runs/annotation/validation \
+  --out runs/annotation/validation/downstream \
+  --threads 4 --analysis-threads 4
+```
+
+`continue` prepares references, runs orthology and the benchmark, then writes
+the enriched audit at `runs/annotation/validation/downstream/final/Stage_2_output.xlsx`.
+If a downstream stage fails, resume it with
+`python -B main/adhesome_workflow.py recover --run runs/annotation/validation/downstream`.
+Once the enriched audit and reports are
+ready, run `recover --run runs/annotation/validation/downstream --phylogeny` to
+start or resume the optional phylogeny without repeating completed orthology or
+audit stages.

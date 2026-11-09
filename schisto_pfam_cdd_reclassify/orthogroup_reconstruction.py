@@ -1,13 +1,12 @@
-"""Count positive-control recovery from saved orthogroup membership and panel FASTAs."""
+"""Measure full-length sequence recovery from saved orthogroups and panel FASTAs."""
 from collections import Counter, defaultdict
 import csv
 import hashlib
 import re
 
 DETAIL_FIELDS = ['species','protein_id','original_id','reference_column','orthogroup','control_in_panel',
-                 'match_type','exact_id_available','identical_sequence_available','exact_id_in_group',
-                 'identical_sequence_in_group','exact_id_and_sequence_same_member','same_species_members',
-                 'exact_id_matches','identical_sequence_matches']
+                 'match_type','identical_sequence_available','identical_sequence_in_group',
+                 'same_species_members','identical_sequence_matches']
 
 
 def entries(path):
@@ -75,7 +74,7 @@ def sequence_hashes(path):
     return result
 
 
-def reconstruction(orthogroups, controls, mapping, files, kind):
+def reconstruction(orthogroups, controls, mapping, files):
     hashes = {column: sequence_hashes(path) for column,path in files.items()}
     targets = defaultdict(dict)
     for row in controls:
@@ -114,21 +113,17 @@ def reconstruction(orthogroups, controls, mapping, files, kind):
         digest = row['sequence_sha256']
         group, refs = grouped.get((column,protein),('',{}))
         group_members = refs.get(reference,set())
-        source_id = row['original_id'].rsplit('|',1)[-1] if kind=='validation' else row.get('accession','')
-        # Prepared panel IDs are namespaced; retain the exact source identifier, including version.
-        candidates = {source_id, reference+'__'+source_id} if reference and source_id else set()
-        exact_ids = candidates & hashes.get(reference,{}).keys()
         identical_ids = ref_sequences[reference].get(digest,set()) if reference else set()
-        matched_ids, matched_sequences = exact_ids & group_members, identical_ids & group_members
-        match_type = ('reference_not_available' if not reference else 'exact_id' if matched_ids else
-                      'identical_sequence_only' if matched_sequences else 'other_same_species_member' if group_members else
+        matched_sequences = identical_ids & group_members
+        match_type = ('reference_not_available' if not reference else
+                      'identical_sequence_recovered' if matched_sequences else
+                      'identical_sequence_available_not_recovered' if identical_ids else
+                      'other_same_species_member' if group_members else
                       'no_same_species_member')
         details.append(dict(species=species,protein_id=protein,original_id=row['original_id'],
             reference_column=reference,orthogroup=group,control_in_panel=protein in hashes.get(column,{}),
-            match_type=match_type,exact_id_available=bool(exact_ids),identical_sequence_available=bool(identical_ids),
-            exact_id_in_group=bool(matched_ids),identical_sequence_in_group=bool(matched_sequences),
-            exact_id_and_sequence_same_member=bool(matched_ids & matched_sequences),
-            same_species_members=len(group_members),exact_id_matches=';'.join(sorted(matched_ids)),
+            match_type=match_type,identical_sequence_available=bool(identical_ids),
+            identical_sequence_in_group=bool(matched_sequences),same_species_members=len(group_members),
             identical_sequence_matches=';'.join(sorted(matched_sequences))))
     by_species = defaultdict(list)
     for row in details:by_species[row['species']].append(row)
@@ -144,17 +139,15 @@ def members(value):
 def summarize(species, rows, reference):
     classes = Counter(r['match_type'] for r in rows)
     assessable = len(rows)-classes['reference_not_available']
-    available = sum(r['exact_id_available'] or r['identical_sequence_available'] for r in rows)
-    recovered = classes['exact_id']+classes['identical_sequence_only']
+    available = sum(r['identical_sequence_available'] for r in rows)
+    recovered = classes['identical_sequence_recovered']
     return dict(species=species,reference_column=reference,positive_controls=len(rows),
         controls_in_panel=sum(r['control_in_panel'] for r in rows),
         assigned_orthogroup=sum(bool(r['orthogroup']) for r in rows),
         controls_with_reference=assessable,any_same_species_member=sum(bool(r['same_species_members']) for r in rows),
-        exact_id=classes['exact_id'],identical_sequence_only=classes['identical_sequence_only'],
+        identical_sequence_available=available,identical_sequence_recovered=recovered,
+        identical_sequence_available_not_recovered=classes['identical_sequence_available_not_recovered'],
         other_same_species_member=classes['other_same_species_member'],
         no_same_species_member=classes['no_same_species_member'],reference_not_available=classes['reference_not_available'],
-        any_identical_sequence=sum(r['identical_sequence_in_group'] for r in rows),
-        exact_id_and_sequence_same_member=sum(r['exact_id_and_sequence_same_member'] for r in rows),
-        exact_match_available=available,exact_match_recovered=recovered,
         recovery_among_with_reference=recovered/assessable if assessable else None,
         recovery_among_available_matches=recovered/available if available else None)

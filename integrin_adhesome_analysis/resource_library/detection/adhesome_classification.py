@@ -15,6 +15,8 @@ from collections import Counter, defaultdict
 import json
 from pathlib import Path
 import re
+import time
+from datetime import datetime, timezone
 import sys
 sys.path.insert(0,str(_layout_resource(Path(__file__)).resolve().parents[1]))
 from classification_contract import general_family,general_rules,stage_one_workbook
@@ -129,7 +131,12 @@ def classify_comparative(args):
     if manifest:
         curated.update(pf(r['Pfam accession']) for r in table(manifest))
     results, architecture_rows, motif_rows = [], [], []
-    for identifier, sequence in sequences.items():
+    classification_started=time.perf_counter();total_sequences=len(sequences)
+    for sequence_index,(identifier, sequence) in enumerate(sequences.items(),1):
+        if sequence_index==1 or sequence_index%100==0 or sequence_index==total_sequences:
+            elapsed=time.perf_counter()-classification_started
+            eta=(elapsed/sequence_index)*(total_sequences-sequence_index) if sequence_index else 0
+            print(f'{datetime.now(timezone.utc).isoformat()} | CLASSIFY {sequence_index}/{total_sequences} ({100*sequence_index/max(1,total_sequences):.1f}%); elapsed {elapsed:.1f}s; ETA {eta:.1f}s; protein {identifier}',flush=True)
         first_result = len(results)
         hits = sorted(domains[identifier],key=lambda r:(int(r['ali_from']),int(r['ali_to'])))
         architecture = ';'.join(f'{r["pfam_accession"]}:{r["ali_from"]}-{r["ali_to"]}' for r in hits)

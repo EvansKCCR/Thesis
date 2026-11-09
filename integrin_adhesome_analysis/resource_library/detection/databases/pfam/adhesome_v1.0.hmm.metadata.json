@@ -1,13 +1,13 @@
 {
   "pipeline_version": "1.0",
   "source": "source_v1.0/combined_source.hmm",
-  "source_sha256": "3ce97cacd75618febb7706038e27d34132529ffeaf9ddebd855e972d983a3c06",
-  "manifest_sha256": "ea2c696b03d898508616109600f343b944ea2607c58540a49642bf565e4ba655",
-  "library_sha256": "a3c81be36b8baff654020ab384352b9cb9eb143d5ec18366a98042151c6db748",
+  "source_sha256": "2325ff940303419d4686b699143a614f4ff1fe836a5db10d0119e97bbf502aee",
+  "manifest_sha256": "64df3c6063a87e4fae4569d3286ae817bdc30ed0fb53aedf4a9b7e6280dbefda",
+  "library_sha256": "52fb61c9d3ae7ddc9757a253f093b9789d763976a94e79623ba3b1d53796f410",
   "full_pfam": false,
   "crosswalk_sha256": "3894d1eb49c465db590939645e18e22c3f1ffe2d836bf11eb36079b0212fc215",
   "split_sha256": {
-    "ga": "a3c81be36b8baff654020ab384352b9cb9eb143d5ec18366a98042151c6db748",
+    "ga": "52fb61c9d3ae7ddc9757a253f093b9789d763976a94e79623ba3b1d53796f410",
     "fallback": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "models": {
@@ -1936,61 +1936,963 @@
         27.0,
         27.0
       ]
+    },
+    "PF00433": {
+      "name": "Pkinase_C",
+      "accession": "PF00433.31",
+      "length": 44,
+      "ga": [
+        20.9,
+        15.0
+      ]
+    },
+    "PF00681": {
+      "name": "Plectin",
+      "accession": "PF00681.27",
+      "length": 39,
+      "ga": [
+        20.5,
+        20.5
+      ]
+    },
+    "PF00757": {
+      "name": "Furin-like",
+      "accession": "PF00757.27",
+      "length": 147,
+      "ga": [
+        26.8,
+        26.8
+      ]
+    },
+    "PF01822": {
+      "name": "WSC",
+      "accession": "PF01822.26",
+      "length": 82,
+      "ga": [
+        27.8,
+        27.8
+      ]
+    },
+    "PF01846": {
+      "name": "FF",
+      "accession": "PF01846.27",
+      "length": 50,
+      "ga": [
+        22.0,
+        22.0
+      ]
+    },
+    "PF01852": {
+      "name": "START",
+      "accession": "PF01852.26",
+      "length": 207,
+      "ga": [
+        22.0,
+        22.0
+      ]
+    },
+    "PF02010": {
+      "name": "REJ",
+      "accession": "PF02010.23",
+      "length": 453,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF02212": {
+      "name": "GED",
+      "accession": "PF02212.24",
+      "length": 92,
+      "ga": [
+        21.4,
+        21.4
+      ]
+    },
+    "PF02865": {
+      "name": "STAT_int",
+      "accession": "PF02865.24",
+      "length": 121,
+      "ga": [
+        26.0,
+        26.0
+      ]
+    },
+    "PF03160": {
+      "name": "Calx-beta",
+      "accession": "PF03160.21",
+      "length": 119,
+      "ga": [
+        27.0,
+        6.8
+      ]
+    },
+    "PF07647": {
+      "name": "SAM_2",
+      "accession": "PF07647.25",
+      "length": 66,
+      "ga": [
+        20.5,
+        20.5
+      ]
+    },
+    "PF07653": {
+      "name": "SH3_2",
+      "accession": "PF07653.24",
+      "length": 55,
+      "ga": [
+        21.8,
+        21.8
+      ]
+    },
+    "PF07965": {
+      "name": "Integrin_B_tail",
+      "accession": "PF07965.19",
+      "length": 88,
+      "ga": [
+        33.6,
+        33.6
+      ]
+    },
+    "PF07974": {
+      "name": "EGF_2",
+      "accession": "PF07974.21",
+      "length": 32,
+      "ga": [
+        22.1,
+        22.1
+      ]
+    },
+    "PF08416": {
+      "name": "PTB",
+      "accession": "PF08416.21",
+      "length": 131,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF08824": {
+      "name": "Serine_rich",
+      "accession": "PF08824.17",
+      "length": 157,
+      "ga": [
+        26.9,
+        26.9
+      ]
+    },
+    "PF08913": {
+      "name": "VBS",
+      "accession": "PF08913.17",
+      "length": 125,
+      "ga": [
+        21.0,
+        21.0
+      ]
+    },
+    "PF08919": {
+      "name": "F_actin_bind",
+      "accession": "PF08919.17",
+      "length": 112,
+      "ga": [
+        23.6,
+        23.6
+      ]
+    },
+    "PF09128": {
+      "name": "RGS-like",
+      "accession": "PF09128.18",
+      "length": 191,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF09141": {
+      "name": "Talin_middle",
+      "accession": "PF09141.18",
+      "length": 161,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF09379": {
+      "name": "FERM_N",
+      "accession": "PF09379.17",
+      "length": 64,
+      "ga": [
+        22.7,
+        22.7
+      ]
+    },
+    "PF09380": {
+      "name": "FERM_C",
+      "accession": "PF09380.17",
+      "length": 93,
+      "ga": [
+        23.0,
+        23.0
+      ]
+    },
+    "PF11857": {
+      "name": "DUF3377",
+      "accession": "PF11857.15",
+      "length": 71,
+      "ga": [
+        26.5,
+        26.5
+      ]
+    },
+    "PF11971": {
+      "name": "CAMSAP_CH",
+      "accession": "PF11971.14",
+      "length": 85,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF12205": {
+      "name": "GIT1_C",
+      "accession": "PF12205.15",
+      "length": 110,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF13405": {
+      "name": "EF-hand_6",
+      "accession": "PF13405.14",
+      "length": 30,
+      "ga": [
+        25.0,
+        22.9
+      ]
+    },
+    "PF13716": {
+      "name": "CRAL_TRIO_2",
+      "accession": "PF13716.13",
+      "length": 137,
+      "ga": [
+        23.0,
+        23.0
+      ]
+    },
+    "PF13833": {
+      "name": "EF-hand_8",
+      "accession": "PF13833.13",
+      "length": 54,
+      "ga": [
+        28.0,
+        13.8
+      ]
+    },
+    "PF15936": {
+      "name": "DUF4749",
+      "accession": "PF15936.12",
+      "length": 95,
+      "ga": [
+        28.7,
+        28.7
+      ]
+    },
+    "PF16300": {
+      "name": "WD40_4",
+      "accession": "PF16300.13",
+      "length": 44,
+      "ga": [
+        27.0,
+        10.0
+      ]
+    },
+    "PF16457": {
+      "name": "PH_12",
+      "accession": "PF16457.13",
+      "length": 131,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF16511": {
+      "name": "FERM_f0",
+      "accession": "PF16511.13",
+      "length": 81,
+      "ga": [
+        26.9,
+        26.9
+      ]
+    },
+    "PF16512": {
+      "name": "RhoGAP-FF1",
+      "accession": "PF16512.13",
+      "length": 80,
+      "ga": [
+        30.1,
+        30.1
+      ]
+    },
+    "PF16523": {
+      "name": "betaPIX_CC",
+      "accession": "PF16523.12",
+      "length": 85,
+      "ga": [
+        26.8,
+        26.8
+      ]
+    },
+    "PF16559": {
+      "name": "GIT_CC",
+      "accession": "PF16559.12",
+      "length": 66,
+      "ga": [
+        28.7,
+        28.7
+      ]
+    },
+    "PF16609": {
+      "name": "SH3-RhoG_link",
+      "accession": "PF16609.11",
+      "length": 261,
+      "ga": [
+        26.6,
+        26.6
+      ]
+    },
+    "PF16614": {
+      "name": "RhoGEF67_u2",
+      "accession": "PF16614.12",
+      "length": 99,
+      "ga": [
+        26.8,
+        26.8
+      ]
+    },
+    "PF16615": {
+      "name": "RhoGEF67_u1",
+      "accession": "PF16615.12",
+      "length": 47,
+      "ga": [
+        27.2,
+        27.2
+      ]
+    },
+    "PF16746": {
+      "name": "BAR_3",
+      "accession": "PF16746.12",
+      "length": 235,
+      "ga": [
+        31.7,
+        31.7
+      ]
+    },
+    "PF17205": {
+      "name": "PSI_integrin",
+      "accession": "PF17205.11",
+      "length": 46,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF17838": {
+      "name": "PH_16",
+      "accession": "PF17838.9",
+      "length": 127,
+      "ga": [
+        22.8,
+        22.8
+      ]
+    },
+    "PF17870": {
+      "name": "Insulin_TMD",
+      "accession": "PF17870.8",
+      "length": 47,
+      "ga": [
+        33.4,
+        33.4
+      ]
+    },
+    "PF17902": {
+      "name": "SH3_10",
+      "accession": "PF17902.9",
+      "length": 65,
+      "ga": [
+        22.8,
+        22.8
+      ]
+    },
+    "PF18372": {
+      "name": "I-EGF_1",
+      "accession": "PF18372.9",
+      "length": 29,
+      "ga": [
+        26.1,
+        26.1
+      ]
+    },
+    "PF18373": {
+      "name": "Spectrin_2",
+      "accession": "PF18373.9",
+      "length": 78,
+      "ga": [
+        26.4,
+        26.4
+      ]
+    },
+    "PF18385": {
+      "name": "Tiam_CC_Ex",
+      "accession": "PF18385.8",
+      "length": 98,
+      "ga": [
+        25.0,
+        25.0
+      ]
+    },
+    "PF19518": {
+      "name": "RHG35-p190PhoGP_pG1",
+      "accession": "PF19518.8",
+      "length": 190,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF20421": {
+      "name": "DHR-2_Lobe_C",
+      "accession": "PF20421.6",
+      "length": 103,
+      "ga": [
+        26.0,
+        26.0
+      ]
+    },
+    "PF20422": {
+      "name": "DHR-2_Lobe_B",
+      "accession": "PF20422.5",
+      "length": 77,
+      "ga": [
+        26.0,
+        26.0
+      ]
+    },
+    "PF20492": {
+      "name": "ERM_helical",
+      "accession": "PF20492.5",
+      "length": 120,
+      "ga": [
+        40.0,
+        40.0
+      ]
+    },
+    "PF20519": {
+      "name": "Polycystin_dom",
+      "accession": "PF20519.6",
+      "length": 199,
+      "ga": [
+        23.6,
+        23.6
+      ]
+    },
+    "PF21019": {
+      "name": "Spectrin_3",
+      "accession": "PF21019.6",
+      "length": 68,
+      "ga": [
+        24.4,
+        24.4
+      ]
+    },
+    "PF21020": {
+      "name": "Spectrin_4",
+      "accession": "PF21020.6",
+      "length": 100,
+      "ga": [
+        24.2,
+        24.2
+      ]
+    },
+    "PF21097": {
+      "name": "SR_plectin_7",
+      "accession": "PF21097.5",
+      "length": 116,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF21354": {
+      "name": "STAT_linker",
+      "accession": "PF21354.5",
+      "length": 78,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF21494": {
+      "name": "PKC_C2",
+      "accession": "PF21494.5",
+      "length": 118,
+      "ga": [
+        27.8,
+        27.8
+      ]
+    },
+    "PF21520": {
+      "name": "ITGAX-like_Ig_3",
+      "accession": "PF21520.5",
+      "length": 181,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF21692": {
+      "name": "Talin_R4",
+      "accession": "PF21692.5",
+      "length": 126,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF21865": {
+      "name": "TLN1-like_RS",
+      "accession": "PF21865.4",
+      "length": 166,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF21896": {
+      "name": "Talin_IBS2B",
+      "accession": "PF21896.4",
+      "length": 147,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF21989": {
+      "name": "RA_2",
+      "accession": "PF21989.4",
+      "length": 94,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF22669": {
+      "name": "Exo_endo_phos2",
+      "accession": "PF22669.4",
+      "length": 287,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF22697": {
+      "name": "SOS1_NGEF_PH",
+      "accession": "PF22697.4",
+      "length": 106,
+      "ga": [
+        27.7,
+        27.7
+      ]
+    },
+    "PF22785": {
+      "name": "Tc-R-P",
+      "accession": "PF22785.3",
+      "length": 102,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF23014": {
+      "name": "PH_Tiam1",
+      "accession": "PF23014.4",
+      "length": 170,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF23040": {
+      "name": "PH_SSH1-like_1st",
+      "accession": "PF23040.3",
+      "length": 149,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF23083": {
+      "name": "FF_RHG35_4th",
+      "accession": "PF23083.3",
+      "length": 55,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF23105": {
+      "name": "EGF_integrin",
+      "accession": "PF23105.3",
+      "length": 45,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF23106": {
+      "name": "EGF_Teneurin",
+      "accession": "PF23106.2",
+      "length": 30,
+      "ga": [
+        24.3,
+        24.3
+      ]
+    },
+    "PF23142": {
+      "name": "PH_PLEKHM2",
+      "accession": "PF23142.4",
+      "length": 140,
+      "ga": [
+        22.0,
+        22.0
+      ]
+    },
+    "PF23323": {
+      "name": "Spectrin_6",
+      "accession": "PF23323.2",
+      "length": 104,
+      "ga": [
+        27.9,
+        27.9
+      ]
+    },
+    "PF23329": {
+      "name": "EF_HAND_1_PLCG",
+      "accession": "PF23329.5",
+      "length": 70,
+      "ga": [
+        23.9,
+        23.9
+      ]
+    },
+    "PF23554": {
+      "name": "TPR_DOCK",
+      "accession": "PF23554.4",
+      "length": 524,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF23583": {
+      "name": "EF_HAND_2_PLCG",
+      "accession": "PF23583.4",
+      "length": 71,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF23587": {
+      "name": "SH3_KALRN",
+      "accession": "PF23587.2",
+      "length": 69,
+      "ga": [
+        29.2,
+        29.2
+      ]
+    },
+    "PF24147": {
+      "name": "C2_SHIP1-2_2nd",
+      "accession": "PF24147.4",
+      "length": 106,
+      "ga": [
+        27.5,
+        27.5
+      ]
+    },
+    "PF24150": {
+      "name": "PH_SHIP1-2",
+      "accession": "PF24150.3",
+      "length": 103,
+      "ga": [
+        27.7,
+        27.7
+      ]
+    },
+    "PF24681": {
+      "name": "Kelch_KLHDC2_KLHL20_DRC7",
+      "accession": "PF24681.3",
+      "length": 221,
+      "ga": [
+        50.0,
+        50.0
+      ]
+    },
+    "PF25076": {
+      "name": "LIM_FHL2-3_N",
+      "accession": "PF25076.3",
+      "length": 28,
+      "ga": [
+        35.0,
+        35.0
+      ]
+    },
+    "PF25177": {
+      "name": "Talin_VBS2",
+      "accession": "PF25177.2",
+      "length": 116,
+      "ga": [
+        24.2,
+        24.2
+      ]
+    },
+    "PF25346": {
+      "name": "PH_MRCK",
+      "accession": "PF25346.3",
+      "length": 128,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF25525": {
+      "name": "Ubiquitin_PRKD1_N",
+      "accession": "PF25525.3",
+      "length": 85,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF25526": {
+      "name": "LIP-1",
+      "accession": "PF25526.3",
+      "length": 250,
+      "ga": [
+        34.1,
+        34.1
+      ]
+    },
+    "PF25625": {
+      "name": "PH_NISCH_C",
+      "accession": "PF25625.3",
+      "length": 155,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF26586": {
+      "name": "Fn3_R-PTP-O",
+      "accession": "PF26586.2",
+      "length": 90,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF26755": {
+      "name": "PTPRO_N",
+      "accession": "PF26755.2",
+      "length": 87,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF26964": {
+      "name": "ELMO_N",
+      "accession": "PF26964.2",
+      "length": 76,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF27015": {
+      "name": "SR_desmoplakin_3",
+      "accession": "PF27015.2",
+      "length": 163,
+      "ga": [
+        27.3,
+        27.3
+      ]
+    },
+    "PF27594": {
+      "name": "ABI",
+      "accession": "PF27594.3",
+      "length": 76,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF30386": {
+      "name": "RhoGAP_pG2",
+      "accession": "PF30386.2",
+      "length": 167,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF30509": {
+      "name": "Ig_PTPRO_2nd",
+      "accession": "PF30509.2",
+      "length": 104,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF30511": {
+      "name": "Ig_PTPRO_5th",
+      "accession": "PF30511.2",
+      "length": 96,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF30513": {
+      "name": "Ig_PTPRO_6th",
+      "accession": "PF30513.2",
+      "length": 89,
+      "ga": [
+        27.0,
+        27.0
+      ]
+    },
+    "PF31076": {
+      "name": "RAPGEF1_N",
+      "accession": "PF31076.2",
+      "length": 122,
+      "ga": [
+        27.0,
+        27.0
+      ]
     }
   },
   "source_path_base": "metadata_directory",
   "manifest": "../../config/adhesome_pfam_manifest.csv",
   "manifest_path_base": "metadata_directory",
-  "family_rules_sha256": "9b259d5f04636c4c4fd8917ae8e02c356a9481cfb7bc14c2f2444cac035b912d",
-  "model_count": 214,
+  "family_rules_sha256": "0142bdb16e3445cfe7d210ca7667289f4934314436007e53df17c7ae924418fd",
+  "model_count": 308,
   "expansion": {
-    "date": "2026-10-26",
-    "existing_models": 176,
-    "additional_models": 38,
-    "final_models": 214,
+    "date": "2026-11-09",
+    "existing_models": 214,
+    "additional_models": 94,
+    "final_models": 308,
     "added_accessions": [
-      "PF00323",
-      "PF00350",
-      "PF00626",
-      "PF00787",
-      "PF00794",
-      "PF00879",
-      "PF00880",
-      "PF01017",
-      "PF01030",
-      "PF01031",
-      "PF01335",
-      "PF01471",
-      "PF02174",
-      "PF02187",
-      "PF02196",
-      "PF02209",
-      "PF02262",
-      "PF02761",
-      "PF02762",
-      "PF02864",
-      "PF03501",
-      "PF03915",
-      "PF06297",
-      "PF07815",
-      "PF08518",
-      "PF08766",
-      "PF08776",
-      "PF08912",
-      "PF08916",
-      "PF08953",
-      "PF10480",
-      "PF11841",
-      "PF13499",
-      "PF13920",
-      "PF14429",
-      "PF14593",
-      "PF14604",
-      "PF16172"
+      "PF00433",
+      "PF00681",
+      "PF00757",
+      "PF01822",
+      "PF01846",
+      "PF01852",
+      "PF02010",
+      "PF02212",
+      "PF02865",
+      "PF03160",
+      "PF07647",
+      "PF07653",
+      "PF07965",
+      "PF07974",
+      "PF08416",
+      "PF08824",
+      "PF08913",
+      "PF08919",
+      "PF09128",
+      "PF09141",
+      "PF09379",
+      "PF09380",
+      "PF11857",
+      "PF11971",
+      "PF12205",
+      "PF13405",
+      "PF13716",
+      "PF13833",
+      "PF15936",
+      "PF16300",
+      "PF16457",
+      "PF16511",
+      "PF16512",
+      "PF16523",
+      "PF16559",
+      "PF16609",
+      "PF16614",
+      "PF16615",
+      "PF16746",
+      "PF17205",
+      "PF17838",
+      "PF17870",
+      "PF17902",
+      "PF18372",
+      "PF18373",
+      "PF18385",
+      "PF19518",
+      "PF20421",
+      "PF20422",
+      "PF20492",
+      "PF20519",
+      "PF21019",
+      "PF21020",
+      "PF21097",
+      "PF21354",
+      "PF21494",
+      "PF21520",
+      "PF21692",
+      "PF21865",
+      "PF21896",
+      "PF21989",
+      "PF22669",
+      "PF22697",
+      "PF22785",
+      "PF23014",
+      "PF23040",
+      "PF23083",
+      "PF23105",
+      "PF23106",
+      "PF23142",
+      "PF23323",
+      "PF23329",
+      "PF23554",
+      "PF23583",
+      "PF23587",
+      "PF24147",
+      "PF24150",
+      "PF24681",
+      "PF25076",
+      "PF25177",
+      "PF25346",
+      "PF25525",
+      "PF25526",
+      "PF25625",
+      "PF26586",
+      "PF26755",
+      "PF26964",
+      "PF27015",
+      "PF27594",
+      "PF30386",
+      "PF30509",
+      "PF30511",
+      "PF30513",
+      "PF31076"
     ],
     "original_model_records_and_ga_unchanged": true,
     "main_profile": "calibrated_v1",
-    "previous_library_sha256": "0e952d3e3d5e9dcd109eb14b799c1382e78a0e40559ff5c4911cb5e489e3b173",
+    "previous_library_sha256": "a3c81be36b8baff654020ab384352b9cb9eb143d5ec18366a98042151c6db748",
     "analysis_run": false,
     "backups_created": false
   }

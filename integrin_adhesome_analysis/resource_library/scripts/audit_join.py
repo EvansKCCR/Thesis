@@ -30,12 +30,19 @@ def integer(value):
 
 def join(annotation,handoff,panel,orthology,rows,benchmark):
     """No reference accession, HOG or exact sequence can replace a family hypothesis."""
-    motifs=_layout_resource(annotation/'motifs');targets=json.loads((_layout_resource(panel/'targets.json')).read_text())
-    panel_manifest=_layout_resource(panel/'workflow_manifest.json')
-    panel_sha256=hashlib.sha256(_layout_resource(panel_manifest).read_bytes()).hexdigest() if _layout_resource(panel_manifest).exists() else ''
-    species=json.loads((_layout_resource(panel/'species.json')).read_text());references=[s for s in species if s not in targets]
-    report=read(_layout_resource(orthology/'candidates/candidate_report.tsv'));reports={r['candidate_id']:r for r in report}
-    hogs=read(_layout_resource(orthology/'candidates/candidate_HOGs.tsv'))
+    motifs=_layout_resource(annotation/'motifs')
+    panel_manifest_data=json.loads((_layout_resource(handoff/'workflow_manifest.json')).read_text(encoding='utf-8'))
+    if panel is not None:
+        targets=json.loads((_layout_resource(panel/'targets.json')).read_text())
+        panel_manifest=_layout_resource(panel/'workflow_manifest.json')
+        panel_sha256=hashlib.sha256(_layout_resource(panel_manifest).read_bytes()).hexdigest() if _layout_resource(panel_manifest).exists() else ''
+        species=json.loads((_layout_resource(panel/'species.json')).read_text());references=[s for s in species if s not in targets]
+    else:
+        targets=panel_manifest_data.get('target_species') or sorted({r.get('Specie','') for r in rows if r.get('Specie')})
+        species=list(targets);references=[];panel_sha256=''
+    report=read(_layout_resource(orthology/'candidates/candidate_report.tsv')) if orthology is not None else []
+    reports={r['candidate_id']:r for r in report}
+    hogs=read(_layout_resource(orthology/'candidates/candidate_HOGs.tsv')) if orthology is not None else []
     used=read(_layout_resource(motifs/'used_regions.tsv'));contexts=read(_layout_resource(motifs/'sequence_context.tsv'));cdds=read(_layout_resource(motifs/'CDD_specific_hits.tsv'))
     source=read(_layout_resource(annotation/'external_evidence.tsv'));external={r['protein_id']:r for r in source}
     context={r['sequence_id']:r for r in contexts}
@@ -71,9 +78,9 @@ def join(annotation,handoff,panel,orthology,rows,benchmark):
         row.update(benchmark)
         row['orthology_panel_sha256']=panel_sha256
         row['domain_order_check']=row.get('order_check',row.get('domain_order_check',''))
-        row['Orthology_mapping_status']=rep.get('mapping_status','not_in_candidate_report')
+        row['Orthology_mapping_status']=rep.get('mapping_status','not_run' if orthology is None else 'not_in_candidate_report')
         row['Orthology_Orthogroup']=rep.get('Orthogroup','');row['Orthology_HOG']=rep.get('HOG','')
-        row['Orthology_HOG_status']=rep.get('HOG_status','not_in_candidate_report')
+        row['Orthology_HOG_status']=rep.get('HOG_status','not_run' if orthology is None else 'not_in_candidate_report')
         row['Orthology_analysis_completed']=bool(rep)
         row['Orthology_target_species']=';'.join(targets)
         reference_present=[];direct=[]
@@ -93,7 +100,8 @@ def join(annotation,handoff,panel,orthology,rows,benchmark):
         row['Orthology_HOG_reference_species_count']=len(reference_present)
         row['Orthology_direct_reference_count']=len(direct)
         row['Orthology_reference_support']='; '.join(reference_present)
-        row['Orthology_interpretation']='Reference-species representation in the sampled HOG panel; benchmark weight applies to orthology score only'
+        row['Orthology_interpretation']=('Reference-species representation in the sampled HOG panel; benchmark weight applies to orthology score only'
+            if orthology is not None else 'Orthology not run; this preliminary audit uses available non-orthology evidence')
         ss=list(sites[pid].values());tiers={r['candidate_tier'] for r in ss}
         row.update(MotifPrediction_raw_match_count=len(ss),MotifPrediction_distinct_site_count=len({(r['start'],r['end'],r.get('peptide','')) for r in ss}),
             MotifPrediction_library_ids='; '.join(sorted({r['motif_id'] for r in ss})),MotifPrediction_candidate_tiers=';'.join(sorted(tiers)),

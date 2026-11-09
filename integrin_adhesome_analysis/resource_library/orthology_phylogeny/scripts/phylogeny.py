@@ -22,6 +22,8 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
+import time
 
 from pipeline import SPECIES, table_species, digest, members, read_tsv, records, write_tsv, configure_species, VERSION
 
@@ -443,13 +445,13 @@ def run_locked(args):
         result = subprocess.run([tools[name],flag],capture_output=True,text=True)
         versions[name] = result.stdout+result.stderr
     statuses = []
-    for group in groups:
+    for group_index,group in enumerate(groups,1):
         folder = args.project/group['group']
         for name, sha in group['files'].items():
             if digest(folder/name)!=sha:
                 raise ValueError(f'Prepared input changed: {folder/name}; prepare a new project')
         if group['status']!='ready':
-            print(f'SKIP {group["group"]}: {group["status"]}')
+            print(f'{datetime.now(timezone.utc).isoformat()} | GROUP {group_index}/{len(groups)} SKIP {group["group"]}: {group["status"]}',flush=True)
             statuses.append(dict(group=group['group'],status='skipped',category='too_few_taxa',stage='preparation',error=group['status'],stderr_log=''))
             continue
         work = _layout_resource(folder/'inference')
@@ -487,14 +489,44 @@ def run_locked(args):
                 threads=args.threads,iqtree_threads=iq_threads,tool_versions=versions))
         info.update(status='running',settings=vars(args).copy(),pid=os.getpid(),reused_stages=[])
         info['settings'] = {k:str(v) if isinstance(v,Path) else v for k,v in info['settings'].items() if k!='func'}
+        group_started=time.perf_counter()
+        print(f'{datetime.now(timezone.utc).isoformat()} | GROUP {group_index}/{len(groups)} START {group["group"]}',flush=True)
         def execute(command, stdout_name=None):
             info['commands'].append(command)
             info['active_stage']=stage
             dump(_layout_resource(work/'run.json'),info)
             index = len(info['commands'])
             info['last_stderr_log']=str(_layout_resource(work/f'command_{index}.stderr.log'))
-            with (_layout_resource(work/f'command_{index}.stderr.log')).open('w') as err, (_layout_resource(work/(stdout_name or f'command_{index}.stdout.log'))).open('w') as out:
-                subprocess.run(command,stdout=out,stderr=err,check=True)
+            started=time.perf_counter();tool=Path(str(command[0])).name
+            print(f'{datetime.now(timezone.utc).isoformat()} | {group["group"]} {stage.upper()} START {tool}; stdout: {stdout_name or f"command_{index}.stdout.log"}',flush=True)
+            with (_layout_resource(work/f'command_{index}.stderr.log')).open('w',encoding='utf-8') as err, (_layout_resource(work/(stdout_name or f'command_{index}.stdout.log'))).open('w',encoding='utf-8') as out:
+                process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,encoding='utf-8',errors='replace',bufsize=1)
+                assert process.stdout is not None and process.stderr is not None
+                print_lock=threading.Lock()
+                def relay(stream,destination,channel):
+                    pending=[]
+                    while True:
+                        char=stream.read(1)
+                        if char=='':break
+                        destination.write(char)
+                        if char in ('\r','\n'):
+                            if pending:
+                                with print_lock:print(f'[{group["group"]} {tool} {channel}] '+''.join(pending),flush=True)
+                            pending.clear();destination.flush()
+                        else:pending.append(char)
+                    if pending:
+                        with print_lock:print(f'[{group["group"]} {tool} {channel}] '+''.join(pending),flush=True)
+                    destination.flush()
+                readers=[threading.Thread(target=relay,args=(process.stdout,out,'out'),daemon=True),
+                         threading.Thread(target=relay,args=(process.stderr,err,'err'),daemon=True)]
+                for reader in readers:reader.start()
+                exit_code=process.wait()
+                for reader in readers:reader.join()
+            elapsed=time.perf_counter()-started
+            if exit_code:
+                print(f'{datetime.now(timezone.utc).isoformat()} | {group["group"]} {stage.upper()} FAILED {tool}; exit {exit_code}; elapsed {elapsed:.1f}s',flush=True)
+                raise subprocess.CalledProcessError(exit_code,command)
+            print(f'{datetime.now(timezone.utc).isoformat()} | {group["group"]} {stage.upper()} COMPLETE {tool}; elapsed {elapsed:.1f}s',flush=True)
         stage='input'
         try:
             raw = load_sequences(_layout_resource(folder/'members.faa'))
@@ -550,6 +582,7 @@ def run_locked(args):
             annotate(treefile,work,args.outgroup)
             info['status']='complete'
             info['outputs']={p.name:digest(p) for p in work.iterdir() if _layout_resource(p).is_file() and p.name!='run.json'}
+            print(f'{datetime.now(timezone.utc).isoformat()} | GROUP {group_index}/{len(groups)} COMPLETE {group["group"]}; elapsed {time.perf_counter()-group_started:.1f}s',flush=True)
         except KeyboardInterrupt:
             info.update(status='interrupted',active_stage=stage)
             dump(_layout_resource(work/'run.json'),info)
@@ -564,7 +597,7 @@ def run_locked(args):
                 log=_layout_resource(Path(info['last_stderr_log']))
                 info['stderr_tail']=_layout_resource(log).read_text(errors='replace')[-6000:]
                 info['diagnostic_note']='Exit code alone does not establish a resource/thread cause; inspect stderr and tool logs.'
-            print(f'FAILED {group["group"]}: {exc}',file=sys.stderr)
+            print(f'{datetime.now(timezone.utc).isoformat()} | GROUP {group_index}/{len(groups)} FAILED {group["group"]} at {stage}; elapsed {time.perf_counter()-group_started:.1f}s; {exc}',file=sys.stderr,flush=True)
         dump(_layout_resource(work/'run.json'),info)
         statuses.append(dict(group=group['group'],status=info['status'],category=info.get('failure_category',''),
             stage=info.get('failed_stage','complete'),error=info.get('error',''),stderr_log=info.get('last_stderr_log','')))

@@ -215,14 +215,26 @@ def run(args):
         if kind=='target' and args.reuse_target_detection:
             cmd += ['--reuse-detection',str(_layout_resource(args.reuse_target_detection).resolve())]
         log = _layout_resource(out/kind/'branch.log')
+        branch_started=datetime.now(timezone.utc)
+        print(f'{branch_started.isoformat()} | BRANCH {kind.upper()} START; log: {log}',flush=True)
         with _layout_resource(log).open('a',encoding='utf-8') as handle:
             env=os.environ.copy()
             env['PYTHONPATH']=os.pathsep.join([str(ROOT/'resource_library'),str(ROOT),str(ROOT/'resource_library/scripts'),env.get('PYTHONPATH','')])
-            proc = subprocess.run(cmd,cwd=ROOT,stdout=handle,stderr=subprocess.STDOUT,env=env)
+            proc=subprocess.Popen(cmd,cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,env=env,
+                                  text=True,encoding='utf-8',errors='replace',bufsize=1)
+            assert proc.stdout is not None
+            for line in proc.stdout:
+                handle.write(line);handle.flush()
+                print(f'[{kind}] {line.rstrip()}',flush=True)
+            proc.wait()
+        elapsed=(datetime.now(timezone.utc)-branch_started).total_seconds()
         status_file = _layout_resource(out/kind/'branch_status.json')
         status = json.loads(_layout_resource(status_file).read_text()) if _layout_resource(status_file).exists() else dict(status='failed',exit_code=proc.returncode)
         if proc.returncode not in (0,2):status=dict(status='failed',exit_code=proc.returncode,error=status.get('error','Branch failed before completion'))
         status['log'] = str(log)
+        status['elapsed_seconds']=round(elapsed,3)
+        status['completed_utc']=datetime.now(timezone.utc).isoformat()
+        print(f'{datetime.now(timezone.utc).isoformat()} | BRANCH {kind.upper()} {status.get("status", "finished").upper()}; elapsed {elapsed:.1f}s',flush=True)
         return status
     gates = launch_branches(kinds,worker,workers)
     if args.mode=='validation' and gates.get('validation',{}).get('status')=='complete':

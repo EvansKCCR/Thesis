@@ -227,15 +227,17 @@ def render(folder, kind, summary, matrices, family_matrices, recovery=None):
                               ('Family assignment performance',family_matrices,['population','policy','TP','FP','FN','PPV','recall','F1','evaluable_positive_labels','unmapped_positive_labels'])]:
         sections.append((name,fields,[[display(r.get(f)) for f in fields] for r in rows]))
     if recovery is not None:
-        paragraphs.append('Orthogroup recovery is counted from saved groups and panel FASTAs, independently of audit calls and proposals. Exact ID takes priority over identical sequence under another ID. Other same-species members are not exact recoveries. Controls without a mapped reference are not assessable. Co-membership does not establish one-to-one orthology.')
+        paragraphs.append('Orthogroup recovery requires an identical full-length amino acid sequence from the same-species reference proteome in the saved group. Protein identifiers only locate records; their agreement does not affect recovery. Identical sequences available in the panel but missing from the control group are counted separately. Controls without a mapped reference are not assessable.')
+        paragraphs.append('Positive-control labels are applied after inference for this report. Because control sequences were supplied as targets, this checks recovery of known sequences in the saved groups. It does not establish reconstruction of unseen sequences or one-to-one orthology.')
         fields = ['species','positive_controls','assigned_orthogroup','controls_with_reference',
-                  'any_same_species_member','exact_id','identical_sequence_only','other_same_species_member',
-                  'no_same_species_member','reference_not_available','exact_match_available',
-                  'exact_match_recovered','recovery_among_with_reference','recovery_among_available_matches']
+                  'any_same_species_member','identical_sequence_available','identical_sequence_recovered',
+                  'identical_sequence_available_not_recovered','other_same_species_member',
+                  'no_same_species_member','reference_not_available','recovery_among_with_reference',
+                  'recovery_among_available_matches']
         headers = ['Species','Positive controls','In an orthogroup','With reference','Any same-species member',
-                   'Exact ID','Identical sequence only','Other same-species member','No same-species member',
-                   'No mapped reference','Exact match in panel','Exact match recovered',
-                   'Recovered / with reference','Recovered / exact match in panel']
+                   'Identical sequence in panel','Identical sequence recovered','Available but not recovered',
+                   'Other same-species member only','No same-species member or identical sequence in panel',
+                   'No mapped reference','Recovered / with reference','Recovered / identical sequence in panel']
         sections.append(('Positive-control orthogroup reconstruction',headers,
                          [[display(r[f]) for f in fields] for r in recovery]))
     esc=lambda x:html.escape(str(x),quote=True)
@@ -291,7 +293,7 @@ def generate(args):
         recovery_sources={'orthogroups':orthogroups,**{'panel:'+c:p for c,p in panel_files.items()}}
         sources.update(recovery_sources)
         before.update({k:sha256(p) for k,p in recovery_sources.items()})
-        recovery, recovery_details=orthogroup.reconstruction(orthogroups,controls,reference_mapping,panel_files,args.kind)
+        recovery, recovery_details=orthogroup.reconstruction(orthogroups,controls,reference_mapping,panel_files)
     if predictions and not predictions.keys() & by_pair.keys():
         raise ValueError('No refinement keys match this reference panel/sequence manifest')
     for pair,row in predictions.items():
@@ -354,7 +356,8 @@ def generate(args):
         negative_controls_used_for_training=False,
         output_sha256={p.name:sha256(p) for p in sorted(destination.iterdir()) if p.is_file()})
     if recovery is not None:
-        receipt['orthogroup_reconstruction']=dict(reference_columns=reference_mapping,totals=recovery[-1],
+        receipt['orthogroup_reconstruction']=dict(match_criterion='identical_full_length_amino_acid_sequence',
+            reference_columns=reference_mapping,totals=recovery[-1],
             code_sha256=sha256(Path(orthogroup.__file__)))
     (destination/'report_manifest.json').write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8')
     print('Report: '+str(destination/'performance_report.html'))
