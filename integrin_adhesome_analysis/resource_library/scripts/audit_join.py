@@ -31,13 +31,14 @@ def integer(value):
 def join(annotation,handoff,panel,orthology,rows,benchmark):
     """No reference accession, HOG or exact sequence can replace a family hypothesis."""
     motifs=_layout_resource(annotation/'motifs')
-    panel_manifest_data=json.loads((_layout_resource(handoff/'workflow_manifest.json')).read_text(encoding='utf-8'))
     if panel is not None:
         targets=json.loads((_layout_resource(panel/'targets.json')).read_text())
         panel_manifest=_layout_resource(panel/'workflow_manifest.json')
         panel_sha256=hashlib.sha256(_layout_resource(panel_manifest).read_bytes()).hexdigest() if _layout_resource(panel_manifest).exists() else ''
         species=json.loads((_layout_resource(panel/'species.json')).read_text());references=[s for s in species if s not in targets]
     else:
+        manifest=_layout_resource(handoff/'workflow_manifest.json')
+        panel_manifest_data=json.loads(_layout_resource(manifest).read_text(encoding='utf-8')) if _layout_resource(manifest).is_file() else {}
         targets=panel_manifest_data.get('target_species') or sorted({r.get('Specie','') for r in rows if r.get('Specie')})
         species=list(targets);references=[];panel_sha256=''
     report=read(_layout_resource(orthology/'candidates/candidate_report.tsv')) if orthology is not None else []

@@ -133,7 +133,11 @@ def execute(command, logdir, label=None):
     n = len(list(_layout_resource(logdir).glob('command_*.json')))+1
     record = dict(command=[str(x) for x in command], cwd=str(ROOT), status='running')
     dest = _layout_resource(logdir/f'command_{n:03}.json')
-    label=label or Path(str(command[0])).name
+    if not label:
+        if str(command[0])=='orthofinder':label='OrthoFinder inference'
+        else:
+            script=next((Path(str(item)).stem for item in command[1:3] if str(item).endswith('.py')),None)
+            label=(script or Path(str(command[0])).stem).replace('_',' ')
     started=time.perf_counter()
     record['started_utc']=datetime.now(timezone.utc).isoformat()
     dump(dest, record)
@@ -160,6 +164,7 @@ def execute(command, logdir, label=None):
                 print(''.join(buffer),flush=True)
             log.flush()
             exit_code=proc.wait()
+            proc.stdout.close()
             duration=time.perf_counter()-started
             record.update(status='complete' if exit_code==0 else 'failed',exit_code=exit_code,
                           elapsed_seconds=round(duration,3),completed_utc=datetime.now(timezone.utc).isoformat())
@@ -247,7 +252,7 @@ def start(args):
         cmd += ['--config', _layout_resource(config_path).resolve()]
         if resuming:cmd+=['--resume']
         for code in sorted(excluded):cmd+=['--exclude-target',code]
-        execute(cmd, _layout_resource(out/'logs'),label='Stage 1 target detection')
+        execute(cmd, _layout_resource(out/'logs'))
     batch_path=_layout_resource(detection/'batch.json')
     if _layout_resource(batch_path).exists():
         statuses=json.loads(_layout_resource(batch_path).read_text(encoding='utf-8')).get('species',{})
@@ -338,7 +343,7 @@ def start(args):
     source_fastas = sorted(path for path in _layout_resource(detection).glob('*/prepared/*.faa') if path.parents[1].name in species)
     execute([sys.executable, _layout_resource(MOTIF/'import_domain_regions.py'), '--input-dir', _layout_resource(out/'families'),
              '--domains', *domains, '--source-fasta', *source_fastas, '--out', _layout_resource(out/'verified_regions.tsv')],
-            _layout_resource(out/'logs'),label='Verify and import domain regions')
+            _layout_resource(out/'logs'))
     provenance = json.loads((_layout_resource(out/'verified_regions.provenance.json')).read_text(encoding='utf-8'))
     if provenance['unverified_records']:
         raise ValueError('Unverified domain source sequences; inspect provenance')
@@ -452,7 +457,7 @@ def resume(args):
             dest.parent.mkdir(parents=True,exist_ok=True)
             if _layout_resource(source).resolve()!=_layout_resource(dest).resolve():shutil.copyfile(source,dest)
         if args.external_evidence:write(_layout_resource(out/'external_evidence.tsv'),external)
-        execute(cmd, _layout_resource(out/'logs'),label='External context and motif annotation')
+        execute(cmd, _layout_resource(out/'logs'))
     except (ValueError,OSError,KeyError) as exc:
         state.update(status='failed',error=str(exc))
         dump(checkpoint,state)
@@ -609,7 +614,7 @@ def downstream(args):
     for filename in getattr(args,'reference_file',None) or []:
         reference_command+=['--reference-file',filename]
     if getattr(args,'reference_panel',None):reference_command+=['--reference-panel',args.reference_panel]
-    stage('references',_layout_resource(out/'references'),lambda:execute(reference_command,_layout_resource(out/'logs'),label='Prepare reference proteomes'))
+    stage('references',_layout_resource(out/'references'),lambda:execute(reference_command,_layout_resource(out/'logs')))
     stage('panel',_layout_resource(out/'panel'),lambda:calibrate(argparse.Namespace(handoff=handoff,panel=_layout_resource(out/'references/panel.auto.json'),out=_layout_resource(out/'panel'))))
     stage('orthology',_layout_resource(out/'orthology'),lambda:orthology(argparse.Namespace(panel=_layout_resource(out/'panel'),out=_layout_resource(out/'orthology'),results=None,input_manifest=None,
         threads=args.threads,analysis_threads=args.analysis_threads,compare=args.compare,recovering=recovering,inside_workflow=True,
@@ -664,14 +669,14 @@ def downstream(args):
                       '--candidate-report',_layout_resource(candidates/'candidate_report.tsv')]
             dup=_layout_resource(candidates/'candidate_duplications.tsv')
             cmd+=['--duplications',dup] if _layout_resource(dup).exists() else ['--allow-missing-duplications']
-            stage('phylogeny_prepare',_layout_resource(out/'phylogeny'),lambda:execute(cmd,_layout_resource(out/'logs'),label='Prepare phylogeny groups'))
+            stage('phylogeny_prepare',_layout_resource(out/'phylogeny'),lambda:execute(cmd,_layout_resource(out/'logs')))
             tree_cmd=[sys.executable,_layout_resource(ORTH/'phylogeny.py'),'run','--project',_layout_resource(out/'phylogeny'),'--threads',args.threads,
                       '--iqtree-threads',getattr(args,'iqtree_threads',2)]
             if getattr(args,'allow_partial_phylogeny',False):
                 tree_cmd+=['--allow-partial']
             if recovering:
                 tree_cmd+=['--retry-failed']
-            stage('phylogeny_run',_layout_resource(out/'phylogeny'),lambda:execute(tree_cmd,_layout_resource(out/'logs'),label='Phylogeny inference'),preserve=True)
+            stage('phylogeny_run',_layout_resource(out/'phylogeny'),lambda:execute(tree_cmd,_layout_resource(out/'logs')),preserve=True)
             tree_summary=_layout_resource(out/'phylogeny/run_summary.json')
             dump(_layout_resource(out/'phylogeny_status.json'),dict(status=json.loads(_layout_resource(tree_summary).read_text()).get('status','complete') if _layout_resource(tree_summary).exists() else 'complete'))
         else:
@@ -868,7 +873,7 @@ def orthology(args):
             if (_layout_resource(out/'inference')).exists():
                 archive_attempt(_layout_resource(out/'inference'))
             inference_command=['orthofinder','-f',_layout_resource(panel/'proteomes'),'-t',args.threads,'-a',args.analysis_threads,'-o',_layout_resource(out/'inference'),*inference_options]
-            execute(inference_command, _layout_resource(out/'logs'),label='OrthoFinder inference')
+            execute(inference_command, _layout_resource(out/'logs'))
             dump(receipt,dict(panel_manifest=digest(_layout_resource(panel/'workflow_manifest.json')),inference_settings=inference_settings,
                 inference_command=[str(item) for item in inference_command],
                 files={str(p.relative_to(_layout_resource(out/'inference'))):digest(p) for p in (_layout_resource(out/'inference')).rglob('*') if _layout_resource(p).is_file()}))
@@ -881,7 +886,7 @@ def orthology(args):
     execute([sys.executable, _layout_resource(ORTH/'pipeline.py'),'extract','--results',results,
              '--candidate-set','workflow','--candidate-audit',_layout_resource(panel/'candidate_audit.tsv'),
              '--species-list',_layout_resource(panel/'species.json'),'--target-species',_layout_resource(panel/'targets.json'),'--output',_layout_resource(out/'candidates')],
-            _layout_resource(out/'logs'),label='Extract orthology candidate groups')
+            _layout_resource(out/'logs'))
     report = read(_layout_resource(out/'candidates/candidate_report.tsv'))
     reference_columns = [k for k in report[0] if k.endswith('_orthologues')]
     review = []
@@ -926,7 +931,7 @@ def benchmark_command(results,panel,raw,out,logs,refogs=None,input_dir=None,prot
     if input_dir:command+=['--input-dir',input_dir]
     if selection:command+=['--selection',selection]
     if quality_policy:command+=['--quality-policy',quality_policy]
-    execute(command,logs,label='Evolutionary benchmark')
+    execute(command,logs)
 
 
 def benchmark(args):
@@ -1095,7 +1100,7 @@ def audit(args):
     if getattr(args,'phylogenetic_identity_resolution',False):
         audit_command+=['--phylogenetic-identity-resolution']
         if getattr(args,'phylogenetic_identity_evidence',None):audit_command+=['--phylogenetic-identity-evidence',args.phylogenetic_identity_evidence]
-    execute(audit_command,_layout_resource(out/'logs'),label='Stage 2 family audit')
+    execute(audit_command,_layout_resource(out/'logs'))
     validation=(dict(status='isolated_branch_evaluation',branch=os.environ['SCHISTO_ISOLATED_BRANCH'])
                 if os.environ.get('SCHISTO_ISOLATED_BRANCH') else evaluate_controls(out,handoff))
     motif_snapshot=_layout_resource(MOTIF/'Motif_library/adhesion_core.json')
