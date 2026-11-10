@@ -15,8 +15,7 @@ import json
 import re
 from pathlib import Path
 from pipeline import records, digest, write_tsv, VERSION
-from refseq_gene_map import parse_gff
-from prepare_reference import prepare, BENCHMARK_SEQUENCE_POLICY
+from prepare_reference import prepare, DEFAULT_QC
 from benchmark_workflow import bundle, read_groups, input_proteomes
 from input_dependencies import InputRegistry
 
@@ -51,9 +50,11 @@ def build(raw, handoff, out, benchmark_refogs=None, benchmark_input_dir=None, re
             raise ValueError(f'Target proteome changed or lacks handoff provenance: {source}')
         control_unit=meta.get('query_unit')=='control_protein'
         entries.append(dict(species=sp,fasta=str(_layout_resource(source).resolve()),gene_level=not control_unit,
+            orthology_role='target',
             unit_level='control_protein' if control_unit else 'gene',
             source='Handoff-verified labelled protein units; not a complete proteome' if control_unit else 'Handoff-verified complete target proteome'))
     seen=set(targets)
+    qc_config=json.loads(_layout_resource(_LAYOUT_BUNDLE_ROOT/'config/detection/proteomes.json').read_text(encoding='utf-8')).get('qc',DEFAULT_QC)
     for source in files:
         code=re.sub(r'\.(fa|faa|fasta)(\.gz)?$','',source.name,flags=re.I)
         is_benchmark=source in benchmark_files
@@ -64,59 +65,48 @@ def build(raw, handoff, out, benchmark_refogs=None, benchmark_input_dir=None, re
         seen.add(code)
         folder=out/code
         folder.mkdir()
-        maps=[p for p in (_layout_resource(source.parent/f'{code}.protein_gene.tsv'),_layout_resource(source.parent/f'{code}.tsv')) if _layout_resource(p).exists()]
-        gffs=[p for p in (_layout_resource(source.parent/f'{code}.gff'),_layout_resource(source.parent/f'{code}.gff3')) if _layout_resource(p).exists()]
-        if len(maps)>1 or len(gffs)>1:
-            raise ValueError(f'Ambiguous mapping/GFF sidecars for {code}')
+        # Benchmark FASTAs keep their upstream filename (often a long Ensembl
+        # release name), while the prepared species code is prefixed with
+        # ``Bench_``. Accept source-stem sidecars as well as species-code files
+        # so the isoform filter always sees the real protein-to-gene mapping.
+        sidecar_stems = [source.name, source.stem]
+        maps=sorted({_layout_resource(source.parent/f'{stem}.protein_gene.tsv') for stem in sidecar_stems
+                     if _layout_resource(source.parent/f'{stem}.protein_gene.tsv').is_file()})
+        if len(maps)>1:
+            raise ValueError(f'Ambiguous protein_gene.tsv sidecars for {code}; specify a single matching map')
         rows=list(records(source))
         provenance=dict(fasta=str(_layout_resource(source).resolve()),fasta_sha256=digest(source))
-        panel_metadata=_layout_resource(source.parent/f'{code}.reference.json')
-        if _layout_resource(panel_metadata).exists():
+        metadata_candidates=sorted({_layout_resource(source.parent/f'{stem}.reference.json') for stem in [code,*sidecar_stems]
+                                    if _layout_resource(source.parent/f'{stem}.reference.json').is_file()})
+        if len(metadata_candidates)>1:
+            raise ValueError(f'Ambiguous assembly/provenance metadata sidecars for {code}')
+        panel_metadata=metadata_candidates[0] if metadata_candidates else _layout_resource(source.parent/f'{code}.reference.json')
+        if _layout_resource(panel_metadata).is_file():
             scope=json.loads(_layout_resource(panel_metadata).read_text(encoding='utf-8'))
             if scope.get('fasta_sha256')!=provenance['fasta_sha256']:
                 raise ValueError(f'{code}: reference-scope metadata does not match the FASTA')
             provenance.update(reference_scope=scope,reference_scope_file=str(_layout_resource(panel_metadata).resolve()),
                               reference_scope_sha256=digest(panel_metadata))
-        if is_benchmark:
-            # Preserve the supplied protein benchmark's units. Do not collapse
-            # benchmark isoforms or claim that protein IDs are validated genes.
-            mapping=_layout_resource(folder/'protein_gene.tsv')
-            write_tsv(mapping,['protein_id','gene_id'],[dict(protein_id=h.split()[0],gene_id=h.split()[0]) for h,s in rows])
-            provenance.update(method='original_benchmark_protein_units',benchmark_refogs=str(_layout_resource(refogs).resolve()),
-                              benchmark_truth_sha256={str(p.relative_to(refogs)):digest(p) for p in truth_paths},
-                              unit_level='benchmark_protein',sequence_policy=BENCHMARK_SEQUENCE_POLICY)
-        elif maps:
-            mapping=maps[0]
+        mapping=maps[0] if maps else None
+        if mapping is not None:
             provenance.update(mapping=str(_layout_resource(mapping).resolve()),mapping_sha256=digest(mapping),method='explicit_tsv')
         else:
-            if gffs:
-                gene_sets,metadata=parse_gff(gffs[0])
-                if any(len(gene_sets.get(h.split()[0],set()))!=1 for h,s in rows):
-                    raise ValueError(f'{code}: missing/conflicting CDS protein_id to GeneID mapping; provide an explicit TSV for other GFF schemas')
-                mapping_rows=[dict(protein_id=h.split()[0],gene_id='GeneID_'+next(iter(gene_sets[h.split()[0]]))) for h,s in rows]
-                provenance.update(gff=str(_layout_resource(gffs[0]).resolve()),gff_sha256=digest(gffs[0]),annotation_metadata=metadata,method='ncbi_gff')
-            else:
-                mapping_rows=[]
-                for header,seq in rows:
-                    pid=header.split()[0]
-                    match=re.search(r'(?:^|\s)gene[=:](\S+)',header)
-                    gene=match.group(1) if match else pid[len(code)+2:] if pid.startswith(code+'__') else None
-                    if not gene:
-                        raise ValueError(f'{code}: {pid} lacks an explicit gene ID; supply {code}.protein_gene.tsv or supported GFF')
-                    mapping_rows.append(dict(protein_id=pid,gene_id=gene))
-                provenance['method']='explicit_header_gene_or_prefixed_gene_level'
-            mapping=_layout_resource(folder/'protein_gene.tsv')
-            write_tsv(mapping,['protein_id','gene_id'],mapping_rows)
-        prepared=prepare(code,source,mapping,_layout_resource(folder/'prepared'),internal_stop_policy='mask' if is_benchmark else 'reject')
+            provenance['method']='header_suffix_and_cdhit_fallback'
+        prepared=prepare(code,source,mapping,_layout_resource(folder/'prepared'),internal_stop_policy='mask',qc=qc_config)
         preparation=_layout_resource(folder/'prepared/preparation.json')
         provenance.update(preparation=str(_layout_resource(preparation).resolve()),preparation_sha256=digest(preparation),
                           sequence_qc=json.loads(_layout_resource(preparation).read_text())['sequence_qc'])
+        if is_benchmark:
+            provenance.update(benchmark_refogs=str(_layout_resource(refogs).resolve()),
+                              benchmark_truth_sha256={str(p.relative_to(refogs)):digest(p) for p in truth_paths},
+                              unit_level='gene',isoform_policy='longest QC-passing protein per mapped/derived gene; ties by protein ID')
         if is_benchmark and provenance['sequence_qc']['internal_stop_proteins']:
             qc=provenance['sequence_qc']
             print(f"{code}: masked {qc['internal_stop_sites']} stop markers as X in {qc['internal_stop_proteins']} proteins; see {_layout_resource(folder/'prepared/sequence_qc.tsv')}",flush=True)
         (_layout_resource(folder/'source.json')).write_text(json.dumps(provenance,indent=2)+'\n')
-        entries.append(dict(species=code,fasta=str(_layout_resource(prepared).resolve()),gene_level=not is_benchmark,
-                            unit_level='benchmark_protein' if is_benchmark else 'gene',source=json.dumps(provenance)))
+        entries.append(dict(species=code,fasta=str(_layout_resource(prepared).resolve()),gene_level=True,
+                            unit_level='gene',orthology_role='benchmark_core' if is_benchmark else 'reference_outgroup',
+                            source=json.dumps(provenance)))
     panel=_layout_resource(out/'panel.auto.json')
     panel.write_text(json.dumps(dict(proteomes=entries),indent=2)+'\n')
     return panel

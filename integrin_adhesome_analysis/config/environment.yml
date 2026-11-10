@@ -9,6 +9,7 @@ dependencies:
   - hmmer=3.4
   - blast=2.16.0
   - orthofinder=3.1.5
+  - cd-hit=4.8.1
   - mafft=7.526
   - trimal=1.5.0
   - iqtree=2.4.0

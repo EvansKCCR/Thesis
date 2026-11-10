@@ -359,6 +359,67 @@ groups in place, add `--resume --retry-failed`; `--hog GROUP_ID` limits a group.
 Do not confuse this integrated CLI or its filenames with the sibling standalone
 family-phylogeny runner described in that bundle's own docs.
 
+### Benchmark-core orthology and species-tree inference
+
+When the automatic reference panel includes the 12 RefOG-linked proteomes in
+`input/reference_raw/BENCHMARKS/Input`, the orthology stage runs OrthoFinder on
+those 12 core species first, records core groups present in at least 10/12 taxa,
+then assigns every user-selected target and reference proteome with OrthoFinder
+`--assign --core`. Target and outgroup counts are set by the user's target
+configuration and selected raw reference files; they are not fixed at seven and
+four. The final assigned result retains the full
+predicted orthogroup set for benchmark scoring; `inference/core_consensus.tsv`
+is a separate occupancy-qualified list. This requires OrthoFinder support for
+`--assign` and `--core`, and MSA-based OrthoFinder mode.
+
+The shared proteome preparation and QC runs before detection/orthology. A
+`protein_gene.tsv` is optional; when selected in target configuration or found
+beside a raw reference as `<FASTA-stem>.protein_gene.tsv`, it must have
+`protein_id` and `gene_id` columns and drives longest-isoform grouping. Without
+that map, preparation checks configured/header `gene:ID` or `gene=ID` fields,
+then conservative repeated dot/suffix patterns, and uses CD-HIT only for
+remaining ungrouped proteins (`-c 0.98 -aS 0.90`). It writes the selected
+representatives and complete `identifier_map.tsv`/`sequence_qc.tsv` provenance.
+QC uses the current thresholds: minimum length 30, ambiguous fraction at most
+0.05, and maximum continuous ambiguous run 20; invalid-residue, stop-marker,
+duplicate-ID, and clustering decisions are recorded.
+For the assembly-composition review, add `<FASTA-stem>.reference.json` with
+`fasta_sha256`, `assembly_level`, and `completeness_percent` fields. These
+metadata are reported per core species; missing values remain unverified.
+
+The selected current 12-species set is used as the benchmark core as requested.
+The assembly review records which entries have chromosome/scaffold level and
+completeness metadata; missing metadata remains unverified. Additional targets
+and reference/outgroup species can be selected without editing the orthology
+algorithm or meeting a fixed total of 23 proteomes.
+
+After orthology, prepare strict single-copy consensus gene trees and run the
+optional coalescent and concatenated analyses:
+
+```bash
+python -B resource_library/orthology_phylogeny/scripts/species_phylogeny.py prepare \
+  --orthology runs/annotation/downstream/orthology \
+  --panel runs/annotation/downstream/panel \
+  --out runs/annotation/species_phylogeny
+
+python -B resource_library/orthology_phylogeny/scripts/species_phylogeny.py run \
+  --project runs/annotation/species_phylogeny --threads 4 --iqtree-threads 2
+```
+
+The default tree set requires presence in at least 10/12 benchmark taxa and
+up to five target taxa (or all configured targets if fewer), with a dynamically
+bounded minimum total occupancy and at most one sequence per included species.
+Outgroups are included in each gene tree when present as
+single-copy members. Gene trees use MAFFT L-INS-i, trimAl `-gappyout`, and
+IQ-TREE maximum likelihood with model selection and 1,000 ultrafast bootstrap
+replicates. The script also infers a concatenated IQ-TREE species tree and
+summarizes gene trees with ASTRAL-IV by default. Install `astral4` first, or
+supply an ASTRAL-III jar using `--astral3-jar <path>` on the `run` command.
+The ASTRAL tree is written unrooted with available outgroup tips retained; the
+concatenated IQ-TREE analysis uses the configured outgroups for rooting. This
+project is separate from optional family-level adhesome trees. Resume with
+`run --resume`; completed gene trees are reused.
+
 Existing-tree identity review is a separate optional operation:
 
 ```bash

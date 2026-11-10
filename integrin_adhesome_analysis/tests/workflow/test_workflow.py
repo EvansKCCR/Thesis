@@ -71,6 +71,7 @@ class WorkflowTests(unittest.TestCase):
             (_layout_resource(truth/'RefOG002.txt')).write_text('a2\nb2\n')
             for species,prefix in [('A','a'),('B','b')]:
                 (inputs/(species+'.fa')).write_text(''.join('>'+prefix+str(i)+'\n'+('M*AA*' if i==0 else 'MAAA')+'\n' for i in range(3)))
+                (inputs/(species+'.protein_gene.tsv')).write_text('protein_id\tgene_id\n'+''.join(f'{prefix}{i}\tgene{prefix}{i}\n' for i in range(3)))
             actual=w.execute;commands=[];fail_reference=[True]
             def simulated(command,logs):
                 commands.append([str(x) for x in command])
@@ -108,7 +109,7 @@ class WorkflowTests(unittest.TestCase):
             self.assertFalse(any('phylogeny.py' in ' '.join(command) for command in commands))
             self.assertEqual(w.verify(out,'completed_workflow')['phylogeny_status'],'not_requested')
             panel=json.loads((_layout_resource(out/'references/panel.auto.json')).read_text())
-            self.assertTrue(all(row.get('unit_level')=='benchmark_protein' and row['gene_level'] is False for row in panel['proteomes'] if row['species'].startswith('Bench_')))
+            self.assertTrue(all(row.get('unit_level')=='gene' and row['gene_level'] is True and row.get('orthology_role')=='benchmark_core' for row in panel['proteomes'] if row['species'].startswith('Bench_')))
             benchmark_index=next(i for i,c in enumerate(commands) if 'benchmark.py' in c[1])
             audit_index=next(i for i,c in enumerate(commands) if 'integrated_adhesome_pipeline.py' in c[1])
             self.assertLess(benchmark_index,audit_index)

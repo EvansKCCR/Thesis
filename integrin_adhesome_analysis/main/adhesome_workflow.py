@@ -218,9 +218,9 @@ def start(args):
         if not codes or len(codes)!=len(set(codes)) or any(not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*', s) or '__' in s for s in codes):
             raise ValueError('Target config requires unique safe species codes without double underscores')
         for entry in entries:
-            if not entry.get('species') or not entry.get('path') or not entry.get('gene_regex') or not entry.get('assembly'):
-                raise ValueError('Each target requires code, species, assembly, path and gene_regex')
-            if re.compile(entry['gene_regex']).groups < 1:
+            if not entry.get('species') or not entry.get('path'):
+                raise ValueError('Each configured target requires code, species label and FASTA path')
+            if entry.get('gene_regex') and re.compile(entry['gene_regex']).groups < 1:
                 raise ValueError('gene_regex must capture the explicit gene ID in its first group')
         expected = set(codes)
     if not args.detection and not config_path:
@@ -850,6 +850,14 @@ def orthology(args):
         raise ValueError('Inference tuning options cannot change imported results; run new inference instead')
     panel = _layout_resource(args.panel).resolve()
     panel_meta = verify(panel, 'panel')
+    panel_snapshot=json.loads((_layout_resource(panel/'panel.snapshot.json')).read_text(encoding='utf-8'))
+    has_benchmark_core=sum(entry.get('orthology_role')=='benchmark_core' for entry in panel_snapshot.get('proteomes',[]))==12
+    if has_benchmark_core:
+        if inference_settings['method']=='dendroblast':
+            raise ValueError('Benchmark-core assignment requires OrthoFinder MSA gene trees; use --orthofinder-method msa')
+        if inference_settings['method'] is None:
+            inference_settings['method']='msa'
+            inference_options.extend(['-M','msa'])
     out = _layout_resource(args.out).resolve()
     recovering=getattr(args,'recovering',False)
     out.mkdir(parents=True, exist_ok=recovering)
@@ -869,18 +877,37 @@ def orthology(args):
             for name,sha in saved.get('files',{}).items():
                 if digest(_layout_resource(out/'inference')/name)!=sha:
                     raise ValueError(f'Completed inference output changed: {name}')
+            results=_layout_resource(saved['results']).resolve()
         else:
-            if (_layout_resource(out/'inference')).exists():
-                archive_attempt(_layout_resource(out/'inference'))
-            inference_command=['orthofinder','-f',_layout_resource(panel/'proteomes'),'-t',args.threads,'-a',args.analysis_threads,'-o',_layout_resource(out/'inference'),*inference_options]
-            execute(inference_command, _layout_resource(out/'logs'))
+            inference_dir=_layout_resource(out/'inference')
+            core_entries=[entry for entry in panel_snapshot.get('proteomes',[]) if entry.get('orthology_role')=='benchmark_core']
+            if len(core_entries)==12:
+                if inference_dir.exists() and not recovering:
+                    archive_attempt(inference_dir)
+                core_runner=_layout_resource(ORTH/'orthology_core_assignment.py')
+                inference_command=[sys.executable,core_runner,'--panel',panel,'--out',inference_dir,
+                    '--threads',str(args.threads),'--analysis-threads',str(args.analysis_threads)]
+                if recovering:
+                    inference_command.append('--resume')
+                for token in inference_options:
+                    inference_command.append('--option='+str(token))
+                execute(inference_command,_layout_resource(out/'logs'))
+                result_pointer=inference_dir/'final_results.txt'
+                if not result_pointer.is_file():
+                    raise ValueError('Core-assignment stage completed without final_results.txt')
+                results=_layout_resource(Path(result_pointer.read_text().strip())).resolve()
+            else:
+                if inference_dir.exists():
+                    archive_attempt(inference_dir)
+                inference_command=['orthofinder','-f',_layout_resource(panel/'proteomes'),'-t',args.threads,'-a',args.analysis_threads,'-o',inference_dir,*inference_options]
+                execute(inference_command, _layout_resource(out/'logs'))
+                hits = list(inference_dir.glob('Results_*'))
+                if len(hits)!=1:
+                    raise ValueError('Cannot identify one Results_* directory; use explicit --results on a new output')
+                results=hits[0]
             dump(receipt,dict(panel_manifest=digest(_layout_resource(panel/'workflow_manifest.json')),inference_settings=inference_settings,
-                inference_command=[str(item) for item in inference_command],
-                files={str(p.relative_to(_layout_resource(out/'inference'))):digest(p) for p in (_layout_resource(out/'inference')).rglob('*') if _layout_resource(p).is_file()}))
-        hits = list((_layout_resource(out/'inference')).glob('Results_*'))
-        if len(hits)!=1:
-            raise ValueError('Cannot identify one Results_* directory; use explicit --results on a new output')
-        results = hits[0]
+                inference_command=[str(item) for item in inference_command],results=str(_layout_resource(results).resolve()),
+                files={str(p.relative_to(inference_dir)):digest(p) for p in inference_dir.rglob('*') if _layout_resource(p).is_file()}))
     if recovering and (_layout_resource(out/'candidates')).exists():
         archive_attempt(_layout_resource(out/'candidates'))
     execute([sys.executable, _layout_resource(ORTH/'pipeline.py'),'extract','--results',results,

@@ -7,7 +7,8 @@
       "assembly":"replace_with_assembly_and_release",
       "source_url":"replace_with_proteome_source",
       "path":"TargetA.faa",
-      "gene_regex":"(?:^|\\s)gene[=:]([^\\s]+)"
+      "gene_regex":null,
+      "protein_gene_tsv":null
     }
   ]
 }

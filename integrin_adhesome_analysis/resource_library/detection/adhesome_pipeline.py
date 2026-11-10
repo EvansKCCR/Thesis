@@ -10,6 +10,9 @@ if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
     _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
 from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
 _layout_activate()
+_ORTHOLOGY_SCRIPTS = _LAYOUT_BUNDLE_ROOT / 'resource_library' / 'orthology_phylogeny' / 'scripts'
+if str(_ORTHOLOGY_SCRIPTS) not in _layout_sys.path:
+    _layout_sys.path.insert(0, str(_ORTHOLOGY_SCRIPTS))
 
 import argparse
 from collections import Counter, defaultdict
@@ -34,6 +37,9 @@ REFERENCE_SET = _layout_resource(PROJECT_ROOT / 'references' / 'adhesome_v1.0')
 MODULES = {'extracellular_matrix', 'integrin_receptors', 'membrane_proximal_adaptors',
            'actin_linking', 'focal_adhesion_scaffolds', 'downstream_signalling','other_LIM'}
 
+from prepare_reference import prepare as prepare_gene_level, infer_gene
+from pipeline import read_tsv
+
 def prepare(config, output):
     output = _layout_resource(Path(output))
     settings = json.loads(_layout_resource(Path(config)).read_text(encoding='utf-8'))
@@ -43,62 +49,38 @@ def prepare(config, output):
     codes = [s['code'] for s in settings['proteomes']]
     if len(codes) != len(set(codes)) or any(not re.fullmatch(r'[A-Za-z0-9_]+', c) for c in codes):
         raise ValueError('Species codes must be unique safe identifiers')
+    config_path=_layout_resource(Path(config)).resolve()
     for species in settings['proteomes']:
-        validate_protein_input(_layout_resource(Path(config)).resolve().parent/species['path'])
+        validate_protein_input(config_path.parent/species['path'])
     output.mkdir(parents=True, exist_ok=True)
     summaries = {}
     for species in settings['proteomes']:
-        source = _layout_resource(Path(config)).resolve().parent / species['path']
-        records, identifiers, groups = [], set(), defaultdict(list)
-        for header, sequence in fasta(source):
-            identifier = header.split()[0]
-            if identifier in identifiers:
-                raise ValueError(f'Duplicate protein ID in {source}: {identifier}')
-            identifiers.add(identifier)
-            match = re.search(species['gene_regex'], header)
-            if not match:
-                raise ValueError(f'No gene mapping for {identifier}; supply a validated gene_regex')
-            gene = match.group(1)
-            if not re.fullmatch(r'[A-Za-z0-9_.-]+', gene):
-                raise ValueError(f'Unsafe gene ID: {gene}')
-            sequence = sequence[:-1] if sequence.endswith('*') else sequence
-            row = dict(original_id=identifier, gene_id=gene, original_header=header,
-                       protein_id=species['code'] + '__' + gene, length=len(sequence), sequence=sequence)
-            groups[gene].append(row)
-            records.append(row)
-        if not records:
-            raise ValueError(f'Empty FASTA: {source}')
-        for gene, isoforms in groups.items():
-            # Collapse first, then QC. Do not silently replace a bad longest isoform.
-            winner = sorted(isoforms, key=lambda r: (-r['length'], r['original_id']))[0]
-            for row in isoforms:
-                sequence = row['sequence']
-                ambiguous = sum(c in 'XBZJ' for c in sequence)
-                row['ambiguous_fraction'] = ambiguous / len(sequence) if sequence else 1.0
-                runs = [len(m.group()) for m in re.finditer('[XBZJ]+', sequence)]
-                row['longest_ambiguous_run'] = max(runs, default=0)
-                reasons = []
-                if row is not winner:
-                    reasons.append('shorter_isoform_or_tie')
-                if set(sequence) - set('ACDEFGHIKLMNPQRSTVWYXBZJUO'):
-                    reasons.append('invalid_residue_or_internal_stop')
-                if row['length'] < settings['qc']['min_length']:
-                    reasons.append('below_global_min_length')
-                if row['ambiguous_fraction'] > settings['qc']['max_ambiguous_fraction']:
-                    reasons.append('ambiguous_fraction')
-                if row['longest_ambiguous_run'] > settings['qc']['max_ambiguous_run']:
-                    reasons.append('ambiguous_run')
-                row['decision'] = ';'.join(reasons) if reasons else 'retained'
-        retained = sorted((r for r in records if r['decision'] == 'retained'), key=lambda r: r['protein_id'])
-        prefix = output / species['code']
-        write_fasta(str(prefix) + '.faa', [(r['protein_id'], r['sequence']) for r in retained])
-        write_table(str(prefix) + '.id_map.csv', records,
+        source = config_path.parent / species['path']
+        mapping=species.get('protein_gene_tsv')
+        mapping_path=(config_path.parent/mapping).resolve() if mapping else None
+        if mapping_path is not None and not mapping_path.is_file():
+            raise ValueError(f'{species["code"]}: configured protein_gene.tsv not found: {mapping_path}')
+        prep_dir=output/'_sequence_qc'/species['code']
+        prepared=prepare_gene_level(species['code'],source,mapping_path,prep_dir,
+            internal_stop_policy='mask',gene_regex=species.get('gene_regex'),qc=qc,
+            cdhit=species.get('cdhit_executable','cd-hit'))
+        prefix=output/species['code']
+        shutil.copyfile(prepared,str(prefix)+'.faa')
+        _, map_rows = read_tsv(prep_dir/'identifier_map.tsv')
+        mapped=[]
+        for row in map_rows:
+            mapped.append(dict(protein_id=row['prepared_id'],original_id=row['original_id'],gene_id=row['gene_id'],
+                length=row['length'],ambiguous_fraction=row['ambiguous_fraction'],
+                longest_ambiguous_run=row['longest_ambiguous_run'],decision=row['decision'],original_header=row['original_header']))
+        write_table(str(prefix)+'.id_map.csv',mapped,
                     ['protein_id','original_id','gene_id','length','ambiguous_fraction','longest_ambiguous_run','decision','original_header'])
-        summaries[species['code']] = dict(species=species['species'], assembly=species['assembly'],
+        prep_meta=json.loads((prep_dir/'preparation.json').read_text(encoding='utf-8'))
+        summaries[species['code']] = dict(species=species['species'], assembly=species.get('assembly','not_supplied'),
             assembly_status='user_supplied_not_verified_from_FASTA', source_url=species.get('source_url'),
-            input=str(source), input_sha256=digest(source), input_proteins=len(records), genes=len(groups),
-            retained=len(retained), excluded=len(records)-len(retained),
-            decisions=dict(Counter(r['decision'] for r in records)), output_sha256=digest(str(prefix) + '.faa'))
+            input=str(source), input_sha256=digest(source), input_proteins=prep_meta['input_protein_ids'],
+            genes=prep_meta['genes'],retained=prep_meta['sequence_qc']['retained'],
+            excluded=prep_meta['sequence_qc']['excluded'],sequence_qc=prep_meta['sequence_qc'],
+            output_sha256=digest(str(prefix)+'.faa'))
     save_json(_layout_resource(output / 'preparation.json'), dict(pipeline_version=VERSION,config=settings, config_sha256=digest(config), species=summaries))
     print(json.dumps(summaries, indent=2))
 
@@ -514,8 +496,8 @@ def check_inputs(root,settings,excluded=None):
     paths,ignored=discover_proteomes(root,settings,excluded)
     summary={}
     for entry in settings['proteomes']:
-        code=entry['code'];path=paths[code];pattern=re.compile(entry['gene_regex'])
-        if pattern.groups<1:raise ValueError(f'{code}: gene_regex must capture a gene identifier')
+        code=entry['code'];path=paths[code]
+        if pattern and pattern.groups<1:raise ValueError(f'{code}: gene_regex must capture a gene identifier')
         identifiers=set();genes=set();count=0
         with _layout_resource(path).open(encoding='utf-8-sig') as handle:
             for line in handle:
@@ -524,12 +506,9 @@ def check_inputs(root,settings,excluded=None):
                 header=line[1:].strip();count+=1
                 if not header:raise ValueError(f'{code}: empty FASTA header in {path}')
                 identifier=header.split()[0]
-                if identifier in identifiers:raise ValueError(f'{code}: duplicate protein ID in {path}: {identifier}')
                 identifiers.add(identifier)
-                match=pattern.search(header)
-                if not match or not match.group(1) or not re.fullmatch(r'[A-Za-z0-9_.-]+',match.group(1)):
-                    raise ValueError(f'{code}: gene_regex cannot extract a safe gene identifier from {identifier} in {path}; update this target entry in targets.json before detection')
-                genes.add(match.group(1))
+                inferred,_,_=infer_gene(header,identifier,entry.get('gene_regex'))
+                genes.add(inferred or identifier)
         if not count:raise ValueError(f'{code}: no FASTA records in {path}')
         validate_protein_input(path)
         summary[code]=dict(fasta=str(path),proteins=count,genes=len(genes))

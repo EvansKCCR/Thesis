@@ -226,11 +226,23 @@ explicit. No uncalibrated hit-level confidence percentages are assigned.
 
 Ordinary raw reference FASTAs and applicable GFF/gene maps belong in
 `input/reference_raw/`. FASTA/gzip variants are accepted. Gene preparation uses
-matching `Code.protein_gene.tsv`/`Code.tsv`, NCBI-style `Code.gff`/`Code.gff3`
-protein-to-GeneID CDS annotations, explicit `gene=ID`/`gene:ID` headers or already
-prepared `Code__gene_id` headers. Every protein needs an explicit mapping; the
-longest isoform per gene is retained. Automatic preparation writes panel JSON;
-manual JSON editing is not a required pause after external return.
+matching `Code.protein_gene.tsv`, explicit `gene=ID`/`gene:ID` headers or already
+prepared `Code__gene_id` headers. A `protein_gene.tsv` is optional; when provided
+in the target config or beside a reference FASTA, it drives gene grouping. When
+absent, preparation uses configured/header gene tags and conservative repeated
+suffix conventions, then CD-HIT clustering (`-c 0.98 -aS 0.90`) as the fallback.
+Sequence QC uses minimum length 30, ambiguous fraction <=0.05 and maximum
+ambiguous stretch 20, and records invalid residues and duplicate-ID resolution.
+The longest QC-passing representative per inferred gene/cluster is retained.
+Automatic preparation writes panel JSON; manual JSON editing is not a required
+pause after external return.
+
+Open_Orthobench benchmark proteomes pass through this same preparation and QC.
+Their `protein_gene.tsv` sidecars are optional; without them, header/suffix
+inference and the CD-HIT fallback determine gene groups. With all 12 benchmark
+files present, orthology uses them as the OrthoFinder core, then assigns all
+user-selected targets and reference proteomes. Read the benchmark-core and
+optional species-tree procedure in `docs/WORKFLOW.md` before running.
 
 Reference calibration means adding appropriate reference proteomes to a new
 panel/inference and comparing that result. It does not rename parameters on an
