@@ -70,10 +70,15 @@ class WorkflowTests(unittest.TestCase):
             (_layout_resource(truth/'RefOG001.txt')).write_text('a1\nb1\n')
             (_layout_resource(truth/'RefOG002.txt')).write_text('a2\nb2\n')
             for species,prefix in [('A','a'),('B','b')]:
-                (inputs/(species+'.fa')).write_text(''.join('>'+prefix+str(i)+'\n'+('M*AA*' if i==0 else 'MAAA')+'\n' for i in range(3)))
-                (inputs/(species+'.protein_gene.tsv')).write_text('protein_id\tgene_id\n'+''.join(f'{prefix}{i}\tgene{prefix}{i}\n' for i in range(3)))
+                # Synthetic benchmark proteins must pass the production QC
+                # minimum while retaining one internal-stop example.
+                (inputs/(species+'.fa')).write_text(''.join('>'+prefix+str(i)+'\n'+(('M*'+'A'*39+'*') if i==0 else 'MAAA'*10)+'\n' for i in range(3)))
+                # Keep the synthetic truth IDs stable through preparation so
+                # the benchmark fixture evaluates assignment rather than map
+                # translation.
+                (inputs/(species+'.protein_gene.tsv')).write_text('protein_id\tgene_id\n'+''.join(f'{prefix}{i}\t{prefix}{i}\n' for i in range(3)))
             actual=w.execute;commands=[];fail_reference=[True]
-            def simulated(command,logs):
+            def simulated(command,logs,label=None,**kwargs):
                 commands.append([str(x) for x in command])
                 if 'prepare_references.py' in str(command[1]) and fail_reference[0]:
                     fail_reference[0]=False
@@ -89,7 +94,7 @@ class WorkflowTests(unittest.TestCase):
                     for species,gene in [('Bench_A','a1'),('Bench_B','b1')]:
                         w.write(_layout_resource(result/f'Orthologues/{species}.tsv'),[dict(Orthogroup='OG1',TargetA='TargetA__g',**{species:species+'__'+gene})])
                 else:
-                    actual(command,logs)
+                    actual(command,logs,label=label,**kwargs)
             out=_layout_resource(root/'automatic')
             with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=simulated):
                 with self.assertRaisesRegex(ValueError,'reference preparation failure'):
@@ -113,9 +118,9 @@ class WorkflowTests(unittest.TestCase):
             benchmark_index=next(i for i,c in enumerate(commands) if 'benchmark.py' in c[1])
             audit_index=next(i for i,c in enumerate(commands) if 'integrated_adhesome_pipeline.py' in c[1])
             self.assertLess(benchmark_index,audit_index)
-            def failed_benchmark(command,logs):
+            def failed_benchmark(command,logs,label=None,**kwargs):
                 if 'benchmark.py' in str(command[1]):raise ValueError('simulated benchmark execution failure')
-                return simulated(command,logs)
+                return simulated(command,logs,label=label,**kwargs)
             failed=_layout_resource(root/'benchmark_failure_run')
             with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=failed_benchmark):
                 w.downstream(argparse.Namespace(annotation=annotation,out=failed,reference_raw=raw,threads=1,analysis_threads=1,compare=None,benchmark_protocol='custom'))
@@ -130,8 +135,8 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(w.verify(failed,'completed_workflow')['completion_status'],'complete')
             # A genuine low-quality partition keeps its scores, completes the audit,
             # and cannot acquire an accepted benchmark weight.
-            def merged_predictions(command,logs):
-                simulated(command,logs)
+            def merged_predictions(command,logs,label=None,**kwargs):
+                simulated(command,logs,label=label,**kwargs)
                 if str(command[0])=='orthofinder':
                     result=_layout_resource(Path(command[command.index('-o')+1])/'Results_fixture')
                     w.write(_layout_resource(result/'Phylogenetic_Hierarchical_Orthogroups/N0.tsv'),[
@@ -161,16 +166,18 @@ class WorkflowTests(unittest.TestCase):
     def test_start_preflight_checks_all_targets_before_creating_output(self):
         with tempfile.TemporaryDirectory() as td:
             root=_layout_resource(Path(td));raw=_layout_resource(root/'input/targets');raw.mkdir(parents=True)
-            (_layout_resource(raw/'TargetA.faa')).write_text('>a gene=gene1\nMAAA\n')
-            (_layout_resource(raw/'validation.faa')).write_text('>candidate|P001|GENE1\nMAAA\n>hard_negative|P002|GENE2\nMAAA\n')
+            (_layout_resource(raw/'TargetA.faa')).write_text('>a gene=gene1\n'+'MAAA'*10+'\n')
+            (_layout_resource(raw/'validation.faa')).write_text('>candidate|P001|GENE1\n'+'MAAA'*10+'\n>hard_negative|P002|GENE2\n'+'MCCC'*10+'\n')
             entries=[dict(code=code,species=code,assembly='fixture',path=code+'.faa',gene_regex=r'gene=(\S+)') for code in ('TargetA','validation')]
             cfg=_layout_resource(root/'targets.json');w.dump(cfg,dict(qc=dict(min_length=1,max_ambiguous_fraction=.1,max_ambiguous_run=5),proteomes=entries))
             args=argparse.Namespace(detection=None,input_dir=raw,targets_config=cfg,out=_layout_resource(root/'handoff'),threads=1,check_inputs=True)
             with patch.object(w,'execute') as execute:
-                with self.assertRaisesRegex(ValueError,'validation: gene_regex'):
+                entries[1]['gene_regex']='no_capture_group'
+                w.dump(cfg,dict(qc=dict(min_length=1,max_ambiguous_fraction=.1,max_ambiguous_run=5),proteomes=entries))
+                with self.assertRaisesRegex(ValueError,'gene_regex must capture'):
                     w.start(args)
                 self.assertFalse(_layout_resource(args.out).exists());execute.assert_not_called()
-                entries[1]['gene_regex']=r'^[^|]+\|([^|]+)\|'
+                entries[1].pop('gene_regex')
                 w.dump(cfg,dict(proteomes=entries))
                 w.start(args)
                 self.assertFalse(_layout_resource(args.out).exists());execute.assert_not_called()
@@ -190,17 +197,17 @@ class WorkflowTests(unittest.TestCase):
             w.seal(a,'annotation',handoff=str(h),handoff_manifest=w.digest(_layout_resource(h/'workflow_manifest.json')))
             raw=_layout_resource(root/'reference_raw')
             raw.mkdir()
-            (_layout_resource(raw/'RefA.faa')).write_text('>p1\nMAAA\n>p2\nMA\n')
+            (_layout_resource(raw/'RefA.faa')).write_text('>p1 gene:GeneID_1\n'+'MAAA'*10+'\n>p2 gene:GeneID_1\n'+'MAAA'*11+'\n')
             (_layout_resource(raw/'RefA.gff3')).write_text('chr\tx\tCDS\t1\t9\t.\t+\t0\tprotein_id=p1;Dbxref=GeneID:1\nchr\tx\tCDS\t1\t9\t.\t+\t0\tprotein_id=p2;Dbxref=GeneID:1\n')
-            (_layout_resource(raw/'RefB.faa')).write_text('>b gene=geneB\nMAAA\n')
-            (_layout_resource(raw/'RefC.faa')).write_text('>c\nMAAA\n')
+            (_layout_resource(raw/'RefB.faa')).write_text('>b gene=geneB\n'+'MAAA'*10+'\n')
+            (_layout_resource(raw/'RefC.faa')).write_text('>c\n'+'MAAA'*10+'\n')
             w.dump(_layout_resource(raw/'RefC.reference.json'),dict(fasta_sha256=w.digest(_layout_resource(raw/'RefC.faa')),complete_proteome=False,panel_scope='fixture_targeted_panel'))
             (_layout_resource(raw/'RefC.protein_gene.tsv')).write_text('protein_id\tgene_id\nc\tgeneC\n')
             actual_execute=w.execute
             commands=[]
             fail_tree=[True]
             fail_extract=[True]
-            def simulated(command,logs):
+            def simulated(command,logs,label=None,**kwargs):
                 commands.append([str(x) for x in command])
                 if str(command[0])=='orthofinder':
                     result=_layout_resource(Path(command[command.index('-o')+1])/'Results_fixture')
@@ -221,7 +228,7 @@ class WorkflowTests(unittest.TestCase):
                     fail_extract[0]=False
                     raise ValueError('simulated extraction failure')
                 else:
-                    actual_execute(command,logs)
+                    actual_execute(command,logs,label=label,**kwargs)
             out=_layout_resource(root/'automatic')
             with patch.object(w.shutil,'which',return_value='/fixture/tool'),patch.object(w,'execute',side_effect=simulated):
                 with self.assertRaisesRegex(ValueError,'simulated extraction failure'):
@@ -255,7 +262,7 @@ class WorkflowTests(unittest.TestCase):
                 self.assertTrue(any('--retry-failed' in c for c in recovered))
             self.assertTrue((_layout_resource(out/'final/Stage_2_output.xlsx')).exists())
             self.assertEqual(json.loads((_layout_resource(out/'final/workflow_manifest.json')).read_text())['rules_sha256'],w.digest(w.audit_configuration()[0]))
-            self.assertEqual(w.fasta(_layout_resource(out/'references/RefA/prepared/RefA.faa')),{'RefA__GeneID_1':'MAAA'})
+            self.assertEqual(w.fasta(_layout_resource(out/'references/RefA/prepared/RefA.faa')),{'RefA__GeneID_1':'MAAA'*11})
             self.assertFalse(json.loads((_layout_resource(out/'references/RefC/source.json')).read_text())['reference_scope']['complete_proteome'])
             self.assertEqual(json.loads((_layout_resource(out/'phylogeny/manifest.json')).read_text())['duplication_evidence_status'],'unavailable_not_evidence_of_no_duplication')
             self.assertEqual(json.loads((_layout_resource(out/'phylogeny/manifest.json')).read_text())['grouping'],'family')

@@ -40,7 +40,7 @@ class AnnotationRecoveryTests(unittest.TestCase):
         else:args+=['--allow-missing-context']
         return handoff,_layout_resource(root/'annotation'),args
 
-    def fail(self,command,logs):
+    def fail(self,command,logs,label=None,**kwargs):
         logs.mkdir(parents=True,exist_ok=True)
         w.dump(_layout_resource(logs/'command_001.json'),dict(command=[str(x) for x in command],status='failed',exit_code=2))
         (_layout_resource(logs/'command_001.log')).write_text('Unknown or duplicate family: unassigned_domain_candidate\n')

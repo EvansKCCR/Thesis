@@ -42,6 +42,9 @@ class EvidenceJoinTests(unittest.TestCase):
                 dict(sequence_id='Target__p',motif_id='CURRENT',start=4,end=6,peptide='AAA',candidate_tier='sequence_only_candidate'),
                 dict(sequence_id='Target__p',motif_id='CURRENT',start=7,end=9,peptide='AAA',candidate_tier='context_conflict'),
                 dict(sequence_id='Target__p',motif_id='OLD',start=10,end=12,peptide='AAA',candidate_tier='context_supported_candidate')])
+            # The join accepts both sealed annotations and older handoffs.
+            # Include the minimal handoff manifest so either path is covered.
+            (_layout_resource(root/'workflow_manifest.json')).write_text(json.dumps({'target_species':['Target']}))
             rows=[dict(protein_id='Target__p',Specie='Target',family='profilin',assigned_family='profilin'),
                   dict(protein_id='Target__p',Specie='Target',family='Nck',assigned_family='')]
             before=json.dumps(rows,sort_keys=True)

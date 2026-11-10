@@ -497,7 +497,11 @@ def check_inputs(root,settings,excluded=None):
     summary={}
     for entry in settings['proteomes']:
         code=entry['code'];path=paths[code]
-        if pattern and pattern.groups<1:raise ValueError(f'{code}: gene_regex must capture a gene identifier')
+        gene_regex=entry.get('gene_regex')
+        if gene_regex:
+            try: pattern=re.compile(gene_regex)
+            except re.error as exc:raise ValueError(f'{code}: invalid gene_regex: {exc}')
+            if pattern.groups<1:raise ValueError(f'{code}: gene_regex must capture a gene identifier')
         identifiers=set();genes=set();count=0
         with _layout_resource(path).open(encoding='utf-8-sig') as handle:
             for line in handle:
