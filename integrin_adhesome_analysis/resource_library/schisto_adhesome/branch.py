@@ -16,6 +16,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import traceback
 import time
 from datetime import datetime, timezone
 
@@ -97,6 +98,10 @@ def _execute(args):
                     failed_utc=datetime.now(timezone.utc).isoformat(),elapsed_seconds=round(elapsed,3))
                 dump(state_path,stages)
                 print(f'{datetime.now(timezone.utc).isoformat()} | STAGE {name.upper()} FAILED; elapsed {elapsed:.1f}s; {exc}',flush=True)
+                # Keep the originating file and line in branch.log; the short
+                # status error alone is insufficient to diagnose NameError and
+                # other exceptions from imported workflow modules.
+                traceback.print_exc(file=sys.stdout)
                 raise
         dump(state_path,stages)
     try:
