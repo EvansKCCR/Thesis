@@ -34,10 +34,14 @@ from the root, not from individual stage/script directories.
 
 Create your own `config/targets.json` from `config/targets.example.json` and put the
 configured complete protein FASTAs under `input/target_raw/`. Each entry has an
-explicit gene-ID mapping; codes and species are user-defined. Do not select
+optional `protein_gene_tsv` or `gene_regex`; without either, the preparation
+reads gene tags/suffixes from FASTA headers and uses CD-HIT (`-c 0.98 -aS 0.90`)
+as the grouping fallback. Sequence QC and longest-representative selection are
+deterministic. Target counts and codes are user-defined. Do not select
 validation/calibration controls for an isolated production target analysis.
 
-Put ordinary reference FASTAs and matching GFF or protein/gene TSV files in
+Put ordinary reference FASTAs and, when available, a matching
+`<FASTA-stem>.protein_gene.tsv` in
 `input/reference_raw/`. Keep original benchmark files under
 `input/reference_raw/BENCHMARKS/Input/` and `BENCHMARKS/RefOGs/` as described in
 the manual. Add ordinary reference proteomes here before creating a new panel.
@@ -129,6 +133,16 @@ For target mode repeat its original command with `--resume`,
 are verified and reused. Missing evidence is an external handoff state, not a
 reason to silently invent topology. `--allow-missing-context` is an explicit
 alternative study policy, not the chosen returned-evidence policy.
+
+If only Python implementation, environment or path-layout files changed after a
+run stopped at external-evidence handoff, `--resume` may adopt that update after
+verifying the frozen input, settings and references plus both sealed detection
+handoffs. Frozen rule/model resources are never adopted this way. The adoption
+is recorded in `run_contract_adoptions.json`; changed scientific inputs or settings
+still require a new output directory. After their audit completes, calibration
+and validation discard the raw OrthoFinder inference tree. Candidate HOG tables,
+benchmark summary and audit-embedded orthology context are retained. Target runs
+keep the complete OrthoFinder result files.
 
 Exit status 2 means waiting for external context, 1 means a gate failed, and 0
 means the requested gates completed. Check `branch.log`, `branch_status.json`,

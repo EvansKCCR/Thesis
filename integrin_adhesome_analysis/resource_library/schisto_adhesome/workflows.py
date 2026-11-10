@@ -55,6 +55,71 @@ def verify_frozen(contract):
         raise ValueError('Frozen reference composition changed; use a new run')
 
 
+def _verified_handoff(folder):
+    """Require an intact detection checkpoint before adopting newer code."""
+    manifest_path=_layout_resource(folder/'workflow_manifest.json')
+    if not _layout_resource(manifest_path).is_file():return False
+    try:manifest=json.loads(_layout_resource(manifest_path).read_text(encoding='utf-8'))
+    except (OSError,ValueError):return False
+    if manifest.get('kind')!='handoff':return False
+    for name,expected in manifest.get('files',{}).items():
+        path=_layout_resource(folder/name)
+        if not _layout_resource(path).is_file() or sha(path)!=expected:return False
+    return True
+
+
+def _awaiting_context_checkpoint(out,mode):
+    """Only sealed detection-only gate runs can adopt changed implementation code."""
+    summary_path=_layout_resource(out/'run_summary.json')
+    if not _layout_resource(summary_path).is_file():return False
+    try:summary=json.loads(_layout_resource(summary_path).read_text(encoding='utf-8'))
+    except (OSError,ValueError):return False
+    if summary.get('status')!='awaiting_external_evidence':return False
+    kinds=['calibration',mode] if mode in ('validation','target') else []
+    if not kinds or any(kind not in summary.get('gates',{}) for kind in kinds):return False
+    for kind in kinds:
+        gate=summary['gates'][kind]
+        if gate.get('status')!='awaiting_external_evidence':return False
+        if gate.get('stages',{}).get('detection',{}).get('status')!='complete':return False
+        branch=_layout_resource(out/kind)
+        status_path=_layout_resource(branch/'branch_status.json')
+        if not _layout_resource(status_path).is_file():return False
+        try:status=json.loads(_layout_resource(status_path).read_text(encoding='utf-8'))
+        except (OSError,ValueError):return False
+        if status.get('status')!='awaiting_external_evidence' or not _verified_handoff(_layout_resource(branch/'handoff')):
+            return False
+    return True
+
+
+def reconcile_resume_contract(out,contract):
+    """Resume unchanged inputs; adopt code-only updates at sealed handoff checkpoints."""
+    out=_layout_resource(Path(out)).resolve();path=_layout_resource(out/'run_contract.json')
+    if not _layout_resource(path).is_file():return contract
+    old=json.loads(_layout_resource(path).read_text(encoding='utf-8'))
+    if old==contract:return contract
+    stable=lambda value:{k:v for k,v in value.items() if k not in ('algorithm_files','contract_sha256')}
+    if stable(old)!=stable(contract):
+        changed=sorted(k for k in set(old)|set(contract) if k not in ('algorithm_files','contract_sha256') and old.get(k)!=contract.get(k))
+        raise ValueError('Input/configuration/code/reference contract changed outside the algorithm inventory: '+', '.join(changed)+'. This run cannot be relabelled or resumed.')
+    old_files=old.get('algorithm_files',{});new_files=contract.get('algorithm_files',{})
+    changed_files=sorted(name for name in set(old_files)|set(new_files) if old_files.get(name)!=new_files.get(name))
+    if not changed_files:return contract
+    unsafe=[name for name in changed_files if not (name.endswith(('.py','.yml','.yaml')) or name=='config/layout_paths.json')]
+    if unsafe:
+        raise ValueError('Frozen scientific rule/model resources changed: '+', '.join(unsafe)+'. Keep the original resources or start a new output directory.')
+    if not _awaiting_context_checkpoint(out,contract.get('mode')):
+        raise ValueError('Workflow code changed, and this run has no sealed detection-only external-evidence checkpoint. Keep the original code or start a new output directory.')
+    log_path=_layout_resource(out/'run_contract_adoptions.json')
+    history=json.loads(_layout_resource(log_path).read_text(encoding='utf-8')) if _layout_resource(log_path).is_file() else dict(adoptions=[])
+    history.setdefault('adoptions',[]).append(dict(from_contract_sha256=old.get('contract_sha256'),
+        to_contract_sha256=contract.get('contract_sha256'),changed_algorithm_files=changed_files,
+        completed_gate_checkpoints_verified=True,adopted_utc=datetime.now(timezone.utc).isoformat()))
+    dump(log_path,history);dump(path,contract)
+    print('RESUME CONTRACT: adopted code-only update; sealed calibration/selected-gate detection handoffs verified; '
+          f'{len(changed_files)} changed algorithm files recorded in {log_path}',flush=True)
+    return contract
+
+
 def prepare(args):
     settings = json.loads(_layout_resource(args.config).read_text())
     allowed = {'version','family_coverage','orthogroup_context_weight','qc','orthofinder_search',
@@ -152,9 +217,7 @@ def prepare(args):
     if (_layout_resource(out/'run_contract.json')).exists():
         if not args.resume:
             raise ValueError('Run exists; use --resume with unchanged frozen inputs/configuration')
-        old = json.loads((_layout_resource(out/'run_contract.json')).read_text())
-        if contract != old:
-            raise ValueError('Input/configuration/code/reference contract changed; this run cannot be relabelled or resumed')
+        contract=reconcile_resume_contract(out,contract)
     else:
         if _layout_resource(out).exists() and any(out.iterdir()):
             raise ValueError('Output directory is not empty')

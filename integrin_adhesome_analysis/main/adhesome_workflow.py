@@ -185,6 +185,78 @@ def seal(folder, kind, **metadata):
     dump(_layout_resource(folder/'workflow_manifest.json'), dict(workflow_version=VERSION, kind=kind, files=files, **metadata))
 
 
+def reseal(folder,kind,updates=None):
+    """Refresh a sealed folder after an explicit retention-policy change."""
+    folder=_layout_resource(Path(folder)).resolve();path=_layout_resource(folder/'workflow_manifest.json')
+    old=json.loads(_layout_resource(path).read_text(encoding='utf-8'))
+    metadata={key:value for key,value in old.items() if key not in ('workflow_version','kind','files')}
+    metadata.update(updates or {})
+    seal(folder,kind,**metadata)
+    return json.loads(_layout_resource(path).read_text(encoding='utf-8'))
+
+
+def compact_isolated_gate_orthology(out):
+    """Discard raw OrthoFinder result trees for evaluation gates after audit; keep audit context."""
+    branch=os.environ.get('SCHISTO_ISOLATED_BRANCH')
+    if branch not in ('calibration','validation'):return False
+    out=_layout_resource(Path(out)).resolve();orthology=_layout_resource(out/'orthology')
+    orth_manifest=_layout_resource(orthology/'workflow_manifest.json')
+    inference=_layout_resource(orthology/'inference')
+    if not _layout_resource(orth_manifest).is_file() or not _layout_resource(inference).is_dir():return False
+    metadata=json.loads(_layout_resource(orth_manifest).read_text(encoding='utf-8'))
+    results=Path(metadata.get('results') or '').resolve()
+    if not results.is_relative_to(inference.resolve()):
+        raise ValueError('Evaluation output compaction refused: OrthoFinder results are outside the isolated inference directory')
+    files=sorted(p for p in _layout_resource(inference).rglob('*') if _layout_resource(p).is_file())
+    file_index='\n'.join(f'{p.relative_to(inference).as_posix()}\t{digest(p)}' for p in files)
+    file_index_sha256=hashlib.sha256(file_index.encode()).hexdigest()
+    benchmark_summary=_layout_resource(out/'benchmark/summary.json')
+    discarded_inputs={}
+    if _layout_resource(benchmark_summary).is_file():
+        report=json.loads(_layout_resource(benchmark_summary).read_text(encoding='utf-8'))
+        for name,expected in report.get('inputs',{}).items():
+            source=Path(name).resolve()
+            if source==results or results in source.parents:
+                discarded_inputs[str(source)]=expected
+    marker=dict(status='raw_inference_discarded_after_audit',branch=branch,
+        results_relative_path=results.relative_to(orthology.resolve()).as_posix(),
+        files_removed=len(files),bytes_removed=sum(p.stat().st_size for p in files),
+        removed_file_index_sha256=file_index_sha256,discarded_benchmark_input_sha256=discarded_inputs,
+        retained_context=['candidates/candidate_report.tsv','candidates/candidate_HOGs.tsv',
+            'candidates/direct_orthologues.tsv','candidates/provenance.json','calibration_review.tsv',
+            'benchmark/summary.json','final/supporting_data.json','final/joined_evidence.tsv'])
+    shutil.rmtree(_layout_resource(inference))
+    dump(_layout_resource(orthology/'inference_retention.json'),marker)
+    reseal(orthology,'orthology',dict(inference_retention=marker))
+    new_orthology_sha=digest(_layout_resource(orthology/'workflow_manifest.json'))
+    if _layout_resource(benchmark_summary).is_file():
+        report=json.loads(_layout_resource(benchmark_summary).read_text(encoding='utf-8'))
+        report['orthology_inference_retention']=marker
+        dump(benchmark_summary,report)
+        benchmark_manifest=_layout_resource(out/'benchmark/workflow_manifest.json')
+        if _layout_resource(benchmark_manifest).is_file():
+            reseal(out/'benchmark','evolutionary_benchmark',dict(orthology_manifest=new_orthology_sha,
+                inference_retention_status=marker['status']))
+    final=_layout_resource(out/'final')
+    final_manifest=_layout_resource(final/'workflow_manifest.json')
+    if _layout_resource(final_manifest).is_file():
+        updates=dict(orthology_manifest=new_orthology_sha)
+        if _layout_resource(benchmark_summary).is_file():updates['benchmark_summary_sha256']=digest(benchmark_summary)
+        reseal(final,'audit',updates)
+    recovery=_layout_resource(out/'recovery.json')
+    if _layout_resource(recovery).is_file():
+        state=json.loads(_layout_resource(recovery).read_text(encoding='utf-8'))
+        receipts={'orthology':orthology/'workflow_manifest.json','benchmark':out/'benchmark/workflow_manifest.json',
+                  'audit':final/'workflow_manifest.json'}
+        for name,path in receipts.items():
+            if name in state.get('stages',{}) and _layout_resource(path).is_file():
+                state['stages'][name]['manifest_sha256']=digest(path)
+        dump(recovery,state)
+    print(f'EVALUATION RETENTION: removed {len(files)} raw OrthoFinder files ({marker["bytes_removed"]} bytes); '
+          'candidate HOG context, benchmark summary, and audited evidence were retained.',flush=True)
+    return True
+
+
 def verify(folder, kind, required_files=None):
     data = json.loads((_layout_resource(folder/'workflow_manifest.json')).read_text(encoding='utf-8'))
     if data['kind'] != kind:
@@ -691,6 +763,7 @@ def downstream(args):
     status_file=_layout_resource(out/'phylogeny_status.json')
     tree_status=json.loads(_layout_resource(summary).read_text())['status'] if _layout_resource(summary).exists() else json.loads(_layout_resource(status_file).read_text()).get('status','not_run') if _layout_resource(status_file).exists() else 'not_run'
     if any(error.startswith('phylogeny:') for error in optional_errors):tree_status='failed'
+    compact_isolated_gate_orthology(out)
     seal(out,'completed_workflow',annotation=str(annotation),phylogeny_status=tree_status,
          optional_errors=optional_errors,benchmark_status='failed' if any(error.startswith('benchmark:') for error in optional_errors) else json.loads(_layout_resource(summary_path).read_text()).get('status') if _layout_resource(summary_path).exists() else 'failed',
          completion_status='completed_with_optional_failures' if optional_errors or tree_status=='partial_failure' else 'complete')
@@ -1015,10 +1088,21 @@ def benchmark_evidence(folder,orthology_dir,orthology_meta,panel):
             if data.get('panel_manifest_sha256')!=digest(_layout_resource(panel/'workflow_manifest.json')):
                 raise ValueError('Benchmark panel differs from audit panel')
             prediction=_layout_resource(Path(data['prediction_file']))
-            if _layout_resource(Path(orthology_meta['results'])).resolve() not in _layout_resource(prediction).resolve().parents:
+            results_root=_layout_resource(Path(orthology_meta['results'])).resolve()
+            if results_root not in _layout_resource(prediction).resolve().parents:
                 raise ValueError('Benchmark used predictions outside the audited orthology results')
+            retention=orthology_meta.get('inference_retention',{})
+            compacted=retention.get('status')=='raw_inference_discarded_after_audit'
+            if compacted and data.get('orthology_inference_retention')!=retention:
+                raise ValueError('Benchmark retention receipt differs from the orthology audit context')
             for name,expected in data['inputs'].items():
-                if digest(_layout_resource(Path(name)))!=expected:raise ValueError('Benchmark input changed: '+name)
+                source=_layout_resource(Path(name)).resolve()
+                if compacted and (source==results_root or results_root in source.parents):
+                    if retention.get('discarded_benchmark_input_sha256',{}).get(str(source))!=expected:
+                        raise ValueError('Discarded prediction input is not covered by the retention receipt: '+name)
+                    continue
+                if not _layout_resource(source).is_file() or digest(source)!=expected:
+                    raise ValueError('Benchmark input changed: '+name)
         if data['status']=='validated' and data.get('quality_acceptance',{}).get('status')!='accepted':
             result.update(Orthology_benchmark_status='quality_not_assessed',Orthology_benchmark_weight='',
                           Orthology_benchmark_reason='Legacy benchmark has no accepted performance assessment; rerun benchmarking with the current policy')

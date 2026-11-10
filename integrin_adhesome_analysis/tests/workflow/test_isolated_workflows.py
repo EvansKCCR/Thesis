@@ -13,6 +13,7 @@ _layout_activate()
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import csv
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -103,6 +104,60 @@ class IsolationTests(unittest.TestCase):
                 w.verify_frozen(contract)
                 (_layout_resource(raw/'A.faa')).write_text('>a\nMKKK\n')
                 with self.assertRaisesRegex(ValueError,'reference'):w.verify_frozen(contract)
+
+    def test_code_only_resume_adoption_requires_sealed_external_evidence_checkpoints(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=_layout_resource(Path(td))
+            gates={}
+            for kind in ('calibration','validation'):
+                branch=_layout_resource(root/kind);handoff=_layout_resource(branch/'handoff');handoff.mkdir(parents=True)
+                core.seal(handoff,'handoff')
+                stages={'detection':dict(status='complete',manifest_sha256=d.sha(_layout_resource(handoff/'workflow_manifest.json')))}
+                d.dump(_layout_resource(branch/'branch_status.json'),dict(status='awaiting_external_evidence',stages=stages))
+                gates[kind]=dict(status='awaiting_external_evidence',stages=stages)
+            d.dump(_layout_resource(root/'run_summary.json'),dict(status='awaiting_external_evidence',gates=gates))
+            old=dict(version='1.0',mode='validation',frozen_settings={'family_coverage':'expanded'},
+                datasets={'calibration':{'ids':'same'},'validation':{'ids':'same'}},references={'version':'same'},
+                algorithm_files={'main.py':'old'})
+            old['contract_sha256']=hashlib.sha256(json.dumps(old,sort_keys=True).encode()).hexdigest()
+            d.dump(_layout_resource(root/'run_contract.json'),old)
+            current=dict(old);current.pop('contract_sha256');current['algorithm_files']={'main.py':'new'}
+            current['contract_sha256']=hashlib.sha256(json.dumps(current,sort_keys=True).encode()).hexdigest()
+            result=w.reconcile_resume_contract(root,current)
+            self.assertEqual(result['algorithm_files'],{'main.py':'new'})
+            adoption=json.loads(_layout_resource(root/'run_contract_adoptions.json').read_text())
+            self.assertEqual(adoption['adoptions'][0]['changed_algorithm_files'],['main.py'])
+            current['frozen_settings']={'family_coverage':'original'}
+            with self.assertRaisesRegex(ValueError,'outside the algorithm inventory'):
+                w.reconcile_resume_contract(root,current)
+
+    def test_evaluation_compaction_removes_raw_orthofinder_but_keeps_audit_context(self):
+        with tempfile.TemporaryDirectory() as td,patch.dict('os.environ',SCHISTO_ISOLATED_BRANCH='validation'):
+            root=_layout_resource(Path(td));ort=_layout_resource(root/'orthology');results=_layout_resource(ort/'inference/Results_fixture')
+            table_path=_layout_resource(results/'Orthogroups/Orthogroups.tsv');table_path.parent.mkdir(parents=True)
+            table_path.write_text('Orthogroup\tA\nOG1\ta1\n')
+            candidates=_layout_resource(ort/'candidates');candidates.mkdir(parents=True)
+            for name in ('candidate_report.tsv','candidate_HOGs.tsv','direct_orthologues.tsv','provenance.json'):
+                (_layout_resource(candidates/name)).write_text('retained context\n')
+            core.seal(ort,'orthology',panel='panel',panel_manifest='panel-sha',results=str(results))
+            benchmark=_layout_resource(root/'benchmark');benchmark.mkdir()
+            summary={'status':'validated','inputs':{str(table_path.resolve()):d.sha(table_path)},'prediction_file':str(table_path.resolve())}
+            d.dump(_layout_resource(benchmark/'summary.json'),summary)
+            core.seal(benchmark,'evolutionary_benchmark',orthology=str(ort),orthology_manifest=d.sha(_layout_resource(ort/'workflow_manifest.json')))
+            final=_layout_resource(root/'final');final.mkdir()
+            (final/'supporting_data.json').write_text('{"context":"kept"}')
+            (final/'joined_evidence.tsv').write_text('protein_id\n')
+            core.seal(final,'audit',orthology_manifest=d.sha(_layout_resource(ort/'workflow_manifest.json')),
+                benchmark_summary_sha256=d.sha(_layout_resource(benchmark/'summary.json')))
+            self.assertTrue(core.compact_isolated_gate_orthology(root))
+            self.assertFalse(_layout_resource(ort/'inference').exists())
+            self.assertTrue(_layout_resource(candidates/'candidate_HOGs.tsv').is_file())
+            retention=json.loads(_layout_resource(ort/'workflow_manifest.json').read_text())['inference_retention']
+            self.assertEqual(retention['status'],'raw_inference_discarded_after_audit')
+            self.assertEqual(retention['files_removed'],1)
+            self.assertEqual(core.verify(ort,'orthology')['inference_retention']['status'],retention['status'])
+            self.assertEqual(core.verify(benchmark,'evolutionary_benchmark')['orthology_manifest'],d.sha(_layout_resource(ort/'workflow_manifest.json')))
+            self.assertEqual(core.verify(final,'audit')['orthology_manifest'],d.sha(_layout_resource(ort/'workflow_manifest.json')))
 
     def test_no_backup_policy_preserves_partial_stage(self):
         with tempfile.TemporaryDirectory() as td,patch.dict('os.environ',SCHISTO_NO_ARCHIVES='1'):
