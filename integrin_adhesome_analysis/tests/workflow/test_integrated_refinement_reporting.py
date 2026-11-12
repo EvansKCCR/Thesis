@@ -33,14 +33,20 @@ class IntegratedRefinementReportTests(unittest.TestCase):
                 stage2_family='unassigned',supported='False',predicted_family='unassigned'),
                 dict(Specie='Val_Test',protein_id='p2',control_class='negative',expected_families='',
                 stage1_recruited='True',stage1_family_hypotheses='background',stage2_annotated='True',
-                stage2_family='background',supported='False',predicted_family='background')]
+                stage2_family='background',supported='False',predicted_family='background'),
+                dict(Specie='Val_Test',protein_id='p3',control_class='positive',expected_families='integrin',
+                stage1_recruited='False',stage1_family_hypotheses='',stage2_annotated='False',
+                stage2_family='unassigned',supported='False',predicted_family='unassigned')]
             write_tsv(reports/'predictions.tsv',source)
             proposed=[dict(Specie='Val_Test',protein_id='p1',control_class='positive',expected_families='actin',
                 posthoc_AB='True',posthoc_evaluation_family='actin',posthoc_AB_family_correct='True',
                 original_supported='False',posthoc_status='reviewed',posthoc_tier='A'),
                 dict(Specie='Val_Test',protein_id='p2',control_class='negative',expected_families='',
                 posthoc_AB='False',posthoc_evaluation_family='',posthoc_AB_family_correct='False',
-                original_supported='False',posthoc_status='reviewed',posthoc_tier='C')]
+                original_supported='False',posthoc_status='reviewed',posthoc_tier='C'),
+                dict(Specie='Val_Test',protein_id='p3',control_class='positive',expected_families='integrin',
+                posthoc_AB='False',posthoc_evaluation_family='',posthoc_AB_family_correct='False',
+                original_supported='False',posthoc_status='absent_from_audit',posthoc_tier='')]
             write_tsv(posthoc/'predictions.tsv',proposed)
             write_tsv(refinement/'Stage_2_posthoc_refinement.tsv',[
                 {'Species':'Val_Test','Protein ID':'p1','posthoc_proposed_family_or_class':'actin',
@@ -54,7 +60,7 @@ class IntegratedRefinementReportTests(unittest.TestCase):
             summary=generate(reports/'predictions.tsv',posthoc,refinement,out,'validation')
             metrics={row['stage']:row for row in csv.DictReader((out/'stage_performance.tsv').open(encoding='utf-8'),delimiter='\t')}
             changes=list(csv.DictReader((out/'candidate_changes.tsv').open(encoding='utf-8'),delimiter='\t'))
-            self.assertEqual(metrics['Stage 1 detection']['n'],'2')
+            self.assertEqual(metrics['Stage 1 detection']['n'],'3')
             self.assertEqual(metrics['Stage 3 plus post hoc A/B proposals']['TP'],'1')
             self.assertEqual(summary['posthoc_candidates_rescued'],1)
             self.assertEqual(summary['supported_assignments_flagged_as_potential_false_positive'],1)

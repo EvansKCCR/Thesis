@@ -80,15 +80,20 @@ def generate(predictions_path, posthoc_report, refinement, out, kind):
     raw_key=lambda row:(str(row.get(columns.get('Specie','Specie'),'')).strip(),
                         str(row.get(columns.get('protein_id','protein_id'),'')).strip())
     raw_refinement_by_key={raw_key(row):row for row in raw_refinement}
-    if len(raw_refinement_by_key)!=len(raw_refinement) or set(raw_refinement_by_key)!=set(base):
-        raise ValueError('Post hoc evidence table does not cover the same unique audit cohort')
+    # The all-labelled prediction cohort also contains proteins that Stage 1
+    # did not recruit. They correctly remain no-calls and have no row in the
+    # audit-derived refinement table. Require unique evidence rows that are a
+    # subset of the labelled cohort; the post hoc performance report itself
+    # still has to cover the full labelled cohort above.
+    if len(raw_refinement_by_key)!=len(raw_refinement) or not set(raw_refinement_by_key).issubset(base):
+        raise ValueError('Post hoc evidence table contains duplicate or out-of-cohort records')
     rows=[]
     for protein_key,source in base.items():
         post=proposed[protein_key]
         for field in ('control_class','expected_families'):
             if str(source.get(field,''))!=str(post.get(field,'')):
                 raise ValueError('Stage/post hoc label mismatch for '+str(protein_key))
-        evidence=raw_refinement_by_key[protein_key]
+        evidence=raw_refinement_by_key.get(protein_key,{})
         rows.append(dict(source,posthoc_AB=truthy(post.get('posthoc_AB')),
             posthoc_family=post.get('posthoc_evaluation_family',''),
             posthoc_proposed_family=evidence.get('posthoc_proposed_family_or_class',''),

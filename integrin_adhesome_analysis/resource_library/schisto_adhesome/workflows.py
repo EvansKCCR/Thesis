@@ -180,6 +180,45 @@ def _orthology_recovery_resume_checkpoint(out,mode):
     return True
 
 
+def _post_audit_reporting_resume_checkpoint(out,mode):
+    """Allow a report-adapter fix only when completed scientific artifacts are sealed."""
+    kinds=list(dict.fromkeys(['calibration',mode])) if mode in ('validation','target') else []
+    if mode=='validation':kinds=['calibration','validation']
+    if not kinds:return False
+    for kind in kinds:
+        branch=_layout_resource(out/kind)
+        try:
+            status=json.loads(_layout_resource(branch/'branch_status.json').read_text(encoding='utf-8'))
+            stages=status.get('stages',{})
+        except (OSError,ValueError):return False
+        # This exception is only for a branch that reached the reporting adapter.
+        if status.get('status')!='failed' or stages.get('orthology_audit',{}).get('status')!='complete':return False
+        if stages.get('posthoc_refinement',{}).get('status')!='complete':return False
+        if stages.get('posthoc_performance_report',{}).get('status')!='complete':return False
+        audit=_layout_resource(branch/'downstream/final')
+        if not _verified_folder(audit,'audit'):return False
+        audit_manifest=json.loads(_layout_resource(audit/'workflow_manifest.json').read_text(encoding='utf-8'))
+        audit_file=_layout_resource(audit/'Stage_2_output.xlsx')
+        refinement=_layout_resource(branch/'posthoc_refinement')
+        try:
+            refinement_manifest=json.loads(_layout_resource(refinement/'run_manifest.json').read_text(encoding='utf-8'))
+            report_dir=_layout_resource(branch/'reports/posthoc_performance')
+            report=json.loads(_layout_resource(report_dir/'report_manifest.json').read_text(encoding='utf-8'))
+        except (OSError,ValueError):return False
+        if not audit_file.is_file() or refinement_manifest.get('status')!='complete':return False
+        if refinement_manifest.get('input_sha256')!=sha(audit_file):return False
+        for name,expected in refinement_manifest.get('output_sha256',{}).items():
+            path=_layout_resource(refinement/name)
+            if not path.is_file() or sha(path)!=expected:return False
+        if report.get('status')!='complete' or report.get('source_audit_sha256')!=sha(audit_file):return False
+        for name,expected in report.get('output_sha256',{}).items():
+            path=_layout_resource(report_dir/name)
+            if not path.is_file() or sha(path)!=expected:return False
+        if not _layout_resource(branch/'reports/predictions.tsv').is_file():return False
+        if _layout_resource(branch/'reports/stage_performance').exists():return False
+    return True
+
+
 def reconcile_resume_contract(out,contract):
     """Resume unchanged inputs; adopt bounded code updates at verified checkpoints."""
     out=_layout_resource(Path(out)).resolve();path=_layout_resource(out/'run_contract.json')
@@ -211,14 +250,20 @@ def reconcile_resume_contract(out,contract):
                                 'main/run_pipeline.py',
                                 'resource_library/schisto_adhesome/workflows.py'}
                              and _orthology_recovery_resume_checkpoint(out,contract.get('mode')))
-    if not _awaiting_context_checkpoint(out,contract.get('mode')) and not audit_join_only and not orthology_recovery_only:
+    reporting_only=(bool(changed_files) and set(changed_files)<= {
+                        'resource_library/schisto_adhesome/stage_performance_report.py',
+                        'resource_library/schisto_adhesome/workflows.py'}
+                    and 'resource_library/schisto_adhesome/stage_performance_report.py' in changed_files
+                    and _post_audit_reporting_resume_checkpoint(out,contract.get('mode')))
+    if not _awaiting_context_checkpoint(out,contract.get('mode')) and not audit_join_only and not orthology_recovery_only and not reporting_only:
         raise ValueError('Workflow code changed outside an eligible checkpoint; keep the original code or start a new output directory.')
     log_path=_layout_resource(out/'run_contract_adoptions.json')
     history=json.loads(_layout_resource(log_path).read_text(encoding='utf-8')) if _layout_resource(log_path).is_file() else dict(adoptions=[])
     history.setdefault('adoptions',[]).append(dict(from_contract_sha256=old.get('contract_sha256'),
         to_contract_sha256=contract.get('contract_sha256'),changed_algorithm_files=changed_files,
         completed_gate_checkpoints_verified=True,
-        adoption_scope=('orthology_recovery_after_failed_stage' if orthology_recovery_only else
+        adoption_scope=('post_audit_reporting_only' if reporting_only else
+                        'orthology_recovery_after_failed_stage' if orthology_recovery_only else
                         'audit_join_only_before_audit' if audit_join_only else 'sealed_detection_handoff'),
         adopted_utc=datetime.now(timezone.utc).isoformat()))
     dump(log_path,history);dump(path,contract)
