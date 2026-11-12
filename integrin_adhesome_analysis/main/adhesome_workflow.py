@@ -579,12 +579,7 @@ def downstream(args):
         prior=json.loads((_layout_resource(out/'recovery.json')).read_text())
         retry_trees=bool(getattr(args,'phylogeny',False) and prior['stages'].get('phylogeny_run',{}).get('status')!='complete')
         retry_benchmark=bool(getattr(args,'retry_benchmark',False) or prior['stages'].get('benchmark',{}).get('status')=='failed')
-        retry_blind=bool(evaluation_only and prior.get('stages',{}).get('blind_reconstruction',{}).get('status')!='complete')
-        if retry_blind:
-            # Evaluation reports/audits are already sealed; retry only the compact,
-            # reference-only assessment in place without archiving analysis folders.
-            _layout_resource(out/'workflow_manifest.json').unlink()
-        elif retry_trees or retry_benchmark:
+        if retry_trees or retry_benchmark:
             archive_attempt(_layout_resource(out/'workflow_manifest.json'))
         else:
             print(f'Run already completed: {out}')
@@ -635,7 +630,7 @@ def downstream(args):
                 state['settings'][key]=str(_layout_resource(Path(state['settings'][key])).resolve())
         dump(checkpoint,state)
     programs=[]
-    if state['stages'].get('orthology',{}).get('status')!='complete' and not (_layout_resource(out/'orthology/inference_complete.json')).exists():
+    if not evaluation_only and state['stages'].get('orthology',{}).get('status')!='complete' and not (_layout_resource(out/'orthology/inference_complete.json')).exists():
         programs.append('orthofinder')
     missing=[name for name in programs if not shutil.which(name)]
     if missing:
@@ -696,43 +691,29 @@ def downstream(args):
             raise
     reference_command=[sys.executable,_layout_resource(ORTH/'prepare_references.py'),'--raw',_layout_resource(args.reference_raw).resolve(),
                        '--handoff',handoff,'--out',_layout_resource(out/'references')]
-    for flag in ('benchmark_refogs','benchmark_input_dir'):
-        if getattr(args,flag,None):reference_command+=['--'+flag.replace('_','-'),getattr(args,flag)]
+    if not evaluation_only:
+        for flag in ('benchmark_refogs','benchmark_input_dir'):
+            if getattr(args,flag,None):reference_command+=['--'+flag.replace('_','-'),getattr(args,flag)]
     for filename in getattr(args,'reference_file',None) or []:
         reference_command+=['--reference-file',filename]
     if getattr(args,'reference_panel',None):reference_command+=['--reference-panel',args.reference_panel]
     stage('references',_layout_resource(out/'references'),lambda:execute(reference_command,_layout_resource(out/'logs')))
     stage('panel',_layout_resource(out/'panel'),lambda:calibrate(argparse.Namespace(handoff=handoff,panel=_layout_resource(out/'references/panel.auto.json'),out=_layout_resource(out/'panel'))))
     if evaluation_only:
-        # The evaluation gates classify after annotation without the production
-        # whole-panel assignment/phylogeny. Their only orthogroup assessment is
-        # a separate -og run on reference proteomes, scored against withheld positives.
+        # Calibration and validation finish at the annotation audit and report.
+        # They do not run OrthoFinder, benchmarking or phylogeny.
         previous_orthology=state['stages'].pop('orthology',None)
         if previous_orthology is not None:
             state['stages']['mainstream_orthology_disabled']=dict(status='disabled',
-                prior_status=previous_orthology.get('status'),reason='Evaluation gates use blind reference-only reconstruction only')
+                prior_status=previous_orthology.get('status'),reason='Orthology is disabled in calibration and validation gates')
+        state['stages'].pop('blind_reconstruction',None)
         state['stages'].pop('benchmark',None)
-        state['stages']['orthology']=dict(status='skipped',reason='Mainstream target orthology/phylogeny is disabled in evaluation gates')
         dump(checkpoint,state)
-        audit_refreshed=state['stages'].get('audit',{}).get('status')!='complete'
         stage('audit',_layout_resource(out/'final'),lambda:audit(argparse.Namespace(annotation=annotation,
             orthology=None,benchmark=None,out=_layout_resource(out/'final'),family_coverage=getattr(args,'family_coverage',state['settings'].get('family_coverage',DEFAULT_FAMILY_COVERAGE)),
             orthogroup_context_weight=0,phylogenetic_identity_resolution=False,phylogenetic_identity_evidence=None,
             stage2_profile=getattr(args,'stage2_profile',state['settings'].get('stage2_profile','original')))))
-        blind_status='failed';optional_errors=[]
-        try:
-            control_manifest=_layout_resource(annotation.parent/'inputs/sequence_manifest.tsv')
-            stage('blind_reconstruction',_layout_resource(out/'blind_reconstruction'),
-                lambda:blind_reference_reconstruction(_layout_resource(out/'panel'),control_manifest,
-                    _layout_resource(out/'blind_reconstruction'),args.threads,args.analysis_threads,_layout_resource(out/'logs')),
-                preserve=True)
-            blind_status='complete'
-        except Exception as exc:
-            optional_errors.append('blind_reference_reconstruction: '+str(exc))
-            dump(_layout_resource(out/'blind_reconstruction_status.json'),dict(status='failed',error=str(exc),audit_completed=True))
-            print('Blind reference-only reconstruction failed; annotation-only audit remains complete: '+str(exc),flush=True)
-        # Remove only incomplete legacy whole-panel evaluation inference. The
-        # sealed annotation-only audit and blind reconstruction summaries remain.
+        # Remove only incomplete legacy whole-panel evaluation inference.
         legacy_status=state.get('stages',{}).get('mainstream_orthology_disabled',{}).get('prior_status')
         legacy=_layout_resource(out/'orthology')
         if legacy_status=='failed' and _layout_resource(legacy).exists() and not _layout_resource(legacy/'workflow_manifest.json').exists():
@@ -741,9 +722,8 @@ def downstream(args):
         if _layout_resource(old_benchmark).exists() and not _layout_resource(old_benchmark/'workflow_manifest.json').exists():
             shutil.rmtree(_layout_resource(old_benchmark))
         seal(out,'completed_workflow',annotation=str(annotation),orthology=None,
-            orthology_policy='blind_reference_only_reconstruction',blind_reconstruction_status=blind_status,
-            phylogeny_status='not_run_evaluation_policy',optional_errors=optional_errors,
-            completion_status='complete' if blind_status=='complete' else 'completed_with_optional_failures')
+            orthology_policy='annotation_only_evaluation',phylogeny_status='not_run_evaluation_policy',
+            completion_status='complete')
         print(f'Evaluation audit ready without mainstream orthology/phylogeny: {out}/final/Stage_2_output.xlsx',flush=True)
         return
     stage('orthology',_layout_resource(out/'orthology'),lambda:orthology(argparse.Namespace(panel=_layout_resource(out/'panel'),out=_layout_resource(out/'orthology'),results=None,input_manifest=None,
@@ -1141,91 +1121,6 @@ def orthology(args):
                           getattr(args,'benchmark_level','root'),getattr(args,'benchmark_quality_policy',None))
     seal(out, 'orthology', panel=str(panel), panel_manifest=digest(_layout_resource(panel/'workflow_manifest.json')), results=str(results))
     print(f'Orthology complete: {out}; inspect calibration_review.tsv before final audit.')
-
-
-def blind_reference_reconstruction(panel, controls, folder, threads, analysis_threads, logs):
-    """Run orthogroups-only inference on references, then score withheld controls by exact sequence."""
-    panel=_layout_resource(Path(panel)).resolve();controls=_layout_resource(Path(controls)).resolve()
-    folder=_layout_resource(Path(folder)).resolve();prep=_layout_resource(folder.parent/'blind_preparation')
-    script=_layout_resource(ORTH/'blind_orthogroup_test.py')
-    manifest=_layout_resource(prep/'blind_test_manifest.json')
-    target_species=_layout_resource(panel/'targets.json')
-    if not _layout_resource(manifest).is_file():
-        if _layout_resource(prep).exists():
-            # This path is generated only by this workflow; discard the partial
-            # preparation and rebuild from the sealed panel and control manifest.
-            shutil.rmtree(_layout_resource(prep))
-        execute([sys.executable,script,'prepare','--panel-proteomes',_layout_resource(panel/'proteomes'),
-            '--target-species',target_species,'--controls',controls,'--out',prep],_layout_resource(logs))
-    provenance=json.loads(_layout_resource(manifest).read_text(encoding='utf-8'))
-    if provenance.get('status')!='prepared_reference_only_blind_test' or provenance.get('controls_manifest_sha256')!=digest(controls):
-        raise ValueError('Saved blind-reference preparation does not match the current control manifest')
-    ref_dir=_layout_resource(prep/'reference_proteomes')
-    expected=set(provenance.get('reference_proteomes',{}))
-    if not expected or {p.stem for p in _layout_resource(ref_dir).glob('*.faa')}!=expected:
-        raise ValueError('Saved blind-reference proteome set differs from its preparation receipt')
-    inference=_layout_resource(folder/'inference')
-    result_dir=_layout_resource(folder/'results')
-    receipt=_layout_resource(result_dir/'blind_test_results.json')
-    if _layout_resource(receipt).is_file():
-        result=json.loads(_layout_resource(receipt).read_text(encoding='utf-8'))
-        if result.get('status')!='complete' or result.get('reference_only_manifest_sha256')!=digest(manifest):
-            raise ValueError('Saved blind reconstruction receipt does not match the prepared reference-only test')
-        if _layout_resource(inference).exists():shutil.rmtree(_layout_resource(inference))
-        if _layout_resource(ref_dir).exists():shutil.rmtree(_layout_resource(ref_dir))
-        query=_layout_resource(prep/'withheld_positive_controls.faa')
-        if _layout_resource(query).exists():_layout_resource(query).unlink()
-        dump(_layout_resource(folder/'blind_test_manifest.json'),provenance)
-        if not _layout_resource(folder/'inference_retention.json').exists():
-            dump(_layout_resource(folder/'inference_retention.json'),dict(status='raw_reference_only_orthofinder_removed_after_scoring',
-                orthogroups_sha256=result.get('orthogroups_sha256'),reference_only_manifest_sha256=result.get('reference_only_manifest_sha256')))
-        return result
-    result_tables=sorted([*inference.glob('Results_*/Orthogroups/Orthogroups.tsv'),
-                          *inference.glob('Results_*/Orthogroups/MCL_Orthogroups.tsv')],
-                         key=lambda p:p.stat().st_mtime,reverse=True)
-    group_table=None
-    for candidate in result_tables:
-        with _layout_resource(candidate).open(encoding='utf-8-sig',newline='') as stream:
-            fields=next(csv.reader(stream,delimiter='\t'),[])
-        if fields and fields[0]=='Orthogroup' and set(fields[1:])==expected:
-            group_table=_layout_resource(candidate);break
-    if group_table is None:
-        if _layout_resource(inference).exists():
-            # An incomplete OrthoFinder -og directory has no trusted checkpoint.
-            shutil.rmtree(_layout_resource(inference))
-        inference.mkdir(parents=True,exist_ok=True)
-        command=['orthofinder','-f',ref_dir,'-og','-t',str(threads),'-a',str(analysis_threads),'-o',inference]
-        execute(command,_layout_resource(logs))
-        result_tables=sorted([*inference.glob('Results_*/Orthogroups/Orthogroups.tsv'),
-                              *inference.glob('Results_*/Orthogroups/MCL_Orthogroups.tsv')],
-                             key=lambda p:p.stat().st_mtime,reverse=True)
-        for candidate in result_tables:
-            with _layout_resource(candidate).open(encoding='utf-8-sig',newline='') as stream:
-                fields=next(csv.reader(stream,delimiter='\t'),[])
-            if fields and fields[0]=='Orthogroup' and set(fields[1:])==expected:
-                group_table=_layout_resource(candidate);break
-    if group_table is None:
-        raise ValueError('Blind reference-only OrthoFinder did not produce one orthogroup table with the prepared reference species')
-    if not _layout_resource(receipt).is_file():
-        if _layout_resource(result_dir).exists():
-            # Scoring is deterministic and writes a receipt last. Retry from the
-            # intact orthogroup table after clearing only this partial result.
-            shutil.rmtree(_layout_resource(result_dir))
-        execute([sys.executable,script,'evaluate','--prepared',prep,'--orthogroups',group_table,'--out',result_dir],_layout_resource(logs))
-    # Evaluation gates retain labelled summaries and provenance only, not individual OG trees/files.
-    result=json.loads(_layout_resource(receipt).read_text(encoding='utf-8'))
-    if result.get('status')!='complete' or result.get('orthogroups_sha256')!=digest(group_table):
-        raise ValueError('Blind reconstruction receipt does not match the saved OrthoFinder orthogroups')
-    inference_record=dict(status='raw_reference_only_orthofinder_removed_after_scoring',
-        command=['orthofinder','-f','<prepared reference proteomes>','-og','-t',str(threads),'-a',str(analysis_threads),'-o','<temporary inference>'],
-        orthogroups_sha256=result['orthogroups_sha256'],reference_only_manifest_sha256=result['reference_only_manifest_sha256'])
-    dump(_layout_resource(folder/'inference_retention.json'),inference_record)
-    shutil.rmtree(_layout_resource(inference))
-    if _layout_resource(ref_dir).exists():shutil.rmtree(_layout_resource(ref_dir))
-    query=_layout_resource(prep/'withheld_positive_controls.faa')
-    if _layout_resource(query).exists():_layout_resource(query).unlink()
-    dump(_layout_resource(folder/'blind_test_manifest.json'),provenance)
-    return result
 
 
 def benchmark_entrypoint(scope='all'):

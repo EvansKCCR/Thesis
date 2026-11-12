@@ -147,16 +147,11 @@ Calibration and validation use a separate evaluation flow:
 ```text
 protein preparation -> detection handoff -> returned context and motif annotation
   -> reference preparation -> annotation-only audit and performance report
-  -> blind reference-only OrthoFinder -og -> exact-sequence reconstruction report
 ```
 
-Evaluation controls are never included in their OrthoFinder input. The blind run
-uses reference proteomes only and stops after orthogroup inference (`-og`); it
-does not infer gene trees or a species tree. Positive controls are matched to the
-completed groups afterward by exact full-length sequence identity. Raw group
-directories are discarded after the compact per-control/per-species results and
-provenance are written. The target workflow retains the complete orthology and
-benchmark path; its phylogeny remains optional.
+Calibration and validation do not run OrthoFinder, orthology benchmarking or
+phylogeny. The target workflow retains the complete orthology and benchmark path;
+its phylogeny remains optional.
 
 Stage 1 is broad recruitment, not a definitive identity classifier. Its handoff
 retains alternatives for the same protein, including fibronectin-like hypotheses.
@@ -258,10 +253,9 @@ Their `protein_gene.tsv` sidecars are optional; without them, header/suffix
 inference and the CD-HIT fallback determine gene groups. With all 12 benchmark
 files present, target-mode orthology uses them as the OrthoFinder core, then
 assigns all user-selected targets and reference proteomes. Validation/calibration
-instead run an annotation-only audit and a separate reference-only `-og`
-reconstruction assessment with positive controls withheld until exact-sequence
-matching. Read the target benchmark-core and optional species-tree procedure in
-`docs/WORKFLOW.md` before running.
+instead run an annotation-only audit and a reference-label performance report;
+they do not run OrthoFinder. Read the target benchmark-core and optional
+species-tree procedure in `docs/WORKFLOW.md` before running.
 
 Reference calibration means adding appropriate reference proteomes to a new
 panel/inference and comparing that result. It does not rename parameters on an
@@ -334,9 +328,10 @@ are different from older 235-positive mixed reference-panel controls; historical
 metrics from different cohorts are not interchangeable.
 
 Calibration and validation branches share a frozen algorithm/configuration
-contract but have separate inputs, candidate IDs, returned evidence and blind
-reference-only reconstruction runs. Production targets retain the full orthology
-workflow in a separate branch. A branch cannot mutate another branch's results.
+contract but have separate inputs, candidate IDs and returned evidence. They run
+the audit and reference-label reports without orthology. Production targets
+retain the full orthology workflow in a separate branch. A branch cannot mutate
+another branch's results.
 Production target config rejects evaluation-control codes/IDs. Exact calibration/reference/training
 overlap and prior rule-development inspection limit independence claims, even
 when exact matches are absent. Preserve overlap-free strata and label coverage.

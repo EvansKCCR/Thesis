@@ -186,13 +186,6 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
                 reason='negative_control_provisionally_called' if row['control_class']!='positive' else 'reported_family_does_not_match_mapped_expected_family'))
     provisional_positive=[r for r in positives if r['provisional']]
     mismatches=sum(r['control_class']=='positive' for r in review)
-    blind_root=_layout_resource(branch/'downstream/blind_reconstruction')
-    blind_path=_layout_resource(blind_root/'results/blind_test_results.json')
-    blind_rows_path=_layout_resource(blind_root/'results/blind_reconstruction_by_species.tsv')
-    blind_rows=read(blind_rows_path) if _layout_resource(blind_rows_path).is_file() else []
-    blind=json.loads(_layout_resource(blind_path).read_text()) if _layout_resource(blind_path).is_file() else dict(status='unavailable')
-    if _layout_resource(blind_path).is_file():sources['blind_reference_reconstruction']=blind_path;before['blind_reference_reconstruction']=sha(blind_path)
-    if _layout_resource(blind_rows_path).is_file():sources['blind_reference_reconstruction_by_species']=blind_rows_path;before['blind_reference_reconstruction_by_species']=sha(blind_rows_path)
     cal_folder=_layout_resource(Path(calibration_reports)).resolve() if calibration_reports is not None else _layout_resource(run/'calibration/reports')
     cal_state=_layout_resource(run/'calibration/branch_status.json');cal=None
     cal_ready=calibration_reports is not None or _layout_resource(cal_state).exists() and json.loads(_layout_resource(cal_state).read_text()).get('status')=='complete'
@@ -304,29 +297,14 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
         if subset:regression.append((gene,len(subset),sum(r['supported'] for r in subset),sum(r['provisional'] for r in subset),
             '; '.join(f'{name} ({count})' for name,count in sorted(Counter(r['predicted_family'] for r in subset).items()))))
     if regression:doc.table(['Previously flagged identity','Positives','Supported','Provisional','Predicted family counts'],regression)
-    doc.heading('Blind reference-only orthogroup reconstruction')
-    doc.paragraph('Assessment status: '+str(blind.get('status','unavailable'))+'. OrthoFinder inference used only the prepared reference proteomes; '
-                  'positive controls were withheld from inference and matched afterward by exact full-length sequence identity. '
-                  'This measures reconstruction availability, not family-classification accuracy.')
-    if blind_rows:
-        doc.table(['Species','Positive controls','Identity assessable','One orthogroup','Multiple orthogroups',
-                   'Identical reference, ungrouped','No identical reference'],
-            [(r.get('species'),r.get('positive_controls'),r.get('identity_assessable_controls'),
-              r.get('identical_sequence_maps_to_one_orthogroup'),r.get('identical_sequence_maps_to_multiple_orthogroups'),
-              r.get('identical_reference_sequence_not_assigned_to_group'),r.get('no_identical_sequence_in_reference_panel'))
-             for r in blind_rows])
-        doc.paragraph(f"Reference-only orthogroup table hash: {blind.get('orthogroups_sha256','unavailable')}. "
-                      f"Reconstructed {blind.get('recovered','n.a.')} of {blind.get('positive_controls','n.a.')} positive controls into exactly one orthogroup.")
-    else:
-        doc.paragraph('The blind assessment did not complete. Audit classification and its performance metrics remain available without it.')
-    doc.heading('Orthology benchmark quality assessment')
+    doc.heading('Stored orthology benchmark record')
     if 'orthology_benchmark' in sources:
         benchmark=json.loads(_layout_resource(benchmark_summary).read_text(encoding='utf-8'))
         quality=benchmark.get('quality_acceptance') or {}
-        doc.paragraph(f"Benchmark status: {benchmark.get('status','unavailable')}; "
+        doc.paragraph(f"Stored benchmark status: {benchmark.get('status','unavailable')}; "
                       f"validated weight: {benchmark.get('validated_weight')}; "
                       f"scope: {benchmark.get('scope','unavailable')}; protocol: {benchmark.get('protocol','unavailable')}. "
-                      'A rejected or unavailable benchmark does not block the annotation audit report and does not contribute a validated weight.')
+                      'This stored record is informational; calibration and validation runs do not execute orthology or benchmarking.')
         benchmark_metrics=benchmark.get('metrics') or {}
         doc.table(['Metric','Observed'],[(name,pct(value)) for name,value in benchmark_metrics.items()
             if isinstance(value,(int,float)) and not isinstance(value,bool)])
@@ -337,7 +315,7 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
                  pct(item.get('minimum')) if isinstance(item.get('minimum'),(int,float)) else item.get('minimum','n.a.'),
                  item.get('passed','n.a.')) for name,item in checks.items()])
     else:
-        doc.paragraph('No orthology benchmark summary was produced for this evaluation branch; the blind reference-only reconstruction assessment above is reported separately.')
+        doc.paragraph('No orthology benchmark summary was produced for this evaluation branch; calibration and validation reports use the annotation audit and reference labels only.')
     doc.heading('Interpretation and follow-up')
     doc.paragraph('Review unsupported positives and the provisional-family mismatch table separately. Recruitment '
                   'misses need a recruitment-stage investigation; recovered membership does not establish the reported '
@@ -350,8 +328,6 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
         ('Unsupported positives and errors',_layout_resource(folder/'errors.tsv')),('Pipeline summary report',_layout_resource(folder/'report.html')),
         ('Validation reference',label_file),('Final audit workbook',_layout_resource(audit_dir/'Stage_2_output.xlsx'))]
     if cal is not None:items.append(('Calibration report',_layout_resource(cal_folder/'report.html')))
-    if _layout_resource(blind_rows_path).is_file():items.append(('Blind reconstruction by species',blind_rows_path))
-    if _layout_resource(blind_root/'results/blind_reconstruction_controls.tsv').is_file():items.append(('Blind reconstruction controls',_layout_resource(blind_root/'results/blind_reconstruction_controls.tsv')))
     links=[]
     for label,path in items:
         if _layout_resource(path).is_file():
@@ -377,7 +353,6 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
                     final_audit_decisions_match_predictions=True,all_metric_strata_recomputed=True,sources_unchanged=True),
         calibration_comparison=cal_status,supported=binary['supported'],family_by_policy=fm,
         combined_no_exact_overlap=clean_metrics,provisional_family_review_records=len(review),
-        blind_reference_reconstruction_status=blind.get('status','unavailable'),
         orthology_benchmark_status=(json.loads(_layout_resource(benchmark_summary).read_text(encoding='utf-8')).get('status','unavailable')
                                    if 'orthology_benchmark' in sources else 'not_produced'),
         analytical_pipeline_rerun=False,backups_created=False)

@@ -133,14 +133,9 @@ python -B main/run_pipeline.py --mode validation \
   --validation-context returned/isolated_validation
 ```
 
-Evaluation branches prepare the reference panel for a **blind reference-only
-orthogroup reconstruction assessment**. After annotation, the family audit and
-calibration/validation reports run without the production whole-panel orthology
-assignment, Open_Orthobench scoring, or phylogeny. The blind assessment runs
-OrthoFinder `-og` on references only, with positive controls withheld until
-post-inference exact-sequence matching. It reports reconstruction by species
-and match type, then removes the raw OrthoFinder result files. This keeps the
-evaluation branches independent of the target orthology/phylogeny pipeline.
+Calibration and validation stop after annotation, family audit and their
+performance reports. They do not run OrthoFinder, orthology benchmarking or
+phylogeny. The full orthology and benchmark workflow is reserved for target mode.
 
 For target mode repeat its original command with `--resume`,
 `--target-context returned/isolated_targets` and the appropriate
@@ -154,10 +149,9 @@ run stopped at external-evidence handoff, `--resume` may adopt that update after
 verifying the frozen input, settings and references plus both sealed detection
 handoffs. Frozen rule/model resources are never adopted this way. The adoption
 is recorded in `run_contract_adoptions.json`; changed scientific inputs or settings
-still require a new output directory. Calibration and validation do not run the
-mainstream target/reference assignment or gene-tree inference. Their compact blind
-reconstruction tables and provenance are retained; individual orthogroup files
-are removed after scoring. Target runs keep the complete OrthoFinder results.
+still require a new output directory. Calibration and validation do not run
+orthology assignment, benchmarking or gene-tree inference. Target runs keep the
+complete OrthoFinder results.
 Before target core assignment, saved benchmark alignments are checked for
 unequal sequence lengths. Malformed alignments are rebuilt from their matching
 saved source sequences with FAMSA and the repair hashes are recorded in
@@ -168,8 +162,8 @@ Exit status 2 means waiting for external context, 1 means a gate failed, and 0
 means the requested gates completed. Check `branch.log`, `branch_status.json`,
 `stages.json` and `run_summary.json`. A failed branch does not cancel its peer.
 Each branch has its own annotation and final audit. Calibration/validation also
-have a blind reconstruction report; target runs have full orthology, benchmark,
-and optional phylogeny. Target phylogeny remains opt-in. The mode wrapper does
+have reference-label performance reports; target runs have full orthology,
+benchmark, and optional phylogeny. Target phylogeny remains opt-in. The mode wrapper does
 not automatically launch target phylogeny unless requested.
 
 During a run, the terminal shows timestamped `BRANCH` and `STAGE` start,
@@ -405,8 +399,8 @@ configuration and selected raw reference files; they are not fixed at seven and
 four. The final assigned result retains the full
 predicted orthogroup set for benchmark scoring; `inference/core_consensus.tsv`
 is a separate occupancy-qualified list. This requires OrthoFinder support for
-`--assign` and `--core`, and MSA-based OrthoFinder mode. Validation/calibration
-do not enter this stage; they use the separate blind reference-only `-og` assessment.
+`--assign` and `--core`, and MSA-based OrthoFinder mode. Validation and calibration
+do not enter this stage or run any orthology assessment.
 
 The shared proteome preparation and QC runs before detection/orthology. A
 `protein_gene.tsv` is optional; when selected in target configuration or found
