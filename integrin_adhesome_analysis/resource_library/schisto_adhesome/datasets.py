@@ -39,8 +39,8 @@ def dump(path, value):
     _layout_resource(Path(path)).write_text(json.dumps(value, indent=2, allow_nan=False) + '\n', encoding='utf-8')
 
 
-def table(path, rows):
-    fields = list(dict.fromkeys(k for r in rows for k in r)) or ['status']
+def table(path, rows, fields=None):
+    fields = fields or list(dict.fromkeys(k for r in rows for k in r)) or ['status']
     with _layout_resource(Path(path)).open('w', encoding='utf-8', newline='') as handle:
         writer = csv.DictWriter(handle, fields, delimiter='\t')
         writer.writeheader(); writer.writerows(rows)

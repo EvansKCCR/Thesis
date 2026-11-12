@@ -40,7 +40,10 @@ def metrics(rows, policy):
 
 def summarize_predictions(predictions, folder, kind):
     folder.mkdir(parents=True, exist_ok=True)
-    policies = ('stage1_recruited', 'supported', 'provisional', 'including_provisional', 'before_exclusion')
+    # Keep saved/manual reporting fixtures created before Stage 2 was exposed as
+    # its own metric compatible; live branch evaluation always supplies it.
+    predictions=[dict(row,stage2_annotated=bool(row.get('stage2_annotated',False))) for row in predictions]
+    policies = ('stage1_recruited', 'stage2_annotated', 'supported', 'provisional', 'including_provisional', 'before_exclusion')
     results = []; groups = [('all', 'all', predictions)]
     for field in ('species', 'control_class', 'length_bin', 'calibration_overlap', 'reference_overlap', 'training_overlap'):
         for value in sorted({str(r[field]) for r in predictions}):
@@ -111,6 +114,9 @@ def evaluate_branch(branch, manifest, audit, overlap_hashes, reference_hashes, t
     from evaluate_validation import read_audit
     handoff = _layout_resource(branch/'handoff')
     hypotheses = read(_layout_resource(handoff/'hypotheses.tsv')); recruited = {r['protein_id'] for r in hypotheses}
+    stage1_families=defaultdict(set)
+    for item in hypotheses:
+        if item.get('family'):stage1_families[item['protein_id']].add(item['family'])
     before = {}; final = {}; excluded = {}
     for code in sorted({r['Specie'] for r in manifest}):
         a,b,c = read_audit(audit,code); before.update(a); final.update(b); excluded.update(c)
@@ -119,12 +125,17 @@ def evaluate_branch(branch, manifest, audit, overlap_hashes, reference_hashes, t
     output = []
     for source in manifest:
         pid = source['protein_id']; row = final.get(pid,{})
+        preaudit=before.get(pid,{})
         expected = expected_family_resolution(source)['families'] if source['control_class']=='positive' else set()
         digest = source['sequence_sha256']; length = int(source['length'])
         name = row.get('putative_audited_family') or row.get('assigned_family') or 'unassigned'
+        stage2_family=preaudit.get('putative_audited_family') or preaudit.get('assigned_family') or 'unassigned'
+        stage2_annotated=stage2_family not in ('','unassigned','unresolved')
         provisional = row.get('grade')=='C' and name not in ('','unassigned','unresolved')
         output.append(dict(source, expected_families=';'.join(sorted(expected)),
-            predicted_family=name, stage1_recruited=pid in recruited, supported=supported(row),
+            predicted_family=name, stage1_recruited=pid in recruited, stage2_family=stage2_family,
+            stage1_family_hypotheses=';'.join(sorted(stage1_families.get(pid,set()))),
+            stage2_annotated=stage2_annotated, supported=supported(row),
             provisional=provisional, including_provisional=supported(row) or provisional,
             before_exclusion=supported(before.get(pid)), grade=row.get('grade','not_accepted'),
             exclusion_gate=excluded.get(pid,{}).get('exclusion_gate',''),

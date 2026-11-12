@@ -220,7 +220,7 @@ class IsolationTests(unittest.TestCase):
                 return 0
             args=argparse.Namespace(run=root,kind='target',threads=1,reuse_detection=None,context_dir=None,
                                     allow_missing_context=True,compare_report=None)
-            with patch.object(b,'verify_frozen'),patch.object(core,'main',side_effect=fake):
+            with patch.object(b,'verify_frozen'),patch.object(core,'main',side_effect=fake),patch.object(b,'_posthoc_refinement'):
                 self.assertEqual(b.execute(args),0);self.assertEqual(len(commands),3)
                 original=(_layout_resource(target/'downstream/final/Stage_2_output.xlsx')).read_bytes()
                 self.assertEqual(b.execute(args),0);self.assertEqual(len(commands),3)

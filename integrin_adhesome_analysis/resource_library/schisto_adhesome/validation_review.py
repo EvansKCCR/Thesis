@@ -15,6 +15,7 @@ import argparse
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 import html
+import hashlib
 import json
 import math
 import os
@@ -25,7 +26,8 @@ import sys
 from .datasets import category, dump, label_rows, sha
 from .reports import read, metrics
 
-POLICIES = {'stage1_recruited':'Stage 1 recruitment', 'supported':'Supported A/B',
+POLICIES = {'stage1_recruited':'Stage 1 recruitment', 'stage2_annotated':'Stage 2 family annotation',
+            'supported':'Stage 3 supported A/B',
             'provisional':'Provisional C only', 'including_provisional':'Supported plus provisional',
             'before_exclusion':'Supported before exclusions'}
 FLAGS = tuple(POLICIES) + ('calibration_overlap','reference_overlap','training_overlap')
@@ -48,6 +50,8 @@ def predictions(path):
     rows = read(path)
     for row in rows:
         for key in FLAGS:
+            if key=='stage2_annotated' and key not in row:
+                row[key]='False'
             if key in ('training_overlap','calibration_overlap') and row[key]=='unknown':continue
             row[key] = boolean(row[key])
     return rows
@@ -73,13 +77,25 @@ def same(observed, expected):
         math.isclose(float(observed),float(expected),rel_tol=1e-10,abs_tol=1e-12))
 
 
-def verify_reference(rows, labels):
+def verify_reference(rows, labels, confirmed_homologues=()):
     truth={str(row.get('fasta_id') or ''):row for row in labels}
     ids=[row['original_id'] for row in rows]
-    if not rows or len(truth)!=len(labels) or len(ids)!=len(set(ids)) or set(ids)!=set(truth):
+    allowed={}
+    for item in confirmed_homologues:
+        token=hashlib.sha256((item['species']+'\0'+item['best_target_id']).encode()).hexdigest()[:16]
+        allowed['BenchmarkNegative|'+token]=item
+    if (not rows or len(truth)!=len(labels) or len(ids)!=len(set(ids))
+            or set(ids)!=set(truth)):
         raise ValueError('Validation review requires a unique, exact join of reference labels and predictions')
     for row in rows:
         reference=truth[row['original_id']]
+        if row['original_id'] in allowed:
+            if row['control_class']!='negative' or not boolean(row.get('negative_homology_one_to_one')):
+                raise ValueError('Added benchmark homologue is not retained as a verified negative control: '+row['original_id'])
+            if row.get('negative_homology_source_id')!=allowed[row['original_id']].get('source_control_id'):
+                raise ValueError('Added homologue source identity differs from the RBH evidence: '+row['original_id'])
+        elif row.get('negative_homology_one_to_one') in ('True',True):
+            raise ValueError('Prediction carries homology evidence absent from the confirmed panel: '+row['original_id'])
         pairs=[(row['control_class'],category(reference.get('class'))),
                (int(row['length']),int(reference['sequence_length'])),
                (row.get('accession',''),str(reference.get('accession') or reference.get('mapped_accession') or '')),
@@ -145,18 +161,52 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
     reference=contract['datasets']['validation'];label_file=local(labels_file or reference['labels_file'])
     if sha(label_file)!=reference['labels_sha256']:
         raise ValueError('Validation reference changed since the frozen run')
+    homology_receipt=_layout_resource(branch/'negative_homology/augmentation.json')
+    homology_data=json.loads(_layout_resource(homology_receipt).read_text(encoding='utf-8')) if _layout_resource(homology_receipt).is_file() else {}
+    augmented_labels=local(homology_data.get('labels_path') or label_file)
+    confirmed_path=_layout_resource(branch/'negative_homology/run/confirmed_one_to_one_negative_homologues.tsv')
+    all_homology_path=_layout_resource(branch/'negative_homology/run/homology_matches.tsv')
+    confirmed=read(confirmed_path) if _layout_resource(confirmed_path).is_file() else []
     sources=dict(reference=label_file,contract=contract_path,predictions=_layout_resource(folder/'predictions.tsv'),
                  metrics=_layout_resource(folder/'metrics.tsv'),summary=_layout_resource(folder/'summary.json'),
                  families=_layout_resource(folder/'family_metrics.tsv'),audit=_layout_resource(audit_dir/'audited_family_assignments.tsv'))
+    if augmented_labels!=label_file:sources['augmented_labels']=augmented_labels
+    if _layout_resource(homology_receipt).is_file():sources['negative_homology_receipt']=homology_receipt
+    if _layout_resource(confirmed_path).is_file():sources['confirmed_negative_homologues']=confirmed_path
+    if _layout_resource(all_homology_path).is_file():sources['all_negative_homology_decisions']=all_homology_path
     benchmark_summary=_layout_resource(branch/'downstream/benchmark/summary.json')
     if _layout_resource(benchmark_summary).is_file():
         sources['orthology_benchmark']=benchmark_summary
     for key,path in sources.items():
         if not _layout_resource(path).is_file():raise ValueError('Missing completed validation reporting input: '+str(path))
     before={key:sha(path) for key,path in sources.items()}
-    rows=predictions(sources['predictions']);verify_reference(rows,label_rows(label_file))
-    if reference.get('labelled_records',len(rows))!=len(rows) or (
-            'counts' in reference and reference['counts']!=dict(Counter(r['control_class'] for r in rows))):
+    stage_report=_layout_resource(folder/'stage_performance')
+    stage_metrics_path=_layout_resource(stage_report/'stage_performance.tsv')
+    stage_summary_path=_layout_resource(stage_report/'summary.json')
+    if _layout_resource(stage_metrics_path).is_file() and _layout_resource(stage_summary_path).is_file():
+        stage_receipt=json.loads(_layout_resource(stage_summary_path).read_text(encoding='utf-8'))
+        for name,expected in stage_receipt.get('output_sha256',{}).items():
+            path=_layout_resource(stage_report/name)
+            if not _layout_resource(path).is_file() or sha(path)!=expected:
+                raise ValueError('Stage performance output changed: '+str(path))
+        sources['stage_performance']=stage_metrics_path;sources['stage_performance_summary']=stage_summary_path
+        before['stage_performance']=sha(stage_metrics_path);before['stage_performance_summary']=sha(stage_summary_path)
+    rows=predictions(sources['predictions']);labels=label_rows(augmented_labels)
+    original_label_rows=label_rows(label_file)
+    original_ids={str(r.get('fasta_id') or '') for r in original_label_rows}
+    augmented_ids={str(r.get('fasta_id') or '') for r in labels}
+    allowed_ids=set()
+    for item in confirmed:
+        token=hashlib.sha256((item['species']+'\0'+item['best_target_id']).encode()).hexdigest()[:16]
+        allowed_ids.add('BenchmarkNegative|'+token)
+        if item.get('source_control_id') not in original_ids:
+            raise ValueError('Benchmark negative homologue source is absent from original validation labels')
+    if augmented_ids-original_ids!=allowed_ids or original_ids-augmented_ids:
+        raise ValueError('Run-local validation labels do not exactly match the confirmed one-to-one homologue additions')
+    verify_reference(rows,labels,confirmed)
+    expected_counts=Counter(reference.get('counts',{}));expected_counts['negative']=expected_counts.get('negative',0)+len(confirmed)
+    count_mismatch=('counts' in reference and dict(expected_counts)!=dict(Counter(r['control_class'] for r in rows)))
+    if len(rows)!=reference.get('labelled_records',len(rows))+len(confirmed) or count_mismatch:
         raise ValueError('Validation cohort counts differ from the run contract')
     summary=json.loads(_layout_resource(sources['summary']).read_text());verify_saved_metrics(rows,folder,summary)
     audit_rows=read(sources['audit']);audit={row['protein_id']:row for row in audit_rows}
@@ -202,7 +252,7 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
     doc.heading('Main findings')
     m=binary['supported'];recruited=binary['stage1_recruited']
     doc.paragraph(f'Stage 1 recruited {recruited["TP"]} of {len(positives)} positives ({pct(recruited["recall"])} recall) '
-                  f'and {recruited["FP"]} negatives. Supported Stage 2 assignments retained {m["TP"]} positives and '
+                  f'and {recruited["FP"]} negatives. Supported Stage 3 assignments retained {m["TP"]} positives and '
                   f'{m["FP"]} negatives: observed PPV {pct(m["PPV"])}, recall {pct(m["recall"])}, F1 {dec(m["F1"])}. '
                   'These are panel observations, not proof of precision on unseen proteins.')
     doc.paragraph(f'Of {len(provisional_positive)} positive provisional calls, {mismatches} have reported family labels '
@@ -212,9 +262,14 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
     grades=Counter(r['grade'] for r in rows)
     doc.table(['Item','Records'],[('Labelled evaluation',len(rows)),('Positive controls',len(positives)),
         ('Negative controls',len(negatives)),('Input FASTA',reference.get('fasta_records','n.a.')),
+        ('Confirmed Benchmark/Input one-to-one negative homologues added',len(confirmed)),
         ('Unlabelled input records excluded',len(reference.get('excluded_unlabelled_ids',[]))),
         ('Stage 1 candidates audited',len(recruited_ids)),('Candidates removed by exclusion gates',len(excluded))]+
         [(f'Grade {key}',value) for key,value in sorted(grades.items())])
+    if homology_data:
+        doc.heading('Validation negative-control homology evidence')
+        doc.paragraph(f"Benchmark homology step status: {homology_data.get('summary',{}).get('status','unavailable')}; "
+                      f"{len(confirmed)} verified one-to-one homologues added. The workflow requires exact human-source sequence mapping, a reciprocal best hit, and unique query/target and target-sequence representation. Unverified or ambiguous hits were not added.")
     doc.paragraph('Every reference ID joins exactly once to saved predictions. Class, length, accession, genes and '
                   'reference names were checked; the label checksum matches the run contract. Unlabelled input '
                   'records are excluded from evaluation and are not counted as true negatives.')
@@ -226,6 +281,25 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
                   'PPV = TP/(TP+FP), recall = TP/(TP+FN), F1 = 2TP/(2TP+FP+FN). Undefined rates are n.a. '
                   'Supported means a named family, grade A/B, domain score 4/4 and a non-ambiguous assignment. '
                   'Provisional means grade C with a named family. Reference labels are used for terminal evaluation only.')
+    if 'stage_performance' in sources:
+        stage_rows=read(sources['stage_performance'])
+        stage_summary=json.loads(_layout_resource(sources['stage_performance_summary']).read_text(encoding='utf-8'))
+        doc.heading('Stage-by-stage performance and post hoc proposals')
+        doc.paragraph('The table below uses the same labelled cohort for Stage 1, Stage 2, Stage 3 and the post hoc proposal view. Stage 2 is the pre-exclusion family annotation; Stage 3 is the final supported A/B audit. Post hoc proposals are reported separately and are not promoted into the original audit. The stage report records candidate rescues, revisions, potential false-positive flags, and changes in FP/FN counts.')
+        doc.table(['Stage','n','TP','FP','TN','FN','Precision','Recall','F1'],[
+            (r['stage'],r['n'],r['TP'],r['FP'],r['TN'],r['FN'],pct(float(r['precision'])) if r.get('precision') not in ('',None) else 'n.a.',
+             pct(float(r['recall'])) if r.get('recall') not in ('',None) else 'n.a.',
+             dec(float(r['F1'])) if r.get('F1') not in ('',None) else 'n.a.') for r in stage_rows])
+        doc.table(['Family-scored stage','TP','FP','FN','Precision','Recall','F1','Positive labels without family truth'],[
+            (r['stage'],r['family_TP'],r['family_FP'],r['family_FN'],
+             pct(float(r['family_precision'])) if r.get('family_precision') not in ('',None) else 'n.a.',
+             pct(float(r['family_recall'])) if r.get('family_recall') not in ('',None) else 'n.a.',
+             dec(float(r['family_F1'])) if r.get('family_F1') not in ('',None) else 'n.a.',r['positive_family_unmapped'])
+            for r in stage_rows])
+        doc.paragraph(f"Post hoc proposals rescued {stage_summary.get('posthoc_candidates_rescued',0)} candidates; "
+                      f"{stage_summary.get('posthoc_assignment_changes_proposed',0)} assignment changes were proposed; "
+                      f"{stage_summary.get('supported_assignments_flagged_as_potential_false_positive',0)} existing assignments were flagged for review. "
+                      'Candidate-level changes and incremental stage deltas are available in the linked report outputs.')
     m=binary['supported'];doc.table(['Actual class','Supported accepted','Not accepted'],[('Positive',m['TP'],m['FN']),('Negative',m['FP'],m['TN'])])
     doc.heading('Family assignment correctness')
     doc.table(['Family scoring policy','Correct (TP)','Incorrect (FP)','Unrecovered (FN)','Micro PPV','Micro recall','Micro F1'],
@@ -327,6 +401,9 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
     items=[('All predictions',_layout_resource(folder/'predictions.tsv')),('Metric strata',_layout_resource(folder/'metrics.tsv')),('Per-family metrics',_layout_resource(folder/'family_metrics.tsv')),
         ('Unsupported positives and errors',_layout_resource(folder/'errors.tsv')),('Pipeline summary report',_layout_resource(folder/'report.html')),
         ('Validation reference',label_file),('Final audit workbook',_layout_resource(audit_dir/'Stage_2_output.xlsx'))]
+    if stage_metrics_path.is_file():items.append(('Stage-by-stage performance report',_layout_resource(stage_report/'stage_performance.html')))
+    if _layout_resource(confirmed_path).is_file():items.append(('Confirmed one-to-one benchmark negative homologues',confirmed_path))
+    if _layout_resource(all_homology_path).is_file():items.append(('All benchmark homology decisions',all_homology_path))
     if cal is not None:items.append(('Calibration report',_layout_resource(cal_folder/'report.html')))
     links=[]
     for label,path in items:

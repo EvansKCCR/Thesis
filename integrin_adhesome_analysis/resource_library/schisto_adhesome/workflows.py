@@ -36,8 +36,18 @@ def algorithm_inventory():
                 continue  # Maintenance receipts are history, not algorithm inputs.
             if p.suffix in ('.py','.json','.csv','.hmm','.faa','.yml','.txt','.tsv'):
                 paths.add(p)
+    # These sibling bundles are executable parts of the integrated analytical
+    # path: validation negative homology uses reciprocal_blast.py and every
+    # branch now invokes the post hoc classifier and report adapter.
+    for sibling in ('homology_retrieval','schisto_pfam_cdd_reclassify'):
+        root=ROOT.parent/sibling
+        if not root.is_dir():continue
+        for p in root.rglob('*'):
+            if not p.is_file() or {'__pycache__','tests','runs','results'} & set(p.relative_to(root).parts):continue
+            if p.suffix in ('.py','.json','.csv','.tsv'):
+                paths.add(p)
     paths.add(ROOT/'validation/identity_probability_model.json')
-    return {p.relative_to(ROOT).as_posix():sha(p) for p in sorted(paths) if p.exists()}
+    return {Path(os.path.relpath(p,ROOT)).as_posix():sha(p) for p in sorted(paths) if p.exists()}
 
 
 def verify_frozen(contract):
@@ -324,6 +334,16 @@ def prepare(args):
         no_length_filter_added=True,reference_version=contract['references']['version'])
     for kind,(data,summary) in datasets.items():
         branch = out/kind; branch.mkdir(exist_ok=True)
+        augmentation=_layout_resource(branch/'negative_homology/augmentation.json')
+        if kind=='validation' and args.resume and _layout_resource(augmentation).is_file():
+            saved=json.loads(_layout_resource(augmentation).read_text(encoding='utf-8'))
+            if (saved.get('source_hashes',{}).get(str(_layout_resource(Path(summary['protein_file']))))!=summary['fasta_sha256']
+                    or saved.get('source_hashes',{}).get(str(_layout_resource(Path(summary['labels_file']))))!=summary['labels_sha256']):
+                raise ValueError('Saved validation negative-homology panel belongs to different original inputs')
+            # Keep the sealed augmented panel intact; rebuilding from the base
+            # labelled cohort here would silently drop its additional controls.
+            preflight['validation_negative_homology']=saved.get('summary',{})
+            continue
         dump(_layout_resource(branch/'input_manifest.json'),summary)
         if kind != 'target':
             materialize(kind,data,_layout_resource(branch/'inputs'),settings['qc'])

@@ -616,6 +616,41 @@ Review tiers A–D are heuristic domain evidence tiers, distinct from audit grad
 and calibrated probabilities. They do not change validation performance metrics
 or promote original assignments automatically. The source workbook is unchanged.
 
+The integrated branch workflow now runs this refinement automatically after the
+Stage 3 family audit for target, calibration and validation branches. It writes a
+separate `posthoc_refinement/` directory and never edits the original Stage 2
+workbook or audit TSV. Calibration and validation branches also write
+`reports/posthoc_performance/` and `reports/stage_performance/`. The latter has
+`stage_performance.tsv` (binary and family precision/recall/F1 at each step),
+`stage_changes.tsv` (incremental FP/FN, precision, recall and F1 changes),
+`candidate_changes.tsv` (post hoc proposal evidence and supported assignments
+flagged for review), `summary.json` and an HTML report. A/B proposals appear as a
+separate proposal-only view and as an explicitly counterfactual cumulative view;
+they are not silently accepted into the audit.
+
+The stagewise comparison uses the exact same labelled cohort and denominator at
+every point. Stage 1 is candidate recruitment. Stage 2 is the saved pre-exclusion
+family annotation. Stage 3 is the final supported A/B audit after configured
+negative-exclusion gates. The post hoc row evaluates A/B proposals on their own;
+the cumulative post hoc row retains Stage 3 calls and adds A/B proposals. Family
+metrics omit positive controls without expected-family labels, while binary
+candidate metrics retain them. Calibration and validation reports are generated
+separately from their own labels and predictions.
+
+Before validation detection starts, the workflow looks under the configured raw
+reference directory for a unique `Benchmark/Input` or `Benchmarks/Input` folder.
+When present, it runs the existing `homology_retrieval` against that panel using
+the human-derived validation negative controls. Only exact source-sequence
+mapping plus reciprocal-best-hit records with a unique query/target pair and a
+unique target sequence in that proteome are added. Sequences already present in
+the labelled control panel are not duplicated. Augmentations are kept in the
+validation run only, with source control IDs and RBH evidence in
+`validation/negative_homology/`; uncertain or augmented-reference-only matches
+are excluded. If no benchmark folder is available, validation continues with the
+original negative panel and records the homology step as unavailable. The report
+labels these additions as benchmark-derived negative controls, not as independent
+ground-truth labels for protein-family identity.
+
 To evaluate saved calibration or validation refinement outputs against their
 reference labels, without repeating classification:
 

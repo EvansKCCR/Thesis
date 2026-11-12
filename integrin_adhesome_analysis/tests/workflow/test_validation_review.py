@@ -167,6 +167,8 @@ class ValidationReviewTests(unittest.TestCase):
             args=argparse.Namespace(kind='validation',run=run,threads=1,context_dir=None,allow_missing_context=False,
                                     reuse_detection=None,compare_report=None)
             with patch.object(branch,'ROOT',resource_root),patch.object(branch,'verify_frozen'),\
+                 patch.object(branch,'_validation_negative_panel'),patch.object(branch,'_posthoc_refinement'),\
+                 patch.object(branch,'_stage_performance_report'),\
                  patch.object(branch,'evaluate_branch',return_value=rows),\
                  patch.object(core,'main',side_effect=AssertionError('Analysis must not launch')):
                 self.assertEqual(branch.execute(args),0)
