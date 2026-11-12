@@ -68,6 +68,19 @@ def _verified_handoff(folder):
     return True
 
 
+def _verified_folder(folder,kind):
+    """Verify a sealed branch artifact before adopting an audit-only code fix."""
+    manifest_path=_layout_resource(folder/'workflow_manifest.json')
+    if not _layout_resource(manifest_path).is_file():return False
+    try:manifest=json.loads(_layout_resource(manifest_path).read_text(encoding='utf-8'))
+    except (OSError,ValueError):return False
+    if manifest.get('kind')!=kind:return False
+    for name,expected in manifest.get('files',{}).items():
+        path=_layout_resource(folder/name)
+        if not _layout_resource(path).is_file() or sha(path)!=expected:return False
+    return True
+
+
 def _awaiting_context_checkpoint(out,mode):
     """Only sealed detection-only gate runs can adopt changed implementation code."""
     summary_path=_layout_resource(out/'run_summary.json')
@@ -91,6 +104,41 @@ def _awaiting_context_checkpoint(out,mode):
     return True
 
 
+def _audit_join_resume_checkpoint(out,mode):
+    """Permit an audit-join-only fix after inference, before any audit is sealed."""
+    kinds=list(dict.fromkeys(['calibration',mode])) if mode in ('validation','target') else []
+    if not kinds:return False
+    for kind in kinds:
+        branch=_layout_resource(out/kind)
+        handoff=_layout_resource(branch/'handoff')
+        annotation=_layout_resource(branch/'annotation')
+        downstream=_layout_resource(branch/'downstream')
+        if not _verified_handoff(handoff) or not _verified_folder(annotation,'annotation'):
+            return False
+        checkpoint=_layout_resource(downstream/'recovery.json')
+        if not _layout_resource(checkpoint).is_file():return False
+        try:state=json.loads(_layout_resource(checkpoint).read_text(encoding='utf-8'))
+        except (OSError,ValueError):return False
+        if state.get('annotation_sha256')!=sha(_layout_resource(annotation/'workflow_manifest.json')):
+            return False
+        stages=state.get('stages',{})
+        if stages.get('audit',{}).get('status')=='complete':return False
+        if _layout_resource(downstream/'workflow_manifest.json').exists() or _layout_resource(downstream/'final/workflow_manifest.json').exists():
+            return False
+        for stage_name in ('references','panel'):
+            receipt=stages.get(stage_name,{})
+            if receipt.get('status')!='complete':return False
+            for name,expected in receipt.get('files',{}).items():
+                path=_layout_resource(downstream/name)
+                if not _layout_resource(path).is_file() or digest(path)!=expected:return False
+        orthology=stages.get('orthology',{})
+        if orthology.get('status')=='complete':
+            for name,expected in orthology.get('files',{}).items():
+                path=_layout_resource(downstream/name)
+                if not _layout_resource(path).is_file() or digest(path)!=expected:return False
+    return True
+
+
 def reconcile_resume_contract(out,contract):
     """Resume unchanged inputs; adopt code-only updates at sealed handoff checkpoints."""
     out=_layout_resource(Path(out)).resolve();path=_layout_resource(out/'run_contract.json')
@@ -107,13 +155,19 @@ def reconcile_resume_contract(out,contract):
     unsafe=[name for name in changed_files if not (name.endswith(('.py','.yml','.yaml')) or name=='config/layout_paths.json')]
     if unsafe:
         raise ValueError('Frozen scientific rule/model resources changed: '+', '.join(unsafe)+'. Keep the original resources or start a new output directory.')
-    if not _awaiting_context_checkpoint(out,contract.get('mode')):
+    audit_join_only=(set(changed_files)<= {'resource_library/scripts/audit_join.py',
+                         'resource_library/schisto_adhesome/workflows.py'}
+                     and 'resource_library/scripts/audit_join.py' in changed_files
+                     and _audit_join_resume_checkpoint(out,contract.get('mode')))
+    if not _awaiting_context_checkpoint(out,contract.get('mode')) and not audit_join_only:
         raise ValueError('Workflow code changed, and this run has no sealed detection-only external-evidence checkpoint. Keep the original code or start a new output directory.')
     log_path=_layout_resource(out/'run_contract_adoptions.json')
     history=json.loads(_layout_resource(log_path).read_text(encoding='utf-8')) if _layout_resource(log_path).is_file() else dict(adoptions=[])
     history.setdefault('adoptions',[]).append(dict(from_contract_sha256=old.get('contract_sha256'),
         to_contract_sha256=contract.get('contract_sha256'),changed_algorithm_files=changed_files,
-        completed_gate_checkpoints_verified=True,adopted_utc=datetime.now(timezone.utc).isoformat()))
+        completed_gate_checkpoints_verified=True,
+        adoption_scope='audit_join_only_before_audit' if audit_join_only else 'sealed_detection_handoff',
+        adopted_utc=datetime.now(timezone.utc).isoformat()))
     dump(log_path,history);dump(path,contract)
     print('RESUME CONTRACT: adopted code-only update; sealed calibration/selected-gate detection handoffs verified; '
           f'{len(changed_files)} changed algorithm files recorded in {log_path}',flush=True)
