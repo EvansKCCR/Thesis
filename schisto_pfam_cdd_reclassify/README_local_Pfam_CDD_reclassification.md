@@ -3,6 +3,8 @@
 This independent step reads **Stage_2_output.xlsx produced by the family audit**,
 using its `Audited_family_assignment` worksheet. It reinterprets existing Pfam
 and NCBI CDD annotations for unresolved, ambiguous and provisional proteins.
+It also screens supported calls for possible conflicts between the audited
+family and the post hoc Pfam/CDD rules.
 Original audit assignments, names, support, grades, probabilities, motifs and
 benchmark evidence remain in their original columns. Proposals are exported
 in separate `posthoc_*` columns and a separate review table.
@@ -19,7 +21,8 @@ From `Thesis/integrin_adhesome_analysis`:
 
 ```bash
 python -B main/adhesome_workflow.py refine-unresolved \
-  --input /absolute/path/to/audit/Stage_2_output.xlsx \
+  --input /absolute/path/to/runs/isolated_validation \
+  --kind validation \
   --out runs/posthoc_domain_review_v1
 ```
 
@@ -27,13 +30,18 @@ The standalone entry point works from any directory:
 
 ```bash
 python -B /absolute/path/to/Thesis/schisto_pfam_cdd_reclassify/schisto_pfam_cdd_reclassify.py \
-  --input /absolute/path/to/audit/Stage_2_output.xlsx \
+  --input /absolute/path/to/runs/isolated_calibration \
+  --kind calibration \
   --outdir /absolute/path/to/new/posthoc_domain_review_v1
 ```
 
-The audit's `audited_family_assignments.tsv` or an equivalent CSV is also accepted.
-`--sheet` overrides the XLSX worksheet and is ignored for TSV/CSV. Choose a new
-output directory outside the sealed source audit; existing directories are
+`--input` accepts a final audit workbook, `audited_family_assignments.tsv`/CSV,
+the final audit directory, a calibration/validation branch directory, or a run
+directory containing those branches. If a run directory contains both audits,
+`--kind calibration` or `--kind validation` selects one explicitly. Within a
+final audit directory the workbook is preferred; if absent, TSV and then CSV are
+used. `--sheet` overrides the XLSX worksheet and is ignored for TSV/CSV. Choose
+a new output directory outside the sealed source audit; existing directories are
 refused. No backups or automatic archives are created.
 
 To validate schema, support labels, duplicate keys and record accounting without
@@ -67,6 +75,14 @@ python -B /absolute/path/to/Thesis/schisto_pfam_cdd_reclassify/schisto_pfam_cdd_
   conflicting duplicates stop before output creation.
 - A valid empty final audit produces header-only reports and zero counts.
 
+Supported audit assignments also receive an orthology-free domain cross-check.
+Only a conflicting A-tier Pfam/CDD proposal against a specific-supported audit
+family is listed in `potential_false_positive_candidates.tsv`. Broad-supported
+calls are not treated as conflicts from a more specific domain label alone.
+These are review leads, not confirmed false positives; original audit
+assignments are preserved. Labeled calibration or validation reports remain the
+way to measure false-positive rates against known controls.
+
 ## Rule interpretation
 
 The supplied ordered `specific()` and `broad()` rule bodies are retained from
@@ -98,6 +114,8 @@ fibronectin identity.
 | File | Content |
 | --- | --- |
 | `Stage_2_posthoc_refinement.tsv` | All unique source species/protein records; every original column plus `posthoc_*` fields |
+| `supported_assignment_crosschecks.tsv` | A-tier Pfam/CDD family comparisons for supported audit assignments |
+| `potential_false_positive_candidates.tsv` | Supported assignments with conflicting A-tier domain evidence, for manual review |
 | `Schisto_unassigned_Pfam_CDD_classification.tsv` | Reviewed subset, proposed family/class, rationale, Pfam/CDD and original audit labels |
 | `scope_accounting.tsv` | Per-record review/preserve/exclude decision and reason |
 | `duplicate_protein_ids.tsv` | Exact duplicate rows collapsed within species |
@@ -200,6 +218,7 @@ Each new report directory contains:
 | `family_confusion.tsv` | Expected versus predicted family counts, including no-call/unmapped categories |
 | `predictions.tsv` | One labelled record per row, preserving original calls alongside distinct proposals |
 | `family_misclassifications.tsv` | Incorrect family calls/proposals and negative-control false positives |
+| `false_positive_assignments.tsv` | Label-confirmed binary false positives and incorrect family assignments, separated by policy and type |
 | `unmapped_labels.tsv`, `unmapped_proposals.tsv` | Explicit label-coverage gaps |
 | `unmatched_refinement_records.tsv` | Unlabelled source records excluded from metrics |
 | `report_manifest.json` | Label/mapping/refinement/config/ontology hashes and reporting provenance |

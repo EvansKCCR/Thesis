@@ -24,6 +24,37 @@ REVIEW = {'unresolved', 'unassigned', 'provisional', 'ambiguous', 'conflicting',
 NEGATIVE = {'negative', 'hard_negative', 'background_negative', 'excluded', 'rejected'}
 
 
+def resolve_audit_input(path, kind=None):
+    """Accept an audit file, final-audit folder, branch folder or run folder."""
+    source = Path(path).expanduser().resolve()
+    if source.is_file():
+        return source
+    if not source.is_dir():
+        raise ValueError('Audit input does not exist: '+str(source))
+    if kind not in (None, 'calibration', 'validation'):
+        raise ValueError('Audit kind must be calibration or validation')
+    branch_names = (kind,) if kind else ('calibration', 'validation')
+    roots = [source, source/'downstream/final', source/'final']
+    for branch in branch_names:
+        branch_root = source if source.name == branch else source/branch
+        roots.extend((branch_root/'downstream/final', branch_root/'final', branch_root/'downstream'))
+    found = []
+    for root in roots:
+        if not root.is_dir():
+            continue
+        candidate = next((root/name for name in
+            ('Stage_2_output.xlsx', 'audited_family_assignments.tsv', 'audited_family_assignments.csv')
+            if (root/name).is_file()), None)
+        if candidate is not None and candidate not in found:
+            found.append(candidate)
+    if not found:
+        suffix = f' for {kind}' if kind else ''
+        raise ValueError('No Stage_2_output.xlsx or audited_family_assignments.tsv/csv found in audit directory'+suffix+': '+str(source))
+    if len(found) > 1:
+        raise ValueError('Multiple calibration/validation final audits found; pass --kind calibration or --kind validation')
+    return found[0].resolve()
+
+
 def token(value):
     return re.sub(r'[\s-]+', '_', str(value or '').strip().casefold())
 

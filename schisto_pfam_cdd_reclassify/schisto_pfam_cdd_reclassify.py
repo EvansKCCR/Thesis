@@ -108,7 +108,7 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-from stage2_io import load_table, compare_prior, key, token, integer_length
+from stage2_io import load_table, compare_prior, resolve_audit_input, key, token, integer_length
 
 def contains_any(keys,terms):return any(k in terms for k in keys)
 def part(keys,terms):return any(any(k.lower() in t.lower() for t in terms) for k in keys)
@@ -261,7 +261,9 @@ REVIEW_FIELDS = ['Species','Protein ID','Orthogroup','Original support','Origina
     'SignalP 6.0','Protein length (aa)']
 POSTHOC_FIELDS = ['posthoc_status','posthoc_proposed_family_or_class','posthoc_evidence_tier',
     'posthoc_functional_module','posthoc_priority','posthoc_evidence_rationale',
-    'posthoc_supported_orthogroup_context','posthoc_ruleset_version']
+    'posthoc_supported_orthogroup_context','posthoc_ruleset_version',
+    'posthoc_supported_crosscheck_status','posthoc_supported_domain_family',
+    'posthoc_supported_domain_tier','posthoc_supported_domain_evidence']
 
 
 def pf(row):
@@ -349,14 +351,66 @@ def family_label(row):
     return row['Suggested family / class'].split(' [OG suggests')[0]
 
 
+_FAMILY_GENERIC={'family','protein','domain','related','class','subfamily','superfamily','canonical','like'}
+_FAMILY_SYNONYMS={'parva':'parvin','parvb':'parvin','actopaxin':'parvin',
+    'fermt1':'kindlin','fermt2':'kindlin','fermt3':'kindlin',
+    'actn1':'actinin','actn2':'actinin','actn3':'actinin','actn4':'actinin',
+    'ezrin':'erm','radixin':'erm','moesin':'erm',
+    'fps':'fesfps','fer':'fesfps','fes':'fesfps'}
+
+
+def family_tokens(value):
+    text=str(value or '').casefold().translate(str.maketrans({'α':' alpha ','β':' beta ','γ':' gamma ','δ':' delta ','ζ':' zeta '}))
+    tokens={t for t in re.findall(r'[a-z0-9]+',text) if t not in _FAMILY_GENERIC and len(t)>1}
+    return {_FAMILY_SYNONYMS.get(t,t) for t in tokens}
+
+
+def supported_domain_crosschecks(supported):
+    """Flag only A-tier domain evidence that names a different audit family."""
+    crosschecks=[]
+    for original,proposal in zip(supported,classify(supported,{})):
+        audited=original.get('putative_audited_family','').strip()
+        proposed=family_label(proposal)
+        tier=proposal['Evidence tier']
+        audited_tokens=family_tokens(audited);proposed_tokens=family_tokens(proposed)
+        if not audited or audited.casefold() in {'unassigned','unresolved','unknown'}:
+            status='not_assessable'
+            reason='No specific audited family is available for comparison'
+        elif token(original.get('family_support_level'))=='broad_supported':
+            status='broad_scope_not_comparable'
+            reason='The audit call is intentionally broad; a specific domain proposal alone cannot establish a false positive'
+        elif tier.startswith('A') and proposed_tokens and not (audited_tokens & proposed_tokens):
+            status='potential_false_positive_candidate'
+            reason='A-tier Pfam/CDD evidence proposes a different family label; review the full architecture and audit rationale'
+        elif tier.startswith('A') and audited_tokens & proposed_tokens:
+            status='domain_concordant'
+            reason='A-tier domain proposal shares a normalized family label with the audit assignment'
+        else:
+            status='no_high_specificity_domain_conflict'
+            reason='No conflicting A-tier Pfam/CDD family proposal was produced'
+        crosschecks.append(dict(Specie=original['Specie'],protein_id=original['protein_id'],
+            family_support_level=original.get('family_support_level',''),
+            audited_family=audited,domain_proposed_family=proposed,evidence_tier=tier,
+            domain_evidence=proposal['Evidence rationale'],status=status,reason=reason,
+            Pfam_architecture=original.get('Pfam_architecture',''),
+            NCBI_CDD_architecture=original.get('NCBI_CDD_architecture','')))
+    return crosschecks
+
+
 def execute(args):
-    source = args.input.resolve()
+    source = resolve_audit_input(args.input,args.kind)
     initial_hash = sha256(source)
     data = load_table(source, args.sheet, load_xlsx)
     scopes = collections.Counter(r['posthoc_status'] for r in data['decisions'])
     summary = dict(version=VERSION, input=str(source), input_sha256=initial_hash,
-        sheet=data['sheet'], input_rows=data['source_rows'], unique_species_protein_pairs=len(data['rows']),
+        kind=args.kind, sheet=data['sheet'], input_rows=data['source_rows'], unique_species_protein_pairs=len(data['rows']),
         duplicate_rows=len(data['duplicates']), scope_counts=dict(scopes), column_mapping=data['column_mapping'])
+    statuses = {(r['Specie'],r['protein_id']):r['posthoc_status'] for r in data['decisions']}
+    supported = [r for r in data['rows'] if statuses[key(r)]=='supported_preserved']
+    crosschecks = supported_domain_crosschecks(supported)
+    flagged_crosschecks = [r for r in crosschecks if r['status']=='potential_false_positive_candidate']
+    summary.update(supported_assignment_domain_crosschecks=len(crosschecks),
+                   potential_false_positive_candidates=len(flagged_crosschecks))
     if args.check_inputs:
         summary.update(status='inputs_valid', analysis_launched=False, files_written=False)
         print(json.dumps(summary, indent=2))
@@ -370,8 +424,7 @@ def execute(args):
         raise ValueError('Keep post hoc outputs separate from the source audit')
     if (source.parent/'workflow_manifest.json').is_file() and source.parent in destination.parents:
         raise ValueError('Keep post hoc outputs outside the sealed source audit directory')
-    statuses = {(r['Specie'],r['protein_id']):r['posthoc_status'] for r in data['decisions']}
-    supported = [r for r in data['rows'] if statuses[key(r)]=='supported_preserved']
+    crosscheck_by_key={(r['Specie'],r['protein_id']):r for r in crosschecks}
     unresolved = [r for r in data['rows'] if statuses[key(r)]=='reviewed']
     output = classify(unresolved, build_context(supported))
     tiers = collections.Counter(r['Evidence tier'][0] for r in output)
@@ -393,7 +446,11 @@ def execute(args):
             posthoc_priority=proposal.get('Priority',''),
             posthoc_evidence_rationale=proposal.get('Evidence rationale',''),
             posthoc_supported_orthogroup_context=proposal.get('Supported-family orthogroup context',''),
-            posthoc_ruleset_version=RULESET_VERSION))
+            posthoc_ruleset_version=RULESET_VERSION,
+            posthoc_supported_crosscheck_status=crosscheck_by_key.get(key(row),{}).get('status','not_applicable'),
+            posthoc_supported_domain_family=crosscheck_by_key.get(key(row),{}).get('domain_proposed_family',''),
+            posthoc_supported_domain_tier=crosscheck_by_key.get(key(row),{}).get('evidence_tier',''),
+            posthoc_supported_domain_evidence=crosscheck_by_key.get(key(row),{}).get('domain_evidence','')))
     if sha256(source)!=initial_hash:
         raise ValueError('Source audit changed while preparing the refinement; no outputs written')
     destination.mkdir(parents=True, exist_ok=False)
@@ -401,6 +458,10 @@ def execute(args):
     write_tsv(destination/'Stage_2_posthoc_refinement.tsv',reconciled,data['columns']+POSTHOC_FIELDS)
     write_tsv(destination/'scope_accounting.tsv',data['decisions'],
         ['Specie','protein_id','original_support','posthoc_status','reason'])
+    write_tsv(destination/'supported_assignment_crosschecks.tsv',crosschecks,
+        ['Specie','protein_id','family_support_level','audited_family','domain_proposed_family','evidence_tier','domain_evidence','status','reason','Pfam_architecture','NCBI_CDD_architecture'])
+    write_tsv(destination/'potential_false_positive_candidates.tsv',flagged_crosschecks,
+        ['Specie','protein_id','family_support_level','audited_family','domain_proposed_family','evidence_tier','domain_evidence','status','reason','Pfam_architecture','NCBI_CDD_architecture'])
     write_tsv(destination/'duplicate_protein_ids.tsv',data['duplicates'],
         ['Protein ID','kept_species','duplicate_species','conflicting_data'])
     write_tsv(destination/'tier_summary.tsv',[
@@ -432,6 +493,8 @@ def execute(args):
         algorithm_version=VERSION, ruleset_version=RULESET_VERSION,
         code_sha256=sha256(Path(__file__)), adapter_sha256=sha256(Path(__file__).with_name('stage2_io.py')),
         supported_reference_records=len(supported), unassigned_review_records=len(unresolved),
+        supported_assignment_domain_crosschecks=len(crosschecks),
+        potential_false_positive_candidates=len(flagged_crosschecks),
         proposed_rows=len(output), tier_counts=dict(sorted(tiers.items())),
         source_record_accounting_passed=(len(reconciled)==sum(scopes.values()) and
             len(reconciled)+len(data['duplicates'])==data['source_rows']),
@@ -445,6 +508,7 @@ def execute(args):
     (destination/'run_manifest.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
     print(f'Input rows: {data["source_rows"]}; unique species/protein pairs: {len(reconciled)}')
     print(f'Supported preserved: {len(supported)}; reviewed: {len(unresolved)}; excluded: {scopes["negative_excluded"]}')
+    print(f'Potential false-positive audit assignments flagged for review: {len(flagged_crosschecks)}')
     print('Post hoc review tiers: '+', '.join(f'{t}={tiers[t]}' for t in 'ABCD'))
     print('Output: '+str(destination/'Stage_2_posthoc_refinement.tsv'))
     if failed:
@@ -455,7 +519,8 @@ def execute(args):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version',action='version',version='schisto-pfam-cdd-posthoc '+VERSION)
-    parser.add_argument('--input',type=Path,required=True,help='Stage_2_output.xlsx or audited_family_assignments.tsv/CSV')
+    parser.add_argument('--input',type=Path,required=True,help='Stage_2_output.xlsx/TSV/CSV, final-audit directory, or calibration/validation run directory')
+    parser.add_argument('--kind',choices=['calibration','validation'],help='Select one branch when --input is a run directory containing both calibration and validation audits')
     parser.add_argument('--sheet',default='Audited_family_assignment',help='Worksheet for XLSX input')
     parser.add_argument('--outdir','--out',type=Path,help='New separate output directory; existing outputs are refused')
     parser.add_argument('--check-inputs',action='store_true',help='Validate schema/scope/keys only; write nothing')

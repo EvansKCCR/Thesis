@@ -1352,6 +1352,7 @@ def refine_unresolved(args):
     if not script.is_file():
         raise ValueError('Missing sibling post hoc refinement bundle: '+str(script))
     command=[sys.executable,'-B',str(script),'--input',str(args.input),'--sheet',args.sheet]
+    if args.kind:command+=['--kind',args.kind]
     if args.out is not None:command+=['--outdir',str(args.out)]
     if args.check_inputs:command+=['--check-inputs']
     if args.compare:command+=['--compare',str(args.compare)]
@@ -1476,7 +1477,8 @@ def main(argv=None):
     for s in sub.choices.values():
         s.add_argument('--out', type=Path, required=True, help='New output directory')
     s=sub.add_parser('refine-unresolved',help='Post hoc Pfam/CDD review of any saved Stage 2 audit, with or without orthology')
-    s.add_argument('--input',type=Path,required=True,help='Stage_2_output.xlsx or its audit TSV/CSV export')
+    s.add_argument('--input',type=Path,required=True,help='Stage_2_output.xlsx/TSV/CSV, final-audit directory, or calibration/validation run directory')
+    s.add_argument('--kind',choices=['calibration','validation'],help='Select one branch when --input contains both calibration and validation audits')
     s.add_argument('--sheet',default='Audited_family_assignment')
     s.add_argument('--out',type=Path,help='New separate review directory; required unless checking inputs')
     s.add_argument('--check-inputs',action='store_true',help='Validate input schema and accounting; write nothing')

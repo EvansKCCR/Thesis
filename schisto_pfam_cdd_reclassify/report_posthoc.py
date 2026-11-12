@@ -314,7 +314,7 @@ def generate(args):
         explicit_exclusions=sum(r['posthoc_status']=='negative_excluded' for r in rows),
         unmapped_positive_family_labels=sum(r['control_class']=='positive' and not r['expected_families'] for r in rows),
         unlabelled_refinement_records=len(unmatched))
-    matrices=[];families=[];confusion=[];misclassified=[]
+    matrices=[];families=[];confusion=[];misclassified=[];false_positives=[]
     for population,subset in [('full_labelled_cohort',rows),('posthoc_eligible',[r for r in rows if r['posthoc_eligible']])]:
         for policy in POLICIES:
             if population=='posthoc_eligible' and policy=='original_supported':continue
@@ -332,6 +332,14 @@ def generate(args):
                 if r[policy] and not r[policy+'_family_correct'] and (r['control_class']!='positive' or r['expected_families']):
                     misclassified.append(dict(policy=policy,**r))
             confusion += [dict(policy=policy,expected_family=e,predicted_family=p,records=n) for (e,p),n in sorted(counts.items())]
+    for policy in POLICIES:
+        for r in rows:
+            if not r[policy]:
+                continue
+            if r['control_class']!='positive':
+                false_positives.append(dict(policy=policy,false_positive_type='negative_control_called',**r))
+            elif r['expected_families'] and not r[policy+'_family_correct']:
+                false_positives.append(dict(policy=policy,false_positive_type='incorrect_family_assignment',**r))
     if any(sha256(p)!=before[k] for k,p in sources.items()):
         raise ValueError('A reporting input changed; no outputs written')
     destination.mkdir(parents=True,exist_ok=False)
@@ -342,6 +350,8 @@ def generate(args):
     write_tsv(destination/'unmapped_labels.tsv',[r for r in rows if r['control_class']=='positive' and not r['expected_families']],list(rows[0]))
     write_tsv(destination/'unmapped_proposals.tsv',[r for r in rows if r['posthoc_AB'] and not r['posthoc_evaluation_family']],list(rows[0]))
     write_tsv(destination/'family_misclassifications.tsv',misclassified,['policy',*list(rows[0])])
+    write_tsv(destination/'false_positive_assignments.tsv',false_positives,
+        ['policy','false_positive_type',*list(rows[0])])
     write_tsv(destination/'unmatched_refinement_records.tsv',unmatched,['Specie','protein_id','reason'])
     if recovery is not None:
         write_tsv(destination/'orthogroup_reconstruction.tsv',recovery,list(recovery[0]))
