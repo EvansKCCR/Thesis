@@ -130,7 +130,9 @@ def join(annotation,handoff,panel,orthology,rows,benchmark):
         topology.append(dict(protein_id=pid,DeepLoc_Localizations=row['DeepLoc_2.1'],DeepLoc_Cytoplasm=ctx.get('deeploc_cytoplasm',''),
             DeepLoc_Extracellular=ctx.get('deeploc_extracellular',''),DeepTMHMM_summary=row['DeepTMHMM'],SignalP_prediction=row['SignalP.v6.0']))
     topology=list({r['protein_id']:r for r in topology}.values())
+    direct_orthologues=(read(_layout_resource(orthology/'candidates/direct_orthologues.tsv'))
+                        if orthology is not None else [])
     support=dict(reference_species=references,target_species=targets,benchmark=benchmark,tables=dict(
         Motif_annotations=updated_annotations,Orthology_candidate_report=report,Orthology_HOGs=hogs,
-        Direct_orthologues=read(_layout_resource(orthology/'candidates/direct_orthologues.tsv')),NCBI_CDD_selected_hits=cdds,NCBI_CDD_all_hits=read(_layout_resource(motifs/'CDD_hits.tsv')) if (_layout_resource(motifs/'CDD_hits.tsv')).is_file() else cdds,Topology_predictions=topology))
+        Direct_orthologues=direct_orthologues,NCBI_CDD_selected_hits=cdds,NCBI_CDD_all_hits=read(_layout_resource(motifs/'CDD_hits.tsv')) if (_layout_resource(motifs/'CDD_hits.tsv')).is_file() else cdds,Topology_predictions=topology))
     return joined,support
