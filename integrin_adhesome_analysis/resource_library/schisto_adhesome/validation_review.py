@@ -148,6 +148,9 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
     sources=dict(reference=label_file,contract=contract_path,predictions=_layout_resource(folder/'predictions.tsv'),
                  metrics=_layout_resource(folder/'metrics.tsv'),summary=_layout_resource(folder/'summary.json'),
                  families=_layout_resource(folder/'family_metrics.tsv'),audit=_layout_resource(audit_dir/'audited_family_assignments.tsv'))
+    benchmark_summary=_layout_resource(branch/'downstream/benchmark/summary.json')
+    if _layout_resource(benchmark_summary).is_file():
+        sources['orthology_benchmark']=benchmark_summary
     for key,path in sources.items():
         if not _layout_resource(path).is_file():raise ValueError('Missing completed validation reporting input: '+str(path))
     before={key:sha(path) for key,path in sources.items()}
@@ -316,6 +319,25 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
                       f"Reconstructed {blind.get('recovered','n.a.')} of {blind.get('positive_controls','n.a.')} positive controls into exactly one orthogroup.")
     else:
         doc.paragraph('The blind assessment did not complete. Audit classification and its performance metrics remain available without it.')
+    doc.heading('Orthology benchmark quality assessment')
+    if 'orthology_benchmark' in sources:
+        benchmark=json.loads(_layout_resource(benchmark_summary).read_text(encoding='utf-8'))
+        quality=benchmark.get('quality_acceptance') or {}
+        doc.paragraph(f"Benchmark status: {benchmark.get('status','unavailable')}; "
+                      f"validated weight: {benchmark.get('validated_weight')}; "
+                      f"scope: {benchmark.get('scope','unavailable')}; protocol: {benchmark.get('protocol','unavailable')}. "
+                      'A rejected or unavailable benchmark does not block the annotation audit report and does not contribute a validated weight.')
+        benchmark_metrics=benchmark.get('metrics') or {}
+        doc.table(['Metric','Observed'],[(name,pct(value)) for name,value in benchmark_metrics.items()
+            if isinstance(value,(int,float)) and not isinstance(value,bool)])
+        checks=quality.get('checks') or {}
+        if checks:
+            doc.table(['Acceptance check','Observed','Minimum','Passed'],[
+                (name, pct(item.get('observed')) if isinstance(item.get('observed'),(int,float)) else item.get('observed','n.a.'),
+                 pct(item.get('minimum')) if isinstance(item.get('minimum'),(int,float)) else item.get('minimum','n.a.'),
+                 item.get('passed','n.a.')) for name,item in checks.items()])
+    else:
+        doc.paragraph('No orthology benchmark summary was produced for this evaluation branch; the blind reference-only reconstruction assessment above is reported separately.')
     doc.heading('Interpretation and follow-up')
     doc.paragraph('Review unsupported positives and the provisional-family mismatch table separately. Recruitment '
                   'misses need a recruitment-stage investigation; recovered membership does not establish the reported '
@@ -355,7 +377,10 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
                     final_audit_decisions_match_predictions=True,all_metric_strata_recomputed=True,sources_unchanged=True),
         calibration_comparison=cal_status,supported=binary['supported'],family_by_policy=fm,
         combined_no_exact_overlap=clean_metrics,provisional_family_review_records=len(review),
-        blind_reference_reconstruction_status=blind.get('status','unavailable'),analytical_pipeline_rerun=False,backups_created=False)
+        blind_reference_reconstruction_status=blind.get('status','unavailable'),
+        orthology_benchmark_status=(json.loads(_layout_resource(benchmark_summary).read_text(encoding='utf-8')).get('status','unavailable')
+                                   if 'orthology_benchmark' in sources else 'not_produced'),
+        analytical_pipeline_rerun=False,backups_created=False)
     dump(_layout_resource(folder/'validation_review_provenance.json'),provenance)
     return dict(report=str(_layout_resource(folder/'validation_review.html')),markdown=str(_layout_resource(folder/'validation_review.md')),
                 provisional_review=str(_layout_resource(folder/'validation_provisional_family_review.tsv')),calibration_comparison=cal_status)

@@ -367,8 +367,8 @@ def run(args):
     def worker(kind):
         cmd = [sys.executable,'-B','-m','schisto_adhesome.branch','--kind',kind,'--run',str(out),
                '--threads',str(per_branch)]
-        if kind=='target' and args.phylogeny:
-            cmd += ['--phylogeny','--phylogeny-grouping',args.phylogeny_grouping]
+        if kind=='target' and getattr(args,'phylogeny',False):
+            cmd += ['--phylogeny','--phylogeny-grouping',getattr(args,'phylogeny_grouping','orthogroup')]
         context = getattr(args,kind+'_context',None)
         if context:cmd += ['--context-dir',str(_layout_resource(context).resolve())]
         if args.allow_missing_context:cmd += ['--allow-missing-context']

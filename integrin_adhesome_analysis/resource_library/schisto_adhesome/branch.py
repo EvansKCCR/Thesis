@@ -141,13 +141,13 @@ def _execute(args):
         for key in ('orthogroup_context_weight','orthofinder_search','orthofinder_method',
                     'orthofinder_inflation','benchmark_selection'):
             if settings.get(key) is not None:cmd+=['--'+key.replace('_','-'),str(settings[key])]
-        if args.kind=='target' and args.phylogeny:
-            cmd+=['--phylogeny','--phylogeny-grouping',args.phylogeny_grouping]
+        if args.kind=='target' and getattr(args,'phylogeny',False):
+            cmd+=['--phylogeny','--phylogeny-grouping',getattr(args,'phylogeny_grouping','orthogroup')]
         if (_layout_resource(downstream/'recovery.json')).exists():
             # Recovery restores the original frozen settings. Never adjust weights.
             cmd=['recover','--run',str(downstream),'--threads',str(args.threads),'--analysis-threads',str(args.threads)]
-            if args.kind=='target' and args.phylogeny:
-                cmd+=['--phylogeny','--phylogeny-grouping',args.phylogeny_grouping]
+            if args.kind=='target' and getattr(args,'phylogeny',False):
+                cmd+=['--phylogeny','--phylogeny-grouping',getattr(args,'phylogeny_grouping','orthogroup')]
         if settings.get('phylogenetic_identity_resolution',False):
             cmd+=['--phylogenetic-identity-resolution']
             phylo=contract.get('evolutionary_evidence',{}).get(args.kind)
