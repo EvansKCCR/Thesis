@@ -91,6 +91,17 @@ def summarize_predictions(predictions, folder, kind):
         'Final frozen-configuration evaluation. See overlap strata; exact overlaps are not independent.',
         previous_orthology_F1=.5411461870014839,
         comparison_note='Orthogroup pairwise F1 and candidate/family classification F1 measure different tasks; not a direct improvement comparison.')
+    blind_root=_layout_resource(folder.parent/'downstream/blind_reconstruction')
+    blind_summary=_layout_resource(blind_root/'results/blind_test_results.json')
+    blind_by_species=_layout_resource(blind_root/'results/blind_reconstruction_by_species.tsv')
+    if _layout_resource(blind_summary).is_file() and _layout_resource(blind_by_species).is_file():
+        blind=json.loads(_layout_resource(blind_summary).read_text(encoding='utf-8'))
+        summary['blind_reference_only_reconstruction']=dict(status=blind.get('status'),inference_scope=blind.get('inference_scope'),
+            positive_controls=blind.get('positive_controls'),recovered=blind.get('recovered'),
+            by_species=read(_layout_resource(blind_by_species)),
+            controls_tsv=str(_layout_resource(blind_root/'results/blind_reconstruction_controls.tsv')))
+    else:
+        summary['blind_reference_only_reconstruction']=dict(status='unavailable',reason='Reference-only assessment did not produce a completed result')
     dump(_layout_resource(folder/'summary.json'), summary)
     render(_layout_resource(folder/'report.html'), summary, results)
     return summary
@@ -103,6 +114,8 @@ def render(path, summary, rows):
     content += '<h1>'+esc(summary.get('kind','workflow'))+'</h1><pre>'+esc(json.dumps(summary,indent=2))+'</pre>'
     content += '<table><tr>'+''.join('<th>'+esc(f)+'</th>' for f in fields)+'</tr>'
     content += ''.join('<tr>'+''.join('<td>'+esc(r.get(f,''))+'</td>' for f in fields)+'</tr>' for r in rows)+'</table>'
+    blind=summary.get('blind_reference_only_reconstruction',{})
+    content += '<h2>Blind reference-only orthogroup reconstruction</h2><pre>'+esc(json.dumps(blind,indent=2))+'</pre>'
     _layout_resource(Path(path)).write_text(content, encoding='utf-8')
 
 

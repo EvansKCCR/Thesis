@@ -139,8 +139,39 @@ def _audit_join_resume_checkpoint(out,mode):
     return True
 
 
+def _orthology_recovery_resume_checkpoint(out,mode):
+    """Permit the orthology recovery adapter to change only after that stage failed."""
+    kinds=list(dict.fromkeys(['calibration',mode])) if mode in ('validation','target') else []
+    if not kinds:return False
+    for kind in kinds:
+        branch=_layout_resource(out/kind)
+        handoff=_layout_resource(branch/'handoff')
+        annotation=_layout_resource(branch/'annotation')
+        downstream=_layout_resource(branch/'downstream')
+        if not _verified_handoff(handoff) or not _verified_folder(annotation,'annotation'):
+            return False
+        checkpoint=_layout_resource(downstream/'recovery.json')
+        if not _layout_resource(checkpoint).is_file():return False
+        try:state=json.loads(_layout_resource(checkpoint).read_text(encoding='utf-8'))
+        except (OSError,ValueError):return False
+        if state.get('annotation_sha256')!=sha(_layout_resource(annotation/'workflow_manifest.json')):
+            return False
+        stages=state.get('stages',{})
+        if stages.get('audit',{}).get('status')=='complete':return False
+        if _layout_resource(downstream/'workflow_manifest.json').exists() or _layout_resource(downstream/'final/workflow_manifest.json').exists():
+            return False
+        for stage_name in ('references','panel'):
+            receipt=stages.get(stage_name,{})
+            if receipt.get('status')!='complete':return False
+            for name,expected in receipt.get('files',{}).items():
+                path=_layout_resource(downstream/name)
+                if not _layout_resource(path).is_file() or sha(path)!=expected:return False
+        if stages.get('orthology',{}).get('status')!='failed':return False
+    return True
+
+
 def reconcile_resume_contract(out,contract):
-    """Resume unchanged inputs; adopt code-only updates at sealed handoff checkpoints."""
+    """Resume unchanged inputs; adopt bounded code updates at verified checkpoints."""
     out=_layout_resource(Path(out)).resolve();path=_layout_resource(out/'run_contract.json')
     if not _layout_resource(path).is_file():return contract
     old=json.loads(_layout_resource(path).read_text(encoding='utf-8'))
@@ -159,17 +190,29 @@ def reconcile_resume_contract(out,contract):
                          'resource_library/schisto_adhesome/workflows.py'}
                      and 'resource_library/scripts/audit_join.py' in changed_files
                      and _audit_join_resume_checkpoint(out,contract.get('mode')))
-    if not _awaiting_context_checkpoint(out,contract.get('mode')) and not audit_join_only:
-        raise ValueError('Workflow code changed, and this run has no sealed detection-only external-evidence checkpoint. Keep the original code or start a new output directory.')
+    orthology_recovery_only=(bool(changed_files) and set(changed_files)<= {
+                                'resource_library/orthology_phylogeny/scripts/orthology_core_assignment.py',
+                                'resource_library/orthology_phylogeny/scripts/pipeline.py',
+                                'resource_library/orthology_phylogeny/scripts/blind_orthogroup_test.py',
+                                'resource_library/schisto_adhesome/reports.py',
+                                'resource_library/schisto_adhesome/validation_review.py',
+                                'resource_library/schisto_adhesome/branch.py',
+                                'main/adhesome_workflow.py',
+                                'main/run_pipeline.py',
+                                'resource_library/schisto_adhesome/workflows.py'}
+                             and _orthology_recovery_resume_checkpoint(out,contract.get('mode')))
+    if not _awaiting_context_checkpoint(out,contract.get('mode')) and not audit_join_only and not orthology_recovery_only:
+        raise ValueError('Workflow code changed outside an eligible checkpoint; keep the original code or start a new output directory.')
     log_path=_layout_resource(out/'run_contract_adoptions.json')
     history=json.loads(_layout_resource(log_path).read_text(encoding='utf-8')) if _layout_resource(log_path).is_file() else dict(adoptions=[])
     history.setdefault('adoptions',[]).append(dict(from_contract_sha256=old.get('contract_sha256'),
         to_contract_sha256=contract.get('contract_sha256'),changed_algorithm_files=changed_files,
         completed_gate_checkpoints_verified=True,
-        adoption_scope='audit_join_only_before_audit' if audit_join_only else 'sealed_detection_handoff',
+        adoption_scope=('orthology_recovery_after_failed_stage' if orthology_recovery_only else
+                        'audit_join_only_before_audit' if audit_join_only else 'sealed_detection_handoff'),
         adopted_utc=datetime.now(timezone.utc).isoformat()))
     dump(log_path,history);dump(path,contract)
-    print('RESUME CONTRACT: adopted code-only update; sealed calibration/selected-gate detection handoffs verified; '
+    print('RESUME CONTRACT: adopted code-only update; eligible completed checkpoints verified; '
           f'{len(changed_files)} changed algorithm files recorded in {log_path}',flush=True)
     return contract
 
@@ -324,6 +367,8 @@ def run(args):
     def worker(kind):
         cmd = [sys.executable,'-B','-m','schisto_adhesome.branch','--kind',kind,'--run',str(out),
                '--threads',str(per_branch)]
+        if kind=='target' and args.phylogeny:
+            cmd += ['--phylogeny','--phylogeny-grouping',args.phylogeny_grouping]
         context = getattr(args,kind+'_context',None)
         if context:cmd += ['--context-dir',str(_layout_resource(context).resolve())]
         if args.allow_missing_context:cmd += ['--allow-missing-context']

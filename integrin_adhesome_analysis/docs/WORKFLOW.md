@@ -104,6 +104,12 @@ selection. Completed production-species detection may be reused explicitly with
 `--reuse-target-detection /absolute/path/to/handoff/detection` if sequence,
 configuration, domain-library and resource hashes still match. This never imports
 old mixed control orthogroups; changed inference composition needs new orthology.
+Target mode runs the full-panel orthology and benchmark stages. Candidate
+phylogeny remains opt-in, consistent with the existing target workflow policy;
+request it with `--phylogeny` and optionally set `--phylogeny-grouping family`.
+For example, append `--phylogeny --phylogeny-grouping family` to the target
+command above. Calibration and validation reject this option and never run the
+mainstream whole-panel orthology/phylogeny stages.
 
 ## 4. Return external evidence and resume isolated branches
 
@@ -127,6 +133,15 @@ python -B main/run_pipeline.py --mode validation \
   --validation-context returned/isolated_validation
 ```
 
+Evaluation branches prepare the reference panel for a **blind reference-only
+orthogroup reconstruction assessment**. After annotation, the family audit and
+calibration/validation reports run without the production whole-panel orthology
+assignment, Open_Orthobench scoring, or phylogeny. The blind assessment runs
+OrthoFinder `-og` on references only, with positive controls withheld until
+post-inference exact-sequence matching. It reports reconstruction by species
+and match type, then removes the raw OrthoFinder result files. This keeps the
+evaluation branches independent of the target orthology/phylogeny pipeline.
+
 For target mode repeat its original command with `--resume`,
 `--target-context returned/isolated_targets` and the appropriate
 `--calibration-context`. Completed resource_library/detection/calibration/orthology checkpoints
@@ -139,17 +154,23 @@ run stopped at external-evidence handoff, `--resume` may adopt that update after
 verifying the frozen input, settings and references plus both sealed detection
 handoffs. Frozen rule/model resources are never adopted this way. The adoption
 is recorded in `run_contract_adoptions.json`; changed scientific inputs or settings
-still require a new output directory. After their audit completes, calibration
-and validation discard the raw OrthoFinder inference tree. Candidate HOG tables,
-benchmark summary and audit-embedded orthology context are retained. Target runs
-keep the complete OrthoFinder result files.
+still require a new output directory. Calibration and validation do not run the
+mainstream target/reference assignment or gene-tree inference. Their compact blind
+reconstruction tables and provenance are retained; individual orthogroup files
+are removed after scoring. Target runs keep the complete OrthoFinder results.
+Before target core assignment, saved benchmark alignments are checked for
+unequal sequence lengths. Malformed alignments are rebuilt from their matching
+saved source sequences with FAMSA and the repair hashes are recorded in
+`alignment_repairs.tsv`; an unsafe or unrepairable alignment stops before the
+expensive assignment step.
 
 Exit status 2 means waiting for external context, 1 means a gate failed, and 0
 means the requested gates completed. Check `branch.log`, `branch_status.json`,
 `stages.json` and `run_summary.json`. A failed branch does not cancel its peer.
-Each branch has its own annotation, panel, orthology, benchmark, final audit and
-reports. Optional integrated tree inference is a separate operation; this mode
-wrapper does not automatically launch it.
+Each branch has its own annotation and final audit. Calibration/validation also
+have a blind reconstruction report; target runs have full orthology, benchmark,
+and optional phylogeny. Target phylogeny remains opt-in. The mode wrapper does
+not automatically launch target phylogeny unless requested.
 
 During a run, the terminal shows timestamped `BRANCH` and `STAGE` start,
 completion, reuse and failure messages with elapsed time. Each branch's live
@@ -373,9 +394,9 @@ groups in place, add `--resume --retry-failed`; `--hog GROUP_ID` limits a group.
 Do not confuse this integrated CLI or its filenames with the sibling standalone
 family-phylogeny runner described in that bundle's own docs.
 
-### Benchmark-core orthology and species-tree inference
+### Target benchmark-core orthology and species-tree inference
 
-When the automatic reference panel includes the 12 RefOG-linked proteomes in
+Target mode only: when the automatic reference panel includes the 12 RefOG-linked proteomes in
 `input/reference_raw/BENCHMARKS/Input`, the orthology stage runs OrthoFinder on
 those 12 core species first, records core groups present in at least 10/12 taxa,
 then assigns every user-selected target and reference proteome with OrthoFinder
@@ -384,7 +405,8 @@ configuration and selected raw reference files; they are not fixed at seven and
 four. The final assigned result retains the full
 predicted orthogroup set for benchmark scoring; `inference/core_consensus.tsv`
 is a separate occupancy-qualified list. This requires OrthoFinder support for
-`--assign` and `--core`, and MSA-based OrthoFinder mode.
+`--assign` and `--core`, and MSA-based OrthoFinder mode. Validation/calibration
+do not enter this stage; they use the separate blind reference-only `-og` assessment.
 
 The shared proteome preparation and QC runs before detection/orthology. A
 `protein_gene.tsv` is optional; when selected in target configuration or found

@@ -47,11 +47,15 @@ def main(argv=None):
     parser.add_argument('--select-labelled-validation',action='store_true',help='Select label-table IDs and report extra FASTA records as excluded; never alter source FASTA')
     parser.add_argument('--allow-missing-context',action='store_true',help='Explicitly continue with missing external context, recording that limitation')
     parser.add_argument('--threads',type=int,default=4,help='Total budget across both branches')
+    parser.add_argument('--phylogeny',action='store_true',help='Target mode only: run optional candidate phylogenies after orthology and audit')
+    parser.add_argument('--phylogeny-grouping',choices=['orthogroup','family'],default='orthogroup',help='Target phylogeny grouping')
     parser.add_argument('--schedule',choices=['parallel','serial'],default='parallel')
     parser.add_argument('--preflight-only',action='store_true')
     parser.add_argument('--resume',action='store_true')
     args=parser.parse_args(argv)
     if args.threads<1:parser.error('--threads must be positive')
+    if args.mode=='validation' and args.phylogeny:
+        parser.error('--phylogeny is a target-only option; validation/calibration skip mainstream orthology and phylogeny')
     from schisto_adhesome.workflows import run
     try:return run(args)
     except (OSError,ValueError,KeyError) as exc:

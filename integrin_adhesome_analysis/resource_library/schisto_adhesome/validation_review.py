@@ -183,9 +183,13 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
                 reason='negative_control_provisionally_called' if row['control_class']!='positive' else 'reported_family_does_not_match_mapped_expected_family'))
     provisional_positive=[r for r in positives if r['provisional']]
     mismatches=sum(r['control_class']=='positive' for r in review)
-    benchmark_path=_layout_resource(branch/'downstream/benchmark/summary.json')
-    benchmark=json.loads(_layout_resource(benchmark_path).read_text()) if _layout_resource(benchmark_path).exists() else dict(status='unavailable')
-    if _layout_resource(benchmark_path).exists():sources['benchmark']=benchmark_path;before['benchmark']=sha(benchmark_path)
+    blind_root=_layout_resource(branch/'downstream/blind_reconstruction')
+    blind_path=_layout_resource(blind_root/'results/blind_test_results.json')
+    blind_rows_path=_layout_resource(blind_root/'results/blind_reconstruction_by_species.tsv')
+    blind_rows=read(blind_rows_path) if _layout_resource(blind_rows_path).is_file() else []
+    blind=json.loads(_layout_resource(blind_path).read_text()) if _layout_resource(blind_path).is_file() else dict(status='unavailable')
+    if _layout_resource(blind_path).is_file():sources['blind_reference_reconstruction']=blind_path;before['blind_reference_reconstruction']=sha(blind_path)
+    if _layout_resource(blind_rows_path).is_file():sources['blind_reference_reconstruction_by_species']=blind_rows_path;before['blind_reference_reconstruction_by_species']=sha(blind_rows_path)
     cal_folder=_layout_resource(Path(calibration_reports)).resolve() if calibration_reports is not None else _layout_resource(run/'calibration/reports')
     cal_state=_layout_resource(run/'calibration/branch_status.json');cal=None
     cal_ready=calibration_reports is not None or _layout_resource(cal_state).exists() and json.loads(_layout_resource(cal_state).read_text()).get('status')=='complete'
@@ -297,35 +301,35 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
         if subset:regression.append((gene,len(subset),sum(r['supported'] for r in subset),sum(r['provisional'] for r in subset),
             '; '.join(f'{name} ({count})' for name,count in sorted(Counter(r['predicted_family'] for r in subset).items()))))
     if regression:doc.table(['Previously flagged identity','Positives','Supported','Provisional','Predicted family counts'],regression)
-    doc.heading('Orthology benchmark — separate evaluation task')
-    doc.paragraph('Benchmark status: '+str(benchmark.get('status','unavailable'))+'. Orthogroup reconstruction '
-                  'and candidate/family classification measure different tasks; one F1 must not be substituted for the other.')
-    bm=benchmark.get('metrics',{});checks=benchmark.get('quality_acceptance',{}).get('checks',{})
-    if bm:
-        quality_rows=[]
-        for label,key,formatter in [('Pairwise precision','precision',pct),('Pairwise recall','recall',pct),('Pairwise F1','f1',dec)]:
-            gate=checks.get(key,{})
-            quality_rows.append((label,formatter(bm.get(key)),formatter(gate.get('minimum')),
-                                 ('Passed' if gate['passed'] else 'Failed') if 'passed' in gate else 'Not configured'))
-        quality_rows.append(('Exact reference orthogroups',f'{bm.get("exact_reconstructed_refogs","n.a.")}/{bm.get("evaluated_refogs","n.a.")}',
-                             'n.a.','Reported'))
-        doc.table(['Metric','Observed','Acceptance minimum','Outcome'],quality_rows)
-    doc.paragraph(f'Benchmark scope: {benchmark.get("scope","unavailable")}; protocol: {benchmark.get("protocol","unavailable")}; '
-                  f'validated weight: {benchmark.get("validated_weight")}. A rejected or unavailable benchmark must not be presented as a validated weight.')
-    for diagnostic in benchmark.get('diagnostics',[]):doc.paragraph(str(diagnostic))
+    doc.heading('Blind reference-only orthogroup reconstruction')
+    doc.paragraph('Assessment status: '+str(blind.get('status','unavailable'))+'. OrthoFinder inference used only the prepared reference proteomes; '
+                  'positive controls were withheld from inference and matched afterward by exact full-length sequence identity. '
+                  'This measures reconstruction availability, not family-classification accuracy.')
+    if blind_rows:
+        doc.table(['Species','Positive controls','Identity assessable','One orthogroup','Multiple orthogroups',
+                   'Identical reference, ungrouped','No identical reference'],
+            [(r.get('species'),r.get('positive_controls'),r.get('identity_assessable_controls'),
+              r.get('identical_sequence_maps_to_one_orthogroup'),r.get('identical_sequence_maps_to_multiple_orthogroups'),
+              r.get('identical_reference_sequence_not_assigned_to_group'),r.get('no_identical_sequence_in_reference_panel'))
+             for r in blind_rows])
+        doc.paragraph(f"Reference-only orthogroup table hash: {blind.get('orthogroups_sha256','unavailable')}. "
+                      f"Reconstructed {blind.get('recovered','n.a.')} of {blind.get('positive_controls','n.a.')} positive controls into exactly one orthogroup.")
+    else:
+        doc.paragraph('The blind assessment did not complete. Audit classification and its performance metrics remain available without it.')
     doc.heading('Interpretation and follow-up')
     doc.paragraph('Review unsupported positives and the provisional-family mismatch table separately. Recruitment '
                   'misses need a recruitment-stage investigation; recovered membership does not establish the reported '
                   'family identity. Curate unmapped expected families without copying predictions into truth. '
                   'Retain distinct confidence tiers and do not relax gates solely to improve these scores.')
-    doc.paragraph('Exact reference overlap, species/class composition, incomplete family truth and benchmark quality '
+    doc.paragraph('Exact reference overlap, species/class composition and incomplete family truth '
                   'limit transferability claims. No experimental-evidence requirement or suppression is introduced by this report.')
     doc.heading('Detailed outputs and provenance')
     items=[('All predictions',_layout_resource(folder/'predictions.tsv')),('Metric strata',_layout_resource(folder/'metrics.tsv')),('Per-family metrics',_layout_resource(folder/'family_metrics.tsv')),
         ('Unsupported positives and errors',_layout_resource(folder/'errors.tsv')),('Pipeline summary report',_layout_resource(folder/'report.html')),
         ('Validation reference',label_file),('Final audit workbook',_layout_resource(audit_dir/'Stage_2_output.xlsx'))]
     if cal is not None:items.append(('Calibration report',_layout_resource(cal_folder/'report.html')))
-    if _layout_resource(benchmark_path).exists():items.append(('Benchmark details',benchmark_path))
+    if _layout_resource(blind_rows_path).is_file():items.append(('Blind reconstruction by species',blind_rows_path))
+    if _layout_resource(blind_root/'results/blind_reconstruction_controls.tsv').is_file():items.append(('Blind reconstruction controls',_layout_resource(blind_root/'results/blind_reconstruction_controls.tsv')))
     links=[]
     for label,path in items:
         if _layout_resource(path).is_file():
@@ -351,7 +355,7 @@ def generate(run, *, report_dir=None, audit_dir=None, calibration_reports=None, 
                     final_audit_decisions_match_predictions=True,all_metric_strata_recomputed=True,sources_unchanged=True),
         calibration_comparison=cal_status,supported=binary['supported'],family_by_policy=fm,
         combined_no_exact_overlap=clean_metrics,provisional_family_review_records=len(review),
-        benchmark_quality_status=benchmark.get('status','unavailable'),analytical_pipeline_rerun=False,backups_created=False)
+        blind_reference_reconstruction_status=blind.get('status','unavailable'),analytical_pipeline_rerun=False,backups_created=False)
     dump(_layout_resource(folder/'validation_review_provenance.json'),provenance)
     return dict(report=str(_layout_resource(folder/'validation_review.html')),markdown=str(_layout_resource(folder/'validation_review.md')),
                 provisional_review=str(_layout_resource(folder/'validation_provisional_family_review.tsv')),calibration_comparison=cal_status)

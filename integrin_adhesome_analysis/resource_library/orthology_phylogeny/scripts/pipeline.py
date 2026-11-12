@@ -293,7 +293,38 @@ def resolve_group_table(result, requested):
     modern = _layout_resource(result/'Orthogroups/Orthogroups.tsv')
     if version and tuple(map(int, version.groups())) >= (3, 1) and _layout_resource(modern).exists():
         return modern
-    raise ValueError('No root HOG table found. Expected N0.tsv or verified OrthoFinder >=3.1 Orthogroups.tsv.')
+    native = _layout_resource(result/'Orthogroups/Orthogroups.txt')
+    if version and tuple(map(int, version.groups())) >= (3, 1) and _layout_resource(native).exists():
+        return native
+    raise ValueError('No root HOG/orthogroup table found. Expected N0.tsv or an OrthoFinder >=3.1 orthogroup output.')
+
+
+def read_native_orthogroups(path, species):
+    """Adapt OrthoFinder's OG: member-list output to the TSV rows used by extraction."""
+    observed = set()
+    rows = []
+    with _layout_resource(path).open(encoding='utf-8-sig') as stream:
+        for line_number, line in enumerate(stream, 1):
+            line = line.strip()
+            if not line:
+                continue
+            group, separator, values = line.partition(':')
+            members_in_group = values.split()
+            if not separator or not group.strip().startswith('OG') or not members_in_group:
+                raise ValueError(f'Malformed OrthoFinder orthogroup line {line_number}: {path}')
+            row = {'OG': group.strip()}
+            grouped = defaultdict(list)
+            for protein in members_in_group:
+                matches = [code for code in species if protein.startswith(code+'__')]
+                if len(matches) != 1:
+                    raise ValueError(f'Cannot map OrthoFinder member {protein!r} to one configured species in {path}')
+                grouped[matches[0]].append(protein)
+                observed.add(matches[0])
+            row.update({code:', '.join(grouped.get(code,[])) for code in species})
+            rows.append(row)
+    if not rows:
+        raise ValueError(f'No orthogroups found in {path}')
+    return ['OG', *[code for code in species if code in observed]], rows
 
 
 def pairwise_tables(file):
@@ -317,7 +348,8 @@ def extract(args):
     result = _layout_resource(args.results).resolve()
     hogfile = resolve_group_table(result, args.hog)
     print(f'Using group table: {hogfile}')
-    fields, hogs = read_tsv(hogfile)
+    fields, hogs = (read_native_orthogroups(hogfile, list(CUSTOM_SPECIES or SPECIES))
+                    if hogfile.name=='Orthogroups.txt' else read_tsv(hogfile))
     active_species = table_species(fields)
     targets_path = getattr(args, 'target_species', None)
     targets = json.loads(_layout_resource(targets_path).read_text(encoding='utf-8')) if targets_path else list(SCHISTOSOMA)

@@ -141,9 +141,13 @@ def _execute(args):
         for key in ('orthogroup_context_weight','orthofinder_search','orthofinder_method',
                     'orthofinder_inflation','benchmark_selection'):
             if settings.get(key) is not None:cmd+=['--'+key.replace('_','-'),str(settings[key])]
+        if args.kind=='target' and args.phylogeny:
+            cmd+=['--phylogeny','--phylogeny-grouping',args.phylogeny_grouping]
         if (_layout_resource(downstream/'recovery.json')).exists():
             # Recovery restores the original frozen settings. Never adjust weights.
             cmd=['recover','--run',str(downstream),'--threads',str(args.threads),'--analysis-threads',str(args.threads)]
+            if args.kind=='target' and args.phylogeny:
+                cmd+=['--phylogeny','--phylogeny-grouping',args.phylogeny_grouping]
         if settings.get('phylogenetic_identity_resolution',False):
             cmd+=['--phylogenetic-identity-resolution']
             phylo=contract.get('evolutionary_evidence',{}).get(args.kind)
@@ -200,6 +204,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--kind',choices=['calibration','validation','target'],required=True)
     parser.add_argument('--run',type=Path,required=True);parser.add_argument('--threads',type=int,required=True)
+    parser.add_argument('--phylogeny',action='store_true',help='Target branch: request optional candidate phylogenies')
+    parser.add_argument('--phylogeny-grouping',choices=['orthogroup','family'],default='orthogroup')
     parser.add_argument('--context-dir',type=Path);parser.add_argument('--allow-missing-context',action='store_true')
     parser.add_argument('--reuse-detection',type=Path)
     parser.add_argument('--compare-report',type=Path)
