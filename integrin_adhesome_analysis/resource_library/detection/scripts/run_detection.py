@@ -7,7 +7,9 @@ _LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
                           if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
 if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
     _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
-from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+from pipeline_paths import (activate as _layout_activate, resource_path as _layout_resource,
+                            default_thread_count as _default_thread_count,
+                            warn_slow_wsl_mounts as _warn_slow_wsl_mounts)
 _layout_activate()
 
 import argparse
@@ -21,7 +23,8 @@ def main():
     root=_layout_resource(Path(__file__)).resolve().parents[1]
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version',action='version',version='adhesome-detection 1.0')
-    parser.add_argument('--cpu',type=int,default=8)
+    parser.add_argument('--cpu',type=int,default=_default_thread_count(8),
+                        help='CPU budget; defaults to the scheduler allocation or up to 8 local CPUs')
     parser.add_argument('--config',type=Path,required=True,help='Target species and explicit gene-ID extraction rules')
     parser.add_argument('--input-dir',type=Path,default=raw_input('target_raw'))
     parser.add_argument('--out',type=Path,default=_layout_resource(root/'results/detection_v1.0'))
@@ -35,6 +38,7 @@ def main():
                       ('reference-set','references/adhesome_v1.0'),('rules','config/family_rules.json')]:
         parser.add_argument('--'+name,type=Path,default=root/path)
     args=parser.parse_args()
+    _warn_slow_wsl_mounts(value for value in vars(args).values() if isinstance(value,Path))
     if args.cpu<1:
         parser.error('--cpu must be positive')
     command=[sys.executable,str(_layout_resource(root/'adhesome_pipeline.py')),'batch',

@@ -7,7 +7,7 @@ _LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
                           if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
 if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
     _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
-from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource, default_thread_count as _default_thread_count
 _layout_activate()
 
 import argparse
@@ -97,7 +97,8 @@ def main():
     parser.add_argument('--detection', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--reference-set',type=Path,help='Explicitly rerun forward/reverse BLAST with this paired panel, reusing existing prepared FASTA and domain scans')
-    parser.add_argument('--cpu',type=int,default=4)
+    parser.add_argument('--cpu',type=int,default=_default_thread_count(4),
+                        help='CPU budget; defaults to the scheduler allocation or up to 4 local CPUs')
     for name, filename in [('rules','family_rules.json'), ('manifest','adhesome_pfam_manifest.csv'),
                            ('crosswalk','adhesome_component_crosswalk.csv')]:
         parser.add_argument('--'+name, type=Path, default=_layout_resource(ROOT/'config')/filename)

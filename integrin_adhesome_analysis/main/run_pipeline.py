@@ -8,7 +8,9 @@ _LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
                           if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
 if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
     _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
-from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+from pipeline_paths import (activate as _layout_activate, resource_path as _layout_resource,
+                            default_thread_count as _default_thread_count,
+                            warn_slow_wsl_mounts as _warn_slow_wsl_mounts)
 _layout_activate()
 
 
@@ -46,13 +48,15 @@ def main(argv=None):
         parser.add_argument('--'+kind+'-phylogenetic-evidence',type=Path,help='Branch-specific supported-clade TSV; never shared between evaluation branches')
     parser.add_argument('--select-labelled-validation',action='store_true',help='Select label-table IDs and report extra FASTA records as excluded; never alter source FASTA')
     parser.add_argument('--allow-missing-context',action='store_true',help='Explicitly continue with missing external context, recording that limitation')
-    parser.add_argument('--threads',type=int,default=4,help='Total budget across both branches')
+    parser.add_argument('--threads',type=int,default=_default_thread_count(4),
+                        help='Total CPU budget across both branches; defaults to the scheduler allocation or up to 4 local CPUs')
     parser.add_argument('--phylogeny',action='store_true',help='Target mode only: run optional candidate phylogenies after orthology and audit')
     parser.add_argument('--phylogeny-grouping',choices=['orthogroup','family'],default='orthogroup',help='Target phylogeny grouping')
     parser.add_argument('--schedule',choices=['parallel','serial'],default='parallel')
     parser.add_argument('--preflight-only',action='store_true')
     parser.add_argument('--resume',action='store_true')
     args=parser.parse_args(argv)
+    _warn_slow_wsl_mounts(value for value in vars(args).values() if isinstance(value,Path))
     if args.threads<1:parser.error('--threads must be positive')
     if args.mode=='validation' and args.phylogeny:
         parser.error('--phylogeny is a target-only option; validation/calibration skip mainstream orthology and phylogeny')

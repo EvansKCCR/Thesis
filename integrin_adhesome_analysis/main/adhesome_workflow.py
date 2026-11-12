@@ -12,7 +12,9 @@ _LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
                           if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
 if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
     _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
-from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+from pipeline_paths import (activate as _layout_activate, resource_path as _layout_resource,
+                            default_thread_count as _default_thread_count,
+                            warn_slow_wsl_mounts as _warn_slow_wsl_mounts)
 _layout_activate()
 
 
@@ -838,7 +840,9 @@ def recover(args):
             raise ValueError('Generated reference panel differs from staged panel')
         state=dict(annotation_sha256=digest(_layout_resource(annotation/'workflow_manifest.json')),stages={},settings=dict(
             annotation=str(annotation),out=str(run),reference_raw=str(raw_input('reference_raw')),
-            threads=args.threads or 8,analysis_threads=args.analysis_threads or 8,iqtree_threads=args.iqtree_threads or 2,
+            threads=args.threads or _default_thread_count(8),
+            analysis_threads=args.analysis_threads or _default_thread_count(8),
+            iqtree_threads=args.iqtree_threads or min(2,_default_thread_count(8)),
             compare=None,phylogeny=False,allow_partial_phylogeny=False))
         def adopt(name,files):
             state['stages'][name]=dict(status='complete',files={str(p.relative_to(run)):digest(p) for p in files if _layout_resource(p).is_file()})
@@ -1387,7 +1391,8 @@ def main(argv=None):
     s.add_argument('--check-inputs',action='store_true',help='Validate all target file/header/gene mappings and exit without creating a run')
     s.add_argument('--resume',action='store_true',help='Continue a failed start in the same directory; reuse completed targets without backups')
     s.add_argument('--exclude-target',action='append',help='Omit an unfinished target from detection and handoff export')
-    s.add_argument('--threads', type=int, default=8)
+    s.add_argument('--threads', type=int, default=_default_thread_count(8),
+                   help='CPU budget; defaults to the scheduler allocation or up to 8 local CPUs')
     s.set_defaults(func=start)
     s = sub.add_parser('resume', help='Import external context and run motif annotation')
     s.add_argument('--motif-scope',choices=['adhesion','master'],default='adhesion')
@@ -1414,15 +1419,18 @@ def main(argv=None):
         command.add_argument('--benchmark-selection',type=Path,help='Curated adhesome RefOG/family TSV; used with --benchmark-scope adhesome')
         command.add_argument('--benchmark-level',choices=['root','cohort-lca'],default='root')
         command.add_argument('--benchmark-quality-policy',type=Path,help='Override bundled precision >=0.80 / F1 >=0.70 acceptance criteria')
-        command.add_argument('--threads',type=int,default=8)
-        command.add_argument('--analysis-threads',type=int,default=8)
+        command.add_argument('--threads',type=int,default=_default_thread_count(8),
+                             help='CPU budget; defaults to the scheduler allocation or up to 8 local CPUs')
+        command.add_argument('--analysis-threads',type=int,default=None,
+                             help='OrthoFinder algorithm CPU budget; defaults to --threads')
         command.add_argument('--compare',type=Path,help='Previous orthology output for reference-panel comparison')
         phylo=command.add_mutually_exclusive_group()
         phylo.add_argument('--phylogeny',action='store_true',help='Opt in to optional trees after the audit; tree failures do not invalidate the completed audit')
         phylo.add_argument('--skip-phylogeny',dest='phylogeny',action='store_false',help='Compatibility alias for the default: do not run phylogeny')
         command.set_defaults(phylogeny=False)
         command.add_argument('--phylogeny-grouping',choices=['orthogroup','family'],default='orthogroup',help='One tree per orthogroup or union of groups per candidate family')
-        command.add_argument('--iqtree-threads',type=int,default=2)
+        command.add_argument('--iqtree-threads',type=int,default=None,
+                             help='IQ-TREE CPU budget; defaults to min(2, --threads)')
         command.add_argument('--allow-partial-phylogeny',action='store_true',help='Retain the tree tool partial-failure summary; audit completion is always independent')
     s = sub.add_parser('calibrate', help='Prepare a new complete gene-level reference panel')
     s.add_argument('--handoff', type=Path, required=True)
@@ -1433,8 +1441,10 @@ def main(argv=None):
     s.add_argument('--results', type=Path)
     s.add_argument('--input-manifest', type=Path)
     s.add_argument('--compare', type=Path)
-    s.add_argument('--threads', type=int, default=16)
-    s.add_argument('--analysis-threads', type=int, default=8)
+    s.add_argument('--threads', type=int, default=_default_thread_count(8),
+                   help='CPU budget; defaults to the scheduler allocation or up to 8 local CPUs')
+    s.add_argument('--analysis-threads', type=int, default=None,
+                   help='OrthoFinder algorithm CPU budget; defaults to --threads')
     s.add_argument('--reference-raw',type=Path,default=raw_input('reference_raw'))
     s.add_argument('--benchmark-refogs',type=Path)
     s.add_argument('--benchmark-input-dir',type=Path)
@@ -1519,6 +1529,15 @@ def main(argv=None):
     s.add_argument('--phylogeny-grouping',choices=['orthogroup','family'],default=None)
     s.set_defaults(func=recover)
     args = p.parse_args(argv)
+    _warn_slow_wsl_mounts(value for value in vars(args).values() if isinstance(value,Path))
+    if getattr(args,'analysis_threads',None) is None and hasattr(args,'threads') and args.threads is not None:
+        args.analysis_threads=args.threads
+    if getattr(args,'iqtree_threads',None) is None and hasattr(args,'threads') and args.threads is not None:
+        args.iqtree_threads=min(2,args.threads)
+    if getattr(args,'command',None)=='recover':
+        effective=args.threads or _default_thread_count(8)
+        args.analysis_threads=args.analysis_threads or effective
+        args.iqtree_threads=args.iqtree_threads or min(2,effective)
     try:
         validate_weight(getattr(args,'orthogroup_context_weight',None))
         if hasattr(args,'orthofinder_inflation'):orthofinder_configuration(args)

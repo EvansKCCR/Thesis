@@ -22,13 +22,56 @@ for input roles, selective references, readiness limits and the changed-file map
 
 ```bash
 conda activate adhesome-workflow-v1
-cd /mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/Integrin_analysis/Thesis/integrin_adhesome_analysis
+cd /path/to/Thesis/integrin_adhesome_analysis
 ```
 
 For a genuinely new environment only, first use `conda env create -f config/environment.yml`.
 Existing inference checkpoints require their original environment/tool versions;
 do not replace OrthoFinder 3.1.5 during recovery. All commands in this guide run
 from the root, not from individual stage/script directories.
+
+### WSL and HPC placement
+
+The pipeline runs under Linux and uses the same Conda environment on WSL2 and
+Linux HPC nodes. In WSL, keep the active bundle, large FASTAs and run directory
+inside the Linux filesystem (for example `~/work/Thesis/...`), rather than under
+`/mnt/c` or another Windows-mounted drive. The mounted-drive filesystem can slow
+OrthoFinder's many-file workloads substantially; the CLI prints a reminder when
+it detects an affected WSL path. The warning does not move files.
+
+On HPC, run inside a **single-node** batch allocation: OrthoFinder and the other
+parallel tools use shared-memory threads and do not distribute one run across
+multiple nodes. Keep the live run directory on a fast, persistent project/scratch
+filesystem. Do not put a resumable run only on
+node-local temporary storage. If the scheduler supplies `SLURM_TMPDIR`, Python
+temporary files use it when `TMPDIR` is unset. When omitted, `--threads` uses
+the scheduler CPU allocation (`SLURM_CPUS_PER_TASK`, `PBS_NP`, `PBS_NUM_PPN`,
+`NCPUS`, `NSLOTS` or `LSB_DJOB_NUMPROC`) and otherwise uses up to four CPUs for the isolated wrapper
+or eight for the main workflow. `--analysis-threads` defaults to `--threads`;
+`--iqtree-threads` defaults to at most two. Explicit values always take priority.
+The wrapper's total budget is divided across concurrent calibration/validation
+or calibration/target branches. Request a single Slurm task with the CPUs you
+intend to use, for example:
+
+```bash
+# In a site-specific batch file, set memory and time for your dataset.
+#SBATCH --job-name=adhesome
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+
+set -euo pipefail
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate adhesome-workflow-v1
+cd /path/to/Thesis/integrin_adhesome_analysis
+python -u -B main/run_pipeline.py --mode target \
+  --input-dir input/target_raw --targets-config config/targets.json \
+  --out runs/isolated_targets --threads "$SLURM_CPUS_PER_TASK"
+```
+
+Submit that file with the site's scheduler command (for Slurm, `sbatch`). For
+PBS, SGE or LSF, use the site's equivalent CPU request and retain the scheduler
+allocation variable. Use a new output directory for a new run; use the same
+persistent run directory and unchanged software/input contract for recovery.
 
 ## 2. Prepare targets and raw references
 
@@ -287,7 +330,7 @@ Both audit folders must be completed/sealed. Use the original isolated run and
 its reference labels. For the saved installation:
 
 ```bash
-INSTALL=/mnt/c/Users/eaasa/Desktop/Evans_PHD_Thesis/pipeline_validation/integrin_adhesome_analysis
+INSTALL=/path/to/pipeline_validation/integrin_adhesome_analysis
 
 python -B main/report_audits.py \
   --run "$INSTALL/runs/isolated_validation" \

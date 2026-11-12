@@ -6,6 +6,8 @@ saved run paths, tool commands and external installations are not rebased.
 from pathlib import Path, PureWindowsPath
 import hashlib
 import json
+import os
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,8 +30,71 @@ _LAYOUT = json.loads((CONFIG / 'layout_paths.json').read_text(encoding='utf-8'))
 _RECEIPT_CACHE = None
 
 
+def allocated_cpu_count():
+    """Return CPUs allocated to this process/job, then affinity, then host count."""
+    for name in ('SLURM_CPUS_PER_TASK','PBS_NP','PBS_NUM_PPN','NCPUS','NSLOTS',
+                 'LSB_DJOB_NUMPROC','SLURM_CPUS_ON_NODE'):
+        match=re.match(r'\s*(\d+)',os.environ.get(name,''))
+        if match and int(match.group(1))>0:
+            allocated=int(match.group(1))
+            try:
+                affinity=len(os.sched_getaffinity(0))
+            except (AttributeError,OSError):
+                affinity=allocated
+            return max(1,min(allocated,affinity))
+    try:
+        return max(1,len(os.sched_getaffinity(0)))
+    except (AttributeError,OSError):
+        return max(1,os.cpu_count() or 1)
+
+
+def default_thread_count(local_max=8):
+    """Use scheduler allocation on HPC; cap implicit desktop defaults locally."""
+    has_allocation=any(os.environ.get(name) for name in
+        ('SLURM_CPUS_PER_TASK','PBS_NP','PBS_NUM_PPN','NCPUS','NSLOTS',
+         'LSB_DJOB_NUMPROC','SLURM_CPUS_ON_NODE'))
+    count=allocated_cpu_count()
+    return count if has_allocation else min(count,max(1,int(local_max)))
+
+
+def configure_runtime_environment():
+    """Use scheduler scratch and prevent nested BLAS/OpenMP oversubscription."""
+    scheduler_tmp=os.environ.get('SLURM_TMPDIR')
+    if not os.environ.get('TMPDIR') and scheduler_tmp and Path(scheduler_tmp).is_dir():
+        os.environ['TMPDIR']=scheduler_tmp
+    for name in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS',
+                 'BLIS_NUM_THREADS','NUMEXPR_NUM_THREADS','VECLIB_MAXIMUM_THREADS'):
+        os.environ.setdefault(name,'1')
+
+
+def warn_slow_wsl_mounts(paths):
+    """Warn when large inputs/outputs are under a Windows-mounted WSL drive."""
+    release=Path('/proc/sys/kernel/osrelease')
+    try:
+        is_wsl=bool(os.environ.get('WSL_DISTRO_NAME')) or 'microsoft' in release.read_text().casefold()
+    except OSError:
+        is_wsl=bool(os.environ.get('WSL_DISTRO_NAME'))
+    if not is_wsl:
+        return
+    mounted=[]
+    for value in paths:
+        if value is None:
+            continue
+        try:
+            path=Path(value).expanduser().resolve()
+        except (OSError,RuntimeError):
+            path=Path(value).expanduser()
+        if path.is_absolute() and re.match(r'^/mnt/[a-z](?:/|$)',path.as_posix(),re.I):
+            mounted.append(path)
+    if mounted:
+        print('WSL storage note: sequence data/output under /mnt/<drive> can be slow for OrthoFinder and many-file workloads. '
+              'For faster I/O, keep the active bundle, inputs and run directory in the WSL Linux filesystem (for example under ~/work) '
+              'or use fast persistent HPC scratch. Paths were not moved.',file=sys.stderr,flush=True)
+
+
 def activate():
     """Make canonical CLI, shared modules and maintenance packages importable."""
+    configure_runtime_environment()
     for folder in (ROOT, MAIN, SCRIPTS, MAINTENANCE, RESOURCE_LIBRARY, DETECTION, MOTIFS, ANNOTATION):
         if str(folder) not in sys.path:
             sys.path.insert(0, str(folder))

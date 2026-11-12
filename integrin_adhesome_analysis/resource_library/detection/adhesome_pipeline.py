@@ -8,7 +8,7 @@ _LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
                           if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
 if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
     _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
-from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource, default_thread_count as _default_thread_count
 _layout_activate()
 _ORTHOLOGY_SCRIPTS = _LAYOUT_BUNDLE_ROOT / 'resource_library' / 'orthology_phylogeny' / 'scripts'
 if str(_ORTHOLOGY_SCRIPTS) not in _layout_sys.path:
@@ -693,7 +693,7 @@ def main():
     p.add_argument('--manifest', default=str(_layout_resource(CONFIG / 'adhesome_pfam_manifest.csv')))
     p.add_argument('--crosswalk', default=str(_layout_resource(CONFIG / 'adhesome_component_crosswalk.csv')))
     p.add_argument('--rules', default=str(_layout_resource(CONFIG / 'family_rules.json')))
-    p.add_argument('--cpu', type=int, default=4)
+    p.add_argument('--cpu', type=int, default=_default_thread_count(4))
     p.add_argument('--max-i', type=float, default=1e-3)
     p.add_argument('--max-c', type=float, default=1e-3)
     p.add_argument('--min-coverage', type=float, default=0.35)
@@ -705,7 +705,7 @@ def main():
     p.add_argument('--library', required=True)
     p.add_argument('--manifest', default=str(_layout_resource(CONFIG / 'adhesome_pfam_manifest.csv')))
     p.add_argument('--out', required=True)
-    p.add_argument('--cpu', type=int, default=4)
+    p.add_argument('--cpu', type=int, default=_default_thread_count(4))
     p.add_argument('--max-i', type=float, default=1e-3)
     p.add_argument('--max-c', type=float, default=1e-3)
     p.add_argument('--min-coverage', type=float, default=0.35)
@@ -715,14 +715,14 @@ def main():
     for name, filename in [('references','search_references.faa'),('catalogue','search_catalogue.csv'),
                             ('metazoan','metazoan_references.faa'),('metazoan-catalogue','metazoan_catalogue.csv')]:
         p.add_argument('--'+name, default=str(REFERENCE_SET/filename))
-    p.add_argument('--cpu', type=int, default=4)
+    p.add_argument('--cpu', type=int, default=_default_thread_count(4))
     p.add_argument('--evalue', type=float, default=1e-5)
     p.add_argument('--coverage', type=float, default=0.3)
     p.add_argument('--tie-fraction', type=float, default=0.01)
     p = sub.add_parser('profiles')
     for name in ('proteome','profiles','profile-map','out'):
         p.add_argument('--' + name, required=True)
-    p.add_argument('--cpu', type=int, default=4)
+    p.add_argument('--cpu', type=int, default=_default_thread_count(4))
     p.add_argument('--max-i', type=float, default=1e-3)
     p.add_argument('--max-c', type=float, default=1e-3)
     p.add_argument('--min-coverage', type=float, default=0.35)

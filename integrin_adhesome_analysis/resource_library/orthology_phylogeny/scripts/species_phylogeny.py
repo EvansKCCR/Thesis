@@ -12,8 +12,17 @@ import hashlib
 import json
 import shutil
 import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+
+_LAYOUT_BUNDLE_ROOT=next(p for p in Path(__file__).resolve().parents
+                         if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in sys.path:
+    sys.path.insert(0,str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import (activate as _layout_activate, default_thread_count as _default_thread_count,
+                            warn_slow_wsl_mounts as _warn_slow_wsl_mounts)
+_layout_activate()
 
 
 def digest(path):
@@ -317,8 +326,10 @@ def main():
     p.set_defaults(func=prepare)
     p=sub.add_parser('run')
     p.add_argument('--project',type=Path,required=True)
-    p.add_argument('--threads',type=int,default=4)
-    p.add_argument('--iqtree-threads',type=int,default=2)
+    p.add_argument('--threads',type=int,default=_default_thread_count(4),
+                   help='CPU budget; defaults to the scheduler allocation or up to 4 local CPUs')
+    p.add_argument('--iqtree-threads',type=int,default=None,
+                   help='IQ-TREE CPU budget; defaults to min(2, --threads)')
     p.add_argument('--mafft',default='mafft')
     p.add_argument('--trimal',default='trimal')
     p.add_argument('--iqtree',default='iqtree2')
@@ -328,10 +339,13 @@ def main():
     p.add_argument('--resume',action='store_true')
     p.set_defaults(func=run)
     args=parser.parse_args()
+    _warn_slow_wsl_mounts(value for value in vars(args).values() if isinstance(value,Path))
     try:
         if args.command=='prepare':
             prepare(args)
         else:
+            if args.iqtree_threads is None:
+                args.iqtree_threads=min(2,args.threads)
             if args.threads<1 or args.iqtree_threads<1:
                 raise ValueError('Thread counts must be positive')
             run(args)

@@ -8,7 +8,9 @@ _LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
                           if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
 if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
     _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
-from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+from pipeline_paths import (activate as _layout_activate, resource_path as _layout_resource,
+                            default_thread_count as _default_thread_count,
+                            warn_slow_wsl_mounts as _warn_slow_wsl_mounts)
 _layout_activate()
 
 import argparse
@@ -452,8 +454,10 @@ def main():
     p = commands.add_parser('run')
     p.add_argument('--profile',choices=['expanded8','legacy5'],default='expanded8')
     p.add_argument('--name',required=True)
-    p.add_argument('--threads',type=int,default=16)
-    p.add_argument('--analysis-threads',type=int,default=8)
+    p.add_argument('--threads',type=int,default=_default_thread_count(8),
+                   help='CPU budget; defaults to the scheduler allocation or up to 8 local CPUs')
+    p.add_argument('--analysis-threads',type=int,default=None,
+                   help='OrthoFinder algorithm CPU budget; defaults to --threads')
     p.add_argument('--dry-run',action='store_true')
     p.set_defaults(func=run)
     p = commands.add_parser('extract')
@@ -466,6 +470,9 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.set_defaults(func=extract)
     args = parser.parse_args()
+    _warn_slow_wsl_mounts(value for value in vars(args).values() if isinstance(value,Path))
+    if args.command=='run' and args.analysis_threads is None:
+        args.analysis_threads=args.threads
     try:
         configure_species(getattr(args, 'species_list', None))
         return args.func(args)

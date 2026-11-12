@@ -8,7 +8,9 @@ _LAYOUT_BUNDLE_ROOT = next(p for p in _LayoutPath(__file__).resolve().parents
                           if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
 if str(_LAYOUT_BUNDLE_ROOT) not in _layout_sys.path:
     _layout_sys.path.insert(0, str(_LAYOUT_BUNDLE_ROOT))
-from pipeline_paths import activate as _layout_activate, resource_path as _layout_resource
+from pipeline_paths import (activate as _layout_activate, resource_path as _layout_resource,
+                            default_thread_count as _default_thread_count,
+                            warn_slow_wsl_mounts as _warn_slow_wsl_mounts)
 _layout_activate()
 
 import argparse
@@ -632,8 +634,10 @@ def main():
     p.add_argument('--project',type=Path,required=True)
     p.add_argument('--hog',action='append')
     p.add_argument('--outgroup',action='append',default=[],help='Explicit justified tip ID; repeat for a multi-tip outgroup; one HOG only')
-    p.add_argument('--threads',type=int,default=8)
-    p.add_argument('--iqtree-threads',type=int,default=2,help='Independent IQ-TREE thread count; exit status 2 does not by itself imply resource exhaustion')
+    p.add_argument('--threads',type=int,default=_default_thread_count(8),
+                   help='CPU budget; defaults to the scheduler allocation or up to 8 local CPUs')
+    p.add_argument('--iqtree-threads',type=int,default=None,
+                   help='Independent IQ-TREE CPU budget; defaults to min(2, --threads)')
     p.add_argument('--retry-failed',action='store_true',help='Retry failed groups; with --resume retries in place, otherwise preserves the legacy archived-attempt behavior')
     p.add_argument('--resume',action='store_true',help='Continue an interrupted project in place: verify/reuse completed stages and IQ-TREE checkpoints; failed groups stay flagged unless --retry-failed is also supplied; no attempt backups')
     p.add_argument('--allow-partial',action='store_true',help='Return success with an explicit partial_failure summary when some groups fail')
@@ -646,6 +650,9 @@ def main():
     p.add_argument('--iqtree',default='iqtree2')
     p.set_defaults(func=run)
     args=parser.parse_args()
+    _warn_slow_wsl_mounts(value for value in vars(args).values() if isinstance(value,Path))
+    if args.iqtree_threads is None:
+        args.iqtree_threads=min(2,args.threads)
     try:
         args.func(args)
     except (OSError,ValueError,ImportError) as exc:

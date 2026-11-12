@@ -16,6 +16,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+_LAYOUT_BUNDLE_ROOT = next(p for p in Path(__file__).resolve().parents
+                           if (p/'config/layout_paths.json').is_file() and (p/'pipeline_paths.py').is_file())
+if str(_LAYOUT_BUNDLE_ROOT) not in sys.path:
+    sys.path.insert(0,str(_LAYOUT_BUNDLE_ROOT))
+from pipeline_paths import (activate as _layout_activate, default_thread_count as _default_thread_count,
+                            warn_slow_wsl_mounts as _warn_slow_wsl_mounts)
+_layout_activate()
+
 
 def sha256(path: Path) -> str:
     h = hashlib.sha256()
@@ -404,13 +412,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--panel', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
-    parser.add_argument('--threads', type=int, default=4)
-    parser.add_argument('--analysis-threads', type=int, default=4)
+    parser.add_argument('--threads', type=int, default=_default_thread_count(4),
+                        help='CPU budget; defaults to the scheduler allocation or up to 4 local CPUs')
+    parser.add_argument('--analysis-threads', type=int, default=None,
+                        help='OrthoFinder algorithm CPU budget; defaults to --threads')
     parser.add_argument('--minimum-core-presence', type=int, default=10)
     parser.add_argument('--option', action='append', default=[], help='One OrthoFinder option token; repeat for key and value')
     parser.add_argument('--resume', action='store_true')
     args = parser.parse_args()
     try:
+        _warn_slow_wsl_mounts((args.panel,args.out))
+        if args.analysis_threads is None:
+            args.analysis_threads=args.threads
         if args.threads < 1 or args.analysis_threads < 1:
             raise ValueError('Thread counts must be positive')
         execute(args)
