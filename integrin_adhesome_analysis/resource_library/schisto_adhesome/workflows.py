@@ -130,12 +130,12 @@ def _audit_join_resume_checkpoint(out,mode):
             if receipt.get('status')!='complete':return False
             for name,expected in receipt.get('files',{}).items():
                 path=_layout_resource(downstream/name)
-                if not _layout_resource(path).is_file() or digest(path)!=expected:return False
+                if not _layout_resource(path).is_file() or sha(path)!=expected:return False
         orthology=stages.get('orthology',{})
         if orthology.get('status')=='complete':
             for name,expected in orthology.get('files',{}).items():
                 path=_layout_resource(downstream/name)
-                if not _layout_resource(path).is_file() or digest(path)!=expected:return False
+                if not _layout_resource(path).is_file() or sha(path)!=expected:return False
     return True
 
 
