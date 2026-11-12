@@ -651,7 +651,9 @@ def main():
     p.set_defaults(func=run)
     args=parser.parse_args()
     _warn_slow_wsl_mounts(value for value in vars(args).values() if isinstance(value,Path))
-    if args.iqtree_threads is None:
+    # Only the ``run`` subcommand defines this option. Keep preparation and
+    # other subcommands valid when their argparse Namespace has no such field.
+    if hasattr(args, 'iqtree_threads') and args.iqtree_threads is None:
         args.iqtree_threads=min(2,args.threads)
     try:
         args.func(args)
