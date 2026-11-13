@@ -170,10 +170,13 @@ BLAST-only or audit-only refresh does not provide it.
 ## Rules, motifs and probability model maintenance
 
 Install family and identity rules as the canonical pair. Validate rule IDs,
-parent routes, executable fields, coverage and specificity without replacing
-the main `calibrated_v1` algorithm. Keep `precision_v1` explicit and development
-only. Do not restore calibration-derived automatic-promotion restrictions or
-experimental-evidence confidence caps to production.
+parent routes, executable fields, coverage and specificity. The main
+`calibrated_v1` profile uses the CDD hit decision matrix in
+`config/annotation/audit_policy.json` for Specific/Broad/Ambiguous adjudication
+and family-specific CDD gates. Keep `precision_v1` explicit and development
+only for its additional safeguards. Do not restore calibration-derived
+automatic-promotion restrictions or experimental-evidence confidence caps to
+production.
 
 Keep motif definition evidence, source aliases, exclusion records and contextual
 requirements together. The 2026-10-14 snapshot rebuild is not a live refresh of all

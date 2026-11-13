@@ -209,11 +209,20 @@ as an additional human species beside a complete proteome for that taxon.
 
 The importer retains CDD hit category, accession/model, coordinates, E-value,
 bit score, incomplete-domain status and reported model cutoffs/coverage when
-available. `CDD_hits.tsv` contains all categories. Main-profile
-`CDD_specific_hits.tsv` keeps the historical specific-only, E-value <=1e-3 intake.
-Overlapping Pfam footprints observed through Pfam and CDD are not independent
-votes. The stricter development profile adds specificity/competition safeguards;
-it does not silently replace main-profile behavior.
+available. The main audit adjudicates all `CDD_hits.tsv` rows with the CDD hit
+decision matrix in `config/annotation/audit_policy.json`. A source-reported
+Specific hit must pass any supplied model cutoffs; conflicting specific clusters
+or tied top models are ambiguous. A Broad call requires only non-specific or
+superfamily hits, unanimous `cl` agreement, E-value <=1e-5 and >=50% model
+coverage. Missing coverage cannot pass that gate. Conflicting clusters, weak
+E-values (1e-3 to 0.01), coverage <40%, and missing broad-call evidence are
+retained as ambiguous/manual-review evidence, not family-specific support.
+The final audit includes per-protein `cdd_evidence_category`, label, cluster and
+reason fields, with detailed per-hit evidence in `cdd_specificity_audit.tsv` and
+one-row-per-protein decisions in `cdd_evidence_decisions.tsv`. The older
+`CDD_specific_hits.tsv` remains a filtered convenience export; the main audit
+reads all categories. Overlapping Pfam footprints observed through Pfam and CDD
+are not independent votes.
 
 Motif evidence describes definitions and contextual hypotheses, not functional
 validation of a new regex hit. The supplied 2026-10-14 motif snapshot has 347

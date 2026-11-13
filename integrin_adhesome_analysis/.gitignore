@@ -4,6 +4,7 @@ runs/
 inputs/
 returned/
 results/
+validation_reports/
 resource_library/detection/proteome_fasta_files/
 resource_library/orthology_phylogeny/01_raw_proteomes/
 resource_library/orthology_phylogeny/02_primary_proteomes/

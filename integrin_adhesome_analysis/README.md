@@ -1,4 +1,4 @@
-# Integrin-adhesome workflow 1.0
+Thesis# Integrin-adhesome workflow 1.0
 
 The maintained main profile is **calibrated_v1** with the current expanded family
 and identity libraries. All operational documentation is in docs/:
@@ -7,8 +7,11 @@ and identity libraries. All operational documentation is in docs/:
 - [Workflow](docs/WORKFLOW.md): setup, handoffs, external return, audits and reports.
 - [Maintenance](docs/MAINTENANCE.md): recovery, resource updates, diagnostics and tests.
 
-Run commands from this directory in `adhesome-workflow-v1`. Start with the workflow
-guide; do not change into a component directory for normal analysis. Inputs,
+Run commands from this directory. On Linux/WSL, use `make info` to inspect the
+detected host and `make prepare` to provision/check the pinned environment and
+run a no-analysis preflight. On module-managed HPC, load the site's environment
+and use `make prepare USE_ACTIVE_ENV=1`. Start with the workflow guide; do not
+change into a component directory for normal analysis. Inputs,
 returned evidence and stored runs retain their recorded locations. The separate
 [family phylogeny bundle](../../independent_family_phylogeny/README.md) has its own
 documentation and is not automatically part of this pipeline.

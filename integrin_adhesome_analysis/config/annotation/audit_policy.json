@@ -44,6 +44,7 @@
     "Grb2": "GRB.?2|DRK",
     "Crk": "CRKL?",
     "Shc": "SHC[1234]?",
+    "RNF5_185_like": "RING-HC_RNF(?:5|185)\\b",
     "PTP_PEST": "PTPN(?:12|18|22)|PTPc N(?:12|18|22)|PTP PEST",
     "alpha_actinin": "ACTININ|ACTN",
     "paxillin_like": "PAXILLIN|LEUPAXIN",

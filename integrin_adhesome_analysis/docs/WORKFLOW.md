@@ -18,23 +18,31 @@ calibration/validation datasets. See [deployment maintenance](MAINTENANCE.md#cle
 for input roles, selective references, readiness limits and the changed-file map.
 `--preflight-only` remains a real-data preflight; it is not a clean-state dry run.
 
-## 1. Choose the bundle root and environment
+## 1. Choose the bundle root and prepare the environment
 
 ```bash
-conda activate adhesome-workflow-v1
 cd /path/to/Thesis/integrin_adhesome_analysis
+make info
+make prepare
 ```
 
-For a genuinely new environment only, first use `conda env create -f config/environment.yml`.
-Existing inference checkpoints require their original environment/tool versions;
-do not replace OrthoFinder 3.1.5 during recovery. All commands in this guide run
-from the root, not from individual stage/script directories.
+`make prepare` detects WSL, Linux or an HPC scheduler, creates the pinned
+`adhesome-workflow-v1` Conda environment only when it is missing, and runs the
+clean-state deployment preflight without launching biological analysis. An
+existing environment is preserved; `make env-update` is an explicit update.
+On a site-managed HPC environment, load the site's modules/environment first
+and use `make prepare USE_ACTIVE_ENV=1`; module names are site-specific and are
+not guessed by the Makefile. The full dependencies and versions are defined in
+`config/environment.yml`. Existing inference checkpoints require their original
+environment/tool versions; do not replace OrthoFinder 3.1.5 during recovery.
+All commands in this guide run from the bundle root, not from individual
+stage/script directories.
 
 ### WSL and HPC placement
 
 The pipeline runs under Linux and uses the same Conda environment on WSL2 and
 Linux HPC nodes. In WSL, keep the active bundle, large FASTAs and run directory
-inside the Linux filesystem (for example `~/work/Thesis/...`), rather than under
+inside the Linux filesystem (for example `~/work/Thesis/...`), instead of under a mounted drive system 
 `/mnt/c` or another Windows-mounted drive. The mounted-drive filesystem can slow
 OrthoFinder's many-file workloads substantially; the CLI prints a reminder when
 it detects an affected WSL path. The warning does not move files.
