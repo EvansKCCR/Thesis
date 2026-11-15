@@ -37,6 +37,7 @@ def main(argv=None):
     parser.add_argument('--input-dir',type=Path,default=raw_input('target_raw'))
     parser.add_argument('--targets-config',type=Path,default=raw_input('target_configuration'))
     parser.add_argument('--reuse-target-detection',type=Path,help='Reuse only sequence/config-verified completed production species; controls are omitted')
+    parser.add_argument('--target-ml-model',type=Path,help='Target-only shortcut: classify Stage 1 candidates in batches of 250 and skip Stage 2 annotation, orthology, audit, benchmark and phylogeny; accepts model file or model directory')
     parser.add_argument('--compare-calibration',type=Path,help='Previous isolated calibration reports directory for assignment/metric drift diagnostics')
     for kind in ('calibration','validation'):
         parser.add_argument('--'+kind+'-fasta',type=Path,default=_layout_resource(ROOT/f'validation/{kind}.faa'))
@@ -60,6 +61,8 @@ def main(argv=None):
     if args.threads<1:parser.error('--threads must be positive')
     if args.mode=='validation' and args.phylogeny:
         parser.error('--phylogeny is a target-only option; validation/calibration skip mainstream orthology and phylogeny')
+    if args.target_ml_model and args.mode!='target':
+        parser.error('--target-ml-model is a target-only option')
     from schisto_adhesome.workflows import run
     try:return run(args)
     except (OSError,ValueError,KeyError) as exc:

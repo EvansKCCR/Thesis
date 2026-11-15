@@ -1,0 +1,25 @@
+{
+  "format_version": "1.0",
+  "source": "NCBI CD-Search returned hit tables joined to labelled positive controls",
+  "coordinate_convention": "1-based inclusive input coordinates; FASTA extraction uses [From-1:To]",
+  "unique_domain_sequences": 79417,
+  "traceable_hit_records": 199022,
+  "classification_levels": {
+    "broad": 16702,
+    "non-specific": 172902,
+    "specific": 9418
+  },
+  "sequence_deduplication": "Identical extracted amino-acid strings share one FASTA record; all source hits remain as metadata rows",
+  "counts": {
+    "calibration_positive_controls": 234,
+    "calibration_specific_hit_records": 2014,
+    "calibration_broad_hit_records": 3603,
+    "calibration_non-specific_hit_records": 36181,
+    "calibration_duplicate_hits_skipped": 27,
+    "validation_positive_controls": 902,
+    "validation_specific_hit_records": 7404,
+    "validation_broad_hit_records": 13099,
+    "validation_non-specific_hit_records": 136721,
+    "validation_duplicate_hits_skipped": 86
+  }
+}

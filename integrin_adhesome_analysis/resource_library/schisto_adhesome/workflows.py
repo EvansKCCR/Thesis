@@ -63,6 +63,20 @@ def verify_frozen(contract):
     reference = reference_inventory(raw,selected)
     if reference != contract['references']:
         raise ValueError('Frozen reference composition changed; use a new run')
+    target_classifier=contract.get('target_classifier')
+    if target_classifier:
+        model=_layout_resource(Path(target_classifier['model_path']))
+        if not model.is_file() or sha(model)!=target_classifier.get('model_sha256'):
+            raise ValueError('Frozen target ML classifier model is missing or has changed; use the same model or a new run')
+        context_dir=target_classifier.get('returned_evidence_directory')
+        if context_dir:
+            context=_layout_resource(Path(context_dir))
+            if not context.is_dir():
+                raise ValueError('Frozen target classifier returned-evidence directory is missing')
+            for name,expected in target_classifier.get('returned_evidence_hashes',{}).items():
+                path=_layout_resource(context/name)
+                if not path.is_file() or sha(path)!=expected:
+                    raise ValueError('Frozen target classifier returned evidence changed: '+str(path))
 
 
 def _verified_handoff(folder):
@@ -219,6 +233,43 @@ def _post_audit_reporting_resume_checkpoint(out,mode):
     return True
 
 
+def _target_stage1_ml_choice_checkpoint(out):
+    """Allow selecting a target classifier only while the sealed run is at Stage 1 handoff."""
+    out=_layout_resource(Path(out)).resolve()
+    try:
+        contract=json.loads(_layout_resource(out/'run_contract.json').read_text(encoding='utf-8'))
+        status=json.loads(_layout_resource(out/'target/branch_status.json').read_text(encoding='utf-8'))
+    except (OSError,ValueError):return False
+    if contract.get('mode')!='target' or status.get('status')!='awaiting_external_evidence':return False
+    if status.get('stages',{}).get('detection',{}).get('status')!='complete':return False
+    if not _verified_handoff(_layout_resource(out/'target/handoff')):return False
+    for path in (out/'target/annotation/workflow_manifest.json',out/'target/downstream/recovery.json',
+                 out/'target/downstream/workflow_manifest.json',out/'target/downstream/final/workflow_manifest.json',
+                 out/'target/ml_classifier/workflow_manifest.json'):
+        if _layout_resource(path).exists():return False
+    return True
+
+
+def _target_ml_prediction_retry_checkpoint(out):
+    """Permit a model/code correction after ML prediction failed but before its checkpoint was sealed."""
+    out=_layout_resource(Path(out)).resolve()
+    try:
+        contract=json.loads(_layout_resource(out/'run_contract.json').read_text(encoding='utf-8'))
+        status=json.loads(_layout_resource(out/'target/branch_status.json').read_text(encoding='utf-8'))
+    except (OSError,ValueError):return False
+    if contract.get('mode')!='target' or not contract.get('target_classifier',{}).get('enabled'):
+        return False
+    stages=status.get('stages',{})
+    if status.get('status')!='failed' or stages.get('detection',{}).get('status')!='complete':return False
+    if stages.get('ml_classifier',{}).get('status')!='failed':return False
+    if not _verified_handoff(_layout_resource(out/'target/handoff')):return False
+    for path in (out/'target/annotation/workflow_manifest.json',out/'target/downstream/recovery.json',
+                 out/'target/downstream/workflow_manifest.json',out/'target/downstream/final/workflow_manifest.json',
+                 out/'target/ml_classifier/workflow_manifest.json'):
+        if _layout_resource(path).exists():return False
+    return True
+
+
 def reconcile_resume_contract(out,contract):
     """Resume unchanged inputs; adopt bounded code updates at verified checkpoints."""
     out=_layout_resource(Path(out)).resolve();path=_layout_resource(out/'run_contract.json')
@@ -226,15 +277,35 @@ def reconcile_resume_contract(out,contract):
     old=json.loads(_layout_resource(path).read_text(encoding='utf-8'))
     if old==contract:return contract
     stable=lambda value:{k:v for k,v in value.items() if k not in ('algorithm_files','contract_sha256')}
-    if stable(old)!=stable(contract):
-        changed=sorted(k for k in set(old)|set(contract) if k not in ('algorithm_files','contract_sha256') and old.get(k)!=contract.get(k))
-        raise ValueError('Input/configuration/code/reference contract changed outside the algorithm inventory: '+', '.join(changed)+'. This run cannot be relabelled or resumed.')
+    stable_changes=sorted(k for k in set(old)|set(contract)
+        if k not in ('algorithm_files','contract_sha256') and old.get(k)!=contract.get(k))
+    target_ml_selection_checkpoint=_target_stage1_ml_choice_checkpoint(out)
+    target_ml_prediction_retry_checkpoint=_target_ml_prediction_retry_checkpoint(out)
+    target_ml_selection_only=(set(stable_changes)<= {'target_classifier'}
+        and target_ml_selection_checkpoint)
+    target_ml_retry_only=(set(stable_changes)<= {'target_classifier'}
+        and target_ml_prediction_retry_checkpoint)
+    target_ml_resume_contract=(target_ml_selection_only or target_ml_retry_only)
+    if stable_changes and not target_ml_resume_contract:
+        changed=stable_changes
+        raise ValueError('Input/configuration/code/reference contract changed outside an eligible target ML checkpoint: '+', '.join(changed)+'. This run cannot be relabelled or resumed.')
     old_files=old.get('algorithm_files',{});new_files=contract.get('algorithm_files',{})
     changed_files=sorted(name for name in set(old_files)|set(new_files) if old_files.get(name)!=new_files.get(name))
-    if not changed_files:return contract
+    if not changed_files:
+        if not target_ml_resume_contract:return contract
+        history_path=_layout_resource(out/'run_contract_adoptions.json')
+        history=json.loads(history_path.read_text(encoding='utf-8')) if history_path.is_file() else dict(adoptions=[])
+        scope='target_ml_shortcut_selected_at_stage1_handoff' if target_ml_selection_only else 'target_ml_classifier_retry_before_sealed_checkpoint'
+        history.setdefault('adoptions',[]).append(dict(from_contract_sha256=old.get('contract_sha256'),
+            to_contract_sha256=contract.get('contract_sha256'),changed_algorithm_files=[],
+            completed_gate_checkpoints_verified=True,adoption_scope=scope,
+            adopted_utc=datetime.now(timezone.utc).isoformat()))
+        dump(history_path,history);dump(path,contract)
+        print('RESUME CONTRACT: '+scope.replace('_',' ')+' adopted at verified target ML checkpoint',flush=True)
+        return contract
     unsafe=[name for name in changed_files if not (name.endswith(('.py','.yml','.yaml')) or name=='config/layout_paths.json')]
     if unsafe:
-        raise ValueError('Frozen scientific rule/model resources changed: '+', '.join(unsafe)+'. Keep the original resources or start a new output directory.')
+        raise ValueError('Frozen scientific rule/model resources changed: '+', '.join(unsafe)+'. Keep the original resources or start a new run.')
     audit_join_only=(set(changed_files)<= {'resource_library/scripts/audit_join.py',
                          'resource_library/schisto_adhesome/workflows.py'}
                      and 'resource_library/scripts/audit_join.py' in changed_files
@@ -255,20 +326,23 @@ def reconcile_resume_contract(out,contract):
                         'resource_library/schisto_adhesome/workflows.py'}
                     and 'resource_library/schisto_adhesome/stage_performance_report.py' in changed_files
                     and _post_audit_reporting_resume_checkpoint(out,contract.get('mode')))
-    if not _awaiting_context_checkpoint(out,contract.get('mode')) and not audit_join_only and not orthology_recovery_only and not reporting_only:
+    target_ml_update=(target_ml_resume_contract and all(name.endswith(('.py','.yml','.yaml'))
+        or name=='config/layout_paths.json' for name in changed_files))
+    if not _awaiting_context_checkpoint(out,contract.get('mode')) and not audit_join_only and not orthology_recovery_only and not reporting_only and not target_ml_update:
         raise ValueError('Workflow code changed outside an eligible checkpoint; keep the original code or start a new output directory.')
     log_path=_layout_resource(out/'run_contract_adoptions.json')
     history=json.loads(_layout_resource(log_path).read_text(encoding='utf-8')) if _layout_resource(log_path).is_file() else dict(adoptions=[])
+    scope=('target_ml_shortcut_selected_at_stage1_handoff' if target_ml_selection_only else
+           'target_ml_classifier_retry_before_sealed_checkpoint' if target_ml_retry_only else
+           'post_audit_reporting_only' if reporting_only else
+           'orthology_recovery_after_failed_stage' if orthology_recovery_only else
+           'audit_join_only_before_audit' if audit_join_only else 'sealed_detection_handoff')
     history.setdefault('adoptions',[]).append(dict(from_contract_sha256=old.get('contract_sha256'),
         to_contract_sha256=contract.get('contract_sha256'),changed_algorithm_files=changed_files,
-        completed_gate_checkpoints_verified=True,
-        adoption_scope=('post_audit_reporting_only' if reporting_only else
-                        'orthology_recovery_after_failed_stage' if orthology_recovery_only else
-                        'audit_join_only_before_audit' if audit_join_only else 'sealed_detection_handoff'),
+        completed_gate_checkpoints_verified=True,adoption_scope=scope,
         adopted_utc=datetime.now(timezone.utc).isoformat()))
     dump(log_path,history);dump(path,contract)
-    print('RESUME CONTRACT: adopted code-only update; eligible completed checkpoints verified; '
-          f'{len(changed_files)} changed algorithm files recorded in {log_path}',flush=True)
+    print('RESUME CONTRACT: '+scope.replace('_',' ')+' adopted after verifying the Stage 1 handoff and unsealed ML checkpoint',flush=True)
     return contract
 
 
@@ -290,6 +364,8 @@ def prepare(args):
         raise ValueError('Isolated routine runs require a fixed context coefficient; use 1.0 for neutral expanded-baseline context')
     if settings.get('family_coverage') not in ('expanded','original') or 'qc' not in settings:
         raise ValueError('Select paired family coverage and explicit sequence QC')
+    if getattr(args,'target_ml_model',None) and args.mode!='target':
+        raise ValueError('--target-ml-model is available only in target mode')
     registry=InputRegistry(ROOT)
     decisions=[registry.assess('calibration_'+kind,'calibration.inputs',mandatory=False,
                               override=getattr(args,'calibration_'+kind),execution=True) for kind in ('fasta','labels')]
@@ -356,6 +432,38 @@ def prepare(args):
         for kind in datasets:
             path=getattr(args,kind+'_phylogenetic_evidence',None)
             if path:evolutionary_evidence[kind]=dict(path=str(_layout_resource(path).resolve()),sha256=sha(path) if _layout_resource(path).is_file() else None)
+    out = _layout_resource(args.out).resolve()
+    target_classifier=None
+    if args.mode=='target':
+        model_arg=getattr(args,'target_ml_model',None)
+        saved_classifier={}
+        saved_contract_path=_layout_resource(out/'run_contract.json')
+        if args.resume and _layout_resource(saved_contract_path).is_file():
+            try:saved_classifier=json.loads(_layout_resource(saved_contract_path).read_text(encoding='utf-8')).get('target_classifier') or {}
+            except (OSError,ValueError):saved_classifier={}
+        if model_arg:
+            model=_layout_resource(model_arg).resolve()
+            if model.is_dir():model=_layout_resource(model/'adhesome_ml.joblib').resolve()
+            if not _layout_resource(model).is_file():
+                raise ValueError('--target-ml-model must be a saved adhesome_ml.joblib file or a directory containing it')
+            context_arg=getattr(args,'target_context',None)
+            if context_arg:
+                context=_layout_resource(context_arg).resolve()
+                if not _layout_resource(context).is_dir():
+                    raise ValueError('--target-context must be an existing returned-evidence directory when using --target-ml-model')
+                context_hashes={path.relative_to(context).as_posix():sha(path)
+                    for path in sorted([*context.rglob('*.tsv'),*context.rglob('*.csv')]) if path.is_file()}
+                context_dir=str(context)
+            else:
+                context_dir=saved_classifier.get('returned_evidence_directory')
+                context_hashes=saved_classifier.get('returned_evidence_hashes',{})
+            target_classifier=dict(enabled=True,model_path=str(model),model_sha256=sha(model),batch_size=250,
+                returned_evidence_directory=context_dir,returned_evidence_hashes=context_hashes)
+        elif saved_classifier.get('enabled'):
+            model=_layout_resource(Path(saved_classifier.get('model_path',''))).resolve()
+            if not _layout_resource(model).is_file() or sha(model)!=saved_classifier.get('model_sha256'):
+                raise ValueError('Saved target ML classifier model is missing or has changed')
+            target_classifier=saved_classifier
     contract = dict(evolutionary_evidence=evolutionary_evidence,version='1.0', mode=args.mode, frozen_settings=settings,
         algorithm_files=algorithm_inventory(),references=reference_inventory(args.reference_raw,selected),
         datasets={kind:summary for kind,(_,summary) in datasets.items()},
@@ -363,9 +471,10 @@ def prepare(args):
         shared_reference_queries_modify_production=False,
         input_decisions=decisions, skipped_gates={} if 'calibration' in datasets else {
             'calibration':dict(status='skipped',reason='Optional calibration FASTA/labels unavailable',input_decisions=decisions)})
+    if target_classifier:
+        contract['target_classifier']=target_classifier
     encoded = json.dumps(contract,sort_keys=True).encode()
     contract['contract_sha256'] = hashlib.sha256(encoded).hexdigest()
-    out = _layout_resource(args.out).resolve()
     if (_layout_resource(out/'run_contract.json')).exists():
         if not args.resume:
             raise ValueError('Run exists; use --resume with unchanged frozen inputs/configuration')
@@ -423,18 +532,30 @@ def launch_branches(kinds, worker, workers):
 
 def run(args):
     contract = prepare(args); out=_layout_resource(args.out).resolve()
+    if args.mode=='target' and contract.get('target_classifier') and args.phylogeny:
+        raise ValueError('--phylogeny cannot be combined with --target-ml-model; the classifier shortcut skips downstream phylogeny')
     if args.preflight_only:
         print('Preflight passed: '+str(_layout_resource(out/'preflight.json'))); return 0
-    kinds = [kind for kind in ('calibration',args.mode) if kind in contract['datasets']]
+    skipped_gates=dict(contract.get('skipped_gates',{}))
+    if args.mode=='target' and contract.get('target_classifier'):
+        kinds=['target']
+        if 'calibration' in contract['datasets']:
+            skipped_gates['calibration']=dict(status='skipped',reason='Pre-trained target ML model selected; calibration audit is not rerun for the Stage 1 classifier shortcut')
+    else:
+        kinds = [kind for kind in ('calibration',args.mode) if kind in contract['datasets']]
     workers = 2 if len(kinds)>1 and args.schedule=='parallel' and args.threads>=2 else 1
     per_branch = max(1,args.threads//workers)
     started = datetime.now(timezone.utc).isoformat()
     def worker(kind):
         cmd = [sys.executable,'-B','-m','schisto_adhesome.branch','--kind',kind,'--run',str(out),
                '--threads',str(per_branch)]
+        if kind=='target' and contract.get('target_classifier'):
+            cmd += ['--ml-model',contract['target_classifier']['model_path']]
         if kind=='target' and getattr(args,'phylogeny',False):
             cmd += ['--phylogeny','--phylogeny-grouping',getattr(args,'phylogeny_grouping','orthogroup')]
         context = getattr(args,kind+'_context',None)
+        if kind=='target' and contract.get('target_classifier'):
+            context=contract['target_classifier'].get('returned_evidence_directory') or context
         if context:cmd += ['--context-dir',str(_layout_resource(context).resolve())]
         if args.allow_missing_context:cmd += ['--allow-missing-context']
         if kind=='calibration' and args.compare_calibration:
@@ -481,12 +602,12 @@ def run(args):
     summary = dict(version='1.0',selected_mode=args.mode,status=status,timestamp=started,
         completed_at=datetime.now(timezone.utc).isoformat(),scheduler=dict(workers=workers,threads_per_branch=per_branch),
         frozen_contract_sha256=contract['contract_sha256'],weights=contract['frozen_settings'].get('orthogroup_context_weight'),
-        automatic_recalibration=False,gates=gates,skipped_gates=contract.get('skipped_gates',{}))
+        automatic_recalibration=False,gates=gates,skipped_gates=skipped_gates)
     dump(_layout_resource(out/'run_summary.json'),summary)
     links = '\n'.join(f'- {kind}: {gate.get("status")} — [{kind} report]({kind}/reports/'+
         ('validation_review.html' if kind=='validation' and gate.get('validation_review') else 'report.html')+
         f'), [{kind} log]({kind}/branch.log)' for kind,gate in gates.items())
-    links += ''.join(f"\n- {kind}: skipped — {gate['reason']}" for kind,gate in contract.get('skipped_gates',{}).items())
+    links += ''.join(f"\n- {kind}: skipped — {gate['reason']}" for kind,gate in skipped_gates.items())
     (_layout_resource(out/'README.md')).write_text(f'# Workflow 1.0: {args.mode}\n\nStatus: {status}\n\n{links}\n\nCalibration is a frozen internal self-test. No fitting occurs.\n',encoding='utf-8')
     print(json.dumps(summary,indent=2))
     return 1 if status=='failed' else 2 if status!='complete' else 0

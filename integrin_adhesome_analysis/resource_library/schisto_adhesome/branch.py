@@ -187,6 +187,100 @@ def _posthoc_refinement(branch, audit, kind, inputs, stages):
     return saved
 
 
+def _target_ml_shortcut(branch, args, contract, stages, stage):
+    """Classify Stage 1 candidate sequences and stop before the expensive audit path."""
+    branch=_layout_resource(branch).resolve()
+    candidate_fasta=_layout_resource(branch/'handoff/external_candidates.faa')
+    if not _layout_resource(candidate_fasta).is_file():
+        raise ValueError('Stage 1 did not produce handoff/external_candidates.faa')
+    selected=contract.get('target_classifier') or {}
+    model=_layout_resource(Path(selected.get('model_path',''))).resolve()
+    if not model.is_file() or sha(model)!=selected.get('model_sha256'):
+        raise ValueError('Target ML classifier model is missing or differs from the frozen run contract')
+    if _layout_resource(Path(args.ml_model)).resolve()!=model:
+        raise ValueError('Target ML classifier path differs from the frozen run contract')
+    expected_context=selected.get('returned_evidence_directory')
+    if expected_context and (not args.context_dir or _layout_resource(args.context_dir).resolve()!=_layout_resource(Path(expected_context)).resolve()):
+        raise ValueError('Target classifier returned-evidence directory differs from the frozen run contract')
+    if args.context_dir and not expected_context:
+        raise ValueError('Returned evidence was not frozen for this target ML classifier run')
+    output=_layout_resource(branch/'ml_classifier')
+    predictions=_layout_resource(output/'predictions.tsv')
+    script=_layout_resource(ROOT/'resource_library/adhesome_ml/classifier.py')
+    stage1_evidence=_layout_resource(branch/'handoff/detection')
+
+    def action():
+        with _layout_resource(candidate_fasta).open(encoding='utf-8-sig') as handle:
+            candidate_count=sum(1 for line in handle if line.lstrip().startswith('>'))
+        if candidate_count:
+            command=[sys.executable,'-B',str(script),'predict','--model',str(model),
+                '--fasta',str(candidate_fasta),'--evidence-dir',str(stage1_evidence),
+                '--batch','--out',str(predictions)]
+            if args.context_dir:
+                command+=['--returned',str(_layout_resource(args.context_dir).resolve())]
+            if predictions.exists():predictions.unlink()
+            core.execute(command,_layout_resource(branch/'logs/ml_classifier'),label='target ML classifier batch prediction')
+        else:
+            output.mkdir(parents=True,exist_ok=True)
+            predictions.write_text('protein_id\tclassifier_call\n',encoding='utf-8')
+        rows=read(predictions)
+        counts={}
+        for row in rows:
+            category=row.get('classifier_call','unresolved')
+            counts[category]=counts.get(category,0)+1
+        context_files={}
+        if args.context_dir:
+            context=_layout_resource(args.context_dir).resolve()
+            for path in sorted([*context.rglob('*.tsv'),*context.rglob('*.csv')]):
+                if path.is_file():context_files[path.relative_to(context).as_posix()]=sha(path)
+        handoff_manifest=_layout_resource(branch/'handoff/workflow_manifest.json')
+        classifier_summary={}
+        classifier_summary_path=_layout_resource(predictions.with_suffix('.summary.json'))
+        if classifier_summary_path.is_file():
+            classifier_summary=json.loads(classifier_summary_path.read_text(encoding='utf-8'))
+        dump(_layout_resource(output/'summary.json'),dict(status='complete',classifier_version=classifier_summary.get('classifier_version','unknown'),
+            feature_schema=classifier_summary.get('feature_schema'),
+            route='target_stage1_ml_shortcut',classification_only=True,records=len(rows),
+            batches=(len(rows)+249)//250,batch_size=250,class_counts=counts,
+            stage1_candidates_fasta=str(candidate_fasta),stage1_candidates_sha256=sha(candidate_fasta),
+            stage1_evidence_directory=str(stage1_evidence),
+            handoff_manifest_sha256=sha(handoff_manifest) if handoff_manifest.is_file() else None,
+            model_path=str(model),model_sha256=sha(model),
+            returned_evidence_directory=str(_layout_resource(args.context_dir).resolve()) if args.context_dir else None,
+            returned_evidence_hashes=context_files,
+            exact_sequence_match_used=False,
+            interpretation='Classifier uses Stage 1 motif, domain architecture/copy/order and forward/reverse homology evidence. Predictions are hypotheses; Stage 2/audit assignment, orthology, benchmark and phylogeny were skipped.'))
+        report_rows=''.join('<tr><td>'+html.escape(str(category))+'</td><td>'+str(number)+'</td></tr>'
+            for category,number in sorted(counts.items()))
+        report='<!doctype html><html><head><meta charset="utf-8"><title>Target ML classifier report</title></head><body>'
+        report+='<h1>Target ML classifier shortcut</h1><p>Stage 1 candidates were classified in batches of at most 250. '
+        report+='This is an ML hypothesis report; no Stage 2 family audit, orthology, benchmark, or phylogeny was run.</p>'
+        report+='<p>Predictions: <a href="../ml_classifier/predictions.tsv">predictions.tsv</a></p>'
+        report+='<table><thead><tr><th>Classifier call</th><th>Count</th></tr></thead><tbody>'+report_rows+'</tbody></table></body></html>\n'
+        (_layout_resource(output/'report.html')).write_text(report,encoding='utf-8')
+        core.seal(output,'target_ml_classifier',
+            handoff_manifest_sha256=sha(_layout_resource(branch/'handoff/workflow_manifest.json')),
+            candidate_fasta_sha256=sha(candidate_fasta),model_sha256=sha(model),
+            returned_evidence_hashes=context_files,records=len(rows),batch_size=250)
+
+    stage('ml_classifier',output,action,'target_ml_classifier')
+    branch_report=_layout_resource(branch/'reports/report.html')
+    branch_report.parent.mkdir(parents=True,exist_ok=True)
+    branch_report.write_text(_layout_resource(output/'report.html').read_text(encoding='utf-8'),encoding='utf-8')
+    saved=json.loads(_layout_resource(output/'summary.json').read_text(encoding='utf-8'))
+    stages['stage2_annotation']=dict(status='skipped',reason='Target ML shortcut selected after Stage 1')
+    stages['orthology_audit']=dict(status='skipped',reason='Target ML shortcut does not launch orthology or downstream audit')
+    stages['ml_classifier']=dict(status='complete',execution=stages.get('ml_classifier',{}).get('execution','reused'),
+        predictions=str(predictions),records=saved.get('records',0),batches=saved.get('batches',0),
+        class_counts=saved.get('class_counts',{}),manifest_sha256=sha(_layout_resource(output/'workflow_manifest.json')))
+    result=dict(status='complete',route='target_stage1_ml_shortcut',classification_only=True,
+        report=str(_layout_resource(branch/'reports/report.html')),
+        predictions=str(predictions),summary=str(_layout_resource(output/'summary.json')),
+        skipped_stages=['annotation/Stage 2','orthology and audit','benchmark','phylogeny'],stages=stages)
+    dump(_layout_resource(branch/'branch_status.json'),result)
+    return result
+
+
 def _stage_performance_report(branch, kind, stages):
     from .stage_performance_report import generate as generate_stage_performance
     branch=_layout_resource(branch);stage_report=_layout_resource(branch/'reports/stage_performance')
@@ -317,6 +411,9 @@ def _execute(args):
         def invoke(command):
             if core.main(command):raise ValueError('Core stage failed: '+' '.join(command[:2]))
         stage('detection',_layout_resource(branch/'handoff'),lambda:invoke(cmd),'handoff')
+        if args.kind=='target' and getattr(args,'ml_model',None):
+            _target_ml_shortcut(branch,args,contract,stages,stage)
+            return 0
         # A first run remains useful without externally returned topology/CDD.
         if not args.context_dir and not args.allow_missing_context and not (_layout_resource(branch/'annotation/workflow_manifest.json')).exists():
             result=dict(status='awaiting_external_evidence',
@@ -410,6 +507,7 @@ def main():
     parser.add_argument('--phylogeny',action='store_true',help='Target branch: request optional candidate phylogenies')
     parser.add_argument('--phylogeny-grouping',choices=['orthogroup','family'],default='orthogroup')
     parser.add_argument('--context-dir',type=Path);parser.add_argument('--allow-missing-context',action='store_true')
+    parser.add_argument('--ml-model',type=Path,help='Target-only: classify Stage 1 candidates and skip annotation/Stage 2 and downstream analysis')
     parser.add_argument('--reuse-detection',type=Path)
     parser.add_argument('--compare-report',type=Path)
     try:return execute(parser.parse_args())

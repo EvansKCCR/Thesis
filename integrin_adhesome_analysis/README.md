@@ -27,3 +27,20 @@ provenance stay alongside their data.
 Use `python -B main/adhesome_workflow.py --help` or
 `python -B main/run_pipeline.py --help` from this bundle. The two small root
 Python files are compatibility loaders, not duplicate implementations.
+
+An optional [machine-learning classifier](docs/WORKFLOW.md#optional-machine-learning-classifier)
+can train from saved calibration outputs and evaluate on a separate validation
+branch. It can classify unknown FASTA files independently, or run after Stage 1
+in target mode in 250-sequence batches when `--target-ml-model` is specified;
+that shortcut skips Stage 2 and downstream audit/orthology analysis and produces
+ML hypotheses rather than audited assignments. The v5.3 gate learns named families
+from calibration reference labels and ranks all learned families for every candidate.
+It verifies the saved Pfam scans against their FASTAs and rescans sequence motifs;
+features include Pfam identity, copy number, score, E-value, coverage and domain order, plus
+forward/reverse BLAST similarity and coverage evidence. Exact sequence lookup,
+sequence hashes, k-mer neighbors and sequence composition are not classifier
+features; records without informative evidence remain unresolved. Validation reports
+separate membership performance from family recovery, including abstentions and
+sequence-overlap strata. Calibration CDD domain fragments add class, family, accession,
+similarity, coverage, order and copy-number features. Validation fragments stay out
+of the reference bank. Stage 2 identity-rule features are evaluated from sequence data only: required domain groups, specific CDD patterns, group order, copy/maximum constraints and length ranges. The v5.3 feature set also parses boolean conditions and individual Pfam/CDD signatures from the post-hoc rules. It excludes post-hoc family proposals, rescue/final decisions, orthogroup context, topology, localization and signal peptide. Calibration fits the model; validation remains evaluation-only. Existing models must be retrained when changing feature schema.

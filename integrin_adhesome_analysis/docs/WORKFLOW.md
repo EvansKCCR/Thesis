@@ -707,3 +707,103 @@ Once the enriched audit and reports are
 ready, run `recover --run runs/annotation/validation/downstream --phylogeny` to
 start or resume the optional phylogeny without repeating completed orthology or
 audit stages.
+
+## Optional machine-learning family classifier
+
+The v5.3 classifier learns adhesome membership and named protein families from the
+calibration branch. It verifies prepared FASTAs against saved Pfam scans and labelled
+sequence manifests, rescans every sequence against the motif library, and searches
+protein sequences against a frozen calibration-only CDD domain-fragment bank using
+BLASTP. The bank preserves specific, non-specific and broad/superfamily evidence
+separately, with source family and CDD accession labels. Features include aligned
+similarity, identity, query/subject coverage, per-class and per-family support,
+accession hits, domain order and copy number. Pfam, motif, architecture and directional
+homology features remain active. Stage 2 identity-rule features are derived from measurable sequence evidence only: required model groups and counts, configured CDD-name patterns, ordered groups, maximum/repeat domain constraints, and sequence length ranges. The current rule JSON defines no separate motif/residue schema, so no motif features are inferred from unrelated fields. Topology, orthology/orthogroups, localization and signal peptide are excluded from this new feature block. Stage 1 family hypotheses and audit calls are context
+only; they do not constrain the family ranking.
+
+The v5.3 model also parses sequence conditions from the independent post-hoc
+Pfam/CDD refinement rules. It adds boolean rule-condition signals and individual
+Pfam/CDD signature presence and copy counts, including partial signatures that do
+not satisfy a complete post-hoc rule. Concurrent signals are represented as
+sequence evidence; the model does not import post-hoc proposed family names,
+tiers, rescue flags, assignment tables, orthogroup arguments or final audit calls.
+These features are computed the same way for calibration, validation and target
+prediction. The inspected post-hoc rules currently express Pfam/CDD conditions,
+not motif predicates or domain-order constraints; the classifier's existing
+sequence-motif and Stage 2 domain-order features remain active. Validation labels
+are never used for fitting.
+
+The CDD reference bank is built only from calibration-origin fragments. Calibration
+query features exclude reference fragments sourced from the same protein. Validation
+sequences are searched against the calibration bank, and validation-origin CDD
+fragments never enter training. The frozen bank is saved with the model and is used
+for every target candidate in batches of at most 250. Exact sequence equality is used
+only for input integrity and overlap reporting, never as a prediction feature.
+
+Unambiguous expected-family labels train the family model. Multi-label controls are
+collapsed only when a configured common parent exists; other unmapped controls remain
+in membership evaluation. Every target is ranked against learned families regardless
+of Stage 1 hypotheses. Specific calls require the configured vote, margin, example
+count and shared domain support; sibling evidence can support a broader parent. CDD
+hit class contributes to the model but does not by itself establish family identity.
+Votes are not calibrated biological probabilities. Validation is evaluation only and
+never selects thresholds. Families without calibration examples cannot be predicted.
+
+Train and independently evaluate using a new model directory:
+
+```bash
+python -B resource_library/adhesome_ml/classifier.py train \
+  --calibration runs/isolated_validation/calibration \
+  --validation runs/isolated_validation/validation \
+  --out runs/ml_family_v5_3/model --jobs 4
+```
+
+To report the incremental change against the prior model, include its saved
+validation predictions. The TSV must contain the same unique validation IDs; it is
+comparison-only and is never used to train the classifier:
+
+```bash
+python -B resource_library/adhesome_ml/classifier.py train \
+  --calibration runs/isolated_validation/calibration \
+  --validation runs/isolated_validation/validation \
+  --baseline-validation-predictions runs/ml_family_v5_2/model/validation_predictions.tsv \
+  --out runs/ml_family_v5_3_comparison/model --jobs 4
+```
+
+The JSON and HTML reports compare sensitivity/recall and false negatives, precision,
+false positives, F1, correctly recovered positives, exact-family accuracy, and
+specific- and broad-family accuracy on a fixed cohort and denominator.
+
+The model directory contains the frozen CDD FASTA and metadata, model, training labels,
+validation predictions and HTML/JSON metrics. Reports include membership and family
+performance, abstentions, unseen labels and calibration overlap. Sequence non-overlap
+does not establish evolutionary independence. The v5.3 workflow requires BLASTP in
+PATH in addition to the existing workflow dependencies.
+
+To evaluate a frozen v5.3 model without retraining, use a new report directory:
+
+```bash
+python -B resource_library/adhesome_ml/classifier.py evaluate \
+  --model runs/ml_family_v5_3/model \
+  --validation runs/isolated_validation/validation \
+  --out runs/ml_family_v5_3/validation_report
+```
+
+Use the saved Stage 1 scans for target prediction; the candidate FASTA must match the
+scanned sequences. A FASTA without saved scan evidence must first pass Stage 1.
+
+```bash
+python -B resource_library/adhesome_ml/classifier.py predict \
+  --model runs/ml_family_v5_3/model \
+  --fasta runs/target_ml_shortcut/target/handoff/external_candidates.faa \
+  --evidence-dir runs/target_ml_shortcut/target/handoff/detection \
+  --batch --out runs/target_ml_shortcut/target/ml_classifier/predictions_family_v5_3.tsv
+```
+
+Earlier v1-v5.2 models must be retrained. Existing predictions are not overwritten.
+
+For future target runs add --target-ml-model runs/ml_family_v5_3/model to
+main/run_pipeline.py --mode target. This selects the classifier immediately after
+Stage 1 and skips Stage 2/audit/orthology/phylogeny. Without that option the standard
+adhesome workflow is used. Completed shortcut summaries describe their original
+model; standalone reclassification writes a separate prediction table.
