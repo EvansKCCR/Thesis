@@ -128,7 +128,7 @@ class IsolationTests(unittest.TestCase):
             adoption=json.loads(_layout_resource(root/'run_contract_adoptions.json').read_text())
             self.assertEqual(adoption['adoptions'][0]['changed_algorithm_files'],['main.py'])
             current['frozen_settings']={'family_coverage':'original'}
-            with self.assertRaisesRegex(ValueError,'outside the algorithm inventory'):
+            with self.assertRaisesRegex(ValueError,'outside an eligible target ML checkpoint'):
                 w.reconcile_resume_contract(root,current)
 
     def test_evaluation_compaction_removes_raw_orthofinder_but_keeps_audit_context(self):
