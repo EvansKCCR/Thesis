@@ -38,6 +38,8 @@ def main(argv=None):
     parser.add_argument('--targets-config',type=Path,default=raw_input('target_configuration'))
     parser.add_argument('--reuse-target-detection',type=Path,help='Reuse only sequence/config-verified completed production species; controls are omitted')
     parser.add_argument('--target-ml-model',type=Path,help='Target-only shortcut: classify Stage 1 candidates in batches of 250 and skip Stage 2 annotation, orthology, audit, benchmark and phylogeny; accepts model file or model directory')
+    parser.add_argument('--target-ml-family-similarity-profile',choices=['strict','balanced','sensitive'],
+                        help='Family-resolution E-value/coverage tier for the target ML shortcut; does not change membership calls')
     parser.add_argument('--compare-calibration',type=Path,help='Previous isolated calibration reports directory for assignment/metric drift diagnostics')
     for kind in ('calibration','validation'):
         parser.add_argument('--'+kind+'-fasta',type=Path,default=_layout_resource(ROOT/f'validation/{kind}.faa'))
@@ -63,6 +65,10 @@ def main(argv=None):
         parser.error('--phylogeny is a target-only option; validation/calibration skip mainstream orthology and phylogeny')
     if args.target_ml_model and args.mode!='target':
         parser.error('--target-ml-model is a target-only option')
+    if args.target_ml_family_similarity_profile and args.mode!='target':
+        parser.error('--target-ml-family-similarity-profile is a target-only option')
+    if args.target_ml_family_similarity_profile and not args.target_ml_model and not args.resume:
+        parser.error('--target-ml-family-similarity-profile requires --target-ml-model')
     from schisto_adhesome.workflows import run
     try:return run(args)
     except (OSError,ValueError,KeyError) as exc:

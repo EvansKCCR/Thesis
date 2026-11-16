@@ -1,15 +1,36 @@
 {
-  "version": "5.3",
+  "version": "5.6",
   "family_gate": {
     "membership_cutoff": 0.5,
     "specific_vote_cutoff": 0.5,
     "specific_margin": 0.15,
     "broad_vote_cutoff": 0.6,
-    "minimum_family_examples": 2
+    "minimum_family_examples": 2,
+    "family_similarity": {
+      "default_profile": "balanced",
+      "search_max_evalue": 0.01,
+      "legacy_model_feature_max_evalue": 0.001,
+      "profiles": {
+        "strict": {
+          "specific": {"max_evalue": 1e-10, "min_query_coverage": 0.06, "min_subject_coverage": 0.4},
+          "broad": {"max_evalue": 1e-5, "min_query_coverage": 0.04, "min_subject_coverage": 0.25}
+        },
+        "balanced": {
+          "specific": {"max_evalue": 1e-5, "min_query_coverage": 0.04, "min_subject_coverage": 0.3},
+          "broad": {"max_evalue": 0.01, "min_query_coverage": 0.02, "min_subject_coverage": 0.15}
+        },
+        "sensitive": {
+          "specific": {"max_evalue": 0.001, "min_query_coverage": 0.03, "min_subject_coverage": 0.2},
+          "broad": {"max_evalue": 0.01, "min_query_coverage": 0.01, "min_subject_coverage": 0.1}
+        }
+      },
+      "rule_override_key": "sequence_similarity_policy",
+      "rule_override_policy": "Optional per-rule specific/broad acceptance thresholds in family_identity_rules.json add a family-specific route while preserving the selected profile thresholds; rule thresholds cannot exceed search_max_evalue."
+    }
   },
   "description": "Sequence-derived adhesome membership and named-family classifier with held-out panel reporting",
   "maximum_prediction_records_per_invocation": 250,
-  "feature_schema": "sequence_family_gate_v5_3_posthoc_sequence_rules",
+  "feature_schema": "sequence_family_gate_v5_6_family_similarity_gates",
   "sequence_homology": {
     "algorithm": "Use Stage 1 forward and reverse BLAST tabular evidence; do not compare query strings or use k-mer neighbours",
     "features": [
@@ -46,7 +67,7 @@
       "N-to-C domain order",
       "FASTA motif identifiers, site count and position; external context excluded",
       "forward/reverse BLAST hit identity, alignment length, query/subject coverage, bit score, E-value and reciprocal reference-pair count",
-      "Calibration-only CDD fragment BLASTP similarity: specific/non-specific/broad class, source family, accession, identity, bit score, query/subject coverage, domain order and hit-copy count",
+      "SHA-256-verified calibration-positive CDD fragments, including family-unlabelled fragments; specific/non-specific/broad class, source family when mapped, accession, identity, bit score, inclusive-coordinate query/subject coverage, domain order and hit-copy count",
       "Measurable sequence features from family_identity_rules.json: required-group presence/count/satisfaction, CDD pattern matches, domain order/copy constraints and configured length ranges",
       "Boolean conditions and individual Pfam/CDD signature presence/copy counts parsed from specific() and broad() in schisto_pfam_cdd_reclassify.py; concurrent rule-signal counts only"
     ],
@@ -71,7 +92,7 @@
     "family_labels": "unambiguous expected_families/trusted_family labels only; no audit assignments",
     "validation": "evaluation only; no fitting or threshold selection",
     "probabilities": "uncalibrated model votes; decision thresholds declared before validation",
-    "cdd_reference_policy": "Calibration-origin domain fragments only; same-protein calibration references excluded; validation-origin fragments are evaluation-only and never enter the model reference bank",
+    "cdd_reference_policy": "Retain all SHA-256-verified CDD fragments from calibration-positive controls, whether or not a trusted family label maps; exclude validation-origin fragments; exclude same-protein calibration references during training",
     "identity_rule_feature_policy": "Evaluate only sequence-supported identity-rule fields identically in calibration, validation and target prediction; do not use family labels, assignment decisions, topology, orthology, localization or signal peptide",
     "posthoc_sequence_rule_feature_policy": "Parse only boolean conditions and sequence-signature tokens from the post-hoc specific() and broad() rules. Validation data remain evaluation-only; no post-hoc outputs or proposed labels enter fitting or features."
   }

@@ -303,7 +303,8 @@ def reconcile_resume_contract(out,contract):
         dump(history_path,history);dump(path,contract)
         print('RESUME CONTRACT: '+scope.replace('_',' ')+' adopted at verified target ML checkpoint',flush=True)
         return contract
-    unsafe=[name for name in changed_files if not (name.endswith(('.py','.yml','.yaml')) or name=='config/layout_paths.json')]
+    unsafe=[name for name in changed_files if not (name.endswith(('.py','.yml','.yaml')) or
+        name=='config/layout_paths.json' or (target_ml_resume_contract and name=='config/ml_classifier/classifier.json'))]
     if unsafe:
         raise ValueError('Frozen scientific rule/model resources changed: '+', '.join(unsafe)+'. Keep the original resources or start a new run.')
     audit_join_only=(set(changed_files)<= {'resource_library/scripts/audit_join.py',
@@ -327,7 +328,7 @@ def reconcile_resume_contract(out,contract):
                     and 'resource_library/schisto_adhesome/stage_performance_report.py' in changed_files
                     and _post_audit_reporting_resume_checkpoint(out,contract.get('mode')))
     target_ml_update=(target_ml_resume_contract and all(name.endswith(('.py','.yml','.yaml'))
-        or name=='config/layout_paths.json' for name in changed_files))
+        or name in {'config/layout_paths.json','config/ml_classifier/classifier.json'} for name in changed_files))
     if not _awaiting_context_checkpoint(out,contract.get('mode')) and not audit_join_only and not orthology_recovery_only and not reporting_only and not target_ml_update:
         raise ValueError('Workflow code changed outside an eligible checkpoint; keep the original code or start a new output directory.')
     log_path=_layout_resource(out/'run_contract_adoptions.json')
@@ -457,13 +458,20 @@ def prepare(args):
             else:
                 context_dir=saved_classifier.get('returned_evidence_directory')
                 context_hashes=saved_classifier.get('returned_evidence_hashes',{})
+            similarity_profile=(getattr(args,'target_ml_family_similarity_profile',None)
+                or saved_classifier.get('family_similarity_profile') or 'model_default')
             target_classifier=dict(enabled=True,model_path=str(model),model_sha256=sha(model),batch_size=250,
-                returned_evidence_directory=context_dir,returned_evidence_hashes=context_hashes)
+                returned_evidence_directory=context_dir,returned_evidence_hashes=context_hashes,
+                family_similarity_profile=similarity_profile)
         elif saved_classifier.get('enabled'):
             model=_layout_resource(Path(saved_classifier.get('model_path',''))).resolve()
             if not _layout_resource(model).is_file() or sha(model)!=saved_classifier.get('model_sha256'):
                 raise ValueError('Saved target ML classifier model is missing or has changed')
-            target_classifier=saved_classifier
+            target_classifier=dict(saved_classifier)
+            profile=getattr(args,'target_ml_family_similarity_profile',None)
+            if profile:target_classifier['family_similarity_profile']=profile
+        if getattr(args,'target_ml_family_similarity_profile',None) and not target_classifier:
+            raise ValueError('--target-ml-family-similarity-profile requires an active target ML classifier')
     contract = dict(evolutionary_evidence=evolutionary_evidence,version='1.0', mode=args.mode, frozen_settings=settings,
         algorithm_files=algorithm_inventory(),references=reference_inventory(args.reference_raw,selected),
         datasets={kind:summary for kind,(_,summary) in datasets.items()},

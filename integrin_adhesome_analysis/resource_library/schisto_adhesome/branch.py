@@ -216,6 +216,9 @@ def _target_ml_shortcut(branch, args, contract, stages, stage):
             command=[sys.executable,'-B',str(script),'predict','--model',str(model),
                 '--fasta',str(candidate_fasta),'--evidence-dir',str(stage1_evidence),
                 '--batch','--out',str(predictions)]
+            profile=selected.get('family_similarity_profile')
+            if profile and profile!='model_default':
+                command+=['--family-similarity-profile',str(profile)]
             if args.context_dir:
                 command+=['--returned',str(_layout_resource(args.context_dir).resolve())]
             if predictions.exists():predictions.unlink()

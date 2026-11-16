@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "original_fasta_records": 79417,
+  "original_cdd_metadata_records": 199022,
+  "original_metadata_unique_fragment_ids": 79417,
+  "original_fasta_duplicate_identifiers": 0,
+  "unmatched_or_mismatched_original_records": 0,
+  "calibration_unique_fragments": 20003,
+  "validation_unique_fragments_excluded_as_reference_records": 65133,
+  "fragments_shared_across_origin_panels": 5719,
+  "reference_bank_unique_fragments": 20003,
+  "bank_matches_calibration_metadata_exactly": true,
+  "bank_sequences_match_original_fasta_exactly": true,
+  "fragment_hashes_and_lengths_match_metadata": true,
+  "reference_metadata_family_labels_present": false,
+  "family_label_note": "The source metadata lacks trusted calibration family identities. families arrays remain empty; source-specific family features require a trusted calibration label table.",
+  "sequence_overlap_note": "Some identical fragments are shared across calibration and validation origin; the bank includes calibration-origin records only, while shared sequences are naturally identical.",
+  "blastp_run_tested": false,
+  "blastp_note": "BLASTP executable not installed in this runtime. File structure and sequence integrity are verified, not sequence-search execution.",
+  "sha256": {
+    "original_sequences_fasta": "096a0848af63256802694298328468fc3f539c31c670452f5a7810176eef4775",
+    "original_cdd_metadata_tsv": "d809f628206df4c587451822ae3f8b51442470f08af51c58bfa03c8dc0c610b6",
+    "calibration_bank_fasta": "f400f05d9c8ddf1a6c801cd513da9b9df2e27ae76d0fac759bc12820920c48f8",
+    "calibration_reference_metadata_json": "9b4f36a47f7f32407a7bfc1e5cb132283e82310f5a95ce3038ad8cdb31585c4e"
+  }
+}

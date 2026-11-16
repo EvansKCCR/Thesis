@@ -710,7 +710,7 @@ audit stages.
 
 ## Optional machine-learning family classifier
 
-The v5.3 classifier learns adhesome membership and named protein families from the
+The v5.6 classifier learns adhesome membership and named protein families from the
 calibration branch. It verifies prepared FASTAs against saved Pfam scans and labelled
 sequence manifests, rescans every sequence against the motif library, and searches
 protein sequences against a frozen calibration-only CDD domain-fragment bank using
@@ -721,7 +721,7 @@ accession hits, domain order and copy number. Pfam, motif, architecture and dire
 homology features remain active. Stage 2 identity-rule features are derived from measurable sequence evidence only: required model groups and counts, configured CDD-name patterns, ordered groups, maximum/repeat domain constraints, and sequence length ranges. The current rule JSON defines no separate motif/residue schema, so no motif features are inferred from unrelated fields. Topology, orthology/orthogroups, localization and signal peptide are excluded from this new feature block. Stage 1 family hypotheses and audit calls are context
 only; they do not constrain the family ranking.
 
-The v5.3 model also parses sequence conditions from the independent post-hoc
+The family feature layer also parses sequence conditions from the independent post-hoc
 Pfam/CDD refinement rules. It adds boolean rule-condition signals and individual
 Pfam/CDD signature presence and copy counts, including partial signatures that do
 not satisfy a complete post-hoc rule. Concurrent signals are represented as
@@ -733,7 +733,12 @@ not motif predicates or domain-order constraints; the classifier's existing
 sequence-motif and Stage 2 domain-order features remain active. Validation labels
 are never used for fitting.
 
-The CDD reference bank is built only from calibration-origin fragments. Calibration
+The frozen CDD reference bank retains all 20,003 SHA-256-verified fragments from the
+41,798 calibration hit records across 5,570 CDD accessions, including fragments whose
+source positive controls lack a trusted family label. Such fragments contribute only
+their available CDD class/accession/annotation evidence; no family label is invented.
+Validation-origin fragments are excluded. Query and subject coverage use inclusive
+BLAST HSP coordinate spans divided by full sequence lengths, capped at 1.0. Calibration
 query features exclude reference fragments sourced from the same protein. Validation
 sequences are searched against the calibration bank, and validation-origin CDD
 fragments never enter training. The frozen bank is saved with the model and is used
@@ -744,8 +749,10 @@ Unambiguous expected-family labels train the family model. Multi-label controls 
 collapsed only when a configured common parent exists; other unmapped controls remain
 in membership evaluation. Every target is ranked against learned families regardless
 of Stage 1 hypotheses. Specific calls require the configured vote, margin, example
-count and shared domain support; sibling evidence can support a broader parent. CDD
-hit class contributes to the model but does not by itself establish family identity.
+count and at least one family-specific support route: shared domain architecture,
+thresholded CDD similarity, or a matching sequence-based family identity rule.
+Related-family evidence can support a broader parent. CDD hit class alone does not
+establish family identity.
 Votes are not calibrated biological probabilities. Validation is evaluation only and
 never selects thresholds. Families without calibration examples cannot be predicted.
 
@@ -755,7 +762,7 @@ Train and independently evaluate using a new model directory:
 python -B resource_library/adhesome_ml/classifier.py train \
   --calibration runs/isolated_validation/calibration \
   --validation runs/isolated_validation/validation \
-  --out runs/ml_family_v5_3/model --jobs 4
+  --out runs/ml_family_v5_6/model --jobs 4
 ```
 
 To report the incremental change against the prior model, include its saved
@@ -767,7 +774,7 @@ python -B resource_library/adhesome_ml/classifier.py train \
   --calibration runs/isolated_validation/calibration \
   --validation runs/isolated_validation/validation \
   --baseline-validation-predictions runs/ml_family_v5_2/model/validation_predictions.tsv \
-  --out runs/ml_family_v5_3_comparison/model --jobs 4
+  --out runs/ml_family_v5_6_comparison/model --jobs 4
 ```
 
 The JSON and HTML reports compare sensitivity/recall and false negatives, precision,
@@ -777,16 +784,98 @@ specific- and broad-family accuracy on a fixed cohort and denominator.
 The model directory contains the frozen CDD FASTA and metadata, model, training labels,
 validation predictions and HTML/JSON metrics. Reports include membership and family
 performance, abstentions, unseen labels and calibration overlap. Sequence non-overlap
-does not establish evolutionary independence. The v5.3 workflow requires BLASTP in
+does not establish evolutionary independence. The v5.6 workflow requires BLASTP in
 PATH in addition to the existing workflow dependencies.
 
-To evaluate a frozen v5.3 model without retraining, use a new report directory:
+Classifier policy 5.5 adds a separate family-identity-rule review path without
+changing the v5.4 Random Forest model or its acceptance gates. A provisional rule
+candidate is emitted only when all required sequence-domain groups and a non-placeholder
+specific CDD signature match, along with any configured order, copy or length
+constraints. The TSV preserves the Random Forest call and adds `rule_family_candidate`,
+`rule_candidate_status`, `rule_candidate_evidence_json`, and conflict/untrained-family
+flags. Rule candidates are provisional evidence, not Random Forest predictions or
+accepted audit assignments. Validation reports score this path separately and do not
+use validation labels to tune it. No family-specific HMM profiles or new training
+labels are fabricated; they require independently curated reference sequences.
+
+Classifier policy 5.6 makes the evidence-gated family-resolution step similarity-aware.
+The CDD search is expanded through E-value `1e-2`; the existing `cdd:*` feature values
+used by the membership model remain restricted to their prior `1e-3` search ceiling.
+The binary membership model excludes the new `family_similarity:*` features, so its
+membership decision and cutoff are unchanged. Family resolution may now use a
+calibration-bank CDD-fragment match that passes both an E-value and query/subject
+coverage threshold, alongside the existing family votes, margins, domain architecture,
+and Stage 2 identity-rule support. It never compares exact sequence strings.
+
+The default family-resolution profile is `balanced`; target prediction can select
+`strict`, `balanced`, or `sensitive`; if omitted, prediction uses the profile frozen
+in the model. These profiles change only the family-assignment support thresholds.
+To allow a particular family rule to accept a more divergent CDD match, a rule in
+`config/annotation/family_identity_rules.json` may optionally include
+`sequence_similarity_policy` with `specific` and/or `broad` objects containing
+`max_evalue`, `min_query_coverage`, and `min_subject_coverage`. A family-specific
+threshold adds another permitted evidence route while retaining the selected global
+profile. Its E-value cannot exceed `search_max_evalue` (`1e-2`). For example:
+
+```json
+{
+  "id": "example_family_rule",
+  "family": "Example family",
+  "sequence_similarity_policy": {
+    "specific": {
+      "max_evalue": 0.0001,
+      "min_query_coverage": 0.03,
+      "min_subject_coverage": 0.2
+    }
+  }
+}
+```
+
+This adjusts family-resolution support only. The family vote, margin, and minimum
+training examples remain required; the adhesome-membership model, cutoff, and output
+are unchanged. Prediction TSVs record the matched reference fragment, CDD annotation
+and accession, identity, bit score, coverage, and whether the selected profile or a
+family identity rule supplied the passing threshold. Changes to family identity rules
+remain subject to the model's frozen rule-hash check.
+
+For the standalone classifier, pass the profile explicitly when predicting:
+
+```bash
+python -B resource_library/adhesome_ml/classifier.py predict \
+  --model runs/ml_family_v5_6/model \
+  --fasta runs/target_ml_shortcut/target/handoff/external_candidates.faa \
+  --evidence-dir runs/target_ml_shortcut/target/handoff/detection \
+  --family-similarity-profile sensitive --batch \
+  --out runs/target_ml_shortcut/target/ml_classifier/predictions_family_sensitive.tsv
+```
+
+The target workflow shortcut accepts the same choice with
+`--target-ml-family-similarity-profile sensitive`. Existing v5.4 models remain usable:
+their saved membership and family vote models ignore the added family-only feature keys,
+while the new evidence gate can use the frozen calibration CDD bank. Newly trained v5.6
+models include the additional family-resolution features in the family model only;
+membership fitting remains on the prior feature set.
+
+To evaluate a frozen model without retraining, use a new report directory:
 
 ```bash
 python -B resource_library/adhesome_ml/classifier.py evaluate \
-  --model runs/ml_family_v5_3/model \
+  --model runs/ml_family_v5_6/model \
   --validation runs/isolated_validation/validation \
-  --out runs/ml_family_v5_3/validation_report
+  --out runs/ml_family_v5_6/validation_report
+```
+
+To inspect a different family-resolution tier, choose it explicitly and write a
+separate report. The membership decision remains unchanged. Treat these as policy
+scenario reports; do not select a tier from validation results and then describe the
+same validation cohort as untouched confirmation.
+
+```bash
+python -B resource_library/adhesome_ml/classifier.py evaluate \
+  --model runs/ml_family_v5_6/model \
+  --validation runs/isolated_validation/validation \
+  --family-similarity-profile sensitive \
+  --out runs/ml_family_v5_6/validation_report_sensitive
 ```
 
 Use the saved Stage 1 scans for target prediction; the candidate FASTA must match the
@@ -794,15 +883,15 @@ scanned sequences. A FASTA without saved scan evidence must first pass Stage 1.
 
 ```bash
 python -B resource_library/adhesome_ml/classifier.py predict \
-  --model runs/ml_family_v5_3/model \
+  --model runs/ml_family_v5_6/model \
   --fasta runs/target_ml_shortcut/target/handoff/external_candidates.faa \
   --evidence-dir runs/target_ml_shortcut/target/handoff/detection \
-  --batch --out runs/target_ml_shortcut/target/ml_classifier/predictions_family_v5_3.tsv
+  --batch --out runs/target_ml_shortcut/target/ml_classifier/predictions_family_v5_6.tsv
 ```
 
 Earlier v1-v5.2 models must be retrained. Existing predictions are not overwritten.
 
-For future target runs add --target-ml-model runs/ml_family_v5_3/model to
+For future target runs add --target-ml-model runs/ml_family_v5_6/model to
 main/run_pipeline.py --mode target. This selects the classifier immediately after
 Stage 1 and skips Stage 2/audit/orthology/phylogeny. Without that option the standard
 adhesome workflow is used. Completed shortcut summaries describe their original

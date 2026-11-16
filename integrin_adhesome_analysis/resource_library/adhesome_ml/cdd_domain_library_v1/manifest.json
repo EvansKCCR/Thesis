@@ -21,5 +21,14 @@
     "validation_broad_hit_records": 13099,
     "validation_non-specific_hit_records": 136721,
     "validation_duplicate_hits_skipped": 86
+  },
+  "classifier_reference_bank": {
+    "origin": "calibration positive controls only",
+    "unique_domain_fragments": 20003,
+    "traceable_calibration_hit_records": 41798,
+    "unique_cdd_accessions": 5570,
+    "sequence_sha256_verified": true,
+    "validation_derived_references_included": false,
+    "unlabelled_family_fragments_retained_for_general_cdd_features": true
   }
 }

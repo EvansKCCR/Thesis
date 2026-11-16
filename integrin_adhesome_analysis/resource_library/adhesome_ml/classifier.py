@@ -22,8 +22,8 @@ from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score,
                              precision_score, recall_score)
 from sklearn.pipeline import Pipeline
 
-VERSION = "5.3"
-FEATURE_SCHEMA = "sequence_family_gate_v5_3_posthoc_sequence_rules"
+VERSION = "5.6"
+FEATURE_SCHEMA = "sequence_family_gate_v5_6_family_similarity_gates"
 _BUNDLE = Path(__file__).resolve().parents[2]
 _SETTINGS_PATH = _BUNDLE / "config/ml_classifier/classifier.json"
 _SETTINGS = json.loads(_SETTINGS_PATH.read_text(encoding="utf-8"))
@@ -806,11 +806,16 @@ def main(argv=None) -> int:
     pred.add_argument("--batch", action="store_true", help="Process any input size in sequential chunks of at most 250 proteins")
     pred.add_argument("--out", type=Path, required=True)
     pred.add_argument("--threshold", type=float, default=float(_SETTINGS["default_membership_vote_cutoff"]), help="Cutoff on the random-forest adhesome class-vote fraction; not a calibrated probability")
+    pred.add_argument("--family-similarity-profile", choices=sorted(_SETTINGS["family_gate"]["family_similarity"]["profiles"]),
+        default=None,
+        help="Family-resolution E-value/coverage tier; defaults to the saved model policy and does not alter adhesome-membership calls")
     pred.set_defaults(func=predict)
-    evaluation = commands.add_parser('evaluate', help='Evaluate a frozen v5.3 classifier on validation; no fitting')
+    evaluation = commands.add_parser('evaluate', help='Evaluate a frozen CDD-bank family classifier on validation; no fitting')
     evaluation.add_argument('--model', type=Path, required=True)
     evaluation.add_argument('--validation', type=Path, required=True)
     evaluation.add_argument('--out', type=Path, required=True, help='New validation report directory')
+    evaluation.add_argument('--family-similarity-profile', choices=sorted(_SETTINGS['family_gate']['family_similarity']['profiles']),
+        default=None,help='Evaluate this family-resolution profile; defaults to the saved model policy and does not change membership calls')
     from family_gate import evaluate_family_gate
     evaluation.set_defaults(func=lambda args: evaluate_family_gate(args, sys.modules[__name__]))
     args = parser.parse_args(argv)
