@@ -1,10 +1,10 @@
 {
-  "version": "5.6",
+  "version": "5.8",
   "family_gate": {
-    "membership_cutoff": 0.5,
-    "specific_vote_cutoff": 0.5,
-    "specific_margin": 0.15,
-    "broad_vote_cutoff": 0.6,
+    "membership_probability_cutoff": 0.5,
+    "specific_family_probability_cutoff": 0.5,
+    "specific_family_probability_margin": 0.15,
+    "broad_parent_probability_cutoff": 0.6,
     "minimum_family_examples": 2,
     "family_similarity": {
       "default_profile": "balanced",
@@ -30,7 +30,36 @@
   },
   "description": "Sequence-derived adhesome membership and named-family classifier with held-out panel reporting",
   "maximum_prediction_records_per_invocation": 250,
-  "feature_schema": "sequence_family_gate_v5_6_family_similarity_gates",
+  "feature_schema": "sequence_family_gate_v5_8_calibrated_probabilities",
+  "probability_calibration": {
+    "method": "sigmoid",
+    "grouping": "CD-HIT clustered OOF at 98% identity and 90% coverage of both sequences, with exact-sequence SHA-256 fallback",
+    "sequence_clustering": {
+      "executable": "cd-hit",
+      "identity": 0.98,
+      "shorter_coverage": 0.9,
+      "longer_coverage": 0.9,
+      "max_memory_mb": 1024
+    },
+    "max_splits": 5,
+    "random_state": 3817,
+    "membership_min_independent_groups_per_class": 5,
+    "family_min_positive_groups_per_class": 10,
+    "family_min_negative_groups_per_class": 5,
+    "family_min_calibrated_classes": 2,
+    "reliability_bins": 10,
+    "family_mapping": "one_vs_rest_sigmoid_then_renormalize_eligible_classes",
+    "minimum_family_support_policy": "families below the independent-cluster thresholds remain raw-vote diagnostics and are excluded from calibrated family rankings and evidence-gated assignments"
+  },
+  "family_signature_crosswalk": {
+    "path": "resource_library/adhesome_ml/cdd_domain_library_v1/adhesome_family_rule_crosswalk.xlsx",
+    "review_sheet": "CDD_Review",
+    "catalogue_sheet": "Full_Catalogue_5570",
+    "review_priorities_used": ["P1_named_model_review", "P2_competing_identity_review", "P3_architecture_review"],
+    "family_pattern_categories_used": ["family_pattern_candidate", "family_pattern_ambiguous"],
+    "require_configured_identity_architecture": true,
+    "ignore_alias_proposals": true
+  },
   "sequence_homology": {
     "algorithm": "Use Stage 1 forward and reverse BLAST tabular evidence; do not compare query strings or use k-mer neighbours",
     "features": [
@@ -60,7 +89,8 @@
     "unresolved",
     "non_adhesome"
   ],
-  "default_membership_vote_cutoff": 0.5,
+  "default_membership_probability_cutoff": 0.5,
+  "probability_gate_threshold_policy": "The existing membership, specific-family, family-margin, and broad-parent numeric cutoffs are fixed pre-validation values and now apply to calibrated probabilities. They are not refit or selected from independent validation results.",
   "feature_policy": {
     "include": [
       "Verified Pfam identity, copy number, score, E-value, profile coverage and relative position",
@@ -69,7 +99,8 @@
       "forward/reverse BLAST hit identity, alignment length, query/subject coverage, bit score, E-value and reciprocal reference-pair count",
       "SHA-256-verified calibration-positive CDD fragments, including family-unlabelled fragments; specific/non-specific/broad class, source family when mapped, accession, identity, bit score, inclusive-coordinate query/subject coverage, domain order and hit-copy count",
       "Measurable sequence features from family_identity_rules.json: required-group presence/count/satisfaction, CDD pattern matches, domain order/copy constraints and configured length ranges",
-      "Boolean conditions and individual Pfam/CDD signature presence/copy counts parsed from specific() and broad() in schisto_pfam_cdd_reclassify.py; concurrent rule-signal counts only"
+      "Boolean conditions and individual Pfam/CDD signature presence/copy counts parsed from specific() and broad() in schisto_pfam_cdd_reclassify.py; concurrent rule-signal counts only",
+      "Family-rule crosswalk combinations: calibration-bank CDD accession HSP plus a linked family identity-rule architecture, including complete and partial combination strength, priority tier, and traceable observed evidence"
     ],
     "exclude": [
       "exact sequence strings",
@@ -81,6 +112,7 @@
       "support grade",
       "exclusion result",
       "post-hoc proposed family/name",
+      "crosswalk proposed family/class text, same-protein family context, calibration counts, and disabled alias proposals",
       "post-hoc rule return values, tiers, rescue/assignment decisions, and orthogroup arguments",
       "topology, orthology, localization and signal peptide fields from Stage 2 identity-rule features"
     ],
@@ -91,9 +123,11 @@
     "membership_labels": "calibration control labels only",
     "family_labels": "unambiguous expected_families/trusted_family labels only; no audit assignments",
     "validation": "evaluation only; no fitting or threshold selection",
-    "probabilities": "uncalibrated model votes; decision thresholds declared before validation",
+    "probabilities": "sigmoid mappings fitted on group-disjoint out-of-fold calibration predictions only; validation is evaluation-only; probabilities are conditional on the labelled control distribution",
+    "probability_calibration_policy": "Fit membership and family calibrators separately from CD-HIT-clustered or exact-sequence-fallback out-of-fold calibration predictions. Keep raw RF votes as diagnostic fields. Calibrated probabilities drive membership and family evidence gates. Validation never fits calibrators or selects thresholds. Family probabilities cover only classes meeting configured independent-cluster minimums; probabilities are renormalized over those eligible classes and other families are explicitly marked unavailable.",
     "cdd_reference_policy": "Retain all SHA-256-verified CDD fragments from calibration-positive controls, whether or not a trusted family label maps; exclude validation-origin fragments; exclude same-protein calibration references during training",
     "identity_rule_feature_policy": "Evaluate only sequence-supported identity-rule fields identically in calibration, validation and target prediction; do not use family labels, assignment decisions, topology, orthology, localization or signal peptide",
-    "posthoc_sequence_rule_feature_policy": "Parse only boolean conditions and sequence-signature tokens from the post-hoc specific() and broad() rules. Validation data remain evaluation-only; no post-hoc outputs or proposed labels enter fitting or features."
+    "posthoc_sequence_rule_feature_policy": "Parse only boolean conditions and sequence-signature tokens from the post-hoc specific() and broad() rules. Validation data remain evaluation-only; no post-hoc outputs or proposed labels enter fitting or features.",
+    "family_signature_crosswalk_policy": "Use crosswalk CDD accession links only in combination with the linked family_identity_rules.json architecture features. Build identical features for calibration, validation, and targets. Ignore proposed family/class text, same-protein family context, calibration counts, and Alias_Proposals. Freeze crosswalk and family_rules hashes in the model. Exclude family_signature features from binary membership training and inference."
   }
 }

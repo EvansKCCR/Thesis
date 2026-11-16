@@ -21,8 +21,9 @@ class FamilyGateTests(unittest.TestCase):
         self.row = {'protein_id':'query','ml_seq_len_aa':'100',
             'ml_domain_hits_json':json.dumps([{'source':'pfam','id':'PF00001','name':'PF00001',
                 'start':1,'end':20,'score':42,'profile_coverage':.8,'evalue':1e-12}])}
-        self.policy = dict(membership_cutoff=.5,specific_vote_cutoff=.5,specific_margin=.15,
-            broad_vote_cutoff=.6,minimum_family_examples=2)
+        self.policy = dict(membership_probability_cutoff=.5,specific_family_probability_cutoff=.5,
+            specific_family_probability_margin=.15,broad_parent_probability_cutoff=.6,
+            minimum_family_examples=2)
 
     def test_hypotheses_and_audit_labels_cannot_change_features(self):
         cached = ([self.row],{},[])

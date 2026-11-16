@@ -22,8 +22,8 @@ from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score,
                              precision_score, recall_score)
 from sklearn.pipeline import Pipeline
 
-VERSION = "5.6"
-FEATURE_SCHEMA = "sequence_family_gate_v5_6_family_similarity_gates"
+VERSION = "5.8"
+FEATURE_SCHEMA = "sequence_family_gate_v5_8_calibrated_probabilities"
 _BUNDLE = Path(__file__).resolve().parents[2]
 _SETTINGS_PATH = _BUNDLE / "config/ml_classifier/classifier.json"
 _SETTINGS = json.loads(_SETTINGS_PATH.read_text(encoding="utf-8"))
@@ -694,20 +694,28 @@ def coverage_by_class(rows: list[dict]) -> dict:
     return coverage
 
 
-def membership_calls(binary, vectors: list[dict], rows: list[dict], threshold: float) -> tuple[list[str], list[float]]:
+def membership_calls(binary, vectors: list[dict], rows: list[dict], threshold: float,
+                     calibration: dict | None = None) -> tuple[list[str], list[float], list[float]]:
+    """Apply saved calibration; return calls, calibrated probabilities, raw diagnostics."""
+    if calibration is None:
+        raise ValueError("Membership calls require the saved v5.8 calibrator; raw votes are not calibrated probabilities")
+    from probability_calibration import apply_binary_sigmoid
     classes = list(binary.named_steps["model"].classes_)
-    probabilities = binary.predict_proba(vectors)
-    calls, votes = [], []
+    raw_probabilities = binary.predict_proba(vectors)
+    calibrated_probabilities = apply_binary_sigmoid(calibration, raw_probabilities, classes)
+    calls, calibrated, raw = [], [], []
     for index, row in enumerate(rows):
-        vote = float(probabilities[index][classes.index("adhesome_associated")])
-        votes.append(vote)
+        probability = float(calibrated_probabilities[index])
+        raw_vote = float(raw_probabilities[index][classes.index("adhesome_associated")])
+        calibrated.append(probability)
+        raw.append(raw_vote)
         if not any(evidence_groups(row).values()):
             calls.append("unresolved")
-        elif vote < threshold:
+        elif probability < threshold:
             calls.append("non_adhesome")
         else:
             calls.append("adhesome_associated")
-    return calls, votes
+    return calls, calibrated, raw
 
 
 def train(args) -> int:
@@ -805,7 +813,7 @@ def main(argv=None) -> int:
     pred.add_argument("--ids", type=Path, help="Optional newline-delimited selection from the input FASTA")
     pred.add_argument("--batch", action="store_true", help="Process any input size in sequential chunks of at most 250 proteins")
     pred.add_argument("--out", type=Path, required=True)
-    pred.add_argument("--threshold", type=float, default=float(_SETTINGS["default_membership_vote_cutoff"]), help="Cutoff on the random-forest adhesome class-vote fraction; not a calibrated probability")
+    pred.add_argument("--threshold", type=float, default=float(_SETTINGS["default_membership_probability_cutoff"]), help="Cutoff on the calibrated adhesome-membership probability")
     pred.add_argument("--family-similarity-profile", choices=sorted(_SETTINGS["family_gate"]["family_similarity"]["profiles"]),
         default=None,
         help="Family-resolution E-value/coverage tier; defaults to the saved model policy and does not alter adhesome-membership calls")

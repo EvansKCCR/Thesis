@@ -7,11 +7,15 @@ import tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
 
-SCHEMA = 'sequence_family_gate_v5_6_family_similarity_gates'
-LEGACY_SCHEMAS = {'sequence_family_gate_v5_4_verified_cdd_bank_coverage'}
+SCHEMA = 'sequence_family_gate_v5_8_calibrated_probabilities'
 from cdd_features import build_calibration_bank, similarity_features
+from family_signature_features import extract as crosswalk_signature_features, load_library as load_crosswalk_library
 from identity_rule_features import features as identity_rule_features, load_rules as load_identity_rules
 from posthoc_rule_features import extract as posthoc_sequence_features, load_rules as load_posthoc_rules
+from probability_calibration import (CalibrationUnavailable, apply_binary_sigmoid,
+    apply_family_sigmoids, cross_fitted_probabilities, fit_binary_sigmoid,
+    fit_family_sigmoids, probability_metrics_binary, sequence_cluster_groups,
+    probability_metrics_multiclass)
 
 
 def sequence_digest(sequence):
@@ -96,6 +100,12 @@ def extract(rows, sequences, evidence, motifs, vocab, c, cached=None, cdd=None):
     raw = {r['protein_id']: r for r in raw}
     posthoc_script=c._BUNDLE.parent/'schisto_pfam_cdd_reclassify/schisto_pfam_cdd_reclassify.py'
     posthoc_rules_sha,_,_,_=load_posthoc_rules(str(posthoc_script))
+    family_rule_config=json.loads((c._BUNDLE/'config/annotation/family_rules.json').read_text(encoding='utf-8'))
+    family_aliases={}
+    for field in ('family_aliases','canonical_family_aliases'):
+        for key,value in family_rule_config.get(field,{}).items():
+            if isinstance(value,str):family_aliases[key.casefold()]=value
+    crosswalk_signatures,crosswalk_metadata=_family_signature_library(c,family_aliases)
     compiled = [(name, re.compile(pattern)) for name, pattern in motifs]
     output = []
     for i, original in enumerate(rows):
@@ -123,6 +133,10 @@ def extract(rows, sequences, evidence, motifs, vocab, c, cached=None, cdd=None):
             vector.update({key:value for key,value in cdd_row.items() if not key.startswith('_')})
         vector.update(identity_rule_features(row,cdd_row,
             c._BUNDLE/'config/annotation/family_identity_rules.json',c._domain_records))
+        signature_features,signature_evidence=crosswalk_signature_features(
+            row,vector,crosswalk_signatures,c._SETTINGS['family_gate']['family_similarity']['search_max_evalue'])
+        vector.update(signature_features)
+        row['_family_signature_evidence_json']=json.dumps(signature_evidence,sort_keys=True)
         posthoc_features,source_sha=posthoc_sequence_features(row,cdd_row,posthoc_script)
         if source_sha!=posthoc_rules_sha: raise ValueError('Post-hoc sequence-rule source changed during feature extraction')
         vector.update(posthoc_features)
@@ -134,6 +148,8 @@ def extract(rows, sequences, evidence, motifs, vocab, c, cached=None, cdd=None):
         if (i + 1) % 250 == 0:
             print(f'FASTA features: {i + 1}/{len(rows)}', flush=True)
     hashes['posthoc_sequence_rules_sha256']=posthoc_rules_sha
+    hashes['adhesome_family_rule_crosswalk_sha256']=crosswalk_metadata['sha256']
+    hashes['family_rules']=c.sha(c._BUNDLE/'config/annotation/family_rules.json')
     return output, hashes
 
 
@@ -161,7 +177,8 @@ def domain_set(row, c):
 
 def membership_model_vector(vector):
     """Keep the membership model's established evidence contract unchanged."""
-    return {key:value for key,value in vector.items() if not key.startswith('family_similarity:')}
+    return {key:value for key,value in vector.items()
+            if not key.startswith(('family_similarity:','family_signature:'))}
 
 
 def _family_token(value):
@@ -170,6 +187,13 @@ def _family_token(value):
 
 def _family_similarity_config(c, saved=None):
     return (saved or {}).get('family_similarity_settings') or c._SETTINGS['family_gate']['family_similarity']
+
+
+def _family_signature_library(c, aliases):
+    path=c._BUNDLE/c._SETTINGS['family_signature_crosswalk']['path']
+    identity_rule_path=c._BUNDLE/'config/annotation/family_identity_rules.json'
+    identity_rules,_,_=load_identity_rules(str(identity_rule_path))
+    return load_crosswalk_library(path,identity_rules,aliases)
 
 
 def _family_similarity_profile(settings, requested=None):
@@ -237,15 +261,17 @@ def decide(membership, ranking, row, profiles, counts, parents, policy, c,
     observed = domain_set(row, c)
     if not any(c.evidence_groups(row).values()):
         return 'unresolved', '', 'no_informative_features'
-    if membership < policy['membership_cutoff']:
+    if membership < policy['membership_probability_cutoff']:
         return 'non_adhesome', '', 'membership_below_cutoff'
+    if not ranking:
+        return ('domain_only' if observed else 'unresolved'), '', 'family_probability_unavailable'
     top, score = ranking[0]
     margin = score - (ranking[1][1] if len(ranking) > 1 else 0)
     shared = observed & set(profiles[top])
     specific_similarity=(_family_similarity_match(row,top,'specific',similarity_settings,similarity_selection,
         identity_rules,aliases) if similarity_settings and similarity_selection else None)
     rule_specific=top in rule_families
-    if (shared or specific_similarity or rule_specific) and counts[top] >= policy['minimum_family_examples'] and score >= policy['specific_vote_cutoff'] and margin >= policy['specific_margin']:
+    if (shared or specific_similarity or rule_specific) and counts[top] >= policy['minimum_family_examples'] and score >= policy['specific_family_probability_cutoff'] and margin >= policy['specific_family_probability_margin']:
         support_reason=('family_vote_margin_and_identity_rule_support' if rule_specific else
                         'family_vote_margin_and_evalue_similarity_support' if specific_similarity else
                         'family_vote_margin_and_shared_domain_support')
@@ -263,7 +289,7 @@ def decide(membership, ranking, row, profiles, counts, parents, policy, c,
             _family_similarity_match(row,name,'broad',similarity_settings,similarity_selection,
                 identity_rules,aliases) for name in related))
         rule_support=any(name in rule_families for name in related)
-        if vote >= policy['broad_vote_cutoff'] and (domain_support or similarity_support or rule_support):
+        if vote >= policy['broad_parent_probability_cutoff'] and (domain_support or similarity_support or rule_support):
             reason=('shared_parent_vote_and_identity_rule_support' if rule_support else
                     'shared_parent_vote_and_evalue_similarity_support' if similarity_support else
                     'shared_parent_vote_and_domain_support')
@@ -271,35 +297,104 @@ def decide(membership, ranking, row, profiles, counts, parents, policy, c,
     return ('domain_only' if observed else 'unresolved'), '', 'insufficient_family_resolution'
 
 
+def _require_calibrated_model(saved, purpose):
+    calibration=saved.get('probability_calibration') or {}
+    membership=calibration.get('membership') or {}
+    family=calibration.get('family') or {}
+    if (saved.get('version')=='5.8' and saved.get('feature_schema')==SCHEMA and
+            membership.get('estimator') is not None and
+            isinstance(family.get('eligible_classes'),list) and
+            isinstance(family.get('estimators'),dict)):
+        return
+    version=saved.get('version','unknown')
+    raise ValueError(f'{purpose} requires a v5.8 calibrated-probability model; '
+        f'the supplied model is v{version} ({saved.get("feature_schema","unknown")}) and must be retrained')
+
+
+def _sequence_groups(rows, sequences, c, settings):
+    return sequence_cluster_groups([sequences[c.row_id(row)] for row in rows],**settings)
+
+
+def _family_probability_assignment_details(assignment, probability_map, parents, all_classes):
+    """Explain direct family probabilities and hierarchy-based parent sums."""
+    if not assignment:
+        return {"probability": None, "basis": "unavailable",
+                "eligible_descendant_classes": [], "unrepresented_descendant_classes": []}
+    descendants = sorted(name for name in all_classes
+                         if assignment in ancestors(name, parents))
+    if descendants:
+        eligible = [name for name in descendants if name in probability_map]
+        if not eligible:
+            return {"probability": None, "basis": "unavailable",
+                    "eligible_descendant_classes": [],
+                    "unrepresented_descendant_classes": descendants}
+        return {"probability": float(sum(probability_map[name] for name in eligible)),
+                "basis": "sum_of_eligible_calibrated_descendant_classes",
+                "eligible_descendant_classes": eligible,
+                "unrepresented_descendant_classes": [name for name in descendants if name not in probability_map]}
+    if assignment in probability_map:
+        return {"probability": float(probability_map[assignment]),
+                "basis": "conditional_family_class_probability",
+                "eligible_descendant_classes": [assignment],
+                "unrepresented_descendant_classes": []}
+    return {"probability": None, "basis": "unavailable",
+            "eligible_descendant_classes": [], "unrepresented_descendant_classes": []}
+
+
 def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None):
+    _require_calibrated_model(saved,'Prediction')
     rule_path=c._BUNDLE/'config/annotation/family_identity_rules.json'
     expected_rule_sha=saved.get('provenance',{}).get('family_identity_rules')
     if expected_rule_sha and c.sha(rule_path)!=expected_rule_sha:
         raise ValueError('Family identity-rule source differs from the one frozen into this classifier')
+    family_rules_path=c._BUNDLE/'config/annotation/family_rules.json'
+    expected_family_rules_sha=saved.get('provenance',{}).get('family_rules')
+    if expected_family_rules_sha and c.sha(family_rules_path)!=expected_family_rules_sha:
+        raise ValueError('Family alias/rule source differs from the one frozen into this classifier')
+    crosswalk_path=c._BUNDLE/c._SETTINGS['family_signature_crosswalk']['path']
+    current_crosswalk_sha=c.sha(crosswalk_path)
+    expected_crosswalk_sha=saved.get('provenance',{}).get('adhesome_family_rule_crosswalk_sha256')
+    if not expected_crosswalk_sha:
+        raise ValueError('The saved calibrated model lacks its crosswalk feature-library receipt; retrain with the current classifier')
+    if expected_crosswalk_sha and current_crosswalk_sha!=expected_crosswalk_sha:
+        raise ValueError('Adhesome family-rule crosswalk differs from the one frozen into this classifier')
     identity_rules,_,_=load_identity_rules(str(rule_path))
     vectors = [x[1] for x in data]
     binary = saved['binary']
-    votes = binary.predict_proba([membership_model_vector(vector) for vector in vectors])[:, list(binary.classes_).index('adhesome_associated')]
-    family_votes = saved['family'].predict_proba(vectors)
-    families = list(saved['family'].classes_)
+    binary_raw_probabilities=binary.predict_proba([membership_model_vector(vector) for vector in vectors])
+    binary_classes=list(binary.classes_)
+    membership_probabilities=apply_binary_sigmoid(
+        saved['probability_calibration']['membership'],binary_raw_probabilities,binary_classes)
+    raw_membership_votes=binary_raw_probabilities[:,binary_classes.index('adhesome_associated')]
+    raw_family_probabilities=saved['family'].predict_proba(vectors)
+    raw_families=list(saved['family'].classes_)
+    families,family_probabilities=apply_family_sigmoids(
+        saved['probability_calibration']['family'],raw_family_probabilities,raw_families)
     policy = dict(saved['policy'])
     similarity_settings=_family_similarity_config(c,saved)
     similarity_profile_name,similarity_selection=_family_similarity_profile(similarity_settings,family_similarity_profile)
     aliases=saved.get('aliases',{})
     if membership_cutoff is not None:
-        policy['membership_cutoff'] = membership_cutoff
+        policy['membership_probability_cutoff'] = membership_cutoff
     output = []
     for i, (row, vector) in enumerate(data):
-        ranking = sorted(zip(families, map(float, family_votes[i])), key=lambda x: (-x[1], x[0]))
+        ranking = sorted(zip(families, map(float, family_probabilities[i])), key=lambda x: (-x[1], x[0]))
+        raw_ranking=sorted(zip(raw_families,map(float,raw_family_probabilities[i])),key=lambda x:(-x[1],x[0]))
+        family_probability_map=dict(ranking)
         proposals=family_identity_rule_proposals(saved,vector,identity_rules)
         proposal_families={x['family'] for x in proposals}
-        category, assignment, reason = decide(float(votes[i]), ranking, row, saved['profiles'], saved['counts'], saved['parents'], policy, c,
+        category, assignment, reason = decide(float(membership_probabilities[i]), ranking, row, saved['profiles'], saved['counts'], saved['parents'], policy, c,
             vector=vector,identity_rules=identity_rules,aliases=aliases,rule_families=proposal_families,
             similarity_settings=similarity_settings,similarity_selection=similarity_selection)
-        candidate_family=assignment if category=='specific' else ranking[0][0]
+        precalibration_category,precalibration_assignment,precalibration_reason=decide(
+            float(raw_membership_votes[i]),raw_ranking,row,saved['profiles'],saved['counts'],
+            saved['parents'],policy,c,vector=vector,identity_rules=identity_rules,
+            aliases=aliases,rule_families=proposal_families,
+            similarity_settings=similarity_settings,similarity_selection=similarity_selection)
+        candidate_family=assignment if category=='specific' else ranking[0][0] if ranking else ''
         candidate_level='specific'
-        matched_similarity=_family_similarity_match(row,candidate_family,candidate_level,similarity_settings,
-            similarity_selection,identity_rules,aliases)
+        matched_similarity=(_family_similarity_match(row,candidate_family,candidate_level,similarity_settings,
+            similarity_selection,identity_rules,aliases) if candidate_family else None)
         if not matched_similarity:
             candidate_level='broad'
             matched_similarity=_family_similarity_match(row,candidate_family,candidate_level,similarity_settings,
@@ -316,15 +411,48 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
                 candidate_level='broad'
         groups=c.evidence_groups(row)
         membership_call=('unresolved' if not any(groups.values()) else
-            'adhesome_associated' if float(votes[i])>=policy['membership_cutoff'] else 'non_adhesome')
+            'adhesome_associated' if float(membership_probabilities[i])>=policy['membership_probability_cutoff'] else 'non_adhesome')
+        precalibration_membership_call=('unresolved' if not any(groups.values()) else
+            'adhesome_associated' if float(raw_membership_votes[i])>=policy['membership_probability_cutoff'] else 'non_adhesome')
+        family_probability_assignment=_family_probability_assignment_details(
+            assignment,family_probability_map,saved['parents'],
+            sorted(set(raw_families)|set(saved.get('counts',{}))|set(saved['parents'])))
+        assigned_family_probability=family_probability_assignment['probability']
+        raw_top_vote=raw_ranking[0][1] if raw_ranking else 0.0
+        best_family_probability=ranking[0][1] if ranking else None
+        probability_status=('calibrated_over_eligible_family_classes' if ranking else
+            'insufficient_independent_family_support')
         prediction={'protein_id': row['protein_id'], 'classifier_call': category,
-            'predicted_family': assignment, 'best_family_candidate': ranking[0][0],
-            'family_vote_fraction': ranking[0][1], 'family_vote_margin': ranking[0][1] - (ranking[1][1] if len(ranking)>1 else 0),
-            'adhesome_vote_fraction': float(votes[i]), 'family_ranking_json': json.dumps(ranking),
+            'predicted_family': assignment, 'best_family_candidate': ranking[0][0] if ranking else '',
+            'best_family_candidate_raw': raw_ranking[0][0] if raw_ranking else '',
+            'best_family_probability_conditional': best_family_probability if best_family_probability is not None else '',
+            'best_family_raw_vote_fraction': raw_top_vote,
+            'family_probability_margin': ranking[0][1] - (ranking[1][1] if len(ranking)>1 else 0) if ranking else '',
+            'family_probability_conditional': assigned_family_probability if assigned_family_probability is not None else '',
+            'family_probability_joint': (float(membership_probabilities[i])*assigned_family_probability
+                if assigned_family_probability is not None else ''),
+            'family_probability_assignment_basis':family_probability_assignment['basis'],
+            'family_probability_eligible_descendant_classes':';'.join(family_probability_assignment['eligible_descendant_classes']),
+            'family_probability_unrepresented_descendant_classes':';'.join(family_probability_assignment['unrepresented_descendant_classes']),
+            'adhesome_probability': float(membership_probabilities[i]),
+            'adhesome_raw_vote_fraction': float(raw_membership_votes[i]),
+            'family_probabilities_json': json.dumps(family_probability_map,sort_keys=True),
+            'family_ranking_json': json.dumps(ranking),
+            'family_raw_ranking_json': json.dumps(raw_ranking),
+            'family_probability_calibration_status': probability_status,
+            'family_probability_class_set':'eligible_calibrated_family_classes' if ranking else '',
+            'family_probability_eligible_class_count':len(families),
+            'family_probability_ineligible_class_count':len(set(saved['probability_calibration']['family'].get('known_classes',raw_families))-set(families)),
+            'family_probability_unavailable_classes':';'.join(sorted(saved['probability_calibration']['family'].get('unavailable_classes',{}))),
+            'family_probability_unavailable_reasons_json':json.dumps(saved['probability_calibration']['family'].get('unavailable_classes',{}),sort_keys=True),
             'assignment_reason': reason, 'exact_sequence_match_used': 'no',
-            'score_interpretation': 'uncalibrated model vote; not a biological probability',
+            'score_interpretation': 'Empirically calibrated on the labelled control distribution; family probability is conditional on adhesome association and the eligible calibrated family classes; joint probability is a derived product, not a universal biological probability.',
             'membership_call':membership_call,
             'random_forest_call':category,'random_forest_family':assignment,
+            'precalibration_policy_call':precalibration_category,
+            'precalibration_predicted_family':precalibration_assignment,
+            'precalibration_assignment_reason':precalibration_reason,
+            'precalibration_membership_call':precalibration_membership_call,
             'family_similarity_profile':similarity_profile_name,
             'family_similarity_search_max_evalue':float(similarity_settings['search_max_evalue']),
             'family_similarity_assignment_policy_json':json.dumps(similarity_selection,sort_keys=True),
@@ -339,6 +467,8 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
             'family_similarity_support_bitscore':matched_similarity.get('bitscore','') if matched_similarity else '',
             'family_similarity_support_threshold_source':matched_similarity.get('_matched_threshold_source','') if matched_similarity else '',
             'family_similarity_support_threshold_json':json.dumps(matched_similarity.get('_matched_threshold',{}),sort_keys=True) if matched_similarity else '',
+            'family_signature_features_used':True,
+            'family_signature_evidence_json':row.get('_family_signature_evidence_json','[]'),
             **c.prediction_evidence_summary(row)}
         families_proposed=sorted({x['family'] for x in proposals})
         prediction.update(rule_family_candidate=families_proposed[0] if len(families_proposed)==1 else '',
@@ -349,8 +479,8 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
             rule_candidate_evidence_json=json.dumps(proposals,sort_keys=True),
             rule_candidate_family_untrained=(len(families_proposed)==1 and families_proposed[0] not in families),
             rule_conflicts_with_random_forest=(len(families_proposed)==1 and bool(assignment) and families_proposed[0]!=assignment),
-            prediction_method='random_forest_with_separate_identity_rule_review',
-            prediction_policy_version='5.5_identity_rule_fallback_v1')
+            prediction_method='random_forest_with_sigmoid_calibration_crosswalk_signature_features',
+            prediction_policy_version='5.8_calibrated_probabilities_v1')
         output.append(prediction)
     return output
 
@@ -399,11 +529,29 @@ def evaluate(rows, predictions, sequences, saved, c, family_similarity_profile=N
     binary['positive_precision'] = c.precision_score(truth, calls, pos_label='adhesome_associated', zero_division=0)
     binary['positive_recall'] = c.recall_score(truth, calls, pos_label='adhesome_associated', zero_division=0)
     binary['positive_f1'] = c.f1_score(truth, calls, pos_label='adhesome_associated', zero_division=0)
+    precalibration_calls=['adhesome_associated' if p.get('precalibration_membership_call')=='adhesome_associated' else 'non_adhesome'
+                          for p in predictions]
+    precalibration_binary=c.class_metrics(truth,precalibration_calls,['adhesome_associated','non_adhesome'])
+    precalibration_binary.update(
+        positive_precision=c.precision_score(truth,precalibration_calls,pos_label='adhesome_associated',zero_division=0),
+        positive_recall=c.recall_score(truth,precalibration_calls,pos_label='adhesome_associated',zero_division=0),
+        positive_f1=c.f1_score(truth,precalibration_calls,pos_label='adhesome_associated',zero_division=0))
+    binary['precalibration_policy_comparison']=precalibration_binary
+    membership_truth=[int(value=='adhesome_associated') for value in truth]
+    binary['probability_calibration']=probability_metrics_binary(membership_truth,
+        [float(p['adhesome_probability']) for p in predictions],
+        [float(p['adhesome_raw_vote_fraction']) for p in predictions],
+        c._SETTINGS['probability_calibration']['reliability_bins'])
     labelled = [(i, trusted_family(r, saved['aliases'], saved['parents'])) for i,r in enumerate(rows) if truth[i]=='adhesome_associated']
     labelled = [(i,label) for i,label in labelled if label]
     expected = [label for _,label in labelled]
     assigned = [predictions[i]['predicted_family'] or '__abstained__' for i,_ in labelled]
-    family = c.class_metrics(expected, assigned, sorted(set(expected) | set(assigned)))
+    precalibration_assigned=[predictions[i].get('precalibration_predicted_family') or '__abstained__'
+                             for i,_ in labelled]
+    shared_family_labels=sorted(set(expected)|set(assigned)|set(precalibration_assigned))
+    family = c.class_metrics(expected, assigned, shared_family_labels)
+    family['precalibration_policy_comparison']=c.class_metrics(
+        expected,precalibration_assigned,shared_family_labels)
     family['labelled_positives'] = len(labelled)
     family['unmapped_positives'] = truth.count('adhesome_associated') - len(labelled)
     family['unseen_label_records'] = sum(label not in saved['counts'] for label in expected)
@@ -414,8 +562,43 @@ def evaluate(rows, predictions, sequences, saved, c, family_similarity_profile=N
     family['top_candidate_correct'] = sum(predictions[i]['best_family_candidate']==label for i,label in labelled)
     family['top_three_contains_truth'] = sum(label in [x[0] for x in json.loads(predictions[i]['family_ranking_json'])[:3]] for i,label in labelled)
     family['correct_broad_or_specific'] = sum(predictions[i]['predicted_family'] in [label]+ancestors(label,saved['parents']) for i,label in labelled)
-    family['per_family'] = {label: {'records': expected.count(label), 'correct': sum(a==label and b==label for a,b in zip(expected,assigned)),
-                                  'missed_or_wrong': sum(a==label and b!=label for a,b in zip(expected,assigned))} for label in sorted(set(expected))}
+    eligible_family_classes=list(saved['probability_calibration']['family'].get('eligible_classes',[]))
+    family_probability_rows=[]
+    for i,label in labelled:
+        if label not in eligible_family_classes:
+            continue
+        calibrated_map=json.loads(predictions[i].get('family_probabilities_json') or '{}')
+        raw_map=dict(json.loads(predictions[i].get('family_raw_ranking_json') or '[]'))
+        calibrated_values=[float(calibrated_map.get(name,0.0)) for name in eligible_family_classes]
+        raw_values=[float(raw_map.get(name,0.0)) for name in eligible_family_classes]
+        raw_total=sum(raw_values)
+        if raw_total>0:
+            raw_values=[value/raw_total for value in raw_values]
+        family_probability_rows.append((label,calibrated_values,raw_values))
+    family['probability_calibration']={
+        'eligible_family_classes':eligible_family_classes,
+        'family_labelled_records':len(labelled),
+        'scored_records':len(family_probability_rows),
+        'unavailable_true_family_records':len(labelled)-len(family_probability_rows),
+        'coverage':len(family_probability_rows)/len(labelled) if labelled else 0.0,
+        'calibration_availability_by_family':{
+            label:{'calibrated':label in eligible_family_classes,
+                   **saved['probability_calibration']['family'].get('class_support',{}).get(label,{}),
+                   'family_training_positive_records':saved['probability_calibration']['family'].get('family_training_support',{}).get(label,{}).get('positive_records',0),
+                   'family_training_positive_independent_groups':saved['probability_calibration']['family'].get('family_training_support',{}).get(label,{}).get('positive_independent_sequence_groups',0),
+                   'unavailable_reason':saved['probability_calibration']['family'].get('unavailable_classes',{}).get(label,'')}
+            for label in saved['probability_calibration']['family'].get('known_classes',saved['probability_calibration']['family'].get('classes',[]))},
+        'metrics':probability_metrics_multiclass(
+            [row[0] for row in family_probability_rows],
+            [row[1] for row in family_probability_rows],eligible_family_classes,
+            [row[2] for row in family_probability_rows],
+            c._SETTINGS['probability_calibration']['reliability_bins'])}
+    family['per_family'] = {label: {'records': expected.count(label),
+                                  'correct': sum(a==label and b==label for a,b in zip(expected,assigned)),
+                                  'missed_or_wrong': sum(a==label and b!=label for a,b in zip(expected,assigned)),
+                                  'precalibration_correct':sum(a==label and b==label for a,b in zip(expected,precalibration_assigned)),
+                                  'precalibration_missed_or_wrong':sum(a==label and b!=label for a,b in zip(expected,precalibration_assigned))}
+                         for label in sorted(set(expected))}
     rule_families=[p.get('rule_family_candidate','') for p in predictions]
     rule_positive=[i for i,p in enumerate(predictions) if p.get('rule_candidate_status')=='unique_rule_candidate_provisional']
     rule_ambiguous=sum(p.get('rule_candidate_status')=='ambiguous_multiple_family_rules' for p in predictions)
@@ -448,10 +631,20 @@ def evaluate(rows, predictions, sequences, saved, c, family_similarity_profile=N
     profile_name,profile_values=_family_similarity_profile(similarity_settings,family_similarity_profile)
     return {'membership': binary, 'family': family, 'rule_fallback':rule_fallback,
             'rule_fallback_policy_version':'5.5_identity_rule_fallback_v1',
+            'family_signature_crosswalk':saved.get('family_signature_crosswalk',{}),
             'family_similarity_policy':{'profile':profile_name,'search_max_evalue':similarity_settings['search_max_evalue'],
                 'thresholds':profile_values,'membership_model_uses_similarity_extension':False},
             'class_counts': dict(Counter(p['classifier_call'] for p in predictions)),
-            'calibration_overlap_strata': strata, 'note': 'Validation never fitted or used to choose thresholds. Exact sequence overlap is reporting only; evolutionary homology overlap may remain. Specific and broad votes are uncalibrated.'}
+            'probability_calibration_policy':{
+                'method':saved['probability_calibration'].get('method'),
+                'grouping':saved['probability_calibration'].get('grouping'),
+                'validation_used_for_calibration':saved['probability_calibration'].get('validation_used_for_calibration'),
+                'membership':{key:value for key,value in saved['probability_calibration']['membership'].items()
+                              if key!='estimator'},
+                'family':{key:value for key,value in saved['probability_calibration']['family'].items()
+                          if key!='estimators'}},
+            'calibration_overlap_strata': strata,
+            'note': 'Validation was evaluation-only and did not fit calibrators or choose thresholds. Membership probabilities are conditional on the labelled control distribution. Family probabilities are conditional on adhesome association and are reported only for families meeting independent-group calibration support. Exact sequence overlap is reporting only; evolutionary homology overlap may remain.'}
 
 
 def compare_validation(rows, baseline, current, saved, c):
@@ -459,7 +652,13 @@ def compare_validation(rows, baseline, current, saved, c):
     truth=[c.normalized_control_class(r) for r in rows]
     expected=[trusted_family(r,saved['aliases'],saved['parents']) for r in rows]
     def summarize(predictions):
-        calls=['adhesome_associated' if p.get('classifier_call') in ('specific','broad','domain_only') else 'non_adhesome' for p in predictions]
+        calls=[]
+        for prediction in predictions:
+            membership=prediction.get('membership_call')
+            if membership is not None:
+                calls.append('adhesome_associated' if membership=='adhesome_associated' else 'non_adhesome')
+            else:
+                calls.append('adhesome_associated' if prediction.get('classifier_call') in ('specific','broad','domain_only') else 'non_adhesome')
         tp=sum(y=='adhesome_associated' and z=='adhesome_associated' for y,z in zip(truth,calls))
         fn=sum(y=='adhesome_associated' and z=='non_adhesome' for y,z in zip(truth,calls))
         fp=sum(y=='non_adhesome' and z=='adhesome_associated' for y,z in zip(truth,calls))
@@ -522,8 +721,91 @@ def write_validation_report(directory, report):
         ('Positive controls without family labels',family['unmapped_positives'])]
     def table(items):
         return '<table>'+''.join('<tr><th>'+html.escape(str(k))+'</th><td>'+html.escape(str(v))+'</td></tr>' for k,v in items)+'</table>'
+    def reliability_svg(title, calibrated, raw=None):
+        width,height,left,top,plot_w,plot_h=480,330,55,28,390,240
+        def point_string(summary):
+            values=[]
+            for item in (summary or {}).get('bins',[]):
+                if item.get('count',0) and item.get('mean_probability') is not None:
+                    x=left+float(item['mean_probability'])*plot_w
+                    y=top+(1.0-float(item['observed_fraction']))*plot_h
+                    values.append(f'{x:.1f},{y:.1f}')
+            return ' '.join(values)
+        diagonal=f'{left},{top+plot_h} {left+plot_w},{top}'
+        svg=(f'<svg role="img" aria-label="{html.escape(title)}" viewBox="0 0 {width} {height}" '
+             f'style="max-width:480px;width:100%;border:1px solid #ddd"><text x="{left}" y="18">'
+             f'{html.escape(title)}</text><line x1="{left}" y1="{top+plot_h}" x2="{left+plot_w}" '
+             f'y2="{top}" stroke="#888" stroke-dasharray="5,5"/><line x1="{left}" y1="{top}" '
+             f'x2="{left}" y2="{top+plot_h}" stroke="#333"/><line x1="{left}" y1="{top+plot_h}" '
+             f'x2="{left+plot_w}" y2="{top+plot_h}" stroke="#333"/>')
+        raw_points=point_string(raw)
+        cal_points=point_string(calibrated)
+        if raw_points:
+            svg+=f'<polyline points="{raw_points}" fill="none" stroke="#b55" stroke-width="2"/>'
+        if cal_points:
+            svg+=f'<polyline points="{cal_points}" fill="none" stroke="#1769aa" stroke-width="2"/>'
+        svg+=(f'<text x="{left+90}" y="{top+plot_h+35}" font-size="12">Mean predicted probability</text>'
+              f'<text x="{left+plot_w+5}" y="{top+plot_h+4}" font-size="11">1</text>'
+              f'<text x="{left-15}" y="{top+5}" font-size="11">1</text>'
+              f'<text x="{left+plot_w-115}" y="{height-12}" font-size="12" fill="#1769aa">Calibrated</text>')
+        if raw_points:
+            svg+=f'<text x="{left+plot_w-215}" y="{height-12}" font-size="12" fill="#b55">Raw votes</text>'
+        return svg+'</svg>'
     document = '<!doctype html><meta charset="utf-8"><title>Family classifier validation</title><style>body{font:16px system-ui;max-width:1000px;margin:40px auto}td,th{padding:8px;border:1px solid #ccc;text-align:left}table{border-collapse:collapse}pre{white-space:pre-wrap}</style><h1>Independent panel evaluation</h1>'
     document += '<p>'+html.escape(report['note'])+'</p>'+table(rows)
+    prior_membership=membership.get('precalibration_policy_comparison',{})
+    if prior_membership:
+        document+='<h2>Previous versus calibrated-policy calls</h2><p>Both policies use the same labelled records and the existing numeric cutoffs. The previous-policy column applies those cutoffs to raw forest votes; the calibrated-policy column applies them to calibrated probabilities. This is a fixed comparison, not validation tuning.</p>'
+        document+='<table><tr><th>Membership metric</th><th>Previous raw-vote policy</th><th>Calibrated policy</th></tr>'
+        for key,label in (('positive_precision','Precision'),('positive_recall','Recall'),('positive_f1','F1')):
+            document+=f'<tr><th>{html.escape(label)}</th><td>{prior_membership.get(key,0.0):.3f}</td><td>{membership.get(key,0.0):.3f}</td></tr>'
+        document+='</table><h3>Membership confusion matrices</h3><p>Previous raw-vote policy</p><pre>'+html.escape(json.dumps(prior_membership.get('confusion_matrix',[])))+'</pre><p>Calibrated policy</p><pre>'+html.escape(json.dumps(membership.get('confusion_matrix',[])))+'</pre>'
+        prior_family=family.get('precalibration_policy_comparison',{})
+        if prior_family:
+            document+='<h3>Family assignment comparison on family-labelled positives</h3><table><tr><th>Metric</th><th>Previous raw-vote policy</th><th>Calibrated policy</th></tr>'
+            for key,label in (('macro_precision','Macro precision'),('macro_recall','Macro recall'),('macro_f1','Macro F1')):
+                document+=f'<tr><th>{html.escape(label)}</th><td>{prior_family.get(key,0.0):.3f}</td><td>{family.get(key,0.0):.3f}</td></tr>'
+            document+='</table><p>Both family comparisons use the same labelled positives; abstentions remain explicit in the confusion matrices.</p><h4>Previous raw-vote family confusion matrix</h4><pre>'+html.escape(json.dumps(prior_family.get('confusion_matrix',[])))+'</pre><h4>Calibrated family confusion matrix</h4><pre>'+html.escape(json.dumps(family.get('confusion_matrix',[])))+'</pre>'
+    membership_calibration=membership.get('probability_calibration',{})
+    if membership_calibration:
+        membership_rows=[('Scored records',membership_calibration.get('records',0)),
+            ('Calibrated Brier score',membership_calibration.get('brier_score')),
+            ('Raw-vote Brier score',membership_calibration.get('raw',{}).get('brier_score')),
+            ('Calibrated log loss',membership_calibration.get('log_loss')),
+            ('Raw-vote log loss',membership_calibration.get('raw',{}).get('log_loss')),
+            ('Calibrated ECE',membership_calibration.get('reliability',{}).get('expected_calibration_error')),
+            ('Raw-vote ECE',membership_calibration.get('raw',{}).get('reliability',{}).get('expected_calibration_error'))]
+        document+='<h2>Membership probability calibration</h2>'+table(membership_rows)
+        document+=reliability_svg('Membership reliability',membership_calibration.get('reliability'),
+            membership_calibration.get('raw',{}).get('reliability'))
+    family_calibration=family.get('probability_calibration',{})
+    family_metrics=family_calibration.get('metrics',{})
+    if family_calibration:
+        family_rows=[('Family-labelled records',family_calibration.get('family_labelled_records',0)),
+            ('Scored records',family_calibration.get('scored_records',0)),
+            ('Unavailable true-family records',family_calibration.get('unavailable_true_family_records',0)),
+            ('Calibrated family coverage',f"{family_calibration.get('coverage',0.0):.1%}"),
+            ('Calibrated multiclass Brier score',family_metrics.get('brier_score')),
+            ('Raw-vote multiclass Brier score',family_metrics.get('raw',{}).get('brier_score')),
+            ('Calibrated multiclass log loss',family_metrics.get('log_loss')),
+            ('Raw-vote multiclass log loss',family_metrics.get('raw',{}).get('log_loss')),
+            ('Calibrated top-label ECE',family_metrics.get('top_label_reliability',{}).get('expected_calibration_error')),
+            ('Raw-vote top-label ECE',family_metrics.get('raw',{}).get('top_label_reliability',{}).get('expected_calibration_error'))]
+        document+='<h2>Family probability calibration</h2>'+table(family_rows)
+        document+=reliability_svg('Top family reliability',family_metrics.get('top_label_reliability'),
+            family_metrics.get('raw',{}).get('top_label_reliability'))
+        availability=family_calibration.get('calibration_availability_by_family',{})
+        if availability:
+            document+='<h3>Per-family calibration support</h3><table><tr><th>Family</th><th>Available</th><th>Family-training positive records</th><th>Family-training positive groups</th><th>Calibrator positive groups</th><th>Calibrator negative groups</th><th>Reason unavailable</th></tr>'
+            for label,details in sorted(availability.items()):
+                document+=('<tr><td>'+html.escape(label)+'</td><td>'+str(bool(details.get('calibrated')))+
+                    '</td><td>'+str(details.get('family_training_positive_records',0))+
+                    '</td><td>'+str(details.get('family_training_positive_independent_groups',0))+
+                    '</td><td>'+str(details.get('independent_groups',''))+'</td><td>'+str(details.get('negative_independent_groups',''))+
+                    '</td><td>'+html.escape(str(details.get('unavailable_reason','')) )+'</td></tr>')
+            document+='</table>'
+        for label,calibration in family_metrics.get('per_class_reliability',{}).items():
+            document+=reliability_svg('Family reliability: '+label,calibration)
     similarity=report.get('family_similarity_policy')
     if similarity:
         policy_rows=[('Family similarity profile',similarity['profile']),
@@ -532,6 +814,14 @@ def write_validation_report(directory, report):
             ('Broad-family threshold',json.dumps(similarity['thresholds']['broad'],sort_keys=True)),
             ('Used to alter membership model',similarity['membership_model_uses_similarity_extension'])]
         document += '<h2>Family-resolution similarity policy</h2><p>CDD-fragment sequence matches support family resolution by E-value and coverage. The membership model continues to use its existing feature set and decision cutoff.</p>'+table(policy_rows)
+    crosswalk=report.get('family_signature_crosswalk')
+    if crosswalk:
+        crosswalk_rows=[('Crosswalk signatures',crosswalk.get('signature_combinations',0)),
+            ('Mapped families',crosswalk.get('mapped_families',0)),
+            ('Mapped family identity rules',crosswalk.get('mapped_identity_rules',0)),
+            ('Alias proposals ignored',crosswalk.get('alias_proposal_rows_ignored',0)),
+            ('Crosswalk SHA-256',crosswalk.get('sha256',''))]
+        document += '<h2>Family-signature crosswalk feature source</h2><p>CDD hits contribute to family features only in combination with configured family identity-rule architecture predicates.</p>'+table(crosswalk_rows)
     comparison=report.get('classifier_version_comparison')
     if comparison:
         metric_rows=[]
@@ -562,8 +852,13 @@ def write_validation_report(directory, report):
             ('Untrained-family exact rule recoveries',fallback['untrained_family_exact_rule_recoveries']),
             ('Conflicts with RF family calls',fallback['rule_rf_conflicts'])]
         document += '<h2>Separate provisional family-identity-rule pathway</h2><p>'+html.escape(fallback['interpretation'])+'</p>'+table(fallback_rows)
-    document += '<h2>Per-family counts</h2>'+table((label,f"{v['correct']} correct / {v['records']} labelled") for label,v in family['per_family'].items())
+    document += '<h2>Per-family assignment counts</h2><table><tr><th>Family</th><th>Calibrated policy correct / labelled</th><th>Previous raw-vote policy correct / labelled</th></tr>'
+    for label,values in family['per_family'].items():
+        document+=('<tr><td>'+html.escape(label)+'</td><td>'+str(values['correct'])+' / '+str(values['records'])+
+                   '</td><td>'+str(values['precalibration_correct'])+' / '+str(values['records'])+'</td></tr>')
+    document+='</table>'
     document += '<details><summary>Full metrics and overlap strata</summary><pre>'+html.escape(json.dumps(report,indent=2))+'</pre></details>'
+    (directory/'internal_validation_report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     (directory/'internal_validation_report.html').write_text(document,encoding='utf-8')
 
 
@@ -572,6 +867,8 @@ def train_family_gate(args, c):
     aliases, parents, motifs = load_resources(c)
     similarity_settings=c._SETTINGS['family_gate']['family_similarity']
     similarity_profile_name,similarity_selection=_family_similarity_profile(similarity_settings)
+    _,crosswalk_metadata=_family_signature_library(c,aliases)
+    print(f"[classifier] Family-signature crosswalk ready: {crosswalk_metadata['signature_combinations']} CDD/architecture combinations across {crosswalk_metadata['mapped_families']} families",flush=True)
     vocab, provenance = c.configured_vocab(c._BUNDLE)
     rows, sequences, receipts = read_cohort(args.calibration, c)
     library=c._BUNDLE/'resource_library/adhesome_ml/cdd_domain_library_v1'
@@ -609,8 +906,40 @@ def train_family_gate(args, c):
     def estimator(seed):
         settings = dict(c._SETTINGS['binary_model'], random_state=seed)
         return c.Pipeline([('vectorizer',c.DictVectorizer()),('model',c.random_forest(settings,args.jobs))])
-    print('[classifier] Fitting adhesome membership model',flush=True)
-    binary = estimator(1729).fit([membership_model_vector(v) for _,v in data], labels)
+    probability_settings=c._SETTINGS['probability_calibration']
+    group_ids,grouping_metadata=_sequence_groups(rows,sequences,c,probability_settings['sequence_clustering'])
+    print(f"[classifier] OOF leakage grouping: {grouping_metadata['method']} "
+          f"(98% identity, 90% coverage of both sequences); "
+          f"fallback={grouping_metadata.get('fallback_reason') or 'not used'}",flush=True)
+    membership_matrix=[membership_model_vector(v) for _,v in data]
+    print('[classifier] Generating group-disjoint OOF membership scores for probability calibration',flush=True)
+    try:
+        membership_classes,membership_oof,membership_folds,membership_fold_summary=\
+            cross_fitted_probabilities(lambda:estimator(1729),membership_matrix,labels,group_ids,
+                probability_settings['max_splits'],probability_settings['random_state'])
+        membership_calibration=fit_binary_sigmoid(membership_oof,labels,membership_classes,group_ids,
+            minimum_groups_per_class=probability_settings['membership_min_independent_groups_per_class'])
+    except CalibrationUnavailable as exc:
+        if grouping_metadata.get('method')!='cdhit_grouped_out_of_fold':
+            raise ValueError(f'Membership probabilities cannot be calibrated from this control set: {exc}') from exc
+        exact_settings=dict(probability_settings['sequence_clustering'],executable='')
+        exact_group_ids,exact_metadata=_sequence_groups(rows,sequences,c,exact_settings)
+        try:
+            membership_classes,membership_oof,membership_folds,membership_fold_summary=\
+                cross_fitted_probabilities(lambda:estimator(1729),membership_matrix,labels,exact_group_ids,
+                    probability_settings['max_splits'],probability_settings['random_state'])
+            membership_calibration=fit_binary_sigmoid(membership_oof,labels,membership_classes,exact_group_ids,
+                minimum_groups_per_class=probability_settings['membership_min_independent_groups_per_class'])
+        except CalibrationUnavailable as exact_exc:
+            raise ValueError(f'Membership probabilities cannot be calibrated from this control set; '
+                f'CD-HIT grouping failed ({exc}) and exact-sequence fallback failed ({exact_exc})') from exact_exc
+        group_ids=exact_group_ids
+        grouping_metadata={**exact_metadata,
+            'cdhit_grouping_rejected_reason':str(exc),
+            'fallback_reason':f'CD-HIT groups did not support membership calibration; exact-sequence grouping used: {exc}'}
+        print(f"[classifier] OOF grouping fallback: {grouping_metadata['fallback_reason']}",flush=True)
+    print('[classifier] Fitting final adhesome membership Random Forest',flush=True)
+    binary = estimator(1729).fit(membership_matrix, labels)
     indices = [(i,trusted_family(row,aliases,parents)) for i,row in enumerate(rows) if labels[i]=='adhesome_associated']
     indices = [(i,label) for i,label in indices if label and any(c.evidence_groups(data[i][0]).values())]
     if len({label for _,label in indices}) < 2:
@@ -618,20 +947,81 @@ def train_family_gate(args, c):
     counts = Counter(label for _,label in indices)
     model_indices=[(i,label) for i,label in indices if counts[label]>=2]
     print(f'[classifier] Fitting family model from {len(model_indices)} labelled, feature-supported controls',flush=True)
-    family = estimator(2718).fit([data[i][1] for i,_ in model_indices], [label for _,label in model_indices])
+    family_matrix=[data[i][1] for i,_ in model_indices]
+    family_labels=[label for _,label in model_indices]
+    family_groups=[group_ids[i] for i,_ in model_indices]
+    family = estimator(2718).fit(family_matrix,family_labels)
+    family_classes=list(family.classes_)
+    family_fold_assignments=[]
+    print('[classifier] Generating group-disjoint OOF family scores for per-family calibration',flush=True)
+    try:
+        oof_classes,family_oof,family_folds,family_fold_summary=\
+            cross_fitted_probabilities(lambda:estimator(2718),family_matrix,family_labels,family_groups,
+                probability_settings['max_splits'],probability_settings['random_state'])
+        family_calibration=fit_family_sigmoids(family_oof,family_labels,oof_classes,family_groups,
+            minimum_positive_groups=probability_settings['family_min_positive_groups_per_class'],
+            minimum_negative_groups=probability_settings['family_min_negative_groups_per_class'],
+            minimum_eligible_classes=probability_settings['family_min_calibrated_classes'])
+        for local_index,(global_index,_) in enumerate(model_indices):
+            family_fold_assignments.append((global_index,int(family_folds[local_index]),family_groups[local_index]))
+    except CalibrationUnavailable as exc:
+        family_fold_summary=[]
+        family_group_support={}
+        for label in family_classes:
+            positive_groups_for_label={family_groups[index] for index,value in enumerate(family_labels) if value==label}
+            negative_groups_for_label={family_groups[index] for index,value in enumerate(family_labels) if value!=label}
+            family_group_support[label]={
+                'records':sum(value==label for value in family_labels),
+                'independent_groups':len(positive_groups_for_label),
+                'negative_records':sum(value!=label for value in family_labels),
+                'negative_independent_groups':len(negative_groups_for_label)}
+        family_calibration={'method':'unavailable_insufficient_grouped_oof_support','classes':family_classes,
+            'eligible_classes':[],'estimators':{},'class_support':family_group_support,
+            'unavailable_classes':{label:str(exc) for label in family_classes},
+            'minimum_positive_groups':int(probability_settings['family_min_positive_groups_per_class']),
+            'minimum_negative_groups':int(probability_settings['family_min_negative_groups_per_class']),
+            'minimum_eligible_classes':int(probability_settings['family_min_calibrated_classes']),
+            'parameters':{'estimator':'sklearn.linear_model.LogisticRegression','C':1e6,
+                'solver':'lbfgs','max_iter':2000,
+                'input':'per-family logit-transformed random-forest probability',
+                'mapping':'one-vs-rest sigmoid, then normalize across eligible families'},
+            'oof_records':0,'unavailable_reason':str(exc)}
+        print(f'[classifier] Family probability calibration unavailable: {exc}',flush=True)
+    family_calibration['known_classes']=sorted(counts)
+    family_calibration['family_training_support']={
+        label:{'positive_records':sum(family==label for _,family in indices),
+               'positive_independent_sequence_groups':len({group_ids[index] for index,family in indices if family==label})}
+        for label in sorted(counts)}
+    for label in sorted(counts):
+        if label not in family_classes:
+            family_calibration.setdefault('unavailable_classes',{})[label]=(
+                f"not included in the family Random Forest: only {counts[label]} feature-supported positive controls; requires at least 2")
+    print(f"[classifier] Calibrated family classes available: {len(family_calibration['eligible_classes'])}/{len(family_classes)}",flush=True)
+    membership_fold_assignments=[(index,int(fold),group_ids[index]) for index,fold in enumerate(membership_folds)]
     profiles = {label: sorted(set().union(*(domain_set(data[i][0],c) for i,f in indices if f==label))) for label in counts}
-    saved = dict(version='5.6',feature_schema=SCHEMA,binary=binary,family=family,config_vocab=sorted(vocab),
+    calibration_provenance={'method':'sigmoid','grouping':probability_settings['grouping'],
+        'grouping_details':grouping_metadata,
+        'random_state':probability_settings['random_state'],'max_splits':probability_settings['max_splits'],
+        'gate_threshold_policy':c._SETTINGS['probability_gate_threshold_policy'],
+        'membership':membership_calibration,'family':family_calibration,
+        'membership_fold_summary':membership_fold_summary,'family_fold_summary':family_fold_summary,
+        'membership_calibration_records':len(labels),'family_calibration_records':len(family_labels),
+        'validation_used_for_calibration':False}
+    saved = dict(version='5.8',feature_schema=SCHEMA,binary=binary,family=family,config_vocab=sorted(vocab),
         aliases=aliases,parents=parents,motifs=motifs,counts=dict(counts),profiles=profiles,
         family_model_counts=dict(Counter(label for _,label in model_indices)),
         single_example_family_profiles=sorted(label for label,n in counts.items() if n==1),
         policy=c._SETTINGS['family_gate'],family_similarity_settings=similarity_settings,
+        family_signature_crosswalk=crosswalk_metadata,
+        probability_calibration=calibration_provenance,
         calibration_sequence_hashes={sequence_digest(sequences[c.row_id(r)]) for r in rows},
         provenance={**provenance,**receipts,**scan_hashes,'labels':c.sha(args.calibration/'reports/predictions.tsv'),
             'cdd_domain_fasta':c.sha(library/'cdd_domain_sequences.faa'),
             'cdd_domain_metadata':c.sha(library/'cdd_domain_metadata.tsv'),
             'family_identity_rules':c.sha(c._BUNDLE/'config/annotation/family_identity_rules.json'),
+            'family_rules':c.sha(c._BUNDLE/'config/annotation/family_rules.json'),
             'posthoc_sequence_rules_sha256':scan_hashes['posthoc_sequence_rules_sha256']})
-    summary = {'classifier_version':'5.6','feature_schema':SCHEMA,'calibration_records':len(rows),
+    summary = {'classifier_version':'5.8','feature_schema':SCHEMA,'calibration_records':len(rows),
         'family_training_records':len(model_indices),'family_profile_records':len(indices),
         'family_model_counts':dict(Counter(label for _,label in model_indices)),
         'single_example_family_profiles':sorted(label for label,n in counts.items() if n==1),
@@ -639,16 +1029,40 @@ def train_family_gate(args, c):
         'unmapped_or_ambiguous_positive_labels':sum(x=='adhesome_associated' for x in labels)-len(indices),
         'family_labels_excluded_from_multiclass_fit':sum(1 for n in counts.values() if n<2),
         'policy':saved['policy'],'validation_used_for_fitting':False,
-        'feature_contract':'Identical FASTA motif scans, verified Pfam hits, calibration CDD local similarities, domain order/copy/quality, directional homology, and sequence-only boolean/token features parsed from the post-hoc rule conditions; no post-hoc proposals, audit scores, or hypothesis labels.',
+        'feature_contract':'Identical FASTA motif scans, verified Pfam hits, calibration CDD local similarities, domain order/copy/quality, directional homology, sequence-only boolean/token features parsed from post-hoc rule conditions, and family-rule crosswalk CDD-plus-architecture combinations; no post-hoc proposals, audit scores, crosswalk family/class text, or hypothesis labels.',
         'identity_rule_policy':'Only measurable sequence fields from family_identity_rules.json are added: required domain-group counts/satisfaction, specific CDD annotation pattern matches, ordered groups, maximum domain counts, repeat indices and protein length ranges. Topology, orthology, localization and signal peptide are excluded from this feature block.',
         'posthoc_rule_feature_policy':'Parse only the boolean conditions in specific() and broad() from schisto_pfam_cdd_reclassify.py. Include rule-condition hits, individual Pfam/CDD signature presence and counts, and concurrent-signal counts. Never read rule return values, proposed family labels, tiers, orthogroup arguments, post-hoc assignment tables, or validation outcomes as features.',
+        'family_signature_crosswalk':crosswalk_metadata,
+        'family_signature_crosswalk_policy':'For each reviewed crosswalk CDD accession, combine its calibration-bank HSP evidence with the linked family_identity_rules.json required architecture, order, pattern, copy and length predicates. Complete and partial combination features are learned by the family classifier. Use the same frozen feature builder on calibration, validation and target data. Proposed family/class text, same-protein family context, calibration counts and alias proposals are excluded.',
         'cdd_policy':'All SHA-256-verified CDD fragments from labelled calibration-positive controls are retained, including fragments without a mapped family label. Validation-origin fragments are excluded. Calibration queries exclude same-protein references. Query and subject coverage use inclusive BLAST HSP coordinate spans divided by full sequence lengths, capped at 1.0.',
         'optional_returned_policy':'Returned CDD hits are not required; candidate sequences are searched against the frozen calibration-only CDD fragment bank.'}
+    summary['probability_calibration']={
+        'method':'sigmoid; fitted from group-disjoint out-of-fold calibration predictions',
+        'grouping':probability_settings['grouping'],
+        'grouping_details':grouping_metadata,
+        'membership':{'calibrated':True,'method':membership_calibration['method'],
+            'parameters':membership_calibration['parameters'],
+            'class_group_counts':membership_calibration['class_group_counts'],
+            'minimum_groups_per_class':membership_calibration['minimum_groups_per_class'],
+            'folds':membership_fold_summary},
+        'family':{'method':family_calibration['method'],
+            'parameters':family_calibration.get('parameters',{}),
+            'eligible_classes':family_calibration['eligible_classes'],
+            'unavailable_classes':family_calibration['unavailable_classes'],
+            'class_support':family_calibration['class_support'],
+            'minimum_positive_groups':family_calibration.get('minimum_positive_groups'),
+            'minimum_negative_groups':family_calibration.get('minimum_negative_groups'),
+            'minimum_eligible_classes':family_calibration.get('minimum_eligible_classes'),
+            'folds':family_fold_summary},
+        'validation_used_for_calibration':False,
+        'gate_threshold_policy':c._SETTINGS['probability_gate_threshold_policy'],
+        'interpretation':'Membership probability is conditional on the labelled control distribution. Family probability is conditional on adhesome association. Joint family probability is their product and is not a universal biological probability.'}
     summary['family_similarity_policy']={'selected_profile':similarity_profile_name,
         'search_max_evalue':similarity_settings['search_max_evalue'],
         'legacy_model_feature_max_evalue':similarity_settings['legacy_model_feature_max_evalue'],
         'profile_thresholds':similarity_selection,
         'membership_model_uses_family_similarity_extension':False,
+        'membership_model_uses_family_signature_crosswalk':False,
         'rule_override_key':similarity_settings.get('rule_override_key')}
     val_predictions = []
     if args.validation:
@@ -669,10 +1083,22 @@ def train_family_gate(args, c):
     (args.out/'cdd_calibration_references.faa').write_bytes(frozen_cdd_fasta)
     (args.out/'cdd_calibration_references.json').write_bytes(frozen_cdd_meta)
     (args.out/'cdd_calibration_references.manifest.json').write_bytes(frozen_cdd_manifest)
+    fold_rows=[]
+    for index,fold,group_id in membership_fold_assignments:
+        fold_rows.append({'model':'membership','protein_id':c.row_id(rows[index]),
+                          'sequence_group_id':group_id,'heldout_fold':fold})
+    for index,fold,group_id in family_fold_assignments:
+        fold_rows.append({'model':'family','protein_id':c.row_id(rows[index]),
+                          'sequence_group_id':group_id,'heldout_fold':fold})
+    fold_path=args.out/'probability_calibration_folds.tsv'
+    c.write_tsv(fold_path,fold_rows,fields=['model','protein_id','sequence_group_id','heldout_fold'])
+    saved['provenance']['probability_calibration_folds']=c.sha(fold_path)
     saved['provenance']['frozen_cdd_reference_fasta']=c.sha(args.out/'cdd_calibration_references.faa')
     saved['provenance']['frozen_cdd_reference_metadata']=c.sha(args.out/'cdd_calibration_references.json')
     saved['provenance']['frozen_cdd_reference_manifest']=c.sha(args.out/'cdd_calibration_references.manifest.json')
     summary['cdd_reference_bank']=json.loads(frozen_cdd_manifest.decode('utf-8'))
+    summary['probability_calibration']['fold_assignments_file']='probability_calibration_folds.tsv'
+    summary['probability_calibration']['fold_assignments_sha256']=saved['provenance']['probability_calibration_folds']
     (args.out/'model_summary.json').write_text(json.dumps(summary,indent=2)+'\n',encoding='utf-8')
     c.joblib.dump(saved,args.out/'adhesome_ml.joblib')
     (args.out/'model_summary.json').write_text(json.dumps(summary,indent=2)+'\n',encoding='utf-8')
@@ -694,8 +1120,7 @@ def evaluate_family_gate(args, c):
         raise ValueError('Choose a new evaluation output directory')
     path = args.model/'adhesome_ml.joblib' if args.model.is_dir() else args.model
     saved = c.joblib.load(path)
-    if saved.get('feature_schema') not in ({SCHEMA}|LEGACY_SCHEMAS):
-        raise ValueError('Evaluation requires a supported frozen CDD-bank family classifier (v5.4 or later)')
+    _require_calibrated_model(saved,'Evaluation')
     similarity_settings=_family_similarity_config(c,saved)
     similarity_profile_name,_=_family_similarity_profile(
         similarity_settings,getattr(args,'family_similarity_profile',None))
@@ -740,8 +1165,7 @@ def predict_family_gate(args, c):
     if not args.fasta or not args.evidence_dir:
         raise ValueError('Family prediction requires --fasta and --evidence-dir for verified sequence-derived features')
     saved = c.joblib.load(args.model/'adhesome_ml.joblib' if args.model.is_dir() else args.model)
-    if saved.get('feature_schema') not in ({SCHEMA}|LEGACY_SCHEMAS):
-        raise ValueError('Prediction requires a supported frozen CDD-bank family classifier (v5.4 or later)')
+    _require_calibrated_model(saved,'Prediction')
     similarity_settings=_family_similarity_config(c,saved)
     similarity_profile_name,similarity_selection=_family_similarity_profile(similarity_settings,args.family_similarity_profile)
     records = c.read_fasta(args.fasta)
@@ -798,16 +1222,21 @@ def predict_family_gate(args, c):
     for prediction in output:
         prediction['stage1_hypotheses_context_only'] = ';'.join(sorted(hypotheses[prediction['protein_id']] - {''}))
     c.write_tsv(args.out,output)
-    receipt = {'classifier_version':'5.6','model_version':saved.get('version','unknown'),
+    receipt = {'classifier_version':'5.8','model_version':saved.get('version','unknown'),
                'rule_fallback_policy_version':'5.5_identity_rule_fallback_v1',
                'family_similarity_profile':similarity_profile_name,
                'family_similarity_search_max_evalue':similarity_settings['search_max_evalue'],
                'family_similarity_assignment_thresholds':similarity_selection,
                'membership_model_uses_family_similarity_extension':False,
+               'membership_model_uses_family_signature_crosswalk':False,
+               'family_signature_crosswalk_sha256':saved.get('provenance',{}).get('adhesome_family_rule_crosswalk_sha256'),
+               'family_signature_features_used':saved.get('feature_schema')==SCHEMA,
                'feature_schema':SCHEMA,'records':len(output),'class_counts':dict(Counter(r['classifier_call'] for r in output)),
                'rule_candidate_status_counts':dict(Counter(r['rule_candidate_status'] for r in output)),
                'untrained_family_rule_candidates':sum(bool(r['rule_candidate_family_untrained']) for r in output),
                'rule_rf_conflicts':sum(bool(r['rule_conflicts_with_random_forest']) for r in output),
+               'probability_calibration_policy':saved.get('probability_calibration',{}).get('method'),
+               'family_probability_calibrated_classes':saved.get('probability_calibration',{}).get('family',{}).get('eligible_classes',[]),
                'model_sha256':c.sha(args.model/'adhesome_ml.joblib' if args.model.is_dir() else args.model),
                'input_sha256':c.sha(args.fasta),'threshold':args.threshold,'exact_sequence_match_used':False}
     args.out.with_suffix('.summary.json').write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8')
