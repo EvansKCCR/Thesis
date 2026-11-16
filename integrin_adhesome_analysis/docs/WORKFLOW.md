@@ -748,12 +748,23 @@ only for input integrity and overlap reporting, never as a prediction feature.
 Unambiguous expected-family labels train the family model. Multi-label controls are
 collapsed only when a configured common parent exists; other unmapped controls remain
 in membership evaluation. Every target is ranked against learned families regardless
-of Stage 1 hypotheses. Specific calls require the configured calibrated family
-probability, margin, example
-count and at least one family-specific support route: shared domain architecture,
-thresholded CDD similarity, or a matching sequence-based family identity rule.
-Related-family evidence can support a broader parent. CDD hit class alone does not
-establish family identity.
+of Stage 1 hypotheses. Membership still uses its calibrated probability. Named-family
+calls now use the previous raw-vote decision policy, subject to the same minimum-example,
+vote-margin and sequence-evidence gates, and are restricted to the configured core and
+expanded-regulatory adhesome families in `config/ml_classifier/classifier.json`. The
+allowlist includes integrin alpha/beta, talin, kindlin, PINCH, parvin, paxillin, alpha
+actinin, ENA/VASP, conventional actin, zyxin/ajuba, filamin, tensin, ILK, vinculin,
+FAK/PTK2, Src, Rho GTPase/RhoGEF, PAK, PIP5K, PI3K, PTEN, FARP, cytohesin, ARF/ARF-GAP,
+calpain, dynamin and Abl. Unlisted family calls abstain to domain-only or unresolved.
+The configured broad groups can emit LIM-scaffold, paxillin-family, SH3/SH2 tyrosine-kinase,
+generic PTP-screen, and RhoGEF calls; these labels intentionally stop short of a child-family
+claim. For configured shared-core groups, the common domain architecture alone cannot make
+a specific call: the CDD identity-rule signature or CDD-fragment match must uniquely support
+one member. Missing, shared, or conflicting CDD evidence collapses a sufficiently supported
+group vote to its configured broad label. The configured collisions cover the three-LIM
+PINCH/zyxin/ajuba core, the ordered SH3/SH2/kinase Src/Abl core, the shared tensin/PTEN
+PF10409 core, and the paxillin subfamily core. Provisional family-identity-rule proposals
+follow the same scope. CDD hit class alone does not establish family identity.
 The v5.8 model calibrates membership and family scores separately using sigmoid
 calibrators fitted only to group-disjoint out-of-fold predictions from the calibration
 controls. CD-HIT groups sequences at 98% identity with at least 90% coverage of both
@@ -763,22 +774,40 @@ only and never enter prediction features. The binary output is an empirical adhe
 conditional on the labelled control distribution. Family probabilities are conditional
 on adhesome association; the optional joint family estimate is their product. These are
 not universal biological probabilities or target-population prevalence estimates.
-Raw forest votes remain in separately named diagnostic columns. The existing membership
-and family evidence gates now use calibrated scores; their configured cutoffs are
-interpreted on those probability scales. Validation is evaluation-only and never fits
+Raw forest votes remain separately named. The calibrated membership score drives the
+membership gate. Family-probability calibrators are retained as separate diagnostics,
+but a calibrated family confidence call is not made when the calibrated family class set is
+unavailable. The evidence-gated raw family vote may still make a specific or broad assignment;
+its score remains a decision score only, not a probability.
+The family-vote cutoffs and evidence rules are explicit in `family_assignment_policy` and
+are not selected or tuned on validation. Validation is evaluation-only and never fits
 calibrators or selects thresholds. The saved fold receipt records per-protein group IDs,
 folds, class counts, grouping method and fallback status.
+This policy changes family-call selection, not the learned feature matrix. An existing
+compatible v5.8 model can be re-evaluated or used for prediction with the current policy;
+newly trained models also embed the policy and its digest.
 
 Family calibration is one-vs-rest sigmoid calibration followed by normalization over
 families with at least 10 independent positive sequence-cluster groups and 5 negative groups.
 Families below those support floors remain visible in raw-vote diagnostics, but their
 calibrated probabilities are unavailable and they are excluded from calibrated family
-rankings and assignments. Parent-family estimates sum only calibrated descendant classes
-present in the hierarchy; each prediction records eligible and unrepresented descendants.
-Validation reports include previous raw-vote versus calibrated-policy calls on the same
-records and denominators, Brier score, log loss, reliability bins/plots, class support,
-and calibration coverage. Family probability metrics are limited to validation records
-whose expected class has a calibrated probability; unavailable counts remain explicit.
+rankings. In the saved v5.8 validation panel, only `integrin_alpha` met the per-class
+independent-group floors, while the policy requires two eligible classes to form a
+family distribution; therefore the calibrated family ranking was empty and produced
+zero family calls. This is a support limitation, not evidence that the family model
+ranked every sequence incorrectly. The previous raw-vote policy made 335 calls among
+879 family-labelled controls, 318 exactly correct (94.9% accepted precision). Applying
+the user-defined scope yielded 178 calls: 170 exact labels and 8 SOS/TIAM cases retained
+at the broad RhoGEF level, with no negative-control family calls in that validation set.
+The scoped labelled denominator was 275; broad-compatible recall was 64.7%. These are
+results for the prior allowlisted policy, not measured performance of the v2 shared-core
+broad-fallback policy. Re-evaluate the new policy on the fixed validation cohort before
+using its performance figures. These are validation-panel results, not universal accuracy
+estimates. Validation reports now
+compare selected shortlist, unrestricted raw-vote and calibrated calls on the same
+records, and distinguish exact calls from broad-family-compatible calls. Membership
+and family probability metrics remain separate; unavailable calibration counts remain
+explicit.
 
 Train and independently evaluate using a new model directory:
 

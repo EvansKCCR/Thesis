@@ -28,6 +28,185 @@
       "rule_override_policy": "Optional per-rule specific/broad acceptance thresholds in family_identity_rules.json add a family-specific route while preserving the selected profile thresholds; rule thresholds cannot exceed search_max_evalue."
     }
   },
+  "family_assignment_policy": {
+    "version": "raw_vote_evidence_gated_whitelist_v2_shared_core_broad_fallback",
+    "mode": "raw_vote_evidence_gated_whitelist",
+    "description": "Keep calibrated adhesome membership as the membership gate. Use the previous Random Forest raw-vote family ranking with its existing domain, CDD-similarity, identity-rule, margin, and minimum-example requirements. For configured shared-domain cores, require a unique CDD discriminator for a specific child; otherwise emit the configured broad family when group vote support passes. Raw vote fractions are decision scores, not probabilities.",
+    "require_calibrated_membership": true,
+    "require_raw_membership_gate": true,
+    "raw_vote_thresholds": {
+      "membership_vote_cutoff": 0.5,
+      "specific_family_vote_fraction_cutoff": 0.5,
+      "specific_family_vote_margin": 0.15,
+      "broad_parent_vote_fraction_cutoff": 0.6,
+      "minimum_family_examples": 2
+    },
+    "allowed_families": {
+      "core": [
+        "integrin_alpha",
+        "integrin_beta",
+        "talin",
+        "talin_like",
+        "kindlin",
+        "PINCH_like",
+        "parvin_like",
+        "paxillin_like",
+        "paxillin_family",
+        "alpha_actinin",
+        "ENA_VASP_like",
+        "actin_conventional",
+        "zyxin_ajuba_like",
+        "zyxin_like",
+        "ajuba_like",
+        "filamin",
+        "filamin_like",
+        "tensin_like",
+        "ILK",
+        "vinculin",
+        "FAK",
+        "PTK2"
+      ],
+      "expanded_regulatory": [
+        "Src",
+        "Rho_GTPase_like",
+        "RhoGEF_like",
+        "PAK_like",
+        "PIP5K_like",
+        "PI3K_like",
+        "PTEN_like",
+        "FARP_like",
+        "FARP",
+        "cytohesin_like",
+        "ARF_GTPase_like",
+        "ASAP_AGAP_like",
+        "ARF_GAP_like",
+        "calpain_like",
+        "dynamin_like",
+        "Abl_family",
+        "Abl"
+      ],
+      "shared_core_broad": [
+        "LIM_scaffold_screen",
+        "SH3_SH2_TK_screen",
+        "generic_PTP_screen"
+      ]
+    },
+    "label_aliases": {
+      "ptk2": "FAK",
+      "ptk2_like": "FAK",
+      "farp": "FARP_like",
+      "abl": "Abl_family",
+      "filamin_like": "filamin",
+      "paxillin_like": "paxillin_family",
+      "ajuba_like": "zyxin_ajuba_like"
+    },
+    "shared_core_resolution": {
+      "enabled": true,
+      "version": "shared_core_cdd_discrimination_v1",
+      "minimum_broad_vote_fraction": 0.6,
+      "policy": "For configured families with the same required-domain core and order, a specific call requires exactly one family-specific CDD identity-rule or CDD-fragment match within the group. If the observed core is present but the CDD evidence is absent, shared, or conflicting, suppress the specific call and emit the configured broad label when grouped raw-vote mass reaches the broad threshold.",
+      "groups": [
+        {
+          "broad_label": "LIM_scaffold_screen",
+          "members": ["PINCH_like", "zyxin_ajuba_like", "zyxin_like"],
+          "core_required_groups": [{"models": ["PF00412"], "count": 3}],
+          "ordered_groups": []
+        },
+        {
+          "broad_label": "SH3_SH2_TK_screen",
+          "members": ["Src", "Abl_family"],
+          "core_required_groups": [
+            {"models": ["PF00018"], "count": 1},
+            {"models": ["PF00017"], "count": 1},
+            {"models": ["PF07714", "PF00069"], "count": 1}
+          ],
+          "ordered_groups": [0, 1, 2]
+        },
+        {
+          "broad_label": "generic_PTP_screen",
+          "members": ["tensin_like", "PTEN_like"],
+          "core_required_groups": [{"models": ["PF10409"], "count": 1}],
+          "ordered_groups": []
+        },
+        {
+          "broad_label": "paxillin_family",
+          "members": ["PXN", "LPXN", "TGFB1I1", "PAXILLIN", "LEUPAXIN", "HIC5"],
+          "core_required_groups": [
+            {"models": ["PF03535"], "count": 1},
+            {"models": ["PF00412"], "count": 3}
+          ],
+          "ordered_groups": [0, 1]
+        }
+      ]
+    },
+    "broad_family_children": {
+      "RhoGEF_like": [
+        "SOS_like",
+        "TIAM_like"
+      ],
+      "LIM_scaffold_screen": [
+        "PINCH_like",
+        "zyxin_ajuba_like",
+        "zyxin_like",
+        "zyxin_family",
+        "ZYX",
+        "LPP",
+        "TRIP6",
+        "AJUBA",
+        "LIMD1",
+        "WTIP",
+        "FBLIM1",
+        "paxillin_like",
+        "paxillin_family",
+        "PXN",
+        "LPXN",
+        "TGFB1I1",
+        "PAXILLIN",
+        "LEUPAXIN",
+        "HIC5"
+      ],
+      "SH3_SH2_TK_screen": [
+        "Src",
+        "Src_family",
+        "SRC",
+        "FYN",
+        "YES1",
+        "LYN",
+        "LCK",
+        "HCK",
+        "BLK",
+        "FGR",
+        "Abl_family",
+        "ABL",
+        "ABL1",
+        "ABL2"
+      ],
+      "generic_PTP_screen": [
+        "tensin_like",
+        "tensin",
+        "PTEN_like",
+        "PTEN"
+      ],
+      "paxillin_family": [
+        "paxillin_like",
+        "PXN",
+        "LPXN",
+        "TGFB1I1",
+        "PAXILLIN",
+        "LEUPAXIN",
+        "HIC5"
+      ]
+    },
+    "broad_family_labels": [
+      "RhoGEF_like",
+      "LIM_scaffold_screen",
+      "SH3_SH2_TK_screen",
+      "generic_PTP_screen",
+      "paxillin_family"
+    ],
+    "abstain_outside_allowed_families": true,
+    "score_interpretation": "Random Forest raw vote fraction used only as an evidence-gated family decision score. It is not an empirically calibrated probability and must not be labelled or reported as one."
+  },
   "description": "Sequence-derived adhesome membership and named-family classifier with held-out panel reporting",
   "maximum_prediction_records_per_invocation": 250,
   "feature_schema": "sequence_family_gate_v5_8_calibrated_probabilities",
