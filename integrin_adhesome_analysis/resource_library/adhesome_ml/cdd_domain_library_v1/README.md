@@ -41,18 +41,15 @@ full rule constraints are satisfied. Proposed family/class text, same-protein fa
 context, calibration counts and the disabled alias-proposal sheet are not used as
 query features. The crosswalk and family-rule hashes are saved with each v5.8 model.
 
-Classifier v5.8 calibrates membership and family outputs separately using sigmoid
-maps fit only on group-disjoint out-of-fold calibration predictions. CD-HIT groups
+Classifier v5.8 calibrates only the binary adhesome-membership output using sigmoid
+maps fit from group-disjoint out-of-fold calibration predictions. CD-HIT groups
 sequences at 98% identity and 90% coverage of both proteins for folds; exact-sequence
 SHA-256 grouping is the recorded fallback. These grouping IDs never enter model features.
-Raw forest votes remain diagnostic fields. Family probabilities are conditional on adhesome
-association and are reported only for families meeting the configured minimum of 10
-independent positive sequence-cluster groups and 5 negative groups; other family probabilities are
-marked unavailable rather than replaced with raw votes. Validation is used only for
-reporting Brier score, log loss, reliability bins/plots, and classification metrics.
-The default membership, specific-family, margin, and broad-parent gates now operate on
-the calibrated score scales. These probabilities reflect the labelled control
-distribution and do not establish prevalence or universal biological certainty.
-Reports preserve previous raw-vote versus calibrated-policy calls on the same validation
-cohort. Parent-family probabilities sum only represented calibrated descendants and
-record any unrepresented descendant classes per prediction.
+Family assignments use Random Forest raw-vote fractions and margins as decision scores,
+alongside the existing evidence and scope gates. The default top-family vote fraction and
+minimum margin are both 0.30; the same vote-fraction cutoff applies to aggregate broad-
+family support. User overrides are recorded with each output. Validation reports the full
+configured fraction/margin grid in `raw_vote_family_threshold_sensitivity.tsv`; target
+prediction writes a matching sidecar with call counts and family distributions. No family
+probabilities or calibrated-family policy comparisons are emitted. Membership calibration
+diagnostics remain separate and conditional on the labelled control distribution.

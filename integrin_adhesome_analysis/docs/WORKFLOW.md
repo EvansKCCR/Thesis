@@ -765,49 +765,36 @@ group vote to its configured broad label. The configured collisions cover the th
 PINCH/zyxin/ajuba core, the ordered SH3/SH2/kinase Src/Abl core, the shared tensin/PTEN
 PF10409 core, and the paxillin subfamily core. Provisional family-identity-rule proposals
 follow the same scope. CDD hit class alone does not establish family identity.
-The v5.8 model calibrates membership and family scores separately using sigmoid
-calibrators fitted only to group-disjoint out-of-fold predictions from the calibration
-controls. CD-HIT groups sequences at 98% identity with at least 90% coverage of both
-sequences for fold assignment; if CD-HIT is unavailable or fails, exact-sequence
-SHA-256 groups are used and the fallback is recorded. Group identifiers control folds
-only and never enter prediction features. The binary output is an empirical adhesome-associated probability
-conditional on the labelled control distribution. Family probabilities are conditional
-on adhesome association; the optional joint family estimate is their product. These are
-not universal biological probabilities or target-population prevalence estimates.
-Raw forest votes remain separately named. The calibrated membership score drives the
-membership gate. Family-probability calibrators are retained as separate diagnostics,
-but a calibrated family confidence call is not made when the calibrated family class set is
-unavailable. The evidence-gated raw family vote may still make a specific or broad assignment;
-its score remains a decision score only, not a probability.
-The family-vote cutoffs and evidence rules are explicit in `family_assignment_policy` and
-are not selected or tuned on validation. Validation is evaluation-only and never fits
-calibrators or selects thresholds. The saved fold receipt records per-protein group IDs,
-folds, class counts, grouping method and fallback status.
-This policy changes family-call selection, not the learned feature matrix. An existing
-compatible v5.8 model can be re-evaluated or used for prediction with the current policy;
-newly trained models also embed the policy and its digest.
+The membership model retains its sigmoid calibration from group-disjoint out-of-fold
+calibration predictions. CD-HIT groups sequences at 98% identity with at least 90%
+coverage of both sequences for fold assignment; if CD-HIT is unavailable or fails,
+exact-sequence SHA-256 groups are used and the fallback is recorded. Group identifiers
+control folds only and never enter prediction features. Membership probabilities remain
+conditional on the labelled control distribution. Named-family assignments use raw
+Random Forest vote fractions and margins as decision scores, not probabilities; there is
+no calibrated-family call path or calibrated-family comparison in prediction/report
+outputs.
 
-Family calibration is one-vs-rest sigmoid calibration followed by normalization over
-families with at least 10 independent positive sequence-cluster groups and 5 negative groups.
-Families below those support floors remain visible in raw-vote diagnostics, but their
-calibrated probabilities are unavailable and they are excluded from calibrated family
-rankings. In the saved v5.8 validation panel, only `integrin_alpha` met the per-class
-independent-group floors, while the policy requires two eligible classes to form a
-family distribution; therefore the calibrated family ranking was empty and produced
-zero family calls. This is a support limitation, not evidence that the family model
-ranked every sequence incorrectly. The previous raw-vote policy made 335 calls among
-879 family-labelled controls, 318 exactly correct (94.9% accepted precision). Applying
-the user-defined scope yielded 178 calls: 170 exact labels and 8 SOS/TIAM cases retained
-at the broad RhoGEF level, with no negative-control family calls in that validation set.
-The scoped labelled denominator was 275; broad-compatible recall was 64.7%. These are
-results for the prior allowlisted policy, not measured performance of the v2 shared-core
-broad-fallback policy. Re-evaluate the new policy on the fixed validation cohort before
-using its performance figures. These are validation-panel results, not universal accuracy
-estimates. Validation reports now
-compare selected shortlist, unrestricted raw-vote and calibrated calls on the same
-records, and distinguish exact calls from broad-family-compatible calls. Membership
-and family probability metrics remain separate; unavailable calibration counts remain
-explicit.
+The default top-family raw-vote fraction is `0.30` and the default minimum margin is
+`0.30`. The same vote-fraction cutoff applies to aggregate broad-family support; the
+margin gate applies to specific-family calls, leaving supported broad calls available
+when child families are ambiguous. Both values can be overridden when evaluating or
+predicting, including from the full sensitivity grid. The validation report evaluates the
+configured grid (0.25–0.65 vote fraction and 0.00–0.30 margin) with membership, family
+evidence, broad-family hierarchy and whitelist gates held fixed. It reports
+the lowest tested margin at which a pair strictly improves both family-compatible
+precision and recall over the active default/override; ties use F1, recall, precision,
+then the lower vote-fraction cutoff. This result is exploratory and never changes the
+configured defaults automatically. The membership calibrator is fit on calibration data
+only; validation labels are evaluation inputs to the sensitivity report, not model-fit
+inputs. A threshold chosen from that report needs confirmation on an independent cohort.
+
+Training and standalone validation evaluation write
+`raw_vote_family_threshold_sensitivity.tsv` with the full labelled-control grid. Every
+target prediction also writes a `*.raw_vote_family_threshold_sensitivity.tsv` sidecar with
+the call count and family distribution for each tested pair. The prediction TSV contains
+per-protein alternative family calls for the same grid. Without reference labels, these
+target outputs describe assignment changes only and do not report precision or recall.
 
 Train and independently evaluate using a new model directory:
 
@@ -830,17 +817,18 @@ python -B resource_library/adhesome_ml/classifier.py train \
   --out runs/ml_family_v5_8_comparison/model --jobs 4
 ```
 
-The JSON and HTML reports compare sensitivity/recall and false negatives, precision,
-false positives, F1, correctly recovered positives, exact-family accuracy, and
-specific- and broad-family accuracy on a fixed cohort and denominator. They also report
-membership and family probability calibration on the eligible validation records.
+The JSON and HTML reports compare membership sensitivity/recall, false negatives,
+precision, false positives, F1, correctly recovered positives, exact-family accuracy,
+and specific- and broad-family accuracy on a fixed cohort and denominator. Family
+calling is reported from raw-vote thresholds and evidence gates only.
 
 The model directory contains the frozen CDD FASTA and metadata, model, training labels,
 validation predictions and HTML/JSON metrics. Reports include membership and family
-performance, abstentions, unseen labels, calibration overlap, probability reliability,
-and the fold assignment receipt in `probability_calibration_folds.tsv`. Sequence non-overlap
-does not establish evolutionary independence. The v5.8 workflow requires BLASTP in
-PATH in addition to the existing workflow dependencies.
+performance, abstentions, unseen labels, calibration overlap, membership probability
+reliability, raw-vote threshold sensitivity, and the membership fold receipt in
+`probability_calibration_folds.tsv`. Sequence non-overlap does not establish evolutionary
+independence. The v5.8 workflow requires BLASTP in PATH in addition to the existing
+workflow dependencies.
 
 Classifier policy 5.5 adds a separate family-identity-rule review path without
 changing the v5.4 Random Forest model or its acceptance gates. A provisional rule
@@ -859,7 +847,7 @@ used by the membership model remain restricted to their prior `1e-3` search ceil
 The binary membership model excludes the new `family_similarity:*` features, so its
 membership decision and cutoff are unchanged. Family resolution may now use a
 calibration-bank CDD-fragment match that passes both an E-value and query/subject
-coverage threshold, alongside the calibrated family probabilities, margins, domain architecture,
+coverage threshold, alongside the raw-vote family ranking, margins, domain architecture,
 and Stage 2 identity-rule support. It never compares exact sequence strings.
 
 The default family-resolution profile is `balanced`; target prediction can select
@@ -905,10 +893,30 @@ python -B resource_library/adhesome_ml/classifier.py predict \
 ```
 
 The target workflow shortcut accepts the same choice with
-`--target-ml-family-similarity-profile sensitive`. The calibrated-probability workflow
-requires a v5.8 model. v5.4 through v5.7 models contain no fitted calibrators and are
-rejected with a retraining message; their saved outputs are not rewritten. v5.8 retains
-the family-rule crosswalk combinations described below.
+`--target-ml-family-similarity-profile sensitive`. Family calling defaults to a top raw-
+vote fraction and minimum margin of `0.30` each. Standalone prediction can override them
+with `--family-vote-fraction-cutoff` and `--family-vote-margin`; target workflow runs use
+`--target-ml-family-vote-fraction-cutoff` and `--target-ml-family-vote-margin`. The
+selected pair is recorded in each prediction row and run summary. Prediction also writes
+a `*.raw_vote_family_threshold_sensitivity.tsv` sidecar; it lists counts and family distributions
+for all tested pairs, without claiming precision/recall on an unlabelled target set.
+
+For example, evaluate a selected pair from the validation grid, then apply that pair to
+target prediction explicitly:
+
+```bash
+python -B resource_library/adhesome_ml/classifier.py evaluate \
+  --model runs/ml_family_v5_8/model \
+  --validation runs/isolated_validation/validation \
+  --family-vote-fraction-cutoff 0.30 --family-vote-margin 0.30 \
+  --out runs/ml_family_v5_8/validation_report_030_030
+```
+
+Omitting the two threshold flags uses `0.30` for each. The v5.8 model is needed for
+membership calibration; family calls themselves use only raw votes and evidence gates.
+v5.4 through v5.7 models lack the required membership calibrator and are rejected with a
+retraining message; existing outputs are not rewritten. v5.8 retains the family-rule
+crosswalk combinations described below.
 
 To evaluate a frozen model without retraining, use a new report directory:
 

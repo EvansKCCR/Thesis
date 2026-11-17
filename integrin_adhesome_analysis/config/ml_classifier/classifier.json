@@ -2,9 +2,6 @@
   "version": "5.8",
   "family_gate": {
     "membership_probability_cutoff": 0.5,
-    "specific_family_probability_cutoff": 0.5,
-    "specific_family_probability_margin": 0.15,
-    "broad_parent_probability_cutoff": 0.6,
     "minimum_family_examples": 2,
     "family_similarity": {
       "default_profile": "balanced",
@@ -12,16 +9,40 @@
       "legacy_model_feature_max_evalue": 0.001,
       "profiles": {
         "strict": {
-          "specific": {"max_evalue": 1e-10, "min_query_coverage": 0.06, "min_subject_coverage": 0.4},
-          "broad": {"max_evalue": 1e-5, "min_query_coverage": 0.04, "min_subject_coverage": 0.25}
+          "specific": {
+            "max_evalue": 1e-10,
+            "min_query_coverage": 0.06,
+            "min_subject_coverage": 0.4
+          },
+          "broad": {
+            "max_evalue": 1e-05,
+            "min_query_coverage": 0.04,
+            "min_subject_coverage": 0.25
+          }
         },
         "balanced": {
-          "specific": {"max_evalue": 1e-5, "min_query_coverage": 0.04, "min_subject_coverage": 0.3},
-          "broad": {"max_evalue": 0.01, "min_query_coverage": 0.02, "min_subject_coverage": 0.15}
+          "specific": {
+            "max_evalue": 1e-05,
+            "min_query_coverage": 0.04,
+            "min_subject_coverage": 0.3
+          },
+          "broad": {
+            "max_evalue": 0.01,
+            "min_query_coverage": 0.02,
+            "min_subject_coverage": 0.15
+          }
         },
         "sensitive": {
-          "specific": {"max_evalue": 0.001, "min_query_coverage": 0.03, "min_subject_coverage": 0.2},
-          "broad": {"max_evalue": 0.01, "min_query_coverage": 0.01, "min_subject_coverage": 0.1}
+          "specific": {
+            "max_evalue": 0.001,
+            "min_query_coverage": 0.03,
+            "min_subject_coverage": 0.2
+          },
+          "broad": {
+            "max_evalue": 0.01,
+            "min_query_coverage": 0.01,
+            "min_subject_coverage": 0.1
+          }
         }
       },
       "rule_override_key": "sequence_similarity_policy",
@@ -29,17 +50,42 @@
     }
   },
   "family_assignment_policy": {
-    "version": "raw_vote_evidence_gated_whitelist_v2_shared_core_broad_fallback",
+    "version": "rule_anchored_provisional_v1",
     "mode": "raw_vote_evidence_gated_whitelist",
-    "description": "Keep calibrated adhesome membership as the membership gate. Use the previous Random Forest raw-vote family ranking with its existing domain, CDD-similarity, identity-rule, margin, and minimum-example requirements. For configured shared-domain cores, require a unique CDD discriminator for a specific child; otherwise emit the configured broad family when group vote support passes. Raw vote fractions are decision scores, not probabilities.",
+    "description": "Keep the separate adhesome-membership gate. Use Random Forest raw-vote family ranking with domain, CDD-similarity, identity-rule, configurable vote-fraction and margin, and minimum-example requirements. Defaults are a top-family vote fraction of 0.30 and margin of 0.30; the same vote-fraction cutoff applies to aggregate broad-family support. User overrides are recorded with each run. For configured shared-domain cores, require a unique CDD discriminator for a specific child; otherwise emit the configured broad family when group vote support passes. Raw vote fractions are decision scores, not probabilities. Unique complete sequence identity rules may emit provisional calls independently of RF rank. Rescue-only or curated-specific-hit rules cannot directly assign using inferred CDD fragments.",
     "require_calibrated_membership": true,
     "require_raw_membership_gate": true,
     "raw_vote_thresholds": {
       "membership_vote_cutoff": 0.5,
-      "specific_family_vote_fraction_cutoff": 0.5,
-      "specific_family_vote_margin": 0.15,
-      "broad_parent_vote_fraction_cutoff": 0.6,
+      "specific_family_vote_fraction_cutoff": 0.3,
+      "specific_family_vote_margin": 0.3,
+      "broad_parent_vote_fraction_cutoff": 0.3,
       "minimum_family_examples": 2
+    },
+    "raw_vote_threshold_sensitivity": {
+      "enabled": true,
+      "top_family_vote_fraction_cutoffs": [
+        0.25,
+        0.3,
+        0.35,
+        0.4,
+        0.45,
+        0.5,
+        0.55,
+        0.6,
+        0.65
+      ],
+      "minimum_margin_cutoffs": [
+        0.0,
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3
+      ],
+      "comparison": "active_output_thresholds",
+      "selection_policy": "Report the least-margin tested pair that strictly improves both family-compatible precision and recall over the active output thresholds; break ties by highest F1, then recall, then precision, then lower top-family vote fraction. This is a validation diagnostic only; it does not change the configured thresholds."
     },
     "allowed_families": {
       "core": [
@@ -103,39 +149,102 @@
     "shared_core_resolution": {
       "enabled": true,
       "version": "shared_core_cdd_discrimination_v1",
-      "minimum_broad_vote_fraction": 0.6,
-      "policy": "For configured families with the same required-domain core and order, a specific call requires exactly one family-specific CDD identity-rule or CDD-fragment match within the group. If the observed core is present but the CDD evidence is absent, shared, or conflicting, suppress the specific call and emit the configured broad label when grouped raw-vote mass reaches the broad threshold.",
+      "policy": "For configured families with the same required-domain core and order, a specific call requires exactly one family-specific CDD identity-rule or CDD-fragment match within the group. If the observed core is present but the CDD evidence is absent, shared, or conflicting, suppress the specific call and emit the configured broad label when grouped raw-vote mass reaches the same configurable vote-fraction threshold used for specific calls.",
       "groups": [
         {
           "broad_label": "LIM_scaffold_screen",
-          "members": ["PINCH_like", "zyxin_ajuba_like", "zyxin_like"],
-          "core_required_groups": [{"models": ["PF00412"], "count": 3}],
+          "members": [
+            "PINCH_like",
+            "zyxin_ajuba_like",
+            "zyxin_like"
+          ],
+          "core_required_groups": [
+            {
+              "models": [
+                "PF00412"
+              ],
+              "count": 3
+            }
+          ],
           "ordered_groups": []
         },
         {
           "broad_label": "SH3_SH2_TK_screen",
-          "members": ["Src", "Abl_family"],
-          "core_required_groups": [
-            {"models": ["PF00018"], "count": 1},
-            {"models": ["PF00017"], "count": 1},
-            {"models": ["PF07714", "PF00069"], "count": 1}
+          "members": [
+            "Src",
+            "Abl_family"
           ],
-          "ordered_groups": [0, 1, 2]
+          "core_required_groups": [
+            {
+              "models": [
+                "PF00018"
+              ],
+              "count": 1
+            },
+            {
+              "models": [
+                "PF00017"
+              ],
+              "count": 1
+            },
+            {
+              "models": [
+                "PF07714",
+                "PF00069"
+              ],
+              "count": 1
+            }
+          ],
+          "ordered_groups": [
+            0,
+            1,
+            2
+          ]
         },
         {
           "broad_label": "generic_PTP_screen",
-          "members": ["tensin_like", "PTEN_like"],
-          "core_required_groups": [{"models": ["PF10409"], "count": 1}],
+          "members": [
+            "tensin_like",
+            "PTEN_like"
+          ],
+          "core_required_groups": [
+            {
+              "models": [
+                "PF10409"
+              ],
+              "count": 1
+            }
+          ],
           "ordered_groups": []
         },
         {
           "broad_label": "paxillin_family",
-          "members": ["PXN", "LPXN", "TGFB1I1", "PAXILLIN", "LEUPAXIN", "HIC5"],
-          "core_required_groups": [
-            {"models": ["PF03535"], "count": 1},
-            {"models": ["PF00412"], "count": 3}
+          "members": [
+            "PXN",
+            "LPXN",
+            "TGFB1I1",
+            "PAXILLIN",
+            "LEUPAXIN",
+            "HIC5"
           ],
-          "ordered_groups": [0, 1]
+          "core_required_groups": [
+            {
+              "models": [
+                "PF03535"
+              ],
+              "count": 1
+            },
+            {
+              "models": [
+                "PF00412"
+              ],
+              "count": 3
+            }
+          ],
+          "ordered_groups": [
+            0,
+            1
+          ]
         }
       ]
     },
@@ -205,11 +314,13 @@
       "paxillin_family"
     ],
     "abstain_outside_allowed_families": true,
-    "score_interpretation": "Random Forest raw vote fraction used only as an evidence-gated family decision score. It is not an empirically calibrated probability and must not be labelled or reported as one."
+    "score_interpretation": "Random Forest raw vote fraction used only as an evidence-gated family decision score. It is not an empirically calibrated probability and must not be labelled or reported as one.",
+    "direct_rule_provisional": true,
+    "sequence_exclusions": []
   },
-  "description": "Sequence-derived adhesome membership and named-family classifier with held-out panel reporting",
+  "description": "Sequence-derived adhesome membership and raw-vote named-family classifier with configurable call cutoffs and held-out panel reporting",
   "maximum_prediction_records_per_invocation": 250,
-  "feature_schema": "sequence_family_gate_v5_8_calibrated_probabilities",
+  "feature_schema": "sequence_family_gate_v5_8_membership_calibrated_raw_vote_family",
   "probability_calibration": {
     "method": "sigmoid",
     "grouping": "CD-HIT clustered OOF at 98% identity and 90% coverage of both sequences, with exact-sequence SHA-256 fallback",
@@ -223,19 +334,21 @@
     "max_splits": 5,
     "random_state": 3817,
     "membership_min_independent_groups_per_class": 5,
-    "family_min_positive_groups_per_class": 10,
-    "family_min_negative_groups_per_class": 5,
-    "family_min_calibrated_classes": 2,
-    "reliability_bins": 10,
-    "family_mapping": "one_vs_rest_sigmoid_then_renormalize_eligible_classes",
-    "minimum_family_support_policy": "families below the independent-cluster thresholds remain raw-vote diagnostics and are excluded from calibrated family rankings and evidence-gated assignments"
+    "reliability_bins": 10
   },
   "family_signature_crosswalk": {
     "path": "resource_library/adhesome_ml/cdd_domain_library_v1/adhesome_family_rule_crosswalk.xlsx",
     "review_sheet": "CDD_Review",
     "catalogue_sheet": "Full_Catalogue_5570",
-    "review_priorities_used": ["P1_named_model_review", "P2_competing_identity_review", "P3_architecture_review"],
-    "family_pattern_categories_used": ["family_pattern_candidate", "family_pattern_ambiguous"],
+    "review_priorities_used": [
+      "P1_named_model_review",
+      "P2_competing_identity_review",
+      "P3_architecture_review"
+    ],
+    "family_pattern_categories_used": [
+      "family_pattern_candidate",
+      "family_pattern_ambiguous"
+    ],
     "require_configured_identity_architecture": true,
     "ignore_alias_proposals": true
   },
@@ -269,7 +382,6 @@
     "non_adhesome"
   ],
   "default_membership_probability_cutoff": 0.5,
-  "probability_gate_threshold_policy": "The existing membership, specific-family, family-margin, and broad-parent numeric cutoffs are fixed pre-validation values and now apply to calibrated probabilities. They are not refit or selected from independent validation results.",
   "feature_policy": {
     "include": [
       "Verified Pfam identity, copy number, score, E-value, profile coverage and relative position",
@@ -301,9 +413,9 @@
   "training_policy": {
     "membership_labels": "calibration control labels only",
     "family_labels": "unambiguous expected_families/trusted_family labels only; no audit assignments",
-    "validation": "evaluation only; no fitting or threshold selection",
-    "probabilities": "sigmoid mappings fitted on group-disjoint out-of-fold calibration predictions only; validation is evaluation-only; probabilities are conditional on the labelled control distribution",
-    "probability_calibration_policy": "Fit membership and family calibrators separately from CD-HIT-clustered or exact-sequence-fallback out-of-fold calibration predictions. Keep raw RF votes as diagnostic fields. Calibrated probabilities drive membership and family evidence gates. Validation never fits calibrators or selects thresholds. Family probabilities cover only classes meeting configured independent-cluster minimums; probabilities are renormalized over those eligible classes and other families are explicitly marked unavailable.",
+    "validation": "evaluation only for model/calibrator fitting; also produces a raw-vote fraction/margin sensitivity report. Sensitivity results do not automatically change prediction thresholds",
+    "probabilities": "Only membership probabilities are sigmoid-calibrated using group-disjoint out-of-fold calibration predictions; these are conditional on the labelled control distribution. Family scores are raw Random Forest vote fractions and margins, not probabilities",
+    "probability_calibration_policy": "Fit the binary membership calibrator from CD-HIT-clustered or exact-sequence-fallback out-of-fold calibration predictions only. Family calls use configurable raw-vote thresholds and sequence evidence gates; no calibrated-family calls or calibrated-family report comparisons are emitted. Validation is not used to fit the model or calibrator. Its full threshold grid is a diagnostic report, and user-selected thresholds must be passed explicitly for prediction.",
     "cdd_reference_policy": "Retain all SHA-256-verified CDD fragments from calibration-positive controls, whether or not a trusted family label maps; exclude validation-origin fragments; exclude same-protein calibration references during training",
     "identity_rule_feature_policy": "Evaluate only sequence-supported identity-rule fields identically in calibration, validation and target prediction; do not use family labels, assignment decisions, topology, orthology, localization or signal peptide",
     "posthoc_sequence_rule_feature_policy": "Parse only boolean conditions and sequence-signature tokens from the post-hoc specific() and broad() rules. Validation data remain evaluation-only; no post-hoc outputs or proposed labels enter fitting or features.",

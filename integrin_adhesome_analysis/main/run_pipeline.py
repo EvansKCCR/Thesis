@@ -40,6 +40,10 @@ def main(argv=None):
     parser.add_argument('--target-ml-model',type=Path,help='Target-only shortcut: classify Stage 1 candidates in batches of 250 and skip Stage 2 annotation, orthology, audit, benchmark and phylogeny; accepts model file or model directory')
     parser.add_argument('--target-ml-family-similarity-profile',choices=['strict','balanced','sensitive'],
                         help='Family-resolution E-value/coverage tier for the target ML shortcut; does not change membership calls')
+    parser.add_argument('--target-ml-family-vote-fraction-cutoff',type=float,
+                        help='Override the target ML top-family raw-vote cutoff; defaults to 0.30')
+    parser.add_argument('--target-ml-family-vote-margin',type=float,
+                        help='Override the target ML minimum raw-vote margin; defaults to 0.30')
     parser.add_argument('--compare-calibration',type=Path,help='Previous isolated calibration reports directory for assignment/metric drift diagnostics')
     for kind in ('calibration','validation'):
         parser.add_argument('--'+kind+'-fasta',type=Path,default=_layout_resource(ROOT/f'validation/{kind}.faa'))
@@ -69,6 +73,17 @@ def main(argv=None):
         parser.error('--target-ml-family-similarity-profile is a target-only option')
     if args.target_ml_family_similarity_profile and not args.target_ml_model and not args.resume:
         parser.error('--target-ml-family-similarity-profile requires --target-ml-model')
+    if args.target_ml_family_vote_fraction_cutoff is not None and args.mode!='target':
+        parser.error('--target-ml-family-vote-fraction-cutoff is a target-only option')
+    if args.target_ml_family_vote_margin is not None and args.mode!='target':
+        parser.error('--target-ml-family-vote-margin is a target-only option')
+    if ((args.target_ml_family_vote_fraction_cutoff is not None or args.target_ml_family_vote_margin is not None)
+            and not args.target_ml_model and not args.resume):
+        parser.error('target family vote overrides require --target-ml-model')
+    if args.target_ml_family_vote_fraction_cutoff is not None and not 0.0 <= args.target_ml_family_vote_fraction_cutoff <= 1.0:
+        parser.error('--target-ml-family-vote-fraction-cutoff must be between 0 and 1')
+    if args.target_ml_family_vote_margin is not None and not 0.0 <= args.target_ml_family_vote_margin <= 1.0:
+        parser.error('--target-ml-family-vote-margin must be between 0 and 1')
     from schisto_adhesome.workflows import run
     try:return run(args)
     except (OSError,ValueError,KeyError) as exc:

@@ -23,7 +23,7 @@ from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score,
 from sklearn.pipeline import Pipeline
 
 VERSION = "5.8"
-FEATURE_SCHEMA = "sequence_family_gate_v5_8_calibrated_probabilities"
+FEATURE_SCHEMA = "sequence_family_gate_v5_8_membership_calibrated_raw_vote_family"
 _BUNDLE = Path(__file__).resolve().parents[2]
 _SETTINGS_PATH = _BUNDLE / "config/ml_classifier/classifier.json"
 _SETTINGS = json.loads(_SETTINGS_PATH.read_text(encoding="utf-8"))
@@ -814,6 +814,10 @@ def main(argv=None) -> int:
     pred.add_argument("--batch", action="store_true", help="Process any input size in sequential chunks of at most 250 proteins")
     pred.add_argument("--out", type=Path, required=True)
     pred.add_argument("--threshold", type=float, default=float(_SETTINGS["default_membership_probability_cutoff"]), help="Cutoff on the calibrated adhesome-membership probability")
+    pred.add_argument("--family-vote-fraction-cutoff",type=float,default=None,
+        help="Override the top-family raw-vote cutoff (default: configured 0.30; see validation sensitivity grid)")
+    pred.add_argument("--family-vote-margin",type=float,default=None,
+        help="Override the minimum top-versus-runner-up raw-vote margin (default: configured 0.30; see validation sensitivity grid)")
     pred.add_argument("--family-similarity-profile", choices=sorted(_SETTINGS["family_gate"]["family_similarity"]["profiles"]),
         default=None,
         help="Family-resolution E-value/coverage tier; defaults to the saved model policy and does not alter adhesome-membership calls")
@@ -822,6 +826,10 @@ def main(argv=None) -> int:
     evaluation.add_argument('--model', type=Path, required=True)
     evaluation.add_argument('--validation', type=Path, required=True)
     evaluation.add_argument('--out', type=Path, required=True, help='New validation report directory')
+    evaluation.add_argument('--family-vote-fraction-cutoff',type=float,default=None,
+        help='Evaluate with an explicit top-family raw-vote cutoff; default comes from configuration')
+    evaluation.add_argument('--family-vote-margin',type=float,default=None,
+        help='Evaluate with an explicit minimum raw-vote margin; default comes from configuration')
     evaluation.add_argument('--family-similarity-profile', choices=sorted(_SETTINGS['family_gate']['family_similarity']['profiles']),
         default=None,help='Evaluate this family-resolution profile; defaults to the saved model policy and does not change membership calls')
     from family_gate import evaluate_family_gate
@@ -848,10 +856,19 @@ def main(argv=None) -> int:
                 raise ValueError("--evidence-dir must be an existing Stage 1 detection directory")
             if not 0.0 < args.threshold < 1.0:
                 raise ValueError("--threshold must be between 0 and 1")
+            if args.family_vote_fraction_cutoff is not None and not 0.0 <= args.family_vote_fraction_cutoff <= 1.0:
+                raise ValueError("--family-vote-fraction-cutoff must be between 0 and 1")
+            if args.family_vote_margin is not None and not 0.0 <= args.family_vote_margin <= 1.0:
+                raise ValueError("--family-vote-margin must be between 0 and 1")
             if args.out.exists():
                 raise ValueError("Choose a new prediction output path; existing files are never overwritten")
             if not args.model.is_file() and not (args.model.is_dir() and (args.model / "adhesome_ml.joblib").is_file()):
                 raise ValueError("--model must be a saved adhesome_ml.joblib file or a directory containing it")
+        elif args.command == "evaluate":
+            if args.family_vote_fraction_cutoff is not None and not 0.0 <= args.family_vote_fraction_cutoff <= 1.0:
+                raise ValueError("--family-vote-fraction-cutoff must be between 0 and 1")
+            if args.family_vote_margin is not None and not 0.0 <= args.family_vote_margin <= 1.0:
+                raise ValueError("--family-vote-margin must be between 0 and 1")
         return args.func(args)
     except (OSError, ValueError, KeyError, csv.Error) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

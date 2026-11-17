@@ -127,9 +127,10 @@ The 38-model HMM expansion preserved the original 176 model records, versions an
 GA thresholds. It does not add observations to old scans. The receipt is
 [pfam_expansion_20261026.json](../maintenance/pfam_expansion_20261026.json).
 Component-reference label provenance predates the latest family catalogue and
-needs a separate verified refresh. The numerical family/name probability model
-is stale pending an explicit local refit; do not falsify its provenance to make
-it current. Computational family support remains available without that fit.
+needs a separate verified refresh. The current classifier calibrates binary
+adhesome membership only; named-family assignments use evidence-gated raw Random
+Forest vote fractions and margins, not family probabilities. Computational family
+support remains available without a numerical family-identity probability model.
 
 ## Stages and evidence interpretation
 
@@ -408,3 +409,26 @@ not audit grades or calibrated probabilities. Supported assignments and explicit
 negative exclusions are retained. See the
 [post hoc guide](../../schisto_pfam_cdd_reclassify/README_local_Pfam_CDD_reclassification.md)
 and the `refine-unresolved` command in the workflow guide.
+
+
+## Provisional family gate (rule_anchored_provisional_v1)
+
+The default family policy now enables `direct_rule_provisional` in `config/ml_classifier/classifier.json`. Both existing membership cutoffs and configured sequence exclusions precede family assignment. Unique complete sequence identity rules can emit provisional specific calls despite RF disagreement; duplicate aliases collapse, conflicting children resolve only to a unique allowed common parent, and unrelated conflicts abstain. RF-only resolution retains its existing evidence and scope checks. These calls do not establish orthology or replace complete Stage 2 resolution.
+
+Rescue-only rules and rules requiring curated NCBI-specific hits cannot directly assign from inferred CDD-fragment similarity. The classifier currently has no configured sequence exclusions: `sequence_exclusions` is empty. Explicit sequence-feature predicates can be supplied as objects with `id` and `all_features` (feature-to-minimum-value mapping). Expected negative-control labels are never exclusion inputs.
+
+New fields record provisional status, direct-rule calls, rescues, previous RF assignment, RF disagreement and per-rule observed features/unmet constraints. Rule calls have no assignment RF score; top RF votes remain diagnostics. Existing membership predictions and feature schema are preserved; output schema is `provisional_family_v1`. Setting `direct_rule_provisional` to false restores RF-only routing. No threshold was selected using validation.
+
+From the bundle root, train into a fresh directory and generate independent evaluation:
+
+```bash
+python -B resource_library/adhesome_ml/classifier.py train --calibration runs/isolated_validation/calibration --validation runs/isolated_validation/validation --out runs/ml_rule_provisional_v1/model --jobs 4
+```
+
+Predict from verified Stage 1 evidence (replace FASTA and detection paths with the matching handoff):
+
+```bash
+python -B resource_library/adhesome_ml/classifier.py predict --model runs/ml_rule_provisional_v1/model --fasta runs/handoff/external_candidates.faa --evidence-dir runs/handoff/detection --batch --out runs/ml_rule_provisional_v1/targets
+```
+
+The report retains exact rule recall, RF top-1/top-3 diagnostics, accepted family metrics and existing scope-specific metrics, and adds direct calls, rescues, coverage, exact F1 and exclusion counts. Full metrics remain in JSON and the HTML details panel. Report truth-labelled false positives as evaluation errors, not deployable exclusion features.

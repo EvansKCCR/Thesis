@@ -187,13 +187,14 @@ rules and the prohibition on inferring hydroxyproline from FASTA O. After a new
 motif resource revision, reimport/reannotate into a new annotation directory;
 superseded motif IDs do not score merely because they exist in old results.
 
-Numerical family/protein-name probabilities require positive labelled calibration
-proteins, matching current evidence/rules and an explicit validated fitting
-procedure. Negatives are exclusion gates, not identity-class examples. The stale
-bundled model must remain disabled where its checks fail; evidence confidence can
-still be strong after family gates pass. Refit is a separate analysis, never a
-side effect of documentation or resource cleanup. Reference overlap and finite
-label coverage must remain visible in probability reports.
+The current ML classifier calibrates binary adhesome membership only. Named-family
+calls use evidence-gated raw Random Forest vote fractions and margins; they are not
+reported as family probabilities. Any future family/protein-name probability model
+requires positive labelled calibration proteins, matching current evidence/rules
+and an explicit validated fitting procedure. Negatives are exclusion gates, not
+identity-class examples. Refit is a separate analysis, never a side effect of
+documentation or resource cleanup. Reference overlap and finite label coverage must
+remain visible in membership-probability reports.
 
 The optional calibration FASTA retrieval utility in
 `validation/build_calibration_set/` retrieves public reviewed human records using

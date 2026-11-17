@@ -206,6 +206,7 @@ def _target_ml_shortcut(branch, args, contract, stages, stage):
         raise ValueError('Returned evidence was not frozen for this target ML classifier run')
     output=_layout_resource(branch/'ml_classifier')
     predictions=_layout_resource(output/'predictions.tsv')
+    sensitivity_report=_layout_resource(output/'predictions.raw_vote_family_threshold_sensitivity.tsv')
     script=_layout_resource(ROOT/'resource_library/adhesome_ml/classifier.py')
     stage1_evidence=_layout_resource(branch/'handoff/detection')
 
@@ -219,13 +220,31 @@ def _target_ml_shortcut(branch, args, contract, stages, stage):
             profile=selected.get('family_similarity_profile')
             if profile and profile!='model_default':
                 command+=['--family-similarity-profile',str(profile)]
+            if selected.get('family_vote_fraction_cutoff') is not None:
+                command+=['--family-vote-fraction-cutoff',str(selected['family_vote_fraction_cutoff'])]
+            if selected.get('family_vote_margin') is not None:
+                command+=['--family-vote-margin',str(selected['family_vote_margin'])]
             if args.context_dir:
                 command+=['--returned',str(_layout_resource(args.context_dir).resolve())]
-            if predictions.exists():predictions.unlink()
+            for stale_output in (predictions,sensitivity_report):
+                if stale_output.exists():stale_output.unlink()
             core.execute(command,_layout_resource(branch/'logs/ml_classifier'),label='target ML classifier batch prediction')
         else:
             output.mkdir(parents=True,exist_ok=True)
+            for stale_output in (predictions,sensitivity_report):
+                if stale_output.exists():stale_output.unlink()
             predictions.write_text('protein_id\tclassifier_call\n',encoding='utf-8')
+            classifier_config=json.loads(_layout_resource(ROOT/'config/ml_classifier/classifier.json').read_text(encoding='utf-8'))
+            family_policy=classifier_config['family_assignment_policy']
+            thresholds=family_policy['raw_vote_thresholds']
+            sensitivity=family_policy.get('raw_vote_threshold_sensitivity',{})
+            lines=['top_family_raw_vote_fraction_cutoff\tminimum_margin\tfamily_calls\tfamily_call_counts_json\tis_configured_output_threshold']
+            for vote_cutoff in sorted({float(x) for x in sensitivity.get('top_family_vote_fraction_cutoffs',[])}):
+                for margin_cutoff in sorted({float(x) for x in sensitivity.get('minimum_margin_cutoffs',[])}):
+                    is_default=(abs(vote_cutoff-float(thresholds['specific_family_vote_fraction_cutoff']))<1e-9 and
+                                abs(margin_cutoff-float(thresholds['specific_family_vote_margin']))<1e-9)
+                    lines.append(f'{vote_cutoff:.3f}\t{margin_cutoff:.3f}\t0\t{{}}\t{str(is_default).lower()}')
+            sensitivity_report.write_text('\n'.join(lines)+'\n',encoding='utf-8')
         rows=read(predictions)
         counts={}
         for row in rows:

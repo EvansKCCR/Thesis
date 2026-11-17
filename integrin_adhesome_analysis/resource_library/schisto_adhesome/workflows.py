@@ -458,20 +458,40 @@ def prepare(args):
             else:
                 context_dir=saved_classifier.get('returned_evidence_directory')
                 context_hashes=saved_classifier.get('returned_evidence_hashes',{})
+            ml_settings=json.loads(_layout_resource(ROOT/'config/ml_classifier/classifier.json').read_text(encoding='utf-8'))
+            raw_vote_defaults=ml_settings['family_assignment_policy']['raw_vote_thresholds']
+            vote_fraction=(getattr(args,'target_ml_family_vote_fraction_cutoff',None)
+                if getattr(args,'target_ml_family_vote_fraction_cutoff',None) is not None else
+                saved_classifier.get('family_vote_fraction_cutoff',raw_vote_defaults['specific_family_vote_fraction_cutoff']))
+            vote_margin=(getattr(args,'target_ml_family_vote_margin',None)
+                if getattr(args,'target_ml_family_vote_margin',None) is not None else
+                saved_classifier.get('family_vote_margin',raw_vote_defaults['specific_family_vote_margin']))
             similarity_profile=(getattr(args,'target_ml_family_similarity_profile',None)
                 or saved_classifier.get('family_similarity_profile') or 'model_default')
             target_classifier=dict(enabled=True,model_path=str(model),model_sha256=sha(model),batch_size=250,
                 returned_evidence_directory=context_dir,returned_evidence_hashes=context_hashes,
-                family_similarity_profile=similarity_profile)
+                family_similarity_profile=similarity_profile,
+                family_vote_fraction_cutoff=float(vote_fraction),family_vote_margin=float(vote_margin))
         elif saved_classifier.get('enabled'):
             model=_layout_resource(Path(saved_classifier.get('model_path',''))).resolve()
             if not _layout_resource(model).is_file() or sha(model)!=saved_classifier.get('model_sha256'):
                 raise ValueError('Saved target ML classifier model is missing or has changed')
             target_classifier=dict(saved_classifier)
+            ml_settings=json.loads(_layout_resource(ROOT/'config/ml_classifier/classifier.json').read_text(encoding='utf-8'))
+            raw_vote_defaults=ml_settings['family_assignment_policy']['raw_vote_thresholds']
             profile=getattr(args,'target_ml_family_similarity_profile',None)
             if profile:target_classifier['family_similarity_profile']=profile
+            vote_fraction=getattr(args,'target_ml_family_vote_fraction_cutoff',None)
+            vote_margin=getattr(args,'target_ml_family_vote_margin',None)
+            target_classifier['family_vote_fraction_cutoff']=float(vote_fraction if vote_fraction is not None
+                else target_classifier.get('family_vote_fraction_cutoff',raw_vote_defaults['specific_family_vote_fraction_cutoff']))
+            target_classifier['family_vote_margin']=float(vote_margin if vote_margin is not None
+                else target_classifier.get('family_vote_margin',raw_vote_defaults['specific_family_vote_margin']))
         if getattr(args,'target_ml_family_similarity_profile',None) and not target_classifier:
             raise ValueError('--target-ml-family-similarity-profile requires an active target ML classifier')
+        if (getattr(args,'target_ml_family_vote_fraction_cutoff',None) is not None or
+                getattr(args,'target_ml_family_vote_margin',None) is not None) and not target_classifier:
+            raise ValueError('Family vote overrides require an active target ML classifier')
     contract = dict(evolutionary_evidence=evolutionary_evidence,version='1.0', mode=args.mode, frozen_settings=settings,
         algorithm_files=algorithm_inventory(),references=reference_inventory(args.reference_raw,selected),
         datasets={kind:summary for kind,(_,summary) in datasets.items()},

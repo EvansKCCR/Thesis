@@ -1,21 +1,22 @@
-"""FASTA-derived family learning. Validation labels never enter fitting or thresholds."""
+"""FASTA-derived family learning; validation labels do not enter model or calibrator fitting."""
 import hashlib
 import html
 import json
 import re
 import tempfile
+import csv
 from collections import Counter, defaultdict
 from pathlib import Path
 
-SCHEMA = 'sequence_family_gate_v5_8_calibrated_probabilities'
+SCHEMA = 'sequence_family_gate_v5_8_membership_calibrated_raw_vote_family'
+LEGACY_SCHEMA = 'sequence_family_gate_v5_8_calibrated_probabilities'
 from cdd_features import build_calibration_bank, similarity_features
 from family_signature_features import extract as crosswalk_signature_features, load_library as load_crosswalk_library
 from identity_rule_features import features as identity_rule_features, load_rules as load_identity_rules
 from posthoc_rule_features import extract as posthoc_sequence_features, load_rules as load_posthoc_rules
 from probability_calibration import (CalibrationUnavailable, apply_binary_sigmoid,
-    apply_family_sigmoids, cross_fitted_probabilities, fit_binary_sigmoid,
-    fit_family_sigmoids, probability_metrics_binary, sequence_cluster_groups,
-    probability_metrics_multiclass)
+    cross_fitted_probabilities, fit_binary_sigmoid, probability_metrics_binary,
+    sequence_cluster_groups)
 
 
 def sequence_digest(sequence):
@@ -306,8 +307,7 @@ def _shared_core_family_resolution(top, ranking, row, c, assignment_policy,
         return None
     top_tokens=_family_label_tokens(top,aliases,assignment_policy)
     raw_thresholds=(assignment_policy or {}).get('raw_vote_thresholds',{})
-    broad_cutoff=float(settings.get('minimum_broad_vote_fraction',
-        raw_thresholds.get('broad_parent_vote_fraction_cutoff',0.6)))
+    broad_cutoff=float(raw_thresholds.get('broad_parent_vote_fraction_cutoff',0.3))
     allowed,_,_,_,_=_family_policy_maps(assignment_policy or {})
     proposal_tokens={_family_policy_token(x) for x in (rule_source_families or set())}
     for group in settings.get('groups',[]) or []:
@@ -365,7 +365,7 @@ def decide(membership, ranking, row, profiles, counts, parents, policy, c,
     if membership < policy['membership_probability_cutoff']:
         return 'non_adhesome', '', 'membership_below_cutoff'
     if not ranking:
-        return ('domain_only' if observed else 'unresolved'), '', 'family_probability_unavailable'
+        return ('domain_only' if observed else 'unresolved'), '', 'family_vote_ranking_unavailable'
     top, score = ranking[0]
     margin = score - (ranking[1][1] if len(ranking) > 1 else 0)
     shared = observed & set(profiles[top])
@@ -376,7 +376,7 @@ def decide(membership, ranking, row, profiles, counts, parents, policy, c,
     specific_similarity=(_family_similarity_match(row,top,'specific',similarity_settings,similarity_selection,
         identity_rules,aliases) if similarity_settings and similarity_selection else None)
     rule_specific=top in rule_families
-    if (not shared_core_resolution or not shared_core_resolution.get('suppress_specific')) and (shared or specific_similarity or rule_specific) and counts[top] >= policy['minimum_family_examples'] and score >= policy['specific_family_probability_cutoff'] and margin >= policy['specific_family_probability_margin']:
+    if (not shared_core_resolution or not shared_core_resolution.get('suppress_specific')) and (shared or specific_similarity or rule_specific) and counts[top] >= policy['minimum_family_examples'] and score >= policy['specific_family_vote_fraction_cutoff'] and margin >= policy['specific_family_vote_margin']:
         support_reason=('family_vote_margin_and_identity_rule_support' if rule_specific else
                         'family_vote_margin_and_evalue_similarity_support' if specific_similarity else
                         'family_vote_margin_and_shared_domain_support')
@@ -406,7 +406,7 @@ def decide(membership, ranking, row, profiles, counts, parents, policy, c,
             _family_similarity_match(row,name,'broad',similarity_settings,similarity_selection,
                 identity_rules,aliases) for name in related))
         rule_support=any(name in rule_families for name in related)
-        if vote >= policy['broad_parent_probability_cutoff'] and (domain_support or similarity_support or rule_support):
+        if vote >= policy['broad_parent_vote_fraction_cutoff'] and (domain_support or similarity_support or rule_support):
             reason=('shared_parent_vote_and_identity_rule_support' if rule_support else
                     'shared_parent_vote_and_evalue_similarity_support' if similarity_support else
                     'shared_parent_vote_and_domain_support')
@@ -526,6 +526,7 @@ def _family_policy_metrics(rows, predictions, truth, expected_labels, saved, c, 
     results = {
         'version': policy.get('version', ''),
         'mode': policy.get('mode', ''),
+        'raw_vote_thresholds':dict(policy.get('raw_vote_thresholds') or {}),
         'score_interpretation': policy.get('score_interpretation', ''),
         'labelled_family_controls': len(labelled),
         'in_scope_labelled_family_controls': len(scope_labelled),
@@ -562,14 +563,11 @@ def _family_policy_metrics(rows, predictions, truth, expected_labels, saved, c, 
 def _require_calibrated_model(saved, purpose):
     calibration=saved.get('probability_calibration') or {}
     membership=calibration.get('membership') or {}
-    family=calibration.get('family') or {}
-    if (saved.get('version')=='5.8' and saved.get('feature_schema')==SCHEMA and
-            membership.get('estimator') is not None and
-            isinstance(family.get('eligible_classes'),list) and
-            isinstance(family.get('estimators'),dict)):
+    if (saved.get('version')=='5.8' and saved.get('feature_schema') in {SCHEMA,LEGACY_SCHEMA} and
+            membership.get('estimator') is not None):
         return
     version=saved.get('version','unknown')
-    raise ValueError(f'{purpose} requires a v5.8 calibrated-probability model; '
+    raise ValueError(f'{purpose} requires a v5.8 model with a membership calibrator and raw-vote family scoring; '
         f'the supplied model is v{version} ({saved.get("feature_schema","unknown")}) and must be retrained')
 
 
@@ -577,52 +575,20 @@ def _sequence_groups(rows, sequences, c, settings):
     return sequence_cluster_groups([sequences[c.row_id(row)] for row in rows],**settings)
 
 
-def _family_probability_assignment_details(assignment, probability_map, parents, all_classes, policy=None):
-    """Explain direct family probabilities and hierarchy-based parent sums."""
-    if not assignment:
-        return {"probability": None, "basis": "unavailable",
-                "eligible_descendant_classes": [], "unrepresented_descendant_classes": []}
-    descendants = sorted(name for name in all_classes
-                         if assignment in ancestors(name, parents))
-    if not descendants and policy:
-        _, _, aliases, children, _ = _family_policy_maps(policy)
-        parent_token = _family_policy_token(aliases.get(_family_policy_token(assignment),assignment))
-        child_tokens = children.get(parent_token,set())
-        if child_tokens:
-            descendants = sorted(name for name in all_classes
-                if _family_policy_token(aliases.get(_family_policy_token(name),name)) in child_tokens)
-            if assignment in all_classes:
-                descendants.append(assignment)
-            descendants=sorted(set(descendants))
-            eligible=[name for name in descendants if name in probability_map]
-            if eligible:
-                return {"probability": float(sum(probability_map[name] for name in eligible)),
-                        "basis": "sum_of_eligible_configured_broad_family_classes",
-                        "eligible_descendant_classes": eligible,
-                        "unrepresented_descendant_classes": [name for name in descendants if name not in probability_map]}
-            return {"probability": None, "basis": "unavailable",
-                    "eligible_descendant_classes": [],
-                    "unrepresented_descendant_classes": descendants}
-    if descendants:
-        eligible = [name for name in descendants if name in probability_map]
-        if not eligible:
-            return {"probability": None, "basis": "unavailable",
-                    "eligible_descendant_classes": [],
-                    "unrepresented_descendant_classes": descendants}
-        return {"probability": float(sum(probability_map[name] for name in eligible)),
-                "basis": "sum_of_eligible_calibrated_descendant_classes",
-                "eligible_descendant_classes": eligible,
-                "unrepresented_descendant_classes": [name for name in descendants if name not in probability_map]}
-    if assignment in probability_map:
-        return {"probability": float(probability_map[assignment]),
-                "basis": "conditional_family_class_probability",
-                "eligible_descendant_classes": [assignment],
-                "unrepresented_descendant_classes": []}
-    return {"probability": None, "basis": "unavailable",
-            "eligible_descendant_classes": [], "unrepresented_descendant_classes": []}
+def _effective_family_assignment_policy(c, saved, vote_fraction_cutoff=None, margin_cutoff=None):
+    policy=dict(c._SETTINGS.get('family_assignment_policy') or saved.get('family_assignment_policy',{}))
+    thresholds=dict(policy.get('raw_vote_thresholds') or {})
+    if vote_fraction_cutoff is not None:
+        thresholds['specific_family_vote_fraction_cutoff']=float(vote_fraction_cutoff)
+    if margin_cutoff is not None:
+        thresholds['specific_family_vote_margin']=float(margin_cutoff)
+    policy['raw_vote_thresholds']=thresholds
+    return policy
 
 
-def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None):
+def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None,
+          include_threshold_sensitivity=False, family_vote_fraction_cutoff=None,
+          family_vote_margin=None):
     _require_calibrated_model(saved,'Prediction')
     rule_path=c._BUNDLE/'config/annotation/family_identity_rules.json'
     expected_rule_sha=saved.get('provenance',{}).get('family_identity_rules')
@@ -647,14 +613,11 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
     membership_probabilities=apply_binary_sigmoid(
         saved['probability_calibration']['membership'],binary_raw_probabilities,binary_classes)
     raw_membership_votes=binary_raw_probabilities[:,binary_classes.index('adhesome_associated')]
-    raw_family_probabilities=saved['family'].predict_proba(vectors)
+    raw_family_vote_fractions=saved['family'].predict_proba(vectors)
     raw_families=list(saved['family'].classes_)
-    families,family_probabilities=apply_family_sigmoids(
-        saved['probability_calibration']['family'],raw_family_probabilities,raw_families)
     policy = dict(saved['policy'])
-    # Assignment policy is a decision-only layer over the frozen feature model;
-    # use the current versioned policy so existing compatible models can adopt it.
-    family_call_policy=c._SETTINGS.get('family_assignment_policy') or saved.get('family_assignment_policy',{})
+    family_call_policy=_effective_family_assignment_policy(c,saved,
+        family_vote_fraction_cutoff,family_vote_margin)
     if family_call_policy.get('mode')!='raw_vote_evidence_gated_whitelist':
         raise ValueError('Saved model or current configuration has no supported family-assignment policy')
     similarity_settings=_family_similarity_config(c,saved)
@@ -664,9 +627,7 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
         policy['membership_probability_cutoff'] = membership_cutoff
     output = []
     for i, (row, vector) in enumerate(data):
-        ranking = sorted(zip(families, map(float, family_probabilities[i])), key=lambda x: (-x[1], x[0]))
-        raw_ranking=sorted(zip(raw_families,map(float,raw_family_probabilities[i])),key=lambda x:(-x[1],x[0]))
-        family_probability_map=dict(ranking)
+        raw_ranking=sorted(zip(raw_families,map(float,raw_family_vote_fractions[i])),key=lambda x:(-x[1],x[0]))
         proposals=[]
         for proposal in family_identity_rule_proposals(saved,vector,identity_rules):
             scoped_proposal=_resolve_family_call('specific',proposal['family'],
@@ -676,21 +637,13 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
                     'family':scoped_proposal[1],'assignment_level':scoped_proposal[0]})
         proposal_families={x['family'] for x in proposals}
         proposal_source_families={x.get('source_family') or x['family'] for x in proposals}
-        calibrated_category, calibrated_assignment, calibrated_reason = decide(float(membership_probabilities[i]), ranking, row, saved['profiles'], saved['counts'], saved['parents'], policy, c,
-            vector=vector,identity_rules=identity_rules,aliases=aliases,rule_families=proposal_families,
-            similarity_settings=similarity_settings,similarity_selection=similarity_selection)
-        precalibration_category,precalibration_assignment,precalibration_reason=decide(
-            float(raw_membership_votes[i]),raw_ranking,row,saved['profiles'],saved['counts'],
-            saved['parents'],policy,c,vector=vector,identity_rules=identity_rules,
-            aliases=aliases,rule_families=proposal_families,
-            similarity_settings=similarity_settings,similarity_selection=similarity_selection)
         raw_policy=dict(policy)
         raw_thresholds=family_call_policy.get('raw_vote_thresholds',{})
         threshold_map={
             'membership_probability_cutoff':'membership_vote_cutoff',
-            'specific_family_probability_cutoff':'specific_family_vote_fraction_cutoff',
-            'specific_family_probability_margin':'specific_family_vote_margin',
-            'broad_parent_probability_cutoff':'broad_parent_vote_fraction_cutoff',
+            'specific_family_vote_fraction_cutoff':'specific_family_vote_fraction_cutoff',
+            'specific_family_vote_margin':'specific_family_vote_margin',
+            'broad_parent_vote_fraction_cutoff':'broad_parent_vote_fraction_cutoff',
             'minimum_family_examples':'minimum_family_examples'}
         for destination,source in threshold_map.items():
             if source in raw_thresholds:
@@ -704,8 +657,6 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
         groups=c.evidence_groups(row)
         membership_call=('unresolved' if not any(groups.values()) else
             'adhesome_associated' if float(membership_probabilities[i])>=policy['membership_probability_cutoff'] else 'non_adhesome')
-        precalibration_membership_call=('unresolved' if not any(groups.values()) else
-            'adhesome_associated' if float(raw_membership_votes[i])>=policy['membership_probability_cutoff'] else 'non_adhesome')
         selected_family_call=_resolve_family_call(raw_vote_category,raw_vote_assignment,raw_vote_reason,
             saved['parents'],family_call_policy)
         suppressed_outside_scope=bool(raw_vote_assignment and raw_vote_category in {'specific','broad'} and not selected_family_call)
@@ -727,7 +678,55 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
             selected_from_raw=False
             selected_tier=''
             selected_source_family=''
-        decision_ranking=raw_ranking if selected_from_raw else ranking
+        legacy_assignment=assignment
+        exclusions=rule_route_exclusions(vector,family_call_policy)
+        rule_selected=None
+        if family_call_policy.get('direct_rule_provisional',False):
+            rule_selected=provisional_rule_resolution(proposals,membership_call,
+                float(raw_membership_votes[i]),raw_policy['membership_probability_cutoff'],
+                raw_ranking,saved['parents'],family_call_policy,exclusions)
+            if rule_selected:
+                category,assignment,reason,selected_tier,selected_source_family=rule_selected
+            elif len(proposal_families)>1:
+                category,assignment,reason='unresolved','','ambiguous_multiple_family_rules'
+        if exclusions:
+            category,assignment,reason='non_adhesome','','sequence_exclusion'
+        sensitivity_calls={}
+        sensitivity_settings=family_call_policy.get('raw_vote_threshold_sensitivity') or {}
+        if include_threshold_sensitivity and sensitivity_settings.get('enabled'):
+            vote_cutoffs=sorted({float(x) for x in sensitivity_settings.get('top_family_vote_fraction_cutoffs',[])})
+            margin_cutoffs=sorted({float(x) for x in sensitivity_settings.get('minimum_margin_cutoffs',[])})
+            if not vote_cutoffs or not margin_cutoffs:
+                raise ValueError('Raw-vote threshold sensitivity is enabled but its cutoff grids are empty')
+            for vote_cutoff in vote_cutoffs:
+                for margin_cutoff in margin_cutoffs:
+                    key=f'{vote_cutoff:.3f}|{margin_cutoff:.3f}'
+                    if membership_call!='adhesome_associated':
+                        sensitivity_calls[key]=''
+                        continue
+                    candidate_policy=dict(raw_policy)
+                    candidate_policy['specific_family_vote_fraction_cutoff']=vote_cutoff
+                    candidate_policy['specific_family_vote_margin']=margin_cutoff
+                    candidate_policy['broad_parent_vote_fraction_cutoff']=vote_cutoff
+                    candidate_assignment_policy=dict(family_call_policy)
+                    candidate_thresholds=dict(candidate_assignment_policy.get('raw_vote_thresholds') or {})
+                    candidate_thresholds.update(
+                        specific_family_vote_fraction_cutoff=vote_cutoff,
+                        specific_family_vote_margin=margin_cutoff,
+                        broad_parent_vote_fraction_cutoff=vote_cutoff)
+                    candidate_assignment_policy['raw_vote_thresholds']=candidate_thresholds
+                    candidate_category,candidate_assignment,candidate_reason=decide(
+                        float(raw_membership_votes[i]),raw_ranking,row,saved['profiles'],saved['counts'],
+                        saved['parents'],candidate_policy,c,vector=vector,identity_rules=identity_rules,
+                        aliases=aliases,rule_families=proposal_families,
+                        similarity_settings=similarity_settings,similarity_selection=similarity_selection,
+                        assignment_policy=candidate_assignment_policy,rule_source_families=proposal_source_families)
+                    resolved=_resolve_family_call(candidate_category,candidate_assignment,candidate_reason,
+                        saved['parents'],candidate_assignment_policy)
+                    sensitivity_calls[key]=(rule_selected[1] if rule_selected else
+                        '' if exclusions or (family_call_policy.get('direct_rule_provisional') and len(proposal_families)>1) else
+                        resolved[1] if resolved else '')
+        decision_ranking=raw_ranking
         candidate_family=assignment if category=='specific' else ''
         if category=='broad' and assignment:
             _,_,policy_aliases,policy_children,_=_family_policy_maps(family_call_policy)
@@ -762,59 +761,37 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
             if family_hits:
                 matched_similarity=min(family_hits,key=lambda hit:(float(hit['evalue']),-float(hit['bitscore'])))
                 candidate_level='broad'
-        family_probability_assignment=_family_probability_assignment_details(
-            assignment,family_probability_map,saved['parents'],
-            sorted(set(raw_families)|set(saved.get('counts',{}))|set(saved['parents'])),family_call_policy)
-        assigned_family_probability=family_probability_assignment['probability']
         raw_top_vote=raw_ranking[0][1] if raw_ranking else 0.0
-        best_family_probability=ranking[0][1] if ranking else None
-        probability_status=('calibrated_over_eligible_family_classes' if ranking else
-            'insufficient_independent_family_support')
         prediction={'protein_id': row['protein_id'], 'classifier_call': category,
-            'predicted_family': assignment, 'best_family_candidate': ranking[0][0] if ranking else '',
-            'best_family_candidate_raw': raw_ranking[0][0] if raw_ranking else '',
-            'best_family_probability_conditional': best_family_probability if best_family_probability is not None else '',
+            'predicted_family': assignment, 'best_family_candidate': raw_ranking[0][0] if raw_ranking else '',
             'best_family_raw_vote_fraction': raw_top_vote,
             'family_raw_vote_margin': raw_ranking[0][1] - (raw_ranking[1][1] if len(raw_ranking)>1 else 0) if raw_ranking else '',
-            'family_assignment_raw_vote_fraction': _family_call_vote(assignment,raw_ranking,saved['parents'],family_call_policy) if assignment else '',
-            'family_assignment_score_kind': 'random_forest_raw_vote_fraction' if assignment else '',
+            'family_assignment_raw_vote_fraction': _family_call_vote(assignment,raw_ranking,saved['parents'],family_call_policy) if assignment and not rule_selected else '',
+            'family_assignment_score_kind': ('sequence_rule_support' if rule_selected else 'random_forest_raw_vote_fraction') if assignment else '',
+            'assignment_status':'provisional' if assignment else 'unassigned',
+            'rule_evaluation_json':json.dumps(rule_evaluation(vector,identity_rules),sort_keys=True),
+            'direct_rule_call':bool(rule_selected),
+            'rule_rescued_call':bool(rule_selected and assignment!=legacy_assignment),
+            'previous_rf_family':legacy_assignment,
+            'sequence_exclusion_reasons':';'.join(exclusions),
+            'family_output_schema':'provisional_family_v1',
             'family_assignment_score_is_probability': False if assignment else '',
-            'family_probability_margin': ranking[0][1] - (ranking[1][1] if len(ranking)>1 else 0) if ranking else '',
-            'family_probability_conditional': assigned_family_probability if assigned_family_probability is not None else '',
-            'family_probability_joint': (float(membership_probabilities[i])*assigned_family_probability
-                if assigned_family_probability is not None else ''),
-            'family_probability_assignment_basis':family_probability_assignment['basis'],
-            'family_probability_eligible_descendant_classes':';'.join(family_probability_assignment['eligible_descendant_classes']),
-            'family_probability_unrepresented_descendant_classes':';'.join(family_probability_assignment['unrepresented_descendant_classes']),
             'adhesome_probability': float(membership_probabilities[i]),
             'adhesome_raw_vote_fraction': float(raw_membership_votes[i]),
-            'family_probabilities_json': json.dumps(family_probability_map,sort_keys=True),
-            'family_ranking_json': json.dumps(ranking),
             'family_raw_ranking_json': json.dumps(raw_ranking),
-            'family_probability_calibration_status': probability_status,
-            'family_probability_class_set':'eligible_calibrated_family_classes' if ranking else '',
-            'family_probability_eligible_class_count':len(families),
-            'family_probability_ineligible_class_count':len(set(saved['probability_calibration']['family'].get('known_classes',raw_families))-set(families)),
-            'family_probability_unavailable_classes':';'.join(sorted(saved['probability_calibration']['family'].get('unavailable_classes',{}))),
-            'family_probability_unavailable_reasons_json':json.dumps(saved['probability_calibration']['family'].get('unavailable_classes',{}),sort_keys=True),
             'assignment_reason': reason, 'exact_sequence_match_used': 'no',
-            'score_interpretation': ('Membership probability is empirically calibrated on the labelled control distribution. Named-family calls use the previous evidence-gated Random Forest raw-vote policy, restricted to the configured core and expanded-regulatory adhesome families; raw votes are decision scores, not probabilities. Any available calibrated family probability remains a separate conditional diagnostic.'),
+            'score_interpretation': ('Membership probability is calibrated on the labelled control distribution. Named-family calls are provisional sequence-rule calls or evidence-gated RF calls; RF votes are diagnostic decision scores, not probabilities.'),
             'membership_call':membership_call,
-            'random_forest_call':category,'random_forest_family':assignment,
-            'calibrated_classifier_call':calibrated_category,
-            'calibrated_predicted_family':calibrated_assignment,
-            'calibrated_assignment_reason':calibrated_reason,
             'family_call_policy_version':family_call_policy.get('version',''),
             'family_call_policy_sha256':_policy_digest(family_call_policy),
             'family_call_policy_call':category,
             'family_call_policy_family':assignment,
+            'family_vote_fraction_cutoff':raw_policy['specific_family_vote_fraction_cutoff'],
+            'family_minimum_margin_cutoff':raw_policy['specific_family_vote_margin'],
+            'family_raw_vote_sensitivity_calls_json':json.dumps(sensitivity_calls,sort_keys=True),
             'family_call_policy_tier':selected_tier,
             'family_call_policy_source_family':selected_source_family,
             'family_call_policy_suppressed_outside_scope':suppressed_outside_scope,
-            'precalibration_policy_call':precalibration_category,
-            'precalibration_predicted_family':precalibration_assignment,
-            'precalibration_assignment_reason':precalibration_reason,
-            'precalibration_membership_call':precalibration_membership_call,
             'family_similarity_profile':similarity_profile_name,
             'family_similarity_search_max_evalue':float(similarity_settings['search_max_evalue']),
             'family_similarity_assignment_policy_json':json.dumps(similarity_selection,sort_keys=True),
@@ -833,9 +810,9 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
             'family_signature_evidence_json':row.get('_family_signature_evidence_json','[]'),
             **c.prediction_evidence_summary(row)}
         families_proposed=sorted({x['family'] for x in proposals})
-        rule_rf_conflict=(len(families_proposed)==1 and bool(assignment) and
-            not (_family_call_compatible(assignment,families_proposed[0],saved['parents'],family_call_policy) or
-                 _family_call_compatible(families_proposed[0],assignment,saved['parents'],family_call_policy)))
+        rule_rf_conflict=(len(families_proposed)==1 and bool(raw_ranking) and
+            not (_family_call_compatible(raw_ranking[0][0],families_proposed[0],saved['parents'],family_call_policy) or
+                 _family_call_compatible(families_proposed[0],raw_ranking[0][0],saved['parents'],family_call_policy)))
         prediction.update(rule_family_candidate=families_proposed[0] if len(families_proposed)==1 else '',
             rule_candidate_families=';'.join(families_proposed),
             rule_candidate_status=('unique_rule_candidate_provisional' if len(families_proposed)==1 else
@@ -844,16 +821,72 @@ def infer(saved, data, c, membership_cutoff=None, family_similarity_profile=None
             rule_candidate_evidence_json=json.dumps(proposals,sort_keys=True),
             rule_candidate_family_untrained=(len(families_proposed)==1 and families_proposed[0] not in raw_families),
             rule_conflicts_with_random_forest=rule_rf_conflict,
-            prediction_method='calibrated_membership_with_raw_vote_evidence_gated_family_whitelist',
+            potential_false_positive_review=bool(rule_rf_conflict or len(families_proposed)>1),
+            prediction_method='membership_gate_with_raw_vote_evidence_gated_family_whitelist',
             prediction_policy_version=family_call_policy.get('version','raw_vote_evidence_gated_whitelist_v1'))
         output.append(prediction)
     return output
+
+
+def rule_evaluation(vector,rules):
+    evaluations=[]
+    for rule in rules:
+        prefix='identity_rule:'+str(rule.get('id',''))+':'
+        unmet=[]
+        checks={'required_groups':'required_all_satisfied','specific_cdd_pattern':'specific_cdd_pattern_present',
+            'ordered_groups':'ordered_groups_satisfied','maximum_model_counts':'maximum_constraints_satisfied',
+            'length_range':'length_in_range','required_cdd_repeat_indices':'required_cdd_repeats_satisfied'}
+        for field,feature in checks.items():
+            if (rule.get(field) or field in {'required_groups','specific_cdd_pattern'}) and vector.get(prefix+feature,0)<.5:
+                unmet.append(field)
+        for field in ('candidate_rescue_only','require_ncbi_curated_specific_hit'):
+            if rule.get(field): unmet.append(field)
+        if rule.get('allow_diagnostic_dispatch') is False: unmet.append('diagnostic_dispatch_disabled')
+        evaluations.append({'rule_id':rule.get('id'),'unmet_constraints':unmet,
+            'observed_features':{k[len(prefix):]:v for k,v in vector.items() if k.startswith(prefix)}})
+    return evaluations
+
+
+def provisional_rule_resolution(proposals, membership_call, raw_membership, cutoff,
+                                ranking, parents, policy, exclusions=()):
+    """Resolve evidence-complete rules without using RF votes as rule confidence."""
+    if exclusions or membership_call != 'adhesome_associated' or raw_membership < cutoff:
+        return None
+    families=sorted({p['family'] for p in proposals})
+    if len(families)==1:
+        family=families[0]
+        level='broad' if any(p.get('assignment_level')=='broad' for p in proposals) else 'specific'
+        agreement=bool(ranking and ranking[0][0]==family)
+        return _resolve_family_call(level,family,
+            'provisional_rule_rf_concordant' if agreement else 'provisional_rule_rf_discordant',parents,policy)
+    if len(families)>1:
+        common=set(ancestors(families[0],parents))
+        for family in families[1:]: common &= set(ancestors(family,parents))
+        # Only a uniquely most-specific common parent may resolve conflicting children.
+        nearest=[p for p in common if not any(p in ancestors(q,parents) for q in common if q!=p)]
+        if len(nearest)==1:
+            return _resolve_family_call('broad',nearest[0],'provisional_rule_shared_parent',parents,policy)
+    return None
+
+
+def rule_route_exclusions(vector, policy):
+    """Explicit sequence-feature exclusions, never expected control labels."""
+    reasons=[]
+    for rule in policy.get('sequence_exclusions',[]):
+        conditions=rule.get('all_features',{})
+        if not conditions or any(not k.startswith(('identity_rule:','posthoc_','cdd:','pfam:')) for k in conditions):
+            raise ValueError('Sequence exclusions require explicit sequence-feature predicates')
+        if all(float(vector.get(k,0))>=float(v) for k,v in conditions.items()):
+            reasons.append(rule['id'])
+    return reasons
 
 
 def family_identity_rule_proposals(saved, vector, rules):
     """Return strict sequence-rule candidates separately from RF assignments."""
     proposals=[]
     for rule in rules:
+        if rule.get('candidate_rescue_only') or rule.get('require_ncbi_curated_specific_hit') or rule.get('allow_diagnostic_dispatch') is False:
+            continue
         groups=rule.get('required_groups',[]) or []
         pattern=str(rule.get('specific_cdd_pattern','')).strip()
         if not groups or not pattern or pattern=='(?!)':
@@ -886,9 +919,118 @@ def family_identity_rule_proposals(saved, vector, rules):
     return proposals
 
 
-def evaluate(rows, predictions, sequences, saved, c, family_similarity_profile=None):
+def _family_vote_threshold_sensitivity(rows, predictions, truth, expected_labels,
+                                        saved, c, policy, baseline):
+    """Compare raw-vote fraction/margin grids on one fixed evaluation cohort."""
+    settings=policy.get('raw_vote_threshold_sensitivity') or {}
+    result={'enabled':bool(settings.get('enabled')),'thresholds_applied':False,
+        'comparison':settings.get('comparison','current_default_policy'),
+        'selection_policy':settings.get('selection_policy',''),
+        'cohort_records':len(rows),
+        'in_scope_labelled_family_controls':baseline.get('in_scope_labelled_family_controls',0),
+        'baseline':{
+            'vote_fraction_cutoff':(policy.get('raw_vote_thresholds') or {}).get('specific_family_vote_fraction_cutoff'),
+            'minimum_margin':(policy.get('raw_vote_thresholds') or {}).get('specific_family_vote_margin'),
+            'family_calls':baseline.get('selected_family_calls',0),
+            'compatible_correct':baseline.get('family_compatible_correct_in_scope',0),
+            'precision':baseline.get('scope_precision_family_compatible',0.0),
+            'recall':baseline.get('scope_recall_family_compatible',0.0),
+            'f1':0.0}}
+    base_precision=float(result['baseline']['precision'] or 0.0)
+    base_recall=float(result['baseline']['recall'] or 0.0)
+    result['baseline']['f1']=(2*base_precision*base_recall/(base_precision+base_recall)
+        if base_precision+base_recall else 0.0)
+    if not settings.get('enabled'):
+        result['reason']='Disabled by family_assignment_policy.raw_vote_threshold_sensitivity.enabled'
+        result['grid']=[]
+        result['least_margin_improvement']=None
+        return result
+    if predictions and not any('family_raw_vote_sensitivity_calls_json' in p for p in predictions):
+        result['reason']='Predictions do not contain threshold-sensitivity calls; evaluate with include_threshold_sensitivity enabled'
+        result['grid']=[]
+        result['least_margin_improvement']=None
+        return result
+    vote_cutoffs=sorted({float(x) for x in settings.get('top_family_vote_fraction_cutoffs',[])})
+    margin_cutoffs=sorted({float(x) for x in settings.get('minimum_margin_cutoffs',[])})
+    grid=[]
+    for vote_cutoff in vote_cutoffs:
+        for margin_cutoff in margin_cutoffs:
+            key=f'{vote_cutoff:.3f}|{margin_cutoff:.3f}'
+            alternate=[]
+            for prediction in predictions:
+                item=dict(prediction)
+                calls=json.loads(item.get('family_raw_vote_sensitivity_calls_json') or '{}')
+                item['predicted_family']=calls.get(key,'')
+                alternate.append(item)
+            metrics=_family_policy_metrics(rows,alternate,truth,expected_labels,saved,c,policy)
+            precision=float(metrics['scope_precision_family_compatible'])
+            recall=float(metrics['scope_recall_family_compatible'])
+            f1=2*precision*recall/(precision+recall) if precision+recall else 0.0
+            improves=precision>base_precision and recall>base_recall
+            grid.append({'top_family_raw_vote_fraction_cutoff':vote_cutoff,
+                'minimum_margin':margin_cutoff,
+                'is_configured_output_threshold':(
+                    abs(vote_cutoff-float((policy.get('raw_vote_thresholds') or {}).get('specific_family_vote_fraction_cutoff',0.3)))<1e-9 and
+                    abs(margin_cutoff-float((policy.get('raw_vote_thresholds') or {}).get('specific_family_vote_margin',0.3)))<1e-9),
+                'family_calls':metrics['selected_family_calls'],
+                'compatible_correct':metrics['family_compatible_correct_in_scope'],
+                'incorrect_or_unlabelled_calls':metrics['incorrect_or_unlabelled_family_calls'],
+                'negative_control_family_calls':metrics['negative_control_family_calls'],
+                'precision':precision,'recall':recall,'f1':f1,
+                'delta_precision':precision-base_precision,
+                'delta_recall':recall-base_recall,'delta_f1':f1-result['baseline']['f1'],
+                'improves_precision_and_recall':improves})
+    qualifying=[item for item in grid if item['improves_precision_and_recall']]
+    qualifying.sort(key=lambda item:(item['minimum_margin'],-item['f1'],-item['recall'],
+                                     -item['precision'],item['top_family_raw_vote_fraction_cutoff']))
+    result['grid']=grid
+    result['least_margin_improvement']=qualifying[0] if qualifying else None
+    result['reason']=('Candidate pair identified; this is validation-set diagnostic evidence only and no threshold was applied.'
+        if qualifying else 'No tested pair strictly improved both family-compatible precision and recall over the active output thresholds.')
+    result['metrics']='Family-compatible precision and recall use the same in-scope labelled positives and all selected family calls as the active output thresholds.'
+    return result
+
+
+def _prediction_sensitivity_summary(predictions, policy):
+    settings=policy.get('raw_vote_threshold_sensitivity') or {}
+    thresholds=policy.get('raw_vote_thresholds') or {}
+    rows=[]
+    for vote_cutoff in sorted({float(x) for x in settings.get('top_family_vote_fraction_cutoffs',[])}):
+        for margin_cutoff in sorted({float(x) for x in settings.get('minimum_margin_cutoffs',[])}):
+            key=f'{vote_cutoff:.3f}|{margin_cutoff:.3f}'
+            counts=Counter()
+            for prediction in predictions:
+                calls=json.loads(prediction.get('family_raw_vote_sensitivity_calls_json') or '{}')
+                family=str(calls.get(key,'') or '')
+                if family:
+                    counts[family]+=1
+            rows.append({'top_family_raw_vote_fraction_cutoff':vote_cutoff,
+                'minimum_margin':margin_cutoff,'family_calls':sum(counts.values()),
+                'family_call_counts_json':json.dumps(dict(sorted(counts.items())),sort_keys=True),
+                'is_configured_output_threshold':(
+                    abs(vote_cutoff-float(thresholds.get('specific_family_vote_fraction_cutoff',0.3)))<1e-9 and
+                    abs(margin_cutoff-float(thresholds.get('specific_family_vote_margin',0.3)))<1e-9)})
+    return rows
+
+
+def _write_family_threshold_sensitivity(directory, sensitivity):
+    path=Path(directory)/'raw_vote_family_threshold_sensitivity.tsv'
+    fields=['top_family_raw_vote_fraction_cutoff','minimum_margin','is_configured_output_threshold',
+        'family_calls','compatible_correct','incorrect_or_unlabelled_calls','negative_control_family_calls',
+        'precision','recall','f1','delta_precision','delta_recall','delta_f1','improves_precision_and_recall']
+    with path.open('w',encoding='utf-8',newline='') as handle:
+        writer=csv.DictWriter(handle,fieldnames=fields,delimiter='\t',extrasaction='ignore')
+        writer.writeheader()
+        writer.writerows(sensitivity.get('grid',[]))
+    sensitivity['tsv']='raw_vote_family_threshold_sensitivity.tsv'
+    return path
+
+
+def evaluate(rows, predictions, sequences, saved, c, family_similarity_profile=None,
+             family_vote_fraction_cutoff=None, family_vote_margin=None):
     truth = [c.normalized_control_class(r) for r in rows]
-    family_call_policy=c._SETTINGS.get('family_assignment_policy') or saved.get('family_assignment_policy',{})
+    family_call_policy=_effective_family_assignment_policy(c,saved,
+        family_vote_fraction_cutoff,family_vote_margin)
     # Score membership from its own output; family-resolution profile changes must not
     # turn an unchanged membership call into a different membership metric.
     calls = ['adhesome_associated' if p.get('membership_call')=='adhesome_associated' else 'non_adhesome'
@@ -897,14 +1039,6 @@ def evaluate(rows, predictions, sequences, saved, c, family_similarity_profile=N
     binary['positive_precision'] = c.precision_score(truth, calls, pos_label='adhesome_associated', zero_division=0)
     binary['positive_recall'] = c.recall_score(truth, calls, pos_label='adhesome_associated', zero_division=0)
     binary['positive_f1'] = c.f1_score(truth, calls, pos_label='adhesome_associated', zero_division=0)
-    precalibration_calls=['adhesome_associated' if p.get('precalibration_membership_call')=='adhesome_associated' else 'non_adhesome'
-                          for p in predictions]
-    precalibration_binary=c.class_metrics(truth,precalibration_calls,['adhesome_associated','non_adhesome'])
-    precalibration_binary.update(
-        positive_precision=c.precision_score(truth,precalibration_calls,pos_label='adhesome_associated',zero_division=0),
-        positive_recall=c.recall_score(truth,precalibration_calls,pos_label='adhesome_associated',zero_division=0),
-        positive_f1=c.f1_score(truth,precalibration_calls,pos_label='adhesome_associated',zero_division=0))
-    binary['precalibration_policy_comparison']=precalibration_binary
     membership_truth=[int(value=='adhesome_associated') for value in truth]
     binary['probability_calibration']=probability_metrics_binary(membership_truth,
         [float(p['adhesome_probability']) for p in predictions],
@@ -914,16 +1048,8 @@ def evaluate(rows, predictions, sequences, saved, c, family_similarity_profile=N
     labelled = [(i,label) for i,label in labelled if label]
     expected = [label for _,label in labelled]
     assigned = [predictions[i]['predicted_family'] or '__abstained__' for i,_ in labelled]
-    precalibration_assigned=[predictions[i].get('precalibration_predicted_family') or '__abstained__'
-                             for i,_ in labelled]
-    calibrated_assigned=[predictions[i].get('calibrated_predicted_family') or '__abstained__'
-                         for i,_ in labelled]
-    shared_family_labels=sorted(set(expected)|set(assigned)|set(precalibration_assigned)|set(calibrated_assigned))
+    shared_family_labels=sorted(set(expected)|set(assigned))
     family = c.class_metrics(expected, assigned, shared_family_labels)
-    family['precalibration_policy_comparison']=c.class_metrics(
-        expected,precalibration_assigned,shared_family_labels)
-    family['calibrated_policy_comparison']=c.class_metrics(
-        expected,calibrated_assigned,shared_family_labels)
     family['labelled_positives'] = len(labelled)
     family['unmapped_positives'] = truth.count('adhesome_associated') - len(labelled)
     family['unseen_label_records'] = sum(label not in saved['counts'] for label in expected)
@@ -931,79 +1057,33 @@ def evaluate(rows, predictions, sequences, saved, c, family_similarity_profile=N
     family['accepted'] = sum(x!='__abstained__' for x in assigned)
     family['accepted_precision'] = family['correct_accepted'] / family['accepted'] if family['accepted'] else 0.0
     family['strict_recall'] = family['correct_accepted'] / len(labelled) if labelled else 0.0
-    family['top_candidate_correct'] = sum(predictions[i]['best_family_candidate_raw']==label for i,label in labelled)
-    family['calibrated_top_candidate_correct'] = sum(predictions[i]['best_family_candidate']==label for i,label in labelled)
+    family['accepted_exact_f1']=2*family['accepted_precision']*family['strict_recall']/(family['accepted_precision']+family['strict_recall']) if family['accepted_precision']+family['strict_recall'] else 0.0
+    family['call_coverage']=family['accepted']/len(labelled) if labelled else 0.0
+    family['potential_false_positive_review_records']=sum(bool(p.get('potential_false_positive_review')) for p in predictions)
+    family['direct_rule_calls']=sum(bool(p.get('direct_rule_call')) for p in predictions)
+    family['rule_rescued_calls']=sum(bool(p.get('rule_rescued_call')) for p in predictions)
+    family['sequence_excluded_records']=sum(bool(p.get('sequence_exclusion_reasons')) for p in predictions)
+    family['top_candidate_correct'] = sum(predictions[i]['best_family_candidate']==label for i,label in labelled)
+    family['top_one_accuracy']=family['top_candidate_correct']/len(labelled) if labelled else 0.0
     family['top_three_contains_truth'] = sum(label in [x[0] for x in json.loads(predictions[i]['family_raw_ranking_json'])[:3]] for i,label in labelled)
+    family['top_three_recall']=family['top_three_contains_truth']/len(labelled) if labelled else 0.0
     _,_,_,broad_children,_=_family_policy_maps(family_call_policy)
     family['correct_broad_or_specific'] = sum(
         predictions[i]['predicted_family'] in [label]+ancestors(label,saved['parents']) or
         _family_policy_token(label) in broad_children.get(_family_policy_token(predictions[i]['predicted_family']),set())
         for i,label in labelled)
-    eligible_family_classes=list(saved['probability_calibration']['family'].get('eligible_classes',[]))
-    family_probability_rows=[]
-    for i,label in labelled:
-        if label not in eligible_family_classes:
-            continue
-        calibrated_map=json.loads(predictions[i].get('family_probabilities_json') or '{}')
-        raw_map=dict(json.loads(predictions[i].get('family_raw_ranking_json') or '[]'))
-        calibrated_values=[float(calibrated_map.get(name,0.0)) for name in eligible_family_classes]
-        raw_values=[float(raw_map.get(name,0.0)) for name in eligible_family_classes]
-        raw_total=sum(raw_values)
-        if raw_total>0:
-            raw_values=[value/raw_total for value in raw_values]
-        family_probability_rows.append((label,calibrated_values,raw_values))
-    family['probability_calibration']={
-        'eligible_family_classes':eligible_family_classes,
-        'family_labelled_records':len(labelled),
-        'scored_records':len(family_probability_rows),
-        'unavailable_true_family_records':len(labelled)-len(family_probability_rows),
-        'coverage':len(family_probability_rows)/len(labelled) if labelled else 0.0,
-        'calibration_availability_by_family':{
-            label:{'calibrated':label in eligible_family_classes,
-                   **saved['probability_calibration']['family'].get('class_support',{}).get(label,{}),
-                   'family_training_positive_records':saved['probability_calibration']['family'].get('family_training_support',{}).get(label,{}).get('positive_records',0),
-                   'family_training_positive_independent_groups':saved['probability_calibration']['family'].get('family_training_support',{}).get(label,{}).get('positive_independent_sequence_groups',0),
-                   'unavailable_reason':saved['probability_calibration']['family'].get('unavailable_classes',{}).get(label,'')}
-            for label in saved['probability_calibration']['family'].get('known_classes',saved['probability_calibration']['family'].get('classes',[]))},
-        'metrics':probability_metrics_multiclass(
-            [row[0] for row in family_probability_rows],
-            [row[1] for row in family_probability_rows],eligible_family_classes,
-            [row[2] for row in family_probability_rows],
-            c._SETTINGS['probability_calibration']['reliability_bins'])}
-    family_calibration=saved['probability_calibration']['family']
-    min_positive=int(family_calibration.get('minimum_positive_groups',0) or 0)
-    min_negative=int(family_calibration.get('minimum_negative_groups',0) or 0)
-    min_eligible=int(family_calibration.get('minimum_eligible_classes',0) or 0)
-    support=family_calibration.get('class_support',{})
-    classes_meeting_floors=[]
-    for name,counts in support.items():
-        positive_groups=int(counts.get('positive_independent_groups',counts.get('independent_groups',0)) or 0)
-        negative_groups=int(counts.get('negative_independent_groups',0) or 0)
-        if positive_groups>=min_positive and negative_groups>=min_negative:
-            classes_meeting_floors.append(name)
-    family['probability_calibration'].update(
-        classes_meeting_support_floors=sorted(classes_meeting_floors),
-        classes_meeting_support_floor_count=len(classes_meeting_floors),
-        minimum_positive_groups=min_positive,
-        minimum_negative_groups=min_negative,
-        minimum_eligible_classes=min_eligible,
-        family_call_availability_reason=(
-            f'{len(classes_meeting_floors)} {"class" if len(classes_meeting_floors)==1 else "classes"} met the per-class independent-group floors; '
-            f'{min_eligible} eligible classes are required for family probability calibration'
-            if len(eligible_family_classes)<min_eligible else 'Calibrated family classes are available'))
     family['per_family'] = {label: {'records': expected.count(label),
                                   'correct': sum(a==label and b==label for a,b in zip(expected,assigned)),
-                                  'missed_or_wrong': sum(a==label and b!=label for a,b in zip(expected,assigned)),
-                                  'calibrated_correct':sum(a==label and b==label for a,b in zip(expected,calibrated_assigned)),
-                                  'calibrated_missed_or_wrong':sum(a==label and b!=label for a,b in zip(expected,calibrated_assigned)),
-                                  'precalibration_correct':sum(a==label and b==label for a,b in zip(expected,precalibration_assigned)),
-                                  'precalibration_missed_or_wrong':sum(a==label and b!=label for a,b in zip(expected,precalibration_assigned))}
+                                  'missed_or_wrong': sum(a==label and b!=label for a,b in zip(expected,assigned))}
                          for label in sorted(set(expected))}
     family['selected_family_call_policy']=_family_policy_metrics(
         rows,predictions,truth,[trusted_family(row,saved['aliases'],saved['parents']) for row in rows],
         saved,c,family_call_policy)
     family['family_compatible_accepted_precision']=family['selected_family_call_policy']['scope_precision_family_compatible']
     family['family_compatible_in_scope_recall']=family['selected_family_call_policy']['scope_recall_family_compatible']
+    family['raw_vote_threshold_sensitivity']=_family_vote_threshold_sensitivity(
+        rows,predictions,truth,[trusted_family(row,saved['aliases'],saved['parents']) for row in rows],
+        saved,c,family_call_policy,family['selected_family_call_policy'])
     rule_families=[p.get('rule_family_candidate','') for p in predictions]
     rule_positive=[i for i,p in enumerate(predictions) if p.get('rule_candidate_status')=='unique_rule_candidate_provisional']
     rule_ambiguous=sum(p.get('rule_candidate_status')=='ambiguous_multiple_family_rules' for p in predictions)
@@ -1045,12 +1125,10 @@ def evaluate(rows, predictions, sequences, saved, c, family_similarity_profile=N
                 'grouping':saved['probability_calibration'].get('grouping'),
                 'validation_used_for_calibration':saved['probability_calibration'].get('validation_used_for_calibration'),
                 'membership':{key:value for key,value in saved['probability_calibration']['membership'].items()
-                              if key!='estimator'},
-                'family':{key:value for key,value in saved['probability_calibration']['family'].items()
-                          if key!='estimators'}},
+                              if key!='estimator'}},
             'calibration_overlap_strata': strata,
             'family_assignment_policy':family_call_policy,
-            'note': 'Validation was evaluation-only and did not fit calibrators or choose thresholds. Membership probabilities are conditional on the labelled control distribution. Family probabilities are conditional on adhesome association and are reported only for families meeting independent-group calibration support. Named family calls use the separately versioned, evidence-gated raw-vote shortlist policy; raw votes are not probabilities. Exact sequence overlap is reporting only; evolutionary homology overlap may remain.'}
+            'note': 'Membership probabilities are calibrated conditional on the labelled control distribution. Family calls use raw Random Forest vote fractions as decision scores, not probabilities. Validation reports the full raw-vote fraction/margin sensitivity grid; its thresholds are not applied unless explicitly specified for prediction. Exact sequence overlap is reporting only; evolutionary homology overlap may remain.'}
 
 
 def compare_validation(rows, baseline, current, saved, c):
@@ -1113,6 +1191,8 @@ def read_baseline_predictions(path, rows, c):
 
 
 def write_validation_report(directory, report):
+    sensitivity=report.get('family',{}).get('raw_vote_threshold_sensitivity') or {}
+    _write_family_threshold_sensitivity(directory,sensitivity)
     (directory/'internal_validation_report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     membership, family = report['membership'], report['family']
     rows = [('Validation records',membership['records']),
@@ -1122,12 +1202,12 @@ def write_validation_report(directory, report):
         ('Family-labelled positives',family['labelled_positives']),
         ('Correct / accepted family calls',f"{family['correct_accepted']} / {family['accepted']}"),
         ('Family-compatible correct calls, including configured broad RhoGEF matches',family['selected_family_call_policy']['family_compatible_correct_in_scope']),
-        ('Calibrated family classes available',len(family['probability_calibration']['eligible_family_classes'])),
-        ('Classes meeting family calibration support floors',family['probability_calibration']['classes_meeting_support_floor_count']),
-        ('Calibrated family-call availability',family['probability_calibration']['family_call_availability_reason']),
+        ('Direct provisional rule calls',family.get('direct_rule_calls',0)),
+        ('Calls rescued by rules',family.get('rule_rescued_calls',0)),
+        ('Sequence exclusions',family.get('sequence_excluded_records',0)),
+        ('Accepted exact-family F1',family.get('accepted_exact_f1',0)),
         ('Strict family recall (abstentions count as missed)',f"{family['strict_recall']:.1%}"),
         ('Top raw-vote-ranked candidate correct (before acceptance)',family['top_candidate_correct']),
-        ('Top calibrated-family candidate correct (before acceptance)',family['calibrated_top_candidate_correct']),
         ('Truth within top three candidates',family['top_three_contains_truth']),
         ('Positive controls without family labels',family['unmapped_positives'])]
     def table(items):
@@ -1164,19 +1244,6 @@ def write_validation_report(directory, report):
         return svg+'</svg>'
     document = '<!doctype html><meta charset="utf-8"><title>Family classifier validation</title><style>body{font:16px system-ui;max-width:1000px;margin:40px auto}td,th{padding:8px;border:1px solid #ccc;text-align:left}table{border-collapse:collapse}pre{white-space:pre-wrap}</style><h1>Independent panel evaluation</h1>'
     document += '<p>'+html.escape(report['note'])+'</p>'+table(rows)
-    prior_membership=membership.get('precalibration_policy_comparison',{})
-    if prior_membership:
-        document+='<h2>Previous versus calibrated-policy calls</h2><p>Both policies use the same labelled records and the existing numeric cutoffs. The previous-policy column applies those cutoffs to raw forest votes; the calibrated-policy column applies them to calibrated probabilities. This is a fixed comparison, not validation tuning.</p>'
-        document+='<table><tr><th>Membership metric</th><th>Previous raw-vote policy</th><th>Calibrated policy</th></tr>'
-        for key,label in (('positive_precision','Precision'),('positive_recall','Recall'),('positive_f1','F1')):
-            document+=f'<tr><th>{html.escape(label)}</th><td>{prior_membership.get(key,0.0):.3f}</td><td>{membership.get(key,0.0):.3f}</td></tr>'
-        document+='</table><h3>Membership confusion matrices</h3><p>Previous raw-vote policy</p><pre>'+html.escape(json.dumps(prior_membership.get('confusion_matrix',[])))+'</pre><p>Calibrated policy</p><pre>'+html.escape(json.dumps(membership.get('confusion_matrix',[])))+'</pre>'
-        prior_family=family.get('precalibration_policy_comparison',{})
-        if prior_family:
-            document+='<h3>Family assignment comparison on family-labelled positives</h3><table><tr><th>Metric</th><th>Previous raw-vote policy</th><th>Calibrated policy</th></tr>'
-            for key,label in (('macro_precision','Macro precision'),('macro_recall','Macro recall'),('macro_f1','Macro F1')):
-                document+=f'<tr><th>{html.escape(label)}</th><td>{prior_family.get(key,0.0):.3f}</td><td>{family.get(key,0.0):.3f}</td></tr>'
-            document+='</table><p>Both family comparisons use the same labelled positives; abstentions remain explicit in the confusion matrices.</p><h4>Previous raw-vote family confusion matrix</h4><pre>'+html.escape(json.dumps(prior_family.get('confusion_matrix',[])))+'</pre><h4>Calibrated family confusion matrix</h4><pre>'+html.escape(json.dumps(family.get('confusion_matrix',[])))+'</pre>'
     membership_calibration=membership.get('probability_calibration',{})
     if membership_calibration:
         membership_rows=[('Scored records',membership_calibration.get('records',0)),
@@ -1189,34 +1256,6 @@ def write_validation_report(directory, report):
         document+='<h2>Membership probability calibration</h2>'+table(membership_rows)
         document+=reliability_svg('Membership reliability',membership_calibration.get('reliability'),
             membership_calibration.get('raw',{}).get('reliability'))
-    family_calibration=family.get('probability_calibration',{})
-    family_metrics=family_calibration.get('metrics',{})
-    if family_calibration:
-        family_rows=[('Family-labelled records',family_calibration.get('family_labelled_records',0)),
-            ('Scored records',family_calibration.get('scored_records',0)),
-            ('Unavailable true-family records',family_calibration.get('unavailable_true_family_records',0)),
-            ('Calibrated family coverage',f"{family_calibration.get('coverage',0.0):.1%}"),
-            ('Calibrated multiclass Brier score',family_metrics.get('brier_score')),
-            ('Raw-vote multiclass Brier score',family_metrics.get('raw',{}).get('brier_score')),
-            ('Calibrated multiclass log loss',family_metrics.get('log_loss')),
-            ('Raw-vote multiclass log loss',family_metrics.get('raw',{}).get('log_loss')),
-            ('Calibrated top-label ECE',family_metrics.get('top_label_reliability',{}).get('expected_calibration_error')),
-            ('Raw-vote top-label ECE',family_metrics.get('raw',{}).get('top_label_reliability',{}).get('expected_calibration_error'))]
-        document+='<h2>Family probability calibration</h2>'+table(family_rows)
-        document+=reliability_svg('Top family reliability',family_metrics.get('top_label_reliability'),
-            family_metrics.get('raw',{}).get('top_label_reliability'))
-        availability=family_calibration.get('calibration_availability_by_family',{})
-        if availability:
-            document+='<h3>Per-family calibration support</h3><table><tr><th>Family</th><th>Available</th><th>Family-training positive records</th><th>Family-training positive groups</th><th>Calibrator positive groups</th><th>Calibrator negative groups</th><th>Reason unavailable</th></tr>'
-            for label,details in sorted(availability.items()):
-                document+=('<tr><td>'+html.escape(label)+'</td><td>'+str(bool(details.get('calibrated')))+
-                    '</td><td>'+str(details.get('family_training_positive_records',0))+
-                    '</td><td>'+str(details.get('family_training_positive_independent_groups',0))+
-                    '</td><td>'+str(details.get('independent_groups',''))+'</td><td>'+str(details.get('negative_independent_groups',''))+
-                    '</td><td>'+html.escape(str(details.get('unavailable_reason','')) )+'</td></tr>')
-            document+='</table>'
-        for label,calibration in family_metrics.get('per_class_reliability',{}).items():
-            document+=reliability_svg('Family reliability: '+label,calibration)
     similarity=report.get('family_similarity_policy')
     if similarity:
         policy_rows=[('Family similarity profile',similarity['profile']),
@@ -1284,11 +1323,32 @@ def write_validation_report(directory, report):
     document += '<table>'+''.join('<tr>'+''.join(
         '<th>'+html.escape(str(value))+'</th>' if row_index==0 else '<td>'+html.escape(str(value))+'</td>'
         for value in row)+'</tr>' for row_index,row in enumerate(policy_tier_rows))+'</table>'
-    document += '<h2>Per-family exact assignment counts</h2><table><tr><th>Family</th><th>Selected shortlist raw-vote policy correct / labelled</th><th>Calibrated policy correct / labelled</th><th>Previous unrestricted raw-vote policy correct / labelled</th></tr>'
+    sensitivity=family.get('raw_vote_threshold_sensitivity') or {}
+    if sensitivity.get('enabled'):
+        candidate=sensitivity.get('least_margin_improvement')
+        document+='<h2>Raw-vote family threshold sensitivity</h2><p>This diagnostic sweeps the top-family raw-vote fraction and minimum margin while holding the labelled cohort, membership gate, family evidence rules, broad-family hierarchy, and allowed-family scope fixed. The vote-fraction cutoff also applies to aggregate parent-family support; the margin gate applies to specific-family resolution so ambiguous child families may still be reported at their supported broad level. The displayed candidate is not applied to the production policy. Validation labels are used here only to describe exploratory performance on this panel; confirm any threshold change on a separate independent cohort.</p>'
+        baseline=sensitivity.get('baseline',{})
+        sensitivity_rows=[('Active output thresholds','—',baseline.get('vote_fraction_cutoff'),baseline.get('minimum_margin'),
+            baseline.get('family_calls'),baseline.get('precision',0.0),baseline.get('recall',0.0),baseline.get('f1',0.0))]
+        if candidate:
+            sensitivity_rows.append(('Least-margin pair improving precision and recall','Candidate',
+                candidate.get('top_family_raw_vote_fraction_cutoff'),candidate.get('minimum_margin'),
+                candidate.get('family_calls'),candidate.get('precision',0.0),candidate.get('recall',0.0),candidate.get('f1',0.0)))
+        document+='<p>'+html.escape(sensitivity.get('reason',''))+'</p><table><tr><th>Policy</th><th>Status</th><th>Top raw-vote fraction</th><th>Minimum margin</th><th>Family calls</th><th>Compatible precision</th><th>Compatible recall</th><th>F1</th></tr>'
+        for item in sensitivity_rows:
+            document+='<tr>'+''.join('<td>'+html.escape(str(value if not isinstance(value,float) else f'{value:.3f}'))+'</td>' for value in item)+'</tr>'
+        document+='</table><h3>Full threshold grid</h3><table><tr><th>Top raw-vote fraction</th><th>Minimum margin</th><th>Calls</th><th>Compatible correct</th><th>Incorrect / unlabelled</th><th>Negative-control calls</th><th>Precision</th><th>Recall</th><th>F1</th><th>Δ precision</th><th>Δ recall</th><th>Both improved</th></tr>'
+        for item in sensitivity.get('grid',[]):
+            values=(item.get('top_family_raw_vote_fraction_cutoff'),item.get('minimum_margin'),
+                item.get('family_calls'),item.get('compatible_correct'),item.get('incorrect_or_unlabelled_calls'),
+                item.get('negative_control_family_calls'),item.get('precision',0.0),item.get('recall',0.0),
+                item.get('f1',0.0),item.get('delta_precision',0.0),item.get('delta_recall',0.0),
+                item.get('improves_precision_and_recall',False))
+            document+='<tr>'+''.join('<td>'+html.escape(f'{value:.3f}' if isinstance(value,float) else str(value))+'</td>' for value in values)+'</tr>'
+        document+='</table>'
+    document += '<h2>Per-family exact assignment counts</h2><table><tr><th>Family</th><th>Raw-vote policy correct / labelled</th></tr>'
     for label,values in family['per_family'].items():
-        document+=('<tr><td>'+html.escape(label)+'</td><td>'+str(values['correct'])+' / '+str(values['records'])+
-                   '</td><td>'+str(values['calibrated_correct'])+' / '+str(values['records'])+
-                   '</td><td>'+str(values['precalibration_correct'])+' / '+str(values['records'])+'</td></tr>')
+        document+=('<tr><td>'+html.escape(label)+'</td><td>'+str(values['correct'])+' / '+str(values['records'])+'</td></tr>')
     document+='</table>'
     document += '<details><summary>Full metrics and overlap strata</summary><pre>'+html.escape(json.dumps(report,indent=2))+'</pre></details>'
     (directory/'internal_validation_report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
@@ -1382,63 +1442,15 @@ def train_family_gate(args, c):
     print(f'[classifier] Fitting family model from {len(model_indices)} labelled, feature-supported controls',flush=True)
     family_matrix=[data[i][1] for i,_ in model_indices]
     family_labels=[label for _,label in model_indices]
-    family_groups=[group_ids[i] for i,_ in model_indices]
     family = estimator(2718).fit(family_matrix,family_labels)
-    family_classes=list(family.classes_)
-    family_fold_assignments=[]
-    print('[classifier] Generating group-disjoint OOF family scores for per-family calibration',flush=True)
-    try:
-        oof_classes,family_oof,family_folds,family_fold_summary=\
-            cross_fitted_probabilities(lambda:estimator(2718),family_matrix,family_labels,family_groups,
-                probability_settings['max_splits'],probability_settings['random_state'])
-        family_calibration=fit_family_sigmoids(family_oof,family_labels,oof_classes,family_groups,
-            minimum_positive_groups=probability_settings['family_min_positive_groups_per_class'],
-            minimum_negative_groups=probability_settings['family_min_negative_groups_per_class'],
-            minimum_eligible_classes=probability_settings['family_min_calibrated_classes'])
-        for local_index,(global_index,_) in enumerate(model_indices):
-            family_fold_assignments.append((global_index,int(family_folds[local_index]),family_groups[local_index]))
-    except CalibrationUnavailable as exc:
-        family_fold_summary=[]
-        family_group_support={}
-        for label in family_classes:
-            positive_groups_for_label={family_groups[index] for index,value in enumerate(family_labels) if value==label}
-            negative_groups_for_label={family_groups[index] for index,value in enumerate(family_labels) if value!=label}
-            family_group_support[label]={
-                'records':sum(value==label for value in family_labels),
-                'independent_groups':len(positive_groups_for_label),
-                'negative_records':sum(value!=label for value in family_labels),
-                'negative_independent_groups':len(negative_groups_for_label)}
-        family_calibration={'method':'unavailable_insufficient_grouped_oof_support','classes':family_classes,
-            'eligible_classes':[],'estimators':{},'class_support':family_group_support,
-            'unavailable_classes':{label:str(exc) for label in family_classes},
-            'minimum_positive_groups':int(probability_settings['family_min_positive_groups_per_class']),
-            'minimum_negative_groups':int(probability_settings['family_min_negative_groups_per_class']),
-            'minimum_eligible_classes':int(probability_settings['family_min_calibrated_classes']),
-            'parameters':{'estimator':'sklearn.linear_model.LogisticRegression','C':1e6,
-                'solver':'lbfgs','max_iter':2000,
-                'input':'per-family logit-transformed random-forest probability',
-                'mapping':'one-vs-rest sigmoid, then normalize across eligible families'},
-            'oof_records':0,'unavailable_reason':str(exc)}
-        print(f'[classifier] Family probability calibration unavailable: {exc}',flush=True)
-    family_calibration['known_classes']=sorted(counts)
-    family_calibration['family_training_support']={
-        label:{'positive_records':sum(family==label for _,family in indices),
-               'positive_independent_sequence_groups':len({group_ids[index] for index,family in indices if family==label})}
-        for label in sorted(counts)}
-    for label in sorted(counts):
-        if label not in family_classes:
-            family_calibration.setdefault('unavailable_classes',{})[label]=(
-                f"not included in the family Random Forest: only {counts[label]} feature-supported positive controls; requires at least 2")
-    print(f"[classifier] Calibrated family classes available: {len(family_calibration['eligible_classes'])}/{len(family_classes)}",flush=True)
     membership_fold_assignments=[(index,int(fold),group_ids[index]) for index,fold in enumerate(membership_folds)]
     profiles = {label: sorted(set().union(*(domain_set(data[i][0],c) for i,f in indices if f==label))) for label in counts}
     calibration_provenance={'method':'sigmoid','grouping':probability_settings['grouping'],
         'grouping_details':grouping_metadata,
         'random_state':probability_settings['random_state'],'max_splits':probability_settings['max_splits'],
-        'gate_threshold_policy':c._SETTINGS['probability_gate_threshold_policy'],
-        'membership':membership_calibration,'family':family_calibration,
-        'membership_fold_summary':membership_fold_summary,'family_fold_summary':family_fold_summary,
-        'membership_calibration_records':len(labels),'family_calibration_records':len(family_labels),
+        'membership':membership_calibration,
+        'membership_fold_summary':membership_fold_summary,
+        'membership_calibration_records':len(labels),
         'validation_used_for_calibration':False}
     saved = dict(version='5.8',feature_schema=SCHEMA,binary=binary,family=family,config_vocab=sorted(vocab),
         aliases=aliases,parents=parents,motifs=motifs,counts=dict(counts),profiles=profiles,
@@ -1482,18 +1494,8 @@ def train_family_gate(args, c):
             'class_group_counts':membership_calibration['class_group_counts'],
             'minimum_groups_per_class':membership_calibration['minimum_groups_per_class'],
             'folds':membership_fold_summary},
-        'family':{'method':family_calibration['method'],
-            'parameters':family_calibration.get('parameters',{}),
-            'eligible_classes':family_calibration['eligible_classes'],
-            'unavailable_classes':family_calibration['unavailable_classes'],
-            'class_support':family_calibration['class_support'],
-            'minimum_positive_groups':family_calibration.get('minimum_positive_groups'),
-            'minimum_negative_groups':family_calibration.get('minimum_negative_groups'),
-            'minimum_eligible_classes':family_calibration.get('minimum_eligible_classes'),
-            'folds':family_fold_summary},
         'validation_used_for_calibration':False,
-        'gate_threshold_policy':c._SETTINGS['probability_gate_threshold_policy'],
-        'interpretation':'Membership probability is conditional on the labelled control distribution. Family probability is conditional on adhesome association. Joint family probability is their product and is not a universal biological probability.'}
+        'interpretation':'Membership probability is conditional on the labelled control distribution. Family assignments use raw-vote evidence gates.'}
     summary['family_similarity_policy']={'selected_profile':similarity_profile_name,
         'search_max_evalue':similarity_settings['search_max_evalue'],
         'legacy_model_feature_max_evalue':similarity_settings['legacy_model_feature_max_evalue'],
@@ -1504,9 +1506,12 @@ def train_family_gate(args, c):
     val_predictions = []
     if args.validation:
         print('[classifier] Evaluating the frozen calibration-trained model on independent validation',flush=True)
-        val_predictions = infer(saved,val_data,c,family_similarity_profile=similarity_profile_name)
+        val_predictions = infer(saved,val_data,c,family_similarity_profile=similarity_profile_name,
+                                include_threshold_sensitivity=True)
         summary['validation'] = evaluate(val_rows,val_predictions,val_sequences,saved,c,
             family_similarity_profile=similarity_profile_name)
+        summary['validation']['family']['raw_vote_threshold_sensitivity']['tsv']=\
+            'raw_vote_family_threshold_sensitivity.tsv'
         summary['validation_provenance'] = {**val_receipts,**val_hashes,'labels':c.sha(args.validation/'reports/predictions.tsv')}
         if args.baseline_validation_predictions:
             baseline_predictions=read_baseline_predictions(args.baseline_validation_predictions,val_rows,c)
@@ -1523,9 +1528,6 @@ def train_family_gate(args, c):
     fold_rows=[]
     for index,fold,group_id in membership_fold_assignments:
         fold_rows.append({'model':'membership','protein_id':c.row_id(rows[index]),
-                          'sequence_group_id':group_id,'heldout_fold':fold})
-    for index,fold,group_id in family_fold_assignments:
-        fold_rows.append({'model':'family','protein_id':c.row_id(rows[index]),
                           'sequence_group_id':group_id,'heldout_fold':fold})
     fold_path=args.out/'probability_calibration_folds.tsv'
     c.write_tsv(fold_path,fold_rows,fields=['model','protein_id','sequence_group_id','heldout_fold'])
@@ -1579,8 +1581,13 @@ def evaluate_family_gate(args, c):
     data, hashes = extract(rows, sequences, args.validation/'handoff/detection', saved['motifs'], set(saved['config_vocab']), c,cdd=cdd)
     if hashes.get('posthoc_sequence_rules_sha256') != saved.get('provenance',{}).get('posthoc_sequence_rules_sha256'):
         raise ValueError('Post-hoc sequence-rule source differs from the one used to train this model')
-    predictions = infer(saved, data, c,family_similarity_profile=similarity_profile_name)
-    report = evaluate(rows, predictions, sequences, saved, c,family_similarity_profile=similarity_profile_name)
+    predictions = infer(saved, data, c,family_similarity_profile=similarity_profile_name,
+                        include_threshold_sensitivity=True,
+                        family_vote_fraction_cutoff=getattr(args,'family_vote_fraction_cutoff',None),
+                        family_vote_margin=getattr(args,'family_vote_margin',None))
+    report = evaluate(rows, predictions, sequences, saved, c,family_similarity_profile=similarity_profile_name,
+        family_vote_fraction_cutoff=getattr(args,'family_vote_fraction_cutoff',None),
+        family_vote_margin=getattr(args,'family_vote_margin',None))
     for row, prediction in zip(rows, predictions):
         prediction.update(expected_family=trusted_family(row,saved['aliases'],saved['parents']),
             control_class=row['control_class'],
@@ -1590,6 +1597,8 @@ def evaluate_family_gate(args, c):
     write_validation_report(args.out, report)
     receipt = {'model_sha256':c.sha(path),'labels_sha256':c.sha(args.validation/'reports/predictions.tsv'),
         'family_similarity_profile':similarity_profile_name,
+        'family_vote_thresholds':report['family']['selected_family_call_policy']['raw_vote_thresholds'],
+        'raw_vote_family_threshold_sensitivity_tsv':'raw_vote_family_threshold_sensitivity.tsv',
         'family_similarity_policy':report['family_similarity_policy'],
         'records':len(rows),'validation_used_for_fitting':False,'sources':{**receipts,**hashes}}
     (args.out/'evaluation_manifest.json').write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8')
@@ -1601,6 +1610,9 @@ def predict_family_gate(args, c):
     print('[classifier] Starting family prediction; loading model and checking inputs',flush=True)
     if not args.fasta or not args.evidence_dir:
         raise ValueError('Family prediction requires --fasta and --evidence-dir for verified sequence-derived features')
+    sensitivity_path=args.out.with_name(args.out.stem+'.raw_vote_family_threshold_sensitivity.tsv')
+    if sensitivity_path.exists():
+        raise ValueError(f'Choose a new sensitivity-report path; existing file is never overwritten: {sensitivity_path}')
     saved = c.joblib.load(args.model/'adhesome_ml.joblib' if args.model.is_dir() else args.model)
     _require_calibrated_model(saved,'Prediction')
     similarity_settings=_family_similarity_config(c,saved)
@@ -1652,32 +1664,41 @@ def predict_family_gate(args, c):
         print(f'[classifier] Batch {batch_index}/{total_batches}: extracting motif, domain, identity-rule, post-hoc-rule and homology features',flush=True)
         data,_ = extract(chunk,sequences,args.evidence_dir,saved['motifs'],set(saved['config_vocab']),c,cached,cdd)
         print(f'[classifier] Batch {batch_index}/{total_batches}: assigning adhesome membership and family calls',flush=True)
-        output.extend(infer(saved,data,c,args.threshold,similarity_profile_name))
+        output.extend(infer(saved,data,c,args.threshold,similarity_profile_name,
+            include_threshold_sensitivity=True,
+            family_vote_fraction_cutoff=getattr(args,'family_vote_fraction_cutoff',None),
+            family_vote_margin=getattr(args,'family_vote_margin',None)))
         print(f'[classifier] Progress: {len(output)}/{len(records)} sequences classified ({100*len(output)/len(records):.1f}%)',flush=True)
     if len(output)!=len(records):
         raise ValueError('Prediction cohort accounting failed')
     for prediction in output:
         prediction['stage1_hypotheses_context_only'] = ';'.join(sorted(hypotheses[prediction['protein_id']] - {''}))
     c.write_tsv(args.out,output)
+    family_call_policy=_effective_family_assignment_policy(c,saved,
+        getattr(args,'family_vote_fraction_cutoff',None),getattr(args,'family_vote_margin',None))
+    c.write_tsv(sensitivity_path,_prediction_sensitivity_summary(output,family_call_policy),
+        fields=['top_family_raw_vote_fraction_cutoff','minimum_margin','family_calls',
+            'family_call_counts_json','is_configured_output_threshold'])
     receipt = {'classifier_version':'5.8','model_version':saved.get('version','unknown'),
                'rule_fallback_policy_version':'5.5_identity_rule_fallback_v1',
                'family_assignment_policy_version':(c._SETTINGS.get('family_assignment_policy') or saved.get('family_assignment_policy',{})).get('version',''),
                'family_assignment_policy_sha256':_policy_digest(c._SETTINGS.get('family_assignment_policy') or saved.get('family_assignment_policy',{})),
                'family_assignment_score_interpretation':'raw Random Forest vote fraction used as an evidence-gated decision score, not a probability',
+               'family_vote_thresholds':family_call_policy.get('raw_vote_thresholds',{}),
+               'raw_vote_family_threshold_sensitivity_tsv':str(sensitivity_path),
                'family_similarity_profile':similarity_profile_name,
                'family_similarity_search_max_evalue':similarity_settings['search_max_evalue'],
                'family_similarity_assignment_thresholds':similarity_selection,
                'membership_model_uses_family_similarity_extension':False,
                'membership_model_uses_family_signature_crosswalk':False,
                'family_signature_crosswalk_sha256':saved.get('provenance',{}).get('adhesome_family_rule_crosswalk_sha256'),
-               'family_signature_features_used':saved.get('feature_schema')==SCHEMA,
+               'family_signature_features_used':saved.get('feature_schema') in {SCHEMA,LEGACY_SCHEMA},
                 'feature_schema':SCHEMA,'records':len(output),'class_counts':dict(Counter(r['classifier_call'] for r in output)),
                 'family_assignment_counts':dict(Counter(r['family_call_policy_tier'] or 'no_family_call' for r in output)),
                'rule_candidate_status_counts':dict(Counter(r['rule_candidate_status'] for r in output)),
                'untrained_family_rule_candidates':sum(bool(r['rule_candidate_family_untrained']) for r in output),
                'rule_rf_conflicts':sum(bool(r['rule_conflicts_with_random_forest']) for r in output),
-               'probability_calibration_policy':saved.get('probability_calibration',{}).get('method'),
-               'family_probability_calibrated_classes':saved.get('probability_calibration',{}).get('family',{}).get('eligible_classes',[]),
+               'membership_probability_calibration':saved.get('probability_calibration',{}).get('method'),
                'model_sha256':c.sha(args.model/'adhesome_ml.joblib' if args.model.is_dir() else args.model),
                'input_sha256':c.sha(args.fasta),'threshold':args.threshold,'exact_sequence_match_used':False}
     args.out.with_suffix('.summary.json').write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8')
