@@ -976,3 +976,18 @@ main/run_pipeline.py --mode target. This selects the classifier immediately afte
 Stage 1 and skips Stage 2/audit/orthology/phylogeny. Without that option the standard
 adhesome workflow is used. Completed shortcut summaries describe their original
 model; standalone reclassification writes a separate prediction table.
+
+
+## Integrated context-aware motif resume
+
+Resume automatically passes `HANDOFF/Stage_1_output.xlsx` when present. Use `--stage1-output` for an explicit override, which must exist. Workbook contents and the current `adhesion_motif_library.xlsx` are hashed into the annotation recovery contract. Changes require a fresh annotation output.
+
+`--scope adhesion_associated` (default) selects the 53 adhesion rules; `--scope all` selects the 347-rule master. Legacy `--motif-scope adhesion/master` remains supported. Adhesion annotations feed the audit; regulatory annotations and feature tables remain supplementary. Context_evidence and Evidence sheets are joined by motif rule ID. Stage 1 families/modules are hypotheses, and topology determines site compartment compatibility.
+
+Exploratory k-mer discovery is disabled by default; standalone `family_motifs.py --discover` enables it.
+
+```bash
+python -B main/adhesome_workflow.py resume --handoff runs/target_ml_shortcut/target/handoff --context-dir returned/context --annotation-only --scope adhesion_associated --out runs/annotation_context_v2 --threads 4
+```
+
+The Stage 1 workbook is discovered from that handoff; no machine-specific path is needed. This command performs annotation only.

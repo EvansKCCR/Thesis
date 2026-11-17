@@ -473,8 +473,19 @@ def resume(args):
     cmd = [sys.executable, _layout_resource(MOTIF/'family_motifs.py'), '--input-dir', _layout_resource(handoff/'families'),
            '--regions', _layout_resource(handoff/'verified_regions.tsv'), '--out', _layout_resource(out/'motifs'),
            '--motif-scope',getattr(args,'motif_scope','adhesion')]
-    if getattr(args,'motif_library',None):cmd+=['--library',_layout_resource(args.motif_library).resolve()]
+    motif_library=getattr(args,'motif_library',None) or MOTIF/'Motif_library/adhesion_motif_library.xlsx'
+    motif_library=_layout_resource(motif_library).resolve()
+    if motif_library.is_file():cmd+=['--library',motif_library]
+    elif getattr(args,'motif_library',None):raise ValueError(f'Missing motif library: {motif_library}')
     inputs, copies = {}, []
+    if motif_library.is_file():inputs[str(motif_library)]=digest(motif_library)
+    stage1=getattr(args,'stage1_output',None) or handoff/'Stage_1_output.xlsx'
+    stage1=_layout_resource(stage1).resolve()
+    if stage1.is_file():
+        cmd+=['--stage1-output',stage1]
+        inputs[str(stage1)]=digest(stage1)
+    elif getattr(args,'stage1_output',None):
+        raise ValueError(f'Missing Stage 1 workbook: {stage1}')
     for flag in ('topology_file','context_dir','evidence'):
         value = getattr(args, flag)
         if value:
@@ -1395,7 +1406,8 @@ def main(argv=None):
                    help='CPU budget; defaults to the scheduler allocation or up to 8 local CPUs')
     s.set_defaults(func=start)
     s = sub.add_parser('resume', help='Import external context and run motif annotation')
-    s.add_argument('--motif-scope',choices=['adhesion','master'],default='adhesion')
+    s.add_argument('--scope','--motif-scope',dest='motif_scope',choices=['adhesion','master','adhesion_associated','all'],default='adhesion_associated')
+    s.add_argument('--stage1-output',type=Path,help='Stage 1 workbook; defaults to HANDOFF/Stage_1_output.xlsx')
     s.add_argument('--motif-library',type=Path,help='Current JSON/XLSX snapshot override')
     s.add_argument('--handoff', type=Path, required=True)
     for flag in ('topology-file','context-dir','external-evidence','evidence'):

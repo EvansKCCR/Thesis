@@ -316,6 +316,27 @@ def external(families, out, args):
     return stages, tools, versions
 
 
+def load_stage1_context(path):
+    if not path:return {}
+    from openpyxl import load_workbook
+    book=load_workbook(_layout_resource(path),read_only=True,data_only=True)
+    try:
+        sheet=book['candidates'] if 'candidates' in book.sheetnames else book.active
+        rows=sheet.iter_rows(values_only=True); header=[str(x or '').strip().casefold() for x in next(rows)]
+        required={'protein_id','family','module','status'}
+        if not required<=set(header):raise ValueError('Stage 1 workbook requires protein_id, family, module and status columns')
+        ix={k:header.index(k) for k in required}; out={}
+        for row in rows:
+            pid=str(row[ix['protein_id']] or '').strip()
+            if not pid:continue
+            item=out.setdefault(pid,{'families':set(),'modules':set(),'statuses':set()})
+            for col,key in [('family','families'),('module','modules'),('status','statuses')]:
+                val=str(row[ix[col]] or '').strip()
+                if val:item[key].add(val)
+        return {k:{'families':sorted(v['families']),'modules':sorted(v['modules']),'status':';'.join(sorted(v['statuses']))} for k,v in out.items()}
+    finally:book.close()
+
+
 def main(argv=None):
     import curated_annotation as curated
     import master_library
@@ -325,15 +346,17 @@ def main(argv=None):
     parser.add_argument('--version',action='version',version='adhesome-motif '+VERSION)
     parser.add_argument('--input-dir', type=Path, default=_layout_resource(HERE/'family_specific_candidate_library'))
     parser.add_argument('--library', type=Path, help='Current JSON/XLSX motif snapshot; defaults to adhesion_core.json')
-    parser.add_argument('--motif-scope',choices=['adhesion','master'],default='adhesion',help='53 adhesion rules by default, or the complete 347-rule snapshot')
+    parser.add_argument('--scope','--motif-scope',dest='motif_scope',choices=['adhesion','master','adhesion_associated','all'],default='adhesion_associated',help='Default 53 adhesion-core rules; all scans core and regulatory master rules')
     parser.add_argument('--rules', type=Path, default=_layout_resource(HERE/'Motif_library'/'context_rules.json'))
     parser.add_argument('--out', type=Path, required=True, help='New output directory')
     parser.add_argument('--regions', type=Path, help='1-based inclusive domain/context TSV')
+    parser.add_argument('--stage1-output',type=Path,help='Stage_1_output.xlsx; family/module hypotheses are joined by protein_id')
     parser.add_argument('--topology-dir', type=Path, help='Directory containing predicted_topologies.3line files recursively')
     parser.add_argument('--topology-file', type=Path, help='Single DeepTMHMM predicted_topologies.3line file')
     parser.add_argument('--topology-zip', type=Path, nargs='+', default=[], help='Additional DeepTMHMM ZIP archives, read without extraction')
     parser.add_argument('--context-dir', type=Path, help='Directory with DeepLoc, SignalP and NCBI CDD files; defaults to current adhesome_candidate data for the bundled FASTAs')
     parser.add_argument('--evidence', type=Path, help='Sequence-hash-verified, site-specific evidence TSV')
+    parser.add_argument('--discover',action='store_true',help='Opt into exploratory k-mer discovery')
     parser.add_argument('--known-meme', type=Path, help='Optional actual protein PWM database')
     parser.add_argument('--external', choices=['skip','plan','run'], default='skip')
     parser.add_argument('--min-streme', type=int, default=50)
@@ -363,6 +386,9 @@ def main(argv=None):
     for spec in rules['families'].values():
         if spec.get('ordered_domains') and not spec.get('ordered_domain_groups'):
             spec['ordered_domain_groups']=[[p] for p in spec['ordered_domains']]
+    args.motif_scope='adhesion' if args.motif_scope in ('adhesion','adhesion_associated') else 'master'
+    current_workbook=HERE/'Motif_library/adhesion_motif_library.xlsx'
+    args.library=args.library or (current_workbook if current_workbook.is_file() else None)
     args.library=args.library or _layout_resource(HERE/'Motif_library')/('adhesion_core.json' if args.motif_scope=='adhesion' else 'motif_master.json')
     snapshot=master_library.load(args.library,args.motif_scope)
     files=sorted(p for p in args.input_dir.iterdir() if p.suffix.lower() in ('.fa','.faa','.fasta'))
@@ -399,9 +425,19 @@ def main(argv=None):
     print('Scanning current evidence-based motif definitions and generating exploratory candidates...',flush=True)
     discovery_families={name:records for name,records in families.items()
                         if rules['families'][name].get('classification_level') not in ('component_hypothesis','screening_hypothesis')}
-    words,sites=discover(discovery_families,args.min_k,args.max_k,args.min_fraction,args.top)
-    master_result=master_library.scan(snapshot,families,regions,evidence,out,write_tsv,sequence_context)
-    result=dict(annotation_rows=master_result['sequence_annotation_rows'],context_filters_implemented=False)
+    words,sites=discover(discovery_families,args.min_k,args.max_k,args.min_fraction,args.top) if args.discover else ([],[])
+    stage1_path=args.stage1_output
+    if stage1_path is None:
+        for base in (_layout_resource(args.input_dir).resolve(),out.resolve()):
+            for parent in (base,*base.parents):
+                candidate=parent/'Stage_1_output.xlsx'
+                if not candidate.is_file():candidate=parent/'handoff'/'Stage_1_output.xlsx'
+                if not candidate.is_file():candidate=parent/'target'/'handoff'/'Stage_1_output.xlsx'
+                if candidate.is_file():stage1_path=candidate;break
+            if stage1_path:break
+    stage1_context=load_stage1_context(stage1_path) if stage1_path else {}
+    master_result=master_library.scan(snapshot,families,regions,evidence,out,write_tsv,sequence_context,stage1_context)
+    result=dict(annotation_rows=master_result['sequence_annotation_rows'],context_filters_implemented=True,feature_groups=['adhesion_core','general_regulatory'])
     stages,tool_paths,versions=external(discovery_families,out,args)
     stages.extend(dict(family=name,stage='family_discovery',status='skipped',
                        reason='screening_bucket_has_no_assigned_family' if rules['families'][name].get('classification_level')=='screening_hypothesis'
@@ -434,12 +470,12 @@ def main(argv=None):
     inputs=files+[args.library,args.rules,domain_source,Path(__file__),_layout_resource(HERE/'curated_annotation.py'),_layout_resource(HERE/'master_library.py'),_layout_resource(HERE/'family_identity_review.py'),_layout_resource(HERE/'import_sequence_context.py')]+topology_paths
     if args.context_dir:
         inputs += [args.context_dir/name for name in ('DeepLoc_adhesome_candidate_list.csv','SignalP_adhesome_candidate_list.txt','NCBI_CDD_adhesome_hitdata.txt')]
-    inputs += [x for x in (args.regions,args.evidence,args.known_meme) if x]
+    inputs += [x for x in (args.regions,args.evidence,args.known_meme,stage1_path) if x]
     failed=any(s['status']=='failed' for s in stages)
     manifest=dict(pipeline_version=VERSION,created_utc=datetime.now(timezone.utc).isoformat(),python=platform.python_version(),
         parameters={k:str(v) if isinstance(v,Path) else [str(x) for x in v] if isinstance(v,list) else v for k,v in vars(args).items()},
         inputs={str(_layout_resource(p).resolve()):digest(p) for p in inputs},tool_paths=tool_paths,tool_versions=versions,
-        inspection_completed=True,external_execution_complete=all(s['status']=='completed' for s in stages),completed=not failed,curated=result,master=master_result)
+        stage1_context_records=len(stage1_context),stage1_context_source=str(stage1_path) if stage1_path else '',inspection_completed=True,external_execution_complete=all(s['status']=='completed' for s in stages),completed=not failed,curated=result,master=master_result)
     (_layout_resource(out/'manifest.json')).write_text(json.dumps(manifest,indent=2),encoding='utf-8')
     report=['# Family motif inspection', '',
         f"{len(families)} families; {sum(len(r) for r in families.values())} records; {master_result['master_records']} master library entries.",
